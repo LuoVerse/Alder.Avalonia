@@ -1,0 +1,64 @@
+name: Gallery WebAssembly preview
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/gallery-pages.yml'
+      - 'Directory.Build.props'
+      - 'samples/Alder.Avalonia.Gallery/**'
+      - 'samples/Alder.Avalonia.Gallery.Browser/**'
+      - 'src/Alder.Avalonia/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: samples/Alder.Avalonia.Gallery.Browser
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: samples/Alder.Avalonia.Gallery.Browser/global.json
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Install WebAssembly tools
+        run: dotnet workload install wasm-tools --skip-manifest-update
+      - name: Publish and check the static site
+        run: |
+          dotnet publish -c Release
+          site=bin/Release/net11.0-browser/publish/wwwroot
+          test -s "$site/index.html"
+          test -s "$site/main.js"
+          test -s "$site/_framework/dotnet.js"
+          touch "$site/.nojekyll"
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: samples/Alder.Avalonia.Gallery.Browser/bin/Release/net11.0-browser/publish/wwwroot
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

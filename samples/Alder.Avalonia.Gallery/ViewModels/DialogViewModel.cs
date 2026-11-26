@@ -26,6 +26,8 @@ public sealed class DialogViewModel : GalleryViewModel
     public ICommand OpenPresentationCommand { get; }
     public ICommand OpenLocalCommand { get; }
 
+    public bool IsNativeWindowSupported => !OperatingSystem.IsBrowser();
+
     public string ProjectName
     {
         get => field;
@@ -84,6 +86,7 @@ public sealed class DialogViewModel : GalleryViewModel
 
     private async Task OpenWindowAsync()
     {
+        if (!IsNativeWindowSupported) return;
         var editor = new ProjectEditorViewModel(ProjectName);
         WindowResult = await Dialog.ShowWindowAsync<ProjectEditorView>(editor, CreateOptions());
         if (WindowResult == DialogResult.OK) ProjectName = editor.ProjectName;

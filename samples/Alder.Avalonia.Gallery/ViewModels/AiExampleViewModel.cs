@@ -4,7 +4,6 @@ using Alder.Avalonia.Controls;
 using Alder.NativeMarkdown.UI;
 using Alder.NativeMarkdown.UI.Transcript;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Converters;
 using Avalonia.Input.Platform;
 using Avalonia.Media;
@@ -19,7 +18,7 @@ public sealed partial class AiExampleViewModel : GalleryViewModel
 {
     private CancellationTokenSource? response;
     private string? feedbackKey;
-    private static Window? Owner => (global::Avalonia.Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+    private static TopLevel? Owner => App.GalleryTopLevel;
 
     public string? Draft { get => field; set => this.RaiseAndSetIfChanged(ref field, value); }
     public bool VoicePreviewActive { get => field; set => this.RaiseAndSetIfChanged(ref field, value); }

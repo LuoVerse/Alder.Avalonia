@@ -1,0 +1,190 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:chrome="using:Avalonia.Controls.Chrome"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.GalleryView"
+             x:Name="GalleryRoot" x:DataType="vm:GalleryWindowViewModel"
+             Background="{DynamicResource GalleryPreviewSurface}">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light"><SolidColorBrush x:Key="GallerySidebarFill" Color="#FAFAFA" /></ResourceDictionary>
+        <ResourceDictionary x:Key="Dark"><SolidColorBrush x:Key="GallerySidebarFill" Color="#121214" /></ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+      <gallery:IconResourceConverter x:Key="NavigationIconConverter" />
+      <DataTemplate x:Key="GalleryNavigationLabel" x:DataType="vm:GalleryNavigationItem">
+        <alder:AlderTextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+      </DataTemplate>
+      <ControlTheme x:Key="GalleryNavigationRow" TargetType="alder:AlderSidebarItem" x:DataType="vm:GalleryNavigationItem"
+                    BasedOn="{StaticResource {x:Type alder:AlderSidebarItem}}">
+        <Setter Property="Icon" Value="{Binding IconKey, Converter={StaticResource NavigationIconConverter}}" />
+        <Setter Property="RailToolTip" Value="{Binding Title}" />
+        <Setter Property="SearchKeywords" Value="{Binding PageKey}" />
+        <Setter Property="AutomationProperties.Name" Value="{Binding Title}" />
+        <Setter Property="Tag" Value="{CompiledBinding RowKind}" />
+        <Style Selector="^[Tag=heading]">
+          <Setter Property="Focusable" Value="False" />
+          <Setter Property="IsHitTestVisible" Value="False" />
+          <Setter Property="SelectOnInvoke" Value="False" />
+          <Setter Property="AutomationProperties.HeadingLevel" Value="2" />
+          <Setter Property="Margin" Value="{CompiledBinding HeadingMargin}" />
+          <Setter Property="Template">
+            <ControlTemplate>
+              <ContentPresenter Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                Foreground="{DynamicResource AlderMuted}" FontSize="12" />
+            </ControlTemplate>
+          </Setter>
+        </Style>
+        <Style Selector="^[Tag=heading][(alder|AlderSidebar.Rail)=True]">
+          <Setter Property="IsVisible" Value="False" />
+        </Style>
+      </ControlTheme>
+      <ControlTheme x:Key="GalleryLanguageMenu" TargetType="MenuFlyoutPresenter"
+                    BasedOn="{StaticResource AlderNavbarDropdownTheme}">
+        <Setter Property="Width" Value="164" />
+      </ControlTheme>
+      <DataTemplate x:Key="GalleryLanguageLabel" x:DataType="vm:GalleryLanguageChoice">
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+          <alder:AlderTextBlock Text="{CompiledBinding Language.Name}" VerticalAlignment="Center" />
+          <alder:AlderPathIcon Grid.Column="1" Width="14" Height="14" Data="{StaticResource AlderIconCheck}"
+                              Foreground="{DynamicResource AlderMuted}" IsVisible="{CompiledBinding IsSelected}"
+                              AutomationProperties.AccessibilityView="Raw" />
+        </Grid>
+      </DataTemplate>
+      <ControlTheme x:Key="GalleryLanguageItem" TargetType="MenuItem" x:DataType="vm:GalleryLanguageChoice"
+                    BasedOn="{StaticResource AlderUserMenuItemTheme}">
+        <Setter Property="Command" Value="{CompiledBinding Command}" />
+        <Setter Property="CommandParameter" Value="{CompiledBinding Language}" />
+        <Setter Property="AutomationProperties.Name" Value="{CompiledBinding Language.Name}" />
+        <Style Selector="^ /template/ ContentPresenter#PART_HeaderPresenter">
+          <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+      </ControlTheme>
+    </ResourceDictionary>
+  </UserControl.Resources>
+
+  <UserControl.Styles>
+    <Style Selector="alder|AlderSidebar.gallerySidebar /template/ Border#PART_Header">
+      <Setter Property="Padding" Value="18,0" />
+      <Setter Property="MinHeight" Value="64" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="chrome:WindowDecorationProperties.ElementRole" Value="TitleBar" />
+    </Style>
+    <Style Selector="alder|AlderSidebar.gallerySidebar /template/ DockPanel#HeaderLayout">
+      <Setter Property="IsHitTestVisible" Value="False" />
+    </Style>
+    <Style Selector="alder|AlderSidebar.gallerySidebar /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Padding" Value="13,10" />
+    </Style>
+    <Style Selector="alder|AlderSidebar.gallerySidebar[(alder|AlderSidebar.Rail)=True] /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Padding" Value="0,10" />
+    </Style>
+    <Style Selector="alder|AlderSidebar.gallerySidebar[(alder|AlderSidebar.Rail)=True] /template/ Border#PART_Header">
+      <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style Selector="alder|AlderSidebar.gallerySidebar alder|AlderSidebarItem">
+      <Setter Property="CornerRadius" Value="11" />
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="Margin" Value="0,2" />
+    </Style>
+    <Style Selector="alder|AlderAppLayout.galleryShell /template/ Border#PART_Navbar">
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+      <Setter Property="BorderThickness" Value="0,0,0,1" />
+    </Style>
+    <Style Selector="alder|AlderAppLayout.galleryShell:compact StackPanel#BreadcrumbParents">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="StackPanel#BreadcrumbParents" x:DataType="vm:GalleryWindowViewModel">
+      <Setter Property="IsVisible" Value="{CompiledBinding ShowBreadcrumbParents}" />
+    </Style>
+    <Style Selector="alder|AlderAppLayout.galleryShell StackPanel.galleryPage">
+      <Setter Property="Margin" Value="32,26,32,28" />
+    </Style>
+    <Style Selector="alder|AlderAppLayout.galleryShell:compact StackPanel.galleryPage">
+      <Setter Property="Margin" Value="16,18,16,20" />
+    </Style>
+  </UserControl.Styles>
+
+  <alder:AlderSidebarHost x:Name="Shell" Classes="galleryShell"
+                          FlowDirection="{DynamicResource GalleryFlowDirection}"
+                          SidebarWidth="244" SidebarBreakpoint="720" SidebarCollapse="Icon"
+                          ScrollMode="Host" Padding="0" IsSidebarOpen="{Binding IsSidebarOpen, Mode=TwoWay}">
+    <alder:AlderSidebarHost.Sidebar>
+      <alder:AlderSidebar x:Name="Sidebar" Classes="gallerySidebar" Background="{DynamicResource GallerySidebarFill}"
+                          CompactRows="True" ShowRail="False" IsSearchEnabled="True"
+                          Header="Alder" SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
+        <alder:AlderSidebar.HeaderIcon>
+          <Border x:Name="AlderMark" Width="26" Height="26" CornerRadius="7" Background="{DynamicResource AlderAccent}"
+                  AutomationProperties.AccessibilityView="Raw">
+            <alder:AlderTextBlock Text="A" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Foreground="{DynamicResource AlderOnAccent}" />
+          </Border>
+        </alder:AlderSidebar.HeaderIcon>
+        <alder:AlderSidebar.HeaderTemplate>
+          <DataTemplate x:DataType="x:String">
+            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+              <alder:AlderTextBlock Text="{Binding}" FontSize="19" FontWeight="Bold" VerticalAlignment="Center"
+                         Foreground="{DynamicResource AlderInk}" />
+              <alder:AlderTextBlock Text="Gallery" FontSize="13" FontWeight="Normal" VerticalAlignment="Center"
+                         Foreground="{DynamicResource AlderMuted}" />
+            </StackPanel>
+          </DataTemplate>
+        </alder:AlderSidebar.HeaderTemplate>
+        <alder:AlderSidebarMenu x:Name="Navigation" ItemsSource="{CompiledBinding NavigationItems}"
+                                SearchTextSelector="{CompiledBinding NavigationSearchText}"
+                                ItemTemplate="{StaticResource GalleryNavigationLabel}"
+                                ItemContainerTheme="{StaticResource GalleryNavigationRow}"
+                                AutomationProperties.Name="{DynamicResource GalleryText.ComponentNavigation}" />
+      </alder:AlderSidebar>
+    </alder:AlderSidebarHost.Sidebar>
+
+    <alder:AlderSidebarHost.Navbar>
+      <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" Height="52">
+        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+          <StackPanel x:Name="BreadcrumbParents" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.GalleryComponents}" Foreground="{DynamicResource AlderMuted}"
+                       FontSize="13" VerticalAlignment="Center" />
+            <alder:AlderPathIcon Data="{StaticResource AlderIconChevronRight}" Foreground="{DynamicResource AlderMuted}" Width="9" Height="9" />
+            <alder:AlderTextBlock Text="{Binding SelectedItem?.GroupTitle}" Foreground="{DynamicResource AlderMuted}"
+                       FontSize="13" VerticalAlignment="Center" />
+            <alder:AlderPathIcon Data="{StaticResource AlderIconChevronRight}" Foreground="{DynamicResource AlderMuted}" Width="9" Height="9" />
+          </StackPanel>
+          <alder:AlderTextBlock Text="{Binding SelectedItem?.Title}" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" />
+        </StackPanel>
+        <Border Grid.Column="1" Background="Transparent" chrome:WindowDecorationProperties.ElementRole="TitleBar" />
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+          <alder:AlderSegment x:Name="ThemeSegment" Size="Small" VerticalAlignment="Center"
+                              SelectedKey="{Binding ThemeKey, Mode=TwoWay}"
+                              AutomationProperties.Name="{DynamicResource AlderText.UserMenuTheme}">
+            <alder:AlderSegmentItem Key="light" Icon="{StaticResource AlderThemeLightIcon}"
+                                    alder:AlderToolTip.Tip="{DynamicResource AlderText.UserMenuLight}"
+                                    AutomationProperties.Name="{DynamicResource AlderText.UserMenuLight}" />
+            <alder:AlderSegmentItem Key="dark" Icon="{StaticResource AlderThemeDarkIcon}"
+                                    alder:AlderToolTip.Tip="{DynamicResource AlderText.UserMenuDark}"
+                                    AutomationProperties.Name="{DynamicResource AlderText.UserMenuDark}" />
+          </alder:AlderSegment>
+          <alder:AlderButton x:Name="LanguageButton" Size="Small" Variant="Secondary" VerticalAlignment="Center"
+                             AutomationProperties.Name="{DynamicResource GalleryText.Language}">
+            <alder:AlderButton.Flyout>
+              <alder:AlderMenuFlyout Placement="BottomEdgeAlignedRight" VerticalOffset="8"
+                                    ItemsSource="{CompiledBinding #GalleryRoot.DataContext?.Languages}"
+                                    ItemTemplate="{StaticResource GalleryLanguageLabel}"
+                                    FlyoutPresenterTheme="{StaticResource GalleryLanguageMenu}"
+                                    ItemContainerTheme="{StaticResource GalleryLanguageItem}" />
+            </alder:AlderButton.Flyout>
+            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+              <alder:AlderPathIcon Data="{StaticResource AlderIconGlobe}" Width="14" Height="14" />
+              <alder:AlderTextBlock Text="{Binding Language.Name}" VerticalAlignment="Center" />
+              <alder:AlderPathIcon Data="{StaticResource AlderIconChevronDown}" Width="11" Height="11" />
+            </StackPanel>
+          </alder:AlderButton>
+        </StackPanel>
+      </Grid>
+    </alder:AlderSidebarHost.Navbar>
+
+    <alder:AlderContentControl x:Name="PageContent" Content="{Binding SelectedItem}"
+                    HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+  </alder:AlderSidebarHost>
+</UserControl>

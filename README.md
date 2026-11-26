@@ -4,7 +4,21 @@ Alder.Avalonia 是一套 Avalonia 原生桌面控件库。它提供基础表单�
 
 界面和交互参考 [HeroUI Web](https://heroui.com/en/docs/react/components) 与 [HeroUI Pro Web](https://heroui.pro/docs/react/components)。控件通过 Avalonia 的模板、属性系统、命令和输入事件运行。
 
-## 运行 Gallery
+## 在线预览
+
+在浏览器中试用 Gallery 控件、搜索示例、切换语言和主题，并查看 AXAML 和 C# 示例。首次打开会下载 WebAssembly 运行时，独立系统窗口示例在桌面版运行。[打开 Alder Gallery 在线预览](https://luoverse.github.io/Alder.Avalonia/)
+
+使用 .NET 11 SDK 在本地运行浏览器版。
+
+```sh
+cd samples/Alder.Avalonia.Gallery.Browser
+dotnet workload install wasm-tools
+dotnet run
+```
+
+浏览器项目和控件库的改动合并到 `main` 后，由 GitHub Actions 构建并部署到 GitHub Pages。[部署记录](https://github.com/LuoVerse/Alder.Avalonia/actions/workflows/gallery-pages.yml)
+
+## 运行桌面 Gallery
 
 [GitHub Releases](https://github.com/LuoVerse/Alder.Avalonia/releases) 提供可直接运行的 Gallery 桌面程序。若从源码运行，需要 .NET 11 SDK。解决方案目标为 `net11.0`，使用 Avalonia 12.2.0。
 
@@ -55,6 +69,7 @@ dotnet package add Alder.Avalonia --version 1.0.0-preview
 | --- | --- |
 | [`src/Alder.Avalonia`](src/Alder.Avalonia) | 控件、主题、资产和原生文本引擎 |
 | [`samples/Alder.Avalonia.Gallery`](samples/Alder.Avalonia.Gallery) | Gallery、双语资源及完整示例 |
+| [`samples/Alder.Avalonia.Gallery.Browser`](samples/Alder.Avalonia.Gallery.Browser) | Gallery 的 WebAssembly 入口 |
 | [`tests/Alder.Avalonia.Tests`](tests/Alder.Avalonia.Tests) | Headless 交互、绑定和状态回归 |
 | [`tests/Alder.Avalonia.AotSmoke`](tests/Alder.Avalonia.AotSmoke) | Skia 像素验收、绑定诊断和 NativeAOT 烟测 |
 
@@ -83,3 +98,4 @@ dotnet publish tests/Alder.Avalonia.AotSmoke -c Release -r osx-arm64 -p:PublishA
 ## 许可
 
 本项目采用 [MIT 许可](LICENSE)。第三方资产和代码保留各自的许可，见[资产目录](src/Alder.Avalonia/Assets)中的许可文件。
+浏览器版的中文回退字体基于 Noto Sans SC，采用 [SIL Open Font License 1.1](samples/Alder.Avalonia.Gallery.Browser/wwwroot/licenses/NotoSansSC-OFL.txt)。

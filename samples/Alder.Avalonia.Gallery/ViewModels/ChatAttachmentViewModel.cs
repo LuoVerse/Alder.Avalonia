@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Alder.Avalonia.Controls;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using ReactiveUI;
@@ -42,7 +41,7 @@ public sealed class ChatAttachmentViewModel : GalleryViewModel
 
     private async Task PickFilesAsync()
     {
-        var owner = (global::Avalonia.Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+        var owner = App.GalleryTopLevel;
         if (owner?.StorageProvider is not { CanOpen: true } storage) return;
 
         int session = generation;

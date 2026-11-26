@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.WebAssembly">
+  <PropertyGroup>
+    <TargetFramework>net11.0-browser</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <WasmMainJSPath>wwwroot/main.js</WasmMainJSPath>
+    <WasmEnableThreads>false</WasmEnableThreads>
+    <!-- The browser hosts the Gallery assembly through App rather than running its desktop entry point. -->
+    <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
+    <!-- Gallery examples and ReactiveUI use reflection at runtime. -->
+    <PublishTrimmed>false</PublishTrimmed>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Browser" Version="12.2.0" />
+    <ProjectReference Include="../Alder.Avalonia.Gallery/Alder.Avalonia.Gallery.csproj" />
+    <AvaloniaResource Include="Assets/Fonts/*.ttf" />
+  </ItemGroup>
+</Project>

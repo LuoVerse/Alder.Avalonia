@@ -1647,6 +1647,7 @@
   "ModalDialog": "窗口内模态对话框",
   "WindowDialog": "独立窗口对话框",
   "OpenWindowDialog": "打开独立窗口",
+  "DialogNativeWindowDesktopOnly": "独立窗口示例可在桌面版 Gallery 中运行。",
   "DialogCentered": "居中",
   "DialogAtTop": "顶部",
   "DialogAtBottom": "底部",

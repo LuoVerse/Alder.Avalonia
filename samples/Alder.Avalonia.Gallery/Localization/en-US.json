@@ -1647,6 +1647,7 @@
   "ModalDialog": "In-window dialog",
   "WindowDialog": "Separate window",
   "OpenWindowDialog": "Open window",
+  "DialogNativeWindowDesktopOnly": "Native windows are available in the desktop Gallery.",
   "DialogCentered": "Center",
   "DialogAtTop": "Top",
   "DialogAtBottom": "Bottom",

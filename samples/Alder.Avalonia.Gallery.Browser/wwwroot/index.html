@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Interactive browser preview of the Alder.Avalonia controls.">
+    <title>Alder.Avalonia Gallery</title>
+    <style>
+        :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+        body { margin: 0; background: Canvas; color: CanvasText; }
+        #out { position: fixed; inset: 0; overflow: hidden; }
+        .avalonia-splash { display: grid; height: 100%; place-items: center; padding: 0 1rem; text-align: center; }
+    </style>
+    <noscript><style>#startup-status { display: none; }</style></noscript>
+</head>
+<body>
+    <div id="out">
+        <div class="avalonia-splash" id="startup-status" role="status">Loading Alder Gallery…</div>
+        <noscript><div class="avalonia-splash" role="alert">Alder Gallery requires JavaScript and WebAssembly.</div></noscript>
+    </div>
+    <script type="module" src="./main.js"></script>
+</body>
+</html>

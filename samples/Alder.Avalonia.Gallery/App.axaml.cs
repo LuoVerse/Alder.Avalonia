@@ -1,9 +1,12 @@
+using Alder.Avalonia.Controls;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using Alder.Avalonia.Gallery.Views;
 using Alder.Avalonia.Gallery.Localization;
+using Alder.Avalonia.Gallery.ViewModels;
 
 namespace Alder.Avalonia.Gallery;
 
@@ -21,8 +24,27 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             desktop.MainWindow = CreateDemoWindow();
+        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
+        {
+            var gallery = new GalleryView();
+            var scope = new ThemeVariantScope
+            {
+                DataContext = gallery.DataContext,
+                Child = new DialogHost { Content = gallery }
+            };
+            scope.Bind(ThemeVariantScope.RequestedThemeVariantProperty,
+                CompiledBinding.Create((GalleryWindowViewModel model) => model.WindowTheme));
+            singleView.MainView = scope;
+        }
         base.OnFrameworkInitializationCompleted();
     }
 
     public static Window CreateDemoWindow() => new GalleryWindow();
+
+    internal static TopLevel? GalleryTopLevel => Current?.ApplicationLifetime switch
+    {
+        IClassicDesktopStyleApplicationLifetime desktop => desktop.MainWindow,
+        ISingleViewApplicationLifetime singleView => TopLevel.GetTopLevel(singleView.MainView),
+        _ => null
+    };
 }

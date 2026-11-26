@@ -61,8 +61,12 @@
           <alder:AlderTextBlock Text="{CompiledBinding ProjectSummary}" TextWrapping="Wrap" TextAlignment="Center"
                      Foreground="{DynamicResource AlderInk}" />
           <alder:AlderButton Command="{CompiledBinding OpenWindowCommand}"
+                        IsEnabled="{CompiledBinding IsNativeWindowSupported}"
                         Content="{DynamicResource GalleryText.OpenWindowDialog}"
                         HorizontalAlignment="Center" />
+          <alder:AlderTextBlock IsVisible="{CompiledBinding !IsNativeWindowSupported}"
+                     Text="{DynamicResource GalleryText.DialogNativeWindowDesktopOnly}"
+                     Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" TextAlignment="Center" />
         </StackPanel>
       </gallery:ExampleCard.Preview>
       <gallery:ExampleCard.Feedback>
