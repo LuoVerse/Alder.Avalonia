@@ -12,6 +12,8 @@
     <ResourceDictionary x:Key="Light">
       <SolidColorBrush x:Key="AlderDataGridScrollThumb" Color="#2618181B" />
       <SolidColorBrush x:Key="AlderDataGridScrollThumbActive" Color="#4D18181B" />
+      <SolidColorBrush x:Key="AlderTableRowRest" Color="#00F5F5F6" />
+      <SolidColorBrush x:Key="AlderTableSecondaryRowRest" Color="#00E9E9EA" />
       <SolidColorBrush x:Key="AlderTableRowHover" Color="#F5F5F6" />
       <SolidColorBrush x:Key="AlderTableSecondaryHover" Color="#80E9E9EA" />
       <SolidColorBrush x:Key="AlderTableRowSelected" Color="#F1F1F2" />
@@ -21,6 +23,8 @@
     <ResourceDictionary x:Key="Dark">
       <SolidColorBrush x:Key="AlderDataGridScrollThumb" Color="#26FCFCFC" />
       <SolidColorBrush x:Key="AlderDataGridScrollThumbActive" Color="#4DFCFCFC" />
+      <SolidColorBrush x:Key="AlderTableRowRest" Color="#001F1F21" />
+      <SolidColorBrush x:Key="AlderTableSecondaryRowRest" Color="#00262629" />
       <SolidColorBrush x:Key="AlderTableRowHover" Color="#1F1F21" />
       <SolidColorBrush x:Key="AlderTableSecondaryHover" Color="#80262629" />
       <SolidColorBrush x:Key="AlderTableRowSelected" Color="#222224" />
@@ -300,7 +304,7 @@
     <Style Selector="^ /template/ Border#HeaderSurface"><Setter Property="CornerRadius" Value="16" /></Style>
   </ControlTheme>
   <ControlTheme x:Key="AlderTableRowTheme" TargetType="TableViewRow">
-    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Background" Value="{DynamicResource AlderTableRowRest}" />
     <Setter Property="BorderBrush" Value="{DynamicResource AlderTableRowLine}" />
     <Setter Property="BorderThickness" Value="0,0,0,1" />
     <Setter Property="FocusAdorner" Value="{x:Null}" />
@@ -319,7 +323,10 @@
       </ControlTemplate>
     </Setter>
     <Style Selector="^:pointerover"><Setter Property="Background" Value="{DynamicResource AlderTableRowHover}" /></Style>
-    <Style Selector="^.secondary"><Setter Property="BorderBrush" Value="{DynamicResource AlderTableSecondaryRowLine}" /></Style>
+    <Style Selector="^.secondary">
+      <Setter Property="Background" Value="{DynamicResource AlderTableSecondaryRowRest}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderTableSecondaryRowLine}" />
+    </Style>
     <Style Selector="^.secondary:pointerover"><Setter Property="Background" Value="{DynamicResource AlderTableSecondaryHover}" /></Style>
     <Style Selector="^:selected"><Setter Property="Background" Value="{DynamicResource AlderTableRowSelected}" /></Style>
     <Style Selector="^.data-grid-row[(alder|AlderMotion.Reduced)=False]">

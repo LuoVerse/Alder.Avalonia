@@ -1,6 +1,7 @@
 using Alder.Avalonia.Controls;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Templates;
 using Avalonia.Headless;
 using Avalonia.Input;
 using Avalonia.Layout;
@@ -19,6 +20,14 @@ internal static class ControlEdgeRenderSmoke
     {
         foreach (var theme in new[] { ThemeVariant.Light, ThemeVariant.Dark })
         {
+            foreach (double scale in new[] { 1d, 1.25d, 2d })
+            {
+                VerifyRoundedWindow(theme, scale);
+                VerifyColorArea(theme, scale);
+                VerifyColorSlider(theme, scale);
+                VerifyEmojiGlyph(theme, scale);
+            }
+
             foreach (double scale in new[] { 1d, 2d })
             {
                 VerifyIndicators(theme, scale);
@@ -26,6 +35,217 @@ internal static class ControlEdgeRenderSmoke
                 VerifyCells(theme, scale);
                 VerifyInlineSelectScrollBar(theme, scale);
             }
+        }
+        VerifyRowHover();
+    }
+
+    private static void VerifyRoundedWindow(ThemeVariant theme, double scale)
+    {
+        var background = theme == ThemeVariant.Light ? Brushes.AntiqueWhite : Brushes.DarkSlateGray;
+        var cover = new Border { Background = background, IsVisible = false };
+        var window = new AlderWindow
+        {
+            Width = 120, Height = 100, CornerRadius = new CornerRadius(18), Content = cover,
+            RequestedThemeVariant = theme, Background = background, ShowTitleBar = false,
+            TransparencyLevelHint = [WindowTransparencyLevel.Transparent],
+            TransparencyBackgroundFallback = Brushes.Transparent
+        };
+        window.Show();
+        window.SetRenderScaling(scale);
+        try
+        {
+            using var presented = Capture(window);
+            var frame = window.GetVisualDescendants().OfType<Control>().Single(x => x.Name == "PART_WindowFrame");
+            using var backgroundOnly = CaptureVisual(frame, scale);
+            cover.IsVisible = true;
+            window.UpdateLayout();
+            using var withContent = CaptureVisual(frame, scale);
+            int blended = 0;
+            int extent = (int)(18 * scale);
+            for (int y = 0; y < extent; y++)
+            for (int x = 0; x < extent; x++)
+            {
+                var a = backgroundOnly.GetPixel(x, y);
+                var b = withContent.GetPixel(x, y);
+                if (a.Alpha is > 5 and < 250) blended++;
+                if (Math.Abs(a.Alpha - b.Alpha) > 1 || Difference(a, b) > 2)
+                    throw new InvalidOperationException($"Window content changed corner coverage at ({x},{y}) ({theme.Key}, {scale}×): {a} vs {b}.");
+            }
+
+            if (blended == 0 || withContent.GetPixel(0, 0).Alpha != 0)
+                throw new InvalidOperationException($"Window lost its antialiased transparent corner ({theme.Key}, {scale}×), {blended} blended pixels, mask {frame.OpacityMask}, corner {withContent.GetPixel(0, 0)}, center {withContent.GetPixel(50, 50)}.");
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyColorArea(ThemeVariant theme, double scale)
+    {
+        var area = new AlderColorArea
+        {
+            Width = 128, Height = 96, Value = AlderColorValue.FromHsb(211, .6, .5),
+            CornerRadius = new CornerRadius(16), BorderBrush = null, ShowDots = false
+        };
+        var preview = new Border { Child = area, Padding = new Thickness(24) };
+        var window = Show(preview, theme, scale);
+        try
+        {
+            using var frame = Capture(window);
+            var bottomLeft = area.TranslatePoint(new Point(0, area.Bounds.Height), window)!.Value;
+            for (int dy = 1; dy <= (int)(5 * scale); dy++)
+            for (int dx = 0; dx <= (int)(12 * scale); dx++)
+            {
+                var pixel = frame.GetPixel((int)(bottomLeft.X * scale) + dx, (int)(bottomLeft.Y * scale) - dy);
+                // The dark end is nearly neutral even where the antialiasing blends with the background.
+                if (pixel.Blue - pixel.Red > 12)
+                    throw new InvalidOperationException($"Color Area leaked its blue base along the dark edge ({theme.Key}, {scale}×): {pixel}.");
+            }
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyColorSlider(ThemeVariant theme, double scale)
+    {
+        var slider = new AlderColorSlider
+        {
+            ColorValue = AlderColorValue.FromHsb(211, .6, .5), Channel = ColorChannel.Hue,
+            HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center
+        };
+        var window = Show(slider, theme, scale);
+        try
+        {
+            using var hue = Capture(window);
+            var rail = slider.GetVisualDescendants().OfType<Decorator>().Single(x => x.Name == "Rail");
+            var origin = rail.TranslatePoint(default, window)!.Value;
+            var checkerHost = rail.Child as Panel;
+            var brush = checkerHost?.Background ?? (rail as Border)?.Background;
+            if (checkerHost is not null) checkerHost.Background = null;
+            else ((Border)rail).Background = null;
+            using var hueWithoutChecker = Capture(window);
+            if (CompareRailEdge(hue, hueWithoutChecker) > 2)
+                throw new InvalidOperationException($"Opaque Hue revealed the checkerboard at the rounded edge ({theme.Key}, {scale}×).");
+
+            slider.Channel = ColorChannel.Alpha;
+            using var alphaWithoutChecker = Capture(window);
+            if (checkerHost is not null) checkerHost.Background = brush;
+            else ((Border)rail).Background = brush;
+            using var alpha = Capture(window);
+            if (!Enumerable.Range(14, 20).Any(x =>
+                Difference(Pixel(alpha, origin + new Vector(x, rail.Bounds.Height / 2), scale),
+                    Pixel(alphaWithoutChecker, origin + new Vector(x, rail.Bounds.Height / 2), scale)) >= 4))
+                throw new InvalidOperationException($"Alpha lost its checkerboard ({theme.Key}, {scale}×).");
+
+            int CompareRailEdge(SKBitmap a, SKBitmap b)
+            {
+                int diff = 0;
+                for (int y = 0; y < (int)(rail.Bounds.Height * scale); y++)
+                for (int x = 0; x < (int)(12 * scale); x++)
+                {
+                    int left = (int)(origin.X * scale) + x;
+                    int top = (int)(origin.Y * scale) + y;
+                    diff = Math.Max(diff, Difference(a.GetPixel(left, top), b.GetPixel(left, top)));
+                }
+                return diff;
+            }
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyEmojiGlyph(ThemeVariant theme, double scale)
+    {
+        var picker = new AlderEmojiPicker
+        {
+            IsInline = true, ShowRecent = false,
+            Categories = [new("faces", "Faces", "😀", [new("😀", "Grinning face")])]
+        };
+        var window = Show(picker, theme, scale);
+        try
+        {
+            using var ready = Capture(window);
+            var grid = picker.GetVisualDescendants().OfType<ListBox>().Single(x => x.Name == "PART_Grid");
+            var glyph = grid.GetVisualDescendants().OfType<AlderTextBlock>().Single(x => x.Text == "😀");
+            if (glyph.ClipToBounds)
+                throw new InvalidOperationException("The Emoji Picker clips the glyph to its text line box.");
+
+            // Deliberately shorten the text line to exercise painted glyph overflow with any system emoji font.
+            glyph.LineHeight = 15;
+            using var fullGlyph = Capture(window);
+            glyph.ClipToBounds = true;
+            using var clippedGlyph = Capture(window);
+            var origin = glyph.TranslatePoint(default, window)!.Value;
+            int left = Math.Max(0, (int)(origin.X * scale));
+            int right = Math.Min(fullGlyph.Width, (int)((origin.X + glyph.Bounds.Width) * scale));
+            int top = Math.Max(0, (int)((origin.Y - 10) * scale));
+            int bottom = Math.Min(fullGlyph.Height, (int)((origin.Y + glyph.Bounds.Height + 10) * scale));
+            int changedPixels = 0;
+            for (int y = top; y < bottom; y++)
+            for (int x = left; x < right; x++)
+                if (Difference(fullGlyph.GetPixel(x, y), clippedGlyph.GetPixel(x, y)) > 8) changedPixels++;
+
+            if (changedPixels == 0)
+                throw new InvalidOperationException($"Emoji line-box overflow was clipped by an ancestor ({theme.Key}, {scale}×).");
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyRowHover()
+    {
+        var tree = new AlderFileTree
+        {
+            ItemsSource = new[] { new AlderFileTreeNode("item", "Item") },
+            Width = 280
+        };
+        var primary = CreateGrid(TableVariant.Primary);
+        var secondary = CreateGrid(TableVariant.Secondary);
+        var contents = new StackPanel { Margin = new Thickness(16), Spacing = 16, Children = { primary, secondary, tree } };
+        var window = Show(contents, ThemeVariant.Dark, 1);
+        AlderMotion.SetReduced(window, false);
+        try
+        {
+            using var ready = Capture(window);
+            var rows = new[] { GridRow(primary), GridRow(secondary),
+                tree.GetVisualDescendants().OfType<Border>().Single(x => x.Name == "PART_Row") };
+            foreach (var row in rows)
+            {
+                var point = row.TranslatePoint(new Point(row.Bounds.Width - 24, row.Bounds.Height / 2), window)!.Value;
+                using var initial = Capture(window);
+                var idle = Pixel(initial, point, 1);
+                window.MouseMove(point);
+                var entering = Sample(point);
+                using var hover = Capture(window);
+                var target = Pixel(hover, point, 1);
+                window.MouseMove(new Point(2, 2));
+                var leaving = Sample(point);
+                if (entering.Concat(leaving).Any(pixel => pixel.Red > Math.Max(idle.Red, target.Red) + 3))
+                    throw new InvalidOperationException($"Hover animation overexposed a dark row ({row.GetType().Name}, idle {idle}, target {target}).");
+            }
+        }
+        finally { window.Close(); }
+
+        static AlderDataGrid CreateGrid(TableVariant variant)
+        {
+            var grid = new AlderDataGrid { ItemsSource = new[] { "Item" }, Variant = variant, RowHeight = 36 };
+            grid.Columns.Add(new AlderTableColumn { Header = "Name", CellTemplate = new FuncDataTemplate<string>((item, _) => new TextBlock { Text = item }) });
+            return grid;
+        }
+
+        static Control GridRow(AlderDataGrid grid) => grid.GetVisualDescendants().OfType<Control>().Single(x => x.Classes.Contains("data-grid-row"));
+
+        List<SKColor> Sample(Point point)
+        {
+            var samples = new List<SKColor>();
+            using var done = new CancellationTokenSource(TimeSpan.FromMilliseconds(600));
+            var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
+            timer.Tick += (_, _) =>
+            {
+                using var frame = Capture(window);
+                samples.Add(Pixel(frame, point, 1));
+                if (samples.Count >= 10) done.Cancel();
+            };
+            timer.Start();
+            try { Dispatcher.UIThread.MainLoop(done.Token); }
+            finally { timer.Stop(); }
+            if (samples.Count < 3) throw new InvalidOperationException("No intermediate hover frames were captured.");
+            return samples;
         }
     }
 
@@ -167,6 +387,16 @@ internal static class ControlEdgeRenderSmoke
         window.Show();
         window.SetRenderScaling(scale);
         return window;
+    }
+
+    private static SKBitmap CaptureVisual(Control control, double scale)
+    {
+        var size = PixelSize.FromSize(control.Bounds.Size, scale);
+        using var bitmap = new RenderTargetBitmap(size, new Vector(96 * scale, 96 * scale));
+        bitmap.Render(control);
+        using var png = new MemoryStream();
+        bitmap.Save(png, PngBitmapEncoderOptions.Default);
+        return SKBitmap.Decode(png.ToArray());
     }
 
     private static SKBitmap Capture(Window window)

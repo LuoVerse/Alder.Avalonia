@@ -831,7 +831,55 @@ public class Interactions
         Assert.Single(autocomplete.SelectedItems!);
         Assert.Equal("North Carolina", autocomplete.SelectionText);
         Assert.False(autocomplete.IsDropDownOpen);
+        var remaining = Assert.Single(wrap.GetVisualDescendants().OfType<Button>());
+        Assert.True(remaining.IsFocused);
+        Assert.DoesNotContain(":focus-visible", remaining.Classes);
+
+        trigger.Focus(NavigationMethod.Pointer);
+        remaining.Focus(NavigationMethod.Tab);
+        Assert.Contains(":focus-visible", remaining.Classes);
+        Press(window, PhysicalKey.Space);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Empty(autocomplete.SelectedItems!);
+        Assert.True(trigger.IsFocused);
+        Assert.Contains(":focus-visible", trigger.Classes);
         window.Close();
+    }
+
+    [AvaloniaFact]
+    public void AutocompleteClearPreservesTheInputMethod()
+    {
+        var autocomplete = new AlderAutocomplete
+        {
+            ItemsSource = new[] { "Alpha", "Beta" },
+            ShowClearButton = true,
+            SelectedIndex = 0
+        };
+        AlderMotion.SetReduced(autocomplete, true);
+        var window = Show(autocomplete);
+        try
+        {
+            var trigger = autocomplete.GetVisualDescendants().OfType<Button>().Single(x => x.Name == "PART_Trigger");
+            var clear = autocomplete.GetVisualDescendants().OfType<Button>().Single(x => x.Name == "PART_Clear");
+            var point = clear.TranslatePoint(new Rect(clear.Bounds.Size).Center, window)!.Value;
+            window.MouseDown(point, MouseButton.Left);
+            window.MouseUp(point, MouseButton.Left);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Equal(-1, autocomplete.SelectedIndex);
+            Assert.True(trigger.IsFocused);
+            Assert.DoesNotContain(":focus-visible", trigger.Classes);
+
+            autocomplete.SelectedIndex = 1;
+            window.UpdateLayout();
+            clear.Focus(NavigationMethod.Tab);
+            Press(window, PhysicalKey.Space);
+            Dispatcher.UIThread.RunJobs();
+            Assert.Equal(-1, autocomplete.SelectedIndex);
+            Assert.True(trigger.IsFocused);
+            Assert.Contains(":focus-visible", trigger.Classes);
+        }
+        finally { window.Close(); }
     }
 
     [AvaloniaFact]

@@ -7,6 +7,7 @@ using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using Alder.Avalonia.Controls;
 using Alder.Avalonia.Gallery.Controls;
 using Alder.Avalonia.Gallery.ViewModels;
@@ -85,15 +86,15 @@ public partial class GalleryView : UserControl
         ["Widget"] = new(() => CreatePage(CreateExamples(new WidgetExample(), new ProDataDisplayViewModel()))),
         ["Agenda"] = new(() => CreatePage(new AgendaExample())),
         ["Carousel"] = new(() => CreatePage(new CarouselExample())),
-        ["DateAndTime"] = new(() => CreatePage(
+        ["DateAndTime"] = new(() => CreateDeferredPage(() => [
             CreateExamples(new CalendarExample(), new CalendarViewModel(), "Calendar"),
             CreateExamples(new DateFieldExample(), new DateFieldViewModel(), "DateField"),
             CreateExamples(new DatePickerExample(), new DatePickerViewModel(), "DatePicker"),
             CreateExamples(new DateRangePickerExample(), new DateRangePickerViewModel(), "DateRangePicker"),
             CreateExamples(new RangeCalendarExample(), new RangeCalendarViewModel(), "RangeCalendar"),
-            CreateExamples(new TimeFieldExample(), new TimeFieldViewModel(), "TimeField"))),
+            CreateExamples(new TimeFieldExample(), new TimeFieldViewModel(), "TimeField")])),
         ["Accordion"] = new(() => CreatePage(CreateExamples(new AccordionExample(), new AccordionViewModel()))),
-        ["AppLayout"] = new(() => CreatePage(CreateExamples(new AppLayoutExample(), new AppLayoutViewModel(), completeNavigationSources: true))),
+        ["AppLayout"] = new(() => CreateDeferredPage(() => [CreateExamples(new AppLayoutExample(), new AppLayoutViewModel(), completeNavigationSources: true)])),
         ["Breadcrumbs"] = new(() => CreatePage(CreateExamples(new BreadcrumbsExample(), new BreadcrumbsViewModel()))),
         ["Command"] = new(() => CreatePage(CreateExamples(new CommandExample(), new CommandViewModel()))),
         ["ContextMenu"] = new(() => CreatePage(CreateExamples(new ContextMenuExample(), new ContextMenuViewModel()))),
@@ -104,7 +105,7 @@ public partial class GalleryView : UserControl
         ["Segment"] = new(() => CreatePage(CreateExamples(new SegmentExample(), new SegmentViewModel()))),
         ["Navbar"] = new(() => CreatePage(CreateExamples(new NavbarExample(), new NavbarViewModel()))),
         ["Stepper"] = new(() => CreatePage(CreateExamples(new StepperExample(), new StepperViewModel()))),
-        ["Sidebar"] = new(() => CreatePage(CreateExamples(new SidebarExample(), new SidebarViewModel(), completeNavigationSources: true))),
+        ["Sidebar"] = new(() => CreateDeferredPage(() => [CreateExamples(new SidebarExample(), new SidebarViewModel(), completeNavigationSources: true)])),
         ["Pagination"] = new(() => CreatePage(CreateExamples(new PaginationExample(), new PaginationViewModel()))),
         ["Tabs"] = new(() => CreatePage(
             CreateExamples(new ExpandableTabsExample(), new ExpandableTabsViewModel()),
@@ -217,7 +218,10 @@ public partial class GalleryView : UserControl
             Control section = link.SectionName is null ? root :
                 root.GetLogicalDescendants().OfType<StackPanel>().FirstOrDefault(group => group.Name == link.SectionName)
                 ?? (Control)root;
-            var example = section.GetLogicalDescendants().OfType<ExampleCard>()
+            var descendants = section.GetLogicalDescendants();
+            var list = descendants.OfType<GalleryExampleList>()
+                .FirstOrDefault(group => group.Items.OfType<ExampleCard>().Any(card => card.Name == link.ExampleName));
+            var example = (list?.Items.OfType<ExampleCard>() ?? descendants.OfType<ExampleCard>())
                 .FirstOrDefault(card => card.Name == link.ExampleName);
             if (example is null)
             {
@@ -225,11 +229,37 @@ public partial class GalleryView : UserControl
                 return;
             }
 
+            list?.ScrollIntoView(example);
             if (link.ShowCode) example.ShowAxaml();
             example.BringIntoView(new Rect(0, 0, example.Bounds.Width, 48));
-        }, DispatcherPriority.Loaded);
+        }, DispatcherPriority.Background);
     }
 
+    private static ScrollViewer CreateDeferredPage(Func<Control[]> createExamples)
+    {
+        var page = CreatePage();
+        var stack = (StackPanel)page.Content!;
+        var loading = new AlderTextBlock();
+        loading[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.Loading");
+        loading[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        stack.Children.Add(loading);
+        stack.AttachedToVisualTree += LoadExamples;
+        return page;
+
+        void LoadExamples(object? sender, VisualTreeAttachmentEventArgs e)
+        {
+            // Let the new navigation selection and page header render before building the previews.
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (!stack.IsAttachedToVisualTree() || !stack.Children.Contains(loading)) return;
+                var examples = createExamples();
+                stack.AttachedToVisualTree -= LoadExamples;
+                stack.Children.Remove(loading);
+                foreach (var example in examples)
+                    stack.Children.Add(example);
+            }, DispatcherPriority.Background);
+        }
+    }
 
     private static ScrollViewer CreatePage(params Control[] groups)
     {
@@ -243,7 +273,7 @@ public partial class GalleryView : UserControl
     {
         view.DataContext = model;
         if (completeNavigationSources) ExampleSource.AttachNavigation(view);
-        else ExampleSource.Attach(view);
+        else ExampleSource.Attach(view, defer: view.Content is GalleryExampleList);
 
         if (title is null)
             return view;

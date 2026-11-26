@@ -5,7 +5,7 @@
   <Design.DataContext>
     <vm:CalendarViewModel />
   </Design.DataContext>
-  <StackPanel Spacing="20">
+  <gallery:GalleryExampleList>
     <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
       <gallery:ExampleCard.Preview>
         <Border Padding="8,16">
@@ -367,5 +367,5 @@
         AutomationProperties.SetName(calendar, "Thai Buddhist calendar");
       ]]></gallery:ExampleCard.CSharpSource>
     </gallery:ExampleCard>
-  </StackPanel>
+  </gallery:GalleryExampleList>
 </UserControl>

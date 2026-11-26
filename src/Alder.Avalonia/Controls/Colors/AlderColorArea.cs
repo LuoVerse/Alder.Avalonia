@@ -50,6 +50,7 @@ public sealed class AlderColorArea : TemplatedControl
     private static readonly IBrush SaturationGradient = Gradient(Brushes.White.Color, Color.FromArgb(0, 255, 255, 255), true);
     private static readonly IBrush BrightnessGradient = Gradient(Color.FromArgb(0, 0, 0, 0), Colors.Black, false);
     private Border? thumb;
+    private IBrush? surfaceMask;
     private WriteableBitmap? plane;
     private (AlderColorValue Base, int X, int Y) planeKey;
     private IPointer? pointer;
@@ -74,6 +75,9 @@ public sealed class AlderColorArea : TemplatedControl
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
+        if (change.Property == CornerRadiusProperty ||
+            (change.Property == BoundsProperty && change.GetOldValue<Rect>().Size != Bounds.Size))
+            surfaceMask = AlderRoundedFrame.CreateMask(Bounds.Size, CornerRadius);
         if (change.Property == BoundsProperty || change.Property == ValueProperty || change.Property == ColorSpaceProperty ||
             change.Property == XChannelProperty || change.Property == YChannelProperty)
             UpdateThumbPosition();
@@ -89,7 +93,7 @@ public sealed class AlderColorArea : TemplatedControl
         var (x, y) = GetAxes();
         var color = Value.InSpace(ColorSpace);
         var rounded = new RoundedRect(rect, CornerRadius);
-        using (context.PushClip(rounded))
+        using (surfaceMask is { } mask ? context.PushOpacityMask(mask, rect) : context.PushClip(rect))
         {
             if (ColorSpace == ColorSpace.Hsb && x == 1 && y == 2 && color.Alpha == 1)
             {

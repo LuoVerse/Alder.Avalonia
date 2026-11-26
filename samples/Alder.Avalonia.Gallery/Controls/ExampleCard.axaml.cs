@@ -40,6 +40,7 @@ public partial class ExampleCard : UserControl
 
     private bool ready;
     private int sourceRevision;
+    private Action? prepareSources;
 
     public ExampleCard()
     {
@@ -69,6 +70,8 @@ public partial class ExampleCard : UserControl
         AddCodeKind("ControlUsageSource", controlUsage);
         CodeKinds.SelectedIndex = 0;
     }
+
+    internal void PrepareSourcesOnDemand(Action prepare) => prepareSources = prepare;
 
     internal void ShowAxaml() => Modes.SelectedIndex = 1;
 
@@ -155,6 +158,10 @@ public partial class ExampleCard : UserControl
             SetCopyFeedback();
             return;
         }
+        var prepare = prepareSources;
+        prepareSources = null;
+        prepare?.Invoke();
+
         bool axaml = mode == 1;
         AxamlKinds.IsVisible = axaml;
         CodeKinds.IsVisible = !axaml;

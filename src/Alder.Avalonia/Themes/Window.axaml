@@ -85,8 +85,8 @@
           <Border Name="PART_TransparencyFallback" IsHitTestVisible="False" />
           <Panel Background="Transparent" Margin="{TemplateBinding WindowDecorationMargin}" />
           <VisualLayerManager Name="PART_VisualLayerManager">
-            <Border Name="PART_WindowFrame" Background="{TemplateBinding Background}" ClipToBounds="True">
-              <Panel>
+            <alder:AlderRoundedFrame Name="PART_WindowFrame">
+              <Panel Background="{TemplateBinding Background}">
                 <alder:DialogHost Name="PART_DialogHost">
                   <Grid RowDefinitions="Auto,*">
                     <Border Name="PART_TitleBar" Height="40" IsVisible="False" Background="Transparent"
@@ -145,7 +145,7 @@
                   <Border Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Transparent" chrome:WindowDecorationProperties.ElementRole="ResizeSE" />
                 </Panel>
               </Panel>
-            </Border>
+            </alder:AlderRoundedFrame>
           </VisualLayerManager>
         </Panel>
       </ControlTemplate>
@@ -158,7 +158,7 @@
       <Setter Property="Margin" Value="82,0,82,0" />
       <Setter Property="HorizontalAlignment" Value="Center" />
     </Style>
-    <Style Selector="^:not(:restore) /template/ Border#PART_WindowFrame">
+    <Style Selector="^:not(:restore) /template/ alder|AlderRoundedFrame#PART_WindowFrame">
       <Setter Property="CornerRadius" Value="{TemplateBinding CornerRadius}" />
     </Style>
     <Style Selector="^:custom-chrome[ShowTitleBar=True] /template/ Border#PART_TitleBar,

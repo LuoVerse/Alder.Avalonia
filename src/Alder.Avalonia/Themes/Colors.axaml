@@ -121,11 +121,12 @@
     <Setter Property="Template">
       <ControlTemplate>
         <Grid Background="Transparent">
-          <Border Name="Rail" CornerRadius="16" ClipToBounds="True" IsHitTestVisible="False"
-                  Background="{x:Static alder:AlderColorRendering.Checkerboard}">
-            <Border CornerRadius="16" Background="{TemplateBinding Gradient}" BackgroundSizing="OuterBorderEdge"
-                    BorderBrush="{StaticResource AlderColorInset}" BorderThickness="1" />
-          </Border>
+          <alder:AlderRoundedFrame Name="Rail" CornerRadius="16" IsHitTestVisible="False">
+            <Panel Background="{x:Static alder:AlderColorRendering.Checkerboard}">
+              <Border Background="{TemplateBinding Gradient}" />
+              <Border CornerRadius="16" BorderBrush="{StaticResource AlderColorInset}" BorderThickness="1" />
+            </Panel>
+          </alder:AlderRoundedFrame>
           <Track Name="PART_Track" Orientation="{TemplateBinding Orientation}" Minimum="{TemplateBinding Minimum}"
                  Maximum="{TemplateBinding Maximum}" IsDirectionReversed="{TemplateBinding IsDirectionReversed}"
                  Value="{TemplateBinding Value, Mode=TwoWay}">

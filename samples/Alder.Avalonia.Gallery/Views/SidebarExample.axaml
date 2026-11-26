@@ -28,7 +28,7 @@
       </Border>
     </DataTemplate>
   </UserControl.Resources>
-  <StackPanel Spacing="20">
+  <gallery:GalleryExampleList>
     <gallery:ExampleCard x:Name="SampleBinding" Title="{DynamicResource GalleryText.NavigationBindingMvvm}">
       <gallery:ExampleCard.Preview>
         <views:SidebarBindingExample x:Name="BindingExample" />
@@ -228,5 +228,5 @@
       </gallery:ExampleCard.Preview>
     </gallery:ExampleCard>
 
-  </StackPanel>
+  </gallery:GalleryExampleList>
 </UserControl>

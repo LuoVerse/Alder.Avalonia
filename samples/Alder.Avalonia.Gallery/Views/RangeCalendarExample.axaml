@@ -5,7 +5,7 @@
   <Design.DataContext>
     <vm:RangeCalendarViewModel />
   </Design.DataContext>
-  <StackPanel Spacing="20">
+  <gallery:GalleryExampleList>
     <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
       <gallery:ExampleCard.Preview>
         <Border Padding="8,16">
@@ -395,5 +395,5 @@
         var preview = new StackPanel { Spacing = 8, Children = { rangeCalendar, actions } };
       ]]></gallery:ExampleCard.CSharpSource>
     </gallery:ExampleCard>
-  </StackPanel>
+  </gallery:GalleryExampleList>
 </UserControl>

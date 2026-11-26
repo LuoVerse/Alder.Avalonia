@@ -6,7 +6,7 @@
     <vm:TimeFieldViewModel />
   </Design.DataContext>
   <UserControl.Styles><Style Selector=":is(Label)"><Setter Property="Theme" Value="{StaticResource AlderLabelTheme}" /></Style></UserControl.Styles>
-  <StackPanel Spacing="20">
+  <gallery:GalleryExampleList>
     <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
       <gallery:ExampleCard.Preview>
         <Border Padding="16,20" MinHeight="120">
@@ -333,5 +333,5 @@
         AutomationProperties.SetName(timeField, "Disabled time");
       ]]></gallery:ExampleCard.CSharpSource>
     </gallery:ExampleCard>
-  </StackPanel>
+  </gallery:GalleryExampleList>
 </UserControl>

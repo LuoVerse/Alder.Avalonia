@@ -188,7 +188,7 @@
                                       AutomationProperties.Name="{CompiledBinding Name}" alder:AlderToolTip.Tip="{CompiledBinding Name}"
                                       Classes.active="{CompiledBinding IsActive}" Classes.picked="{CompiledBinding IsSelected}">
                                 <alder:AlderTextBlock Text="{CompiledBinding Glyph}" FontSize="{CompiledBinding FontSize}"
-                                           FontFamily="{StaticResource AlderEmojiFont}" FlowDirection="LeftToRight" />
+                                           FontFamily="{StaticResource AlderEmojiFont}" FlowDirection="LeftToRight" ClipToBounds="False" />
                               </alder:AlderButton>
                             </Panel>
                           </DataTemplate>

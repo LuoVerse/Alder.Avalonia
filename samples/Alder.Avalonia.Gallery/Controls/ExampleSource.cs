@@ -30,7 +30,35 @@ internal static partial class ExampleSource
     {
         var type = view.GetType();
         var source = ReadFile(type, ".axaml");
+        var files = new Lazy<((string Name, string Text)[] Axaml, (string Name, string Text)[] CSharp)>(
+            () => ReadNavigationFiles(view, source));
         var root = XDocument.Parse(source.Text).Root!;
+        foreach (var element in root.Descendants(Gallery + nameof(ExampleCard)))
+        {
+            var name = (string)element.Attribute(Xaml + "Name")!;
+            var card = view.FindControl<ExampleCard>(name)
+                ?? throw new InvalidOperationException($"Could not find {name} in {source.Name}.");
+            card.PrepareSourcesOnDemand(() =>
+            {
+                if (card.Preview is UserControl { DataContext: NavigationBindingViewModel model } preview)
+                {
+                    var example = preview.GetType();
+                    card.SetSourceFiles([ReadFile(example, ".axaml")],
+                        [ReadFile(model.GetType(), ".cs"), ReadFile(example, ".axaml.cs")]);
+                }
+                else
+                {
+                    var (axaml, csharp) = files.Value;
+                    card.SetSourceFiles(axaml, csharp);
+                }
+            });
+        }
+    }
+
+    private static ((string Name, string Text)[] Axaml, (string Name, string Text)[] CSharp) ReadNavigationFiles(
+        UserControl view, (string Name, string Text) source)
+    {
+        var type = view.GetType();
         (string Name, string Text)[] axaml =
         [
             source,
@@ -51,33 +79,20 @@ internal static partial class ExampleSource
         ];
         if (view is AppLayoutExample)
             csharp = [.. csharp, ReadFile(typeof(LayoutSamples), ".cs")];
-        foreach (var element in root.Descendants(Gallery + nameof(ExampleCard)))
-        {
-            var name = (string)element.Attribute(Xaml + "Name")!;
-            var card = view.FindControl<ExampleCard>(name)
-                ?? throw new InvalidOperationException($"Could not find {name} in {source.Name}.");
-            if (card.Preview is UserControl { DataContext: NavigationBindingViewModel model } preview)
-            {
-                var example = preview.GetType();
-                card.SetSourceFiles([ReadFile(example, ".axaml")],
-                    [ReadFile(model.GetType(), ".cs"), ReadFile(example, ".axaml.cs")]);
-            }
-            else
-                card.SetSourceFiles(axaml, csharp);
-        }
+        return (axaml, csharp);
     }
 
-    public static void Attach(UserControl view)
+    public static void Attach(UserControl view, bool defer = false)
     {
         var type = view.GetType();
         var resource = type.FullName + ".axaml";
         using var stream = type.Assembly.GetManifestResourceStream(resource)
             ?? throw new FileNotFoundException(resource);
         var modelType = view.DataContext!.GetType();
-        var modelCode = ReadCSharp(modelType, ".cs");
-        var viewCode = ReadCSharp(type, ".axaml.cs");
+        var modelCode = new Lazy<CSharpExcerpt>(() => ReadCSharp(modelType, ".cs"));
+        var viewCode = new Lazy<CSharpExcerpt>(() => ReadCSharp(type, ".axaml.cs"));
         var root = XDocument.Load(stream, LoadOptions.PreserveWhitespace).Root!;
-        var namespaces = root.Attributes().Where(attribute => attribute.IsNamespaceDeclaration);
+        var namespaces = root.Attributes().Where(attribute => attribute.IsNamespaceDeclaration).ToArray();
         var localResources = root.Element(root.Name + ".Resources")?.Elements().ToArray() ?? [];
 
         foreach (var element in root.Descendants(Gallery + nameof(ExampleCard)))
@@ -85,6 +100,12 @@ internal static partial class ExampleSource
             var name = (string)element.Attribute(Xaml + "Name")!;
             var card = view.FindControl<ExampleCard>(name)
                 ?? throw new InvalidOperationException($"Could not find {name} in {resource}.");
+            if (defer) card.PrepareSourcesOnDemand(() => SetCardSources(card, element));
+            else SetCardSources(card, element);
+        }
+
+        void SetCardSources(ExampleCard card, XElement element)
+        {
             var preview = element.Element(Gallery + "ExampleCard.Preview")!.Elements().Single();
             var fragment = IncludeLocalResources(preview, localResources);
             var feedback = element.Element(Gallery + "ExampleCard.Feedback");
@@ -93,19 +114,19 @@ internal static partial class ExampleSource
             var attributes = parts.SelectMany(part => part.DescendantsAndSelf().Attributes()).ToArray();
             var namedControls = attributes.Where(attribute => attribute.Name == Xaml + "Name" || attribute.Name == "Name")
                 .Select(attribute => attribute.Value);
-            var codeBehind = viewCode.CodeBehind(type.Name, attributes.Select(attribute => attribute.Value), namedControls)
+            var codeBehind = viewCode.Value.CodeBehind(type.Name, attributes.Select(attribute => attribute.Value), namedControls)
                 .ToArray();
 
             var bindings = FindBindings(attributes, modelType.Name);
             bindings[modelType.Name].UnionWith(CSharpExcerpt.ModelReferences(codeBehind, modelType.Name));
-            var viewModel = modelCode.ViewModel(modelType.Name, bindings);
+            var viewModel = modelCode.Value.ViewModel(modelType.Name, bindings);
             var csharp = element.Element(Gallery + "ExampleCard.CSharpSource")?.Value;
             if (string.IsNullOrWhiteSpace(csharp))
-                throw new InvalidOperationException($"Missing C# source for {name} in {resource}.");
+                throw new InvalidOperationException($"Missing C# source for {card.Name} in {resource}.");
 
             var axaml = SourceFormatter.AxamlFragment(fragment, namespaces);
             var usage = SourceFormatter.CSharp(csharp);
-            if (view is ChainOfThoughtExample && name == "SampleDefault")
+            if (view is ChainOfThoughtExample && card.Name == "SampleDefault")
             {
                 card.SetSourceFiles([(type.Name + ".axaml", axaml)],
                     [(type.Name + ".cs", usage), ReadFile(modelType, ".cs"),

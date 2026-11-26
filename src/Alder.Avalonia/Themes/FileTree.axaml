@@ -2,9 +2,11 @@
                     xmlns:alder="using:Alder.Avalonia.Controls" xmlns:conv="using:Avalonia.Data.Converters">
   <ResourceDictionary.ThemeDictionaries>
     <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderFileTreeRowRest" Color="#00EBEBEC" />
       <BoxShadows x:Key="AlderFileTreeDragShadow">0 4 12 0 #0C000000, 0 15 42 5 #2B000000</BoxShadows>
     </ResourceDictionary>
     <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderFileTreeRowRest" Color="#0027272A" />
       <BoxShadows x:Key="AlderFileTreeDragShadow">0 4 12 0 #26000000, 0 15 42 5 #66000000</BoxShadows>
     </ResourceDictionary>
   </ResourceDictionary.ThemeDictionaries>
@@ -55,7 +57,7 @@
     <Setter Property="Template">
       <ControlTemplate>
         <StackPanel>
-          <Border Name="PART_Row" MinHeight="28" Padding="8,0" Background="Transparent" CornerRadius="{TemplateBinding CornerRadius}">
+          <Border Name="PART_Row" MinHeight="28" Padding="8,0" Background="{DynamicResource AlderFileTreeRowRest}" CornerRadius="{TemplateBinding CornerRadius}">
             <Border.Styles>
               <Style Selector="Border#PART_Row:pointerover"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
               <Style Selector="Border#PART_Row:pointerover Border#PART_DragHandle">

@@ -394,16 +394,20 @@ public abstract class AlderPicker : SelectingItemsControl
         }
     }
 
-    private void ClearSelection(object? sender, RoutedEventArgs e) => ClearSelection();
+    private void ClearSelection(object? sender, RoutedEventArgs e) =>
+        ClearSelection(GetFocusMethod(sender as Control));
 
-    private void ClearSelection()
+    private static NavigationMethod GetFocusMethod(Control? control) =>
+        control?.Classes.Contains(":focus-visible") == true ? NavigationMethod.Tab : NavigationMethod.Pointer;
+
+    private void ClearSelection(NavigationMethod focusMethod = NavigationMethod.Tab)
     {
         if (IsReadOnly) return;
         Selection.Clear();
         WriteText(null);
         committedCustomText = null;
         if (!IsSelect && IsDropDownOpen) RefreshRows();
-        FocusField();
+        FocusField(focusMethod);
     }
 
     private string GetText(object? item) => TextSelector?.Invoke(item) ?? item?.ToString() ?? string.Empty;
@@ -441,16 +445,20 @@ public abstract class AlderPicker : SelectingItemsControl
         if (selectionTags is null) return;
         bool show = IsMultiple && Selection.SelectedItems.Count > 0 &&
                     this is AlderAutocomplete { ShowSelectionTags: true };
+        var focusedTag = selectionTags.IsKeyboardFocusWithin
+            ? selectionTags.GetVisualDescendants().OfType<Button>().FirstOrDefault(button => button.IsFocused)
+            : null;
+        var focusMethod = GetFocusMethod(focusedTag);
         PseudoClasses.Set(":selection-tags", show);
-        bool tagHadFocus = selectionTags.IsKeyboardFocusWithin;
         selectionTags.Children.Clear();
         if (show)
         {
             foreach (int index in Selection.SelectedIndexes)
                 selectionTags.Children.Add(CreateSelectionTag(GetText(ItemsView[index]), index));
         }
-        if (tagHadFocus)
-            (selectionTags.GetVisualDescendants().OfType<Button>().FirstOrDefault() ?? trigger)?.Focus(NavigationMethod.Tab);
+        if (focusedTag is not null &&
+            selectionTags.GetVisualDescendants().OfType<Button>().FirstOrDefault()?.Focus(focusMethod) != true)
+            FocusField(focusMethod);
     }
 
     private Border CreateSelectionTag(string text, int index)
