@@ -182,8 +182,7 @@ public partial class GalleryView : UserControl
                 Content = new GalleryHomeView(OpenHomeExample),
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled
             };
-            homePage.ScrollToHome();
-            return homePage;
+            return OpenPageAtTop(homePage);
         }
 
         if (item?.PageKey is not string key || !pages.TryGetValue(key, out var page))
@@ -200,8 +199,19 @@ public partial class GalleryView : UserControl
             stack.Children.Insert(0, title);
         }
 
-        scrollViewer.ScrollToHome();
-        return scrollViewer;
+        return OpenPageAtTop(scrollViewer);
+    }
+
+    private ScrollViewer OpenPageAtTop(ScrollViewer page)
+    {
+        page.Offset = default;
+        // A cached scroll presenter can restore its old offset while it is reattached and laid out.
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (ReferenceEquals(PageContent.Presenter?.Child, page))
+                page.Offset = default;
+        }, DispatcherPriority.Loaded);
+        return page;
     }
 
     private void OpenHomeExample(GalleryHomeLink link)
