@@ -1,0 +1,123 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             x:Class="Alder.Avalonia.Gallery.Views.ToolTipExample" x:DataType="vm:ToolTipViewModel">
+  <Design.DataContext><vm:ToolTipViewModel /></Design.DataContext>
+  <UserControl.Resources>
+    <DataTemplate x:Key="ToolTipRichContent" x:DataType="vm:ToolTipViewModel">
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="13" Height="13" Foreground="{DynamicResource AlderSoftInk}" />
+        <alder:AlderTextBlock FontSize="12" Text="{CompiledBinding Description}" Foreground="{DynamicResource AlderInk}" TextWrapping="Wrap" />
+      </StackPanel>
+    </DataTemplate>
+  </UserControl.Resources>
+  <StackPanel Spacing="24">
+    <gallery:ExampleCard x:Name="SampleToolTip" Title="{DynamicResource GalleryText.ToolTipInteraction}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton HorizontalAlignment="Center" Content="{DynamicResource GalleryText.ToolTipTrigger}"
+                      alder:AlderToolTip.Tip="{CompiledBinding Description}" alder:AlderToolTip.ShowDelay="0"
+                      AutomationProperties.HelpText="{CompiledBinding Description}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        AlderToolTip.SetTip(trigger, "Review the workspace before sharing it.");
+        AlderToolTip.SetPlacement(trigger, PlacementMode.Top);
+        AlderToolTip.SetShowDelay(trigger, 0);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleToolTipPlacement" Title="{DynamicResource GalleryText.DrawerPlacement}">
+      <gallery:ExampleCard.Preview>
+        <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="Auto,Auto,Auto"
+              RowSpacing="8" ColumnSpacing="8" HorizontalAlignment="Center" alder:AlderToolTip.ShowDelay="0">
+          <alder:AlderButton Grid.Column="1" FullWidth="True" Variant="Tertiary" alder:AlderToolTip.Placement="Top" alder:AlderToolTip.ShowArrow="True"
+                        alder:AlderToolTip.Tip="{DynamicResource GalleryText.TipAtTop}" Content="{DynamicResource GalleryText.DrawerTop}" />
+          <alder:AlderButton Grid.Row="1" Variant="Tertiary" alder:AlderToolTip.Placement="Left" alder:AlderToolTip.ShowArrow="True"
+                        alder:AlderToolTip.Tip="{DynamicResource GalleryText.TipAtLeft}" Content="{DynamicResource GalleryText.DrawerLeft}" />
+          <alder:AlderTextBlock Grid.Row="1" Grid.Column="1" Text="{DynamicResource GalleryText.OverlayHoverButtons}"
+                     VerticalAlignment="Center" Foreground="{DynamicResource AlderMuted}" Margin="4,0" />
+          <alder:AlderButton Grid.Row="1" Grid.Column="2" Variant="Tertiary" alder:AlderToolTip.Placement="Right" alder:AlderToolTip.ShowArrow="True"
+                        alder:AlderToolTip.Tip="{DynamicResource GalleryText.TipAtRight}" Content="{DynamicResource GalleryText.DrawerRight}" />
+          <alder:AlderButton Grid.Row="2" Grid.Column="1" FullWidth="True" Variant="Tertiary" alder:AlderToolTip.Placement="Bottom" alder:AlderToolTip.ShowArrow="True"
+                        alder:AlderToolTip.Tip="{DynamicResource GalleryText.TipAtBottom}" Content="{DynamicResource GalleryText.DrawerBottom}" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        AlderToolTip.SetTip(trigger, "Right placement");
+        AlderToolTip.SetPlacement(trigger, PlacementMode.Right);
+        AlderToolTip.SetShowArrow(trigger, true);
+        AlderToolTip.SetShowDelay(trigger, 0);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleToolTipArrow" Title="{DynamicResource GalleryText.OverlayTipOffsets}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8" alder:AlderToolTip.ShowDelay="0">
+          <alder:AlderButton Content="{DynamicResource GalleryText.OverlayNoArrow}" Variant="Secondary" alder:AlderToolTip.Tip="{CompiledBinding Description}" />
+          <alder:AlderButton Content="{DynamicResource GalleryText.OverlayWithArrow}" Variant="Secondary" alder:AlderToolTip.Tip="{CompiledBinding Description}" alder:AlderToolTip.ShowArrow="True" />
+          <alder:AlderButton Content="{DynamicResource GalleryText.OverlayCustomOffset}" Variant="Secondary" alder:AlderToolTip.Tip="{CompiledBinding Description}" alder:AlderToolTip.ShowArrow="True" alder:AlderToolTip.Offset="22" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        AlderToolTip.SetTip(trigger, "Workspace details");
+        AlderToolTip.SetShowArrow(trigger, true);
+        AlderToolTip.SetOffset(trigger, 22);
+        AlderToolTip.SetShowDelay(trigger, 0);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleToolTipCustom" Title="{DynamicResource GalleryText.OverlayTipTriggers}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="12" LineSpacing="8" alder:AlderToolTip.ShowDelay="0">
+          <alder:AlderToggleButton Theme="{StaticResource AlderToggleButtonTheme}" alder:AlderToolTip.Tip="{CompiledBinding}"
+                        alder:AlderToolTip.ContentTemplate="{StaticResource ToolTipRichContent}" alder:AlderToolTip.Trigger="Focus"
+                        Content="{DynamicResource GalleryText.OverlayFocusOnly}" />
+          <alder:AlderButton IsIconOnly="True" Icon="{StaticResource AlderIconInfo}" Variant="Tertiary"
+                        alder:AlderToolTip.Tip="{CompiledBinding}" alder:AlderToolTip.ContentTemplate="{StaticResource ToolTipRichContent}"
+                        alder:AlderToolTip.ShowArrow="True"
+                        AutomationProperties.Name="{DynamicResource GalleryText.ToolTipTrigger}" />
+          <alder:AlderButton Size="Small" IsIconOnly="True" Variant="Secondary" Content="{DynamicResource GalleryText.OverlayProfileInitials}"
+                        alder:AlderToolTip.ShowArrow="True" AutomationProperties.Name="{DynamicResource GalleryText.OverlayProfileName}">
+            <alder:AlderToolTip.Tip>
+              <StackPanel Spacing="2" Margin="0,2">
+                <alder:AlderTextBlock FontSize="12" Text="{DynamicResource GalleryText.OverlayProfileName}" FontWeight="SemiBold" Foreground="{DynamicResource AlderInk}" />
+                <alder:AlderTextBlock FontSize="12" Text="alex@example.com" Foreground="{DynamicResource AlderMuted}" />
+              </StackPanel>
+            </alder:AlderToolTip.Tip>
+          </alder:AlderButton>
+          <alder:AlderButton Size="Small" Variant="Tertiary" Icon="{StaticResource AlderIconCheck}"
+                        Background="{DynamicResource AlderDialogSuccessSoft}" Foreground="{DynamicResource AlderDialogSuccessInk}"
+                        Content="{DynamicResource GalleryText.OverlayProfileActive}">
+            <alder:AlderToolTip.Tip>
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <Ellipse Width="8" Height="8" Fill="{DynamicResource AlderDialogSuccessInk}" VerticalAlignment="Center" />
+                <alder:AlderTextBlock FontSize="12" Text="{DynamicResource GalleryText.OverlayProfileOnline}" Foreground="{DynamicResource AlderInk}" />
+              </StackPanel>
+            </alder:AlderToolTip.Tip>
+          </alder:AlderButton>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        AlderToolTip.SetTip(toggle, model);
+        AlderToolTip.SetContentTemplate(toggle, detailsTemplate);
+        AlderToolTip.SetTrigger(toggle, ToolTipTrigger.Focus);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleToolTipStyle" Title="{DynamicResource GalleryText.OverlayCustomization}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton HorizontalAlignment="Center" Variant="Secondary"
+                      Content="{DynamicResource GalleryText.OverlayShareLink}"
+                      alder:AlderToolTip.Tip="{DynamicResource GalleryText.OverlayShareLinkHelp}" alder:AlderToolTip.ShowDelay="0"
+                      alder:AlderToolTip.SurfaceCornerRadius="8" alder:AlderToolTip.ContentPadding="10,4"
+                      alder:AlderToolTip.SurfaceBorderBrush="{DynamicResource AlderBorder}" alder:AlderToolTip.SurfaceBorderThickness="1"
+                      alder:AlderToolTip.SurfaceBackground="{DynamicResource AlderSurface}" alder:AlderToolTip.SurfaceShadow="0 2 6 0 #18000000" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        AlderToolTip.SetTip(trigger, "Anyone with the link can view this.");
+        AlderToolTip.SetShowDelay(trigger, 0);
+        AlderToolTip.SetSurfaceCornerRadius(trigger, new CornerRadius(8));
+        AlderToolTip.SetContentPadding(trigger, new Thickness(10, 4));
+        AlderToolTip.SetSurfaceBorderBrush(trigger, borderBrush);
+        AlderToolTip.SetSurfaceBorderThickness(trigger, new Thickness(1));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

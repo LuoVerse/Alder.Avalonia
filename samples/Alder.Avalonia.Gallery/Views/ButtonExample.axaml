@@ -1,0 +1,575 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+    x:Class="Alder.Avalonia.Gallery.Views.ButtonExample"
+    x:DataType="vm:ButtonViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:alder="using:Alder.Avalonia.Controls"
+    xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <LinearGradientBrush EndPoint="100%,100%" StartPoint="0%,0%" x:Key="UpgradeBorder">
+                        <GradientStop Color="#E5E5E5" Offset="0" />
+                        <GradientStop Color="#FAFAFA" Offset="0.5" />
+                        <GradientStop Color="#C4C4C4" Offset="1" />
+                    </LinearGradientBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <LinearGradientBrush EndPoint="100%,100%" StartPoint="0%,0%" x:Key="UpgradeBorder">
+                        <GradientStop Color="#404040" Offset="0" />
+                        <GradientStop Color="#262626" Offset="0.5" />
+                        <GradientStop Color="#525252" Offset="1" />
+                    </LinearGradientBrush>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <UserControl.Styles>
+        <Style Selector="WrapPanel">
+            <Setter Property="ItemSpacing" Value="12" />
+            <Setter Property="LineSpacing" Value="8" />
+        </Style>
+    </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Content="{DynamicResource GalleryText.ButtonClickMe}"
+                           Command="{CompiledBinding Demonstrate}" CommandParameter="PrimaryClicked" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var button = new AlderButton { HorizontalAlignment = HorizontalAlignment.Center, CommandParameter = "PrimaryClicked" };
+        button[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.ButtonClickMe");
+        button.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.Variants}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel>
+            <alder:AlderButton
+                Command="{Binding Demonstrate}"
+                CommandParameter="PrimaryClicked"
+                Content="{DynamicResource GalleryText.Primary}" />
+            <alder:AlderButton
+                Command="{Binding Demonstrate}"
+                CommandParameter="SecondaryClicked"
+                Content="{DynamicResource GalleryText.Secondary}"
+                Variant="Secondary" />
+            <alder:AlderButton
+                Command="{Binding Demonstrate}"
+                CommandParameter="TertiaryClicked"
+                Content="{DynamicResource GalleryText.Tertiary}"
+                Variant="Tertiary" />
+            <alder:AlderButton
+                Command="{Binding Demonstrate}"
+                CommandParameter="OutlineClicked"
+                Content="{DynamicResource GalleryText.Outline}"
+                Variant="Outline" />
+            <alder:AlderButton
+                Command="{Binding Demonstrate}"
+                CommandParameter="GhostClicked"
+                Content="{DynamicResource GalleryText.Ghost}"
+                Variant="Ghost" />
+            <alder:AlderButton
+                Command="{Binding Demonstrate}"
+                CommandParameter="DangerClicked"
+                Content="{DynamicResource GalleryText.Danger}"
+                Variant="Danger" />
+            <alder:AlderButton
+                Command="{Binding Demonstrate}"
+                CommandParameter="DangerSoftClicked"
+                Content="{DynamicResource GalleryText.DangerSoft}"
+                Variant="DangerSoft" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var button1 = new AlderButton { CommandParameter = "PrimaryClicked", Content = "Primary" };
+        button1.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+
+        var button2 = new AlderButton
+        {
+            CommandParameter = "SecondaryClicked",
+            Content = "Secondary",
+            Variant = ButtonVariant.Secondary,
+        };
+        button2.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+
+        var button3 = new AlderButton
+        {
+            CommandParameter = "TertiaryClicked",
+            Content = "Tertiary",
+            Variant = ButtonVariant.Tertiary,
+        };
+        button3.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+
+        var button4 = new AlderButton
+        {
+            CommandParameter = "OutlineClicked",
+            Content = "Outline",
+            Variant = ButtonVariant.Outline,
+        };
+        button4.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+
+        var button5 = new AlderButton
+        {
+            CommandParameter = "GhostClicked",
+            Content = "Ghost",
+            Variant = ButtonVariant.Ghost,
+        };
+        button5.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+
+        var button6 = new AlderButton
+        {
+            CommandParameter = "DangerClicked",
+            Content = "Danger",
+            Variant = ButtonVariant.Danger,
+        };
+        button6.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+
+        var button7 = new AlderButton
+        {
+            CommandParameter = "DangerSoftClicked",
+            Content = "Danger Soft",
+            Variant = ButtonVariant.DangerSoft,
+        };
+        button7.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border
+            BorderBrush="{DynamicResource AlderBorder}"
+            BorderThickness="0,1,0,0"
+            Padding="24,11">
+            <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSizes" Title="{DynamicResource GalleryText.Sizes}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel>
+            <alder:AlderButton
+                Command="{Binding Demonstrate}"
+                CommandParameter="Small32"
+                Content="{DynamicResource GalleryText.Small}"
+                Size="Small"
+                VerticalAlignment="Center" />
+            <alder:AlderButton
+                Command="{Binding Demonstrate}"
+                CommandParameter="Medium36"
+                Content="{DynamicResource GalleryText.Medium}"
+                VerticalAlignment="Center" />
+            <alder:AlderButton
+                Command="{Binding Demonstrate}"
+                CommandParameter="Large40"
+                Content="{DynamicResource GalleryText.Large}"
+                Size="Large"
+                VerticalAlignment="Center" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var button1 = new AlderButton
+        {
+            CommandParameter = "Small32",
+            Content = "Small",
+            Size = AlderSize.Small,
+        };
+        button1.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+
+        var button2 = new AlderButton { CommandParameter = "Medium36", Content = "Medium" };
+        button2.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+
+        var button3 = new AlderButton
+        {
+            CommandParameter = "Large40",
+            Content = "Large",
+            Size = AlderSize.Large,
+        };
+        button3.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border
+            BorderBrush="{DynamicResource AlderBorder}"
+            BorderThickness="0,1,0,0"
+            Padding="24,11">
+            <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleWithIcons" Title="{DynamicResource GalleryText.WithIcons}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel>
+            <alder:AlderButton
+                Command="{Binding Demonstrate}"
+                CommandParameter="SearchClicked"
+                Content="{DynamicResource GalleryText.Search}"
+                Icon="{StaticResource AlderIconGlobe}" />
+            <alder:AlderButton
+                Command="{Binding Demonstrate}"
+                CommandParameter="MemberAdded"
+                Content="{DynamicResource GalleryText.AddMember}"
+                Icon="{StaticResource AlderIconPlus}"
+                Variant="Secondary" />
+            <alder:AlderButton
+                Command="{Binding Demonstrate}"
+                CommandParameter="EmailClicked"
+                Content="{DynamicResource GalleryText.Email}"
+                Icon="{StaticResource AlderIconEnvelope}"
+                Variant="Tertiary" />
+            <alder:AlderButton
+                Command="{Binding Demonstrate}"
+                CommandParameter="DeleteClicked"
+                Content="{DynamicResource GalleryText.Delete}"
+                Icon="{StaticResource AlderIconTrash}"
+                Variant="Danger" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var button1 = new AlderButton
+        {
+            CommandParameter = "SearchClicked",
+            Content = "Search",
+            Icon = (Geometry)this.FindResource("AlderIconGlobe")!,
+        };
+        button1.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+
+        var button2 = new AlderButton
+        {
+            CommandParameter = "MemberAdded",
+            Content = "Add Member",
+            Icon = (Geometry)this.FindResource("AlderIconPlus")!,
+            Variant = ButtonVariant.Secondary,
+        };
+        button2.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+
+        var button3 = new AlderButton
+        {
+            CommandParameter = "EmailClicked",
+            Content = "Email",
+            Icon = (Geometry)this.FindResource("AlderIconEnvelope")!,
+            Variant = ButtonVariant.Tertiary,
+        };
+        button3.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+
+        var button4 = new AlderButton
+        {
+            CommandParameter = "DeleteClicked",
+            Content = "Delete",
+            Icon = (Geometry)this.FindResource("AlderIconTrash")!,
+            Variant = ButtonVariant.Danger,
+        };
+        button4.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border
+            BorderBrush="{DynamicResource AlderBorder}"
+            BorderThickness="0,1,0,0"
+            Padding="24,11">
+            <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleIconOnly" Title="{DynamicResource GalleryText.IconOnly}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel>
+            <alder:AlderButton
+                AutomationProperties.Name="{DynamicResource GalleryText.MoreOptions}"
+                Command="{Binding Demonstrate}"
+                CommandParameter="MoreOptionsClicked"
+                Icon="{StaticResource AlderIconEllipsis}"
+                IsIconOnly="True"
+                Variant="Tertiary" />
+            <alder:AlderButton
+                AutomationProperties.Name="{DynamicResource GalleryText.Settings}"
+                Command="{Binding Demonstrate}"
+                CommandParameter="SettingsClicked"
+                Icon="{StaticResource AlderIconGear}"
+                IsIconOnly="True"
+                Variant="Secondary" />
+            <alder:AlderButton
+                AutomationProperties.Name="{DynamicResource GalleryText.Delete}"
+                Command="{Binding Demonstrate}"
+                CommandParameter="DeleteClicked"
+                Icon="{StaticResource AlderIconTrash}"
+                IsIconOnly="True"
+                Variant="Danger" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var button1 = new AlderButton
+        {
+            CommandParameter = "MoreOptionsClicked",
+            Icon = (Geometry)this.FindResource("AlderIconEllipsis")!,
+            IsIconOnly = true,
+            Variant = ButtonVariant.Tertiary,
+        };
+        AutomationProperties.SetName(button1, "More options");
+        button1.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+
+        var button2 = new AlderButton
+        {
+            CommandParameter = "SettingsClicked",
+            Icon = (Geometry)this.FindResource("AlderIconGear")!,
+            IsIconOnly = true,
+            Variant = ButtonVariant.Secondary,
+        };
+        AutomationProperties.SetName(button2, "Settings");
+        button2.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+
+        var button3 = new AlderButton
+        {
+            CommandParameter = "DeleteClicked",
+            Icon = (Geometry)this.FindResource("AlderIconTrash")!,
+            IsIconOnly = true,
+            Variant = ButtonVariant.Danger,
+        };
+        AutomationProperties.SetName(button3, "Delete");
+        button3.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border
+            BorderBrush="{DynamicResource AlderBorder}"
+            BorderThickness="0,1,0,0"
+            Padding="24,11">
+            <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleLoading" Title="{DynamicResource GalleryText.Loading}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton Content="{DynamicResource GalleryText.Uploading}" IsPending="True" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var button = new AlderButton { Content = "Uploading...", IsPending = true };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleLoadingState" Title="{DynamicResource GalleryText.LoadingState}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton
+            Command="{Binding Upload}"
+            Content="{Binding UploadText}"
+            Icon="{StaticResource AlderIconPaperclip}"
+            IsPending="{Binding IsUploading}"
+            x:Name="UploadButton" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var button = new AlderButton { Icon = (Geometry)this.FindResource("AlderIconPaperclip")! };
+        button.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Upload));
+        button.Bind(AlderButton.ContentProperty, CompiledBinding.Create((ButtonViewModel model) => model.UploadText));
+        button.Bind(AlderButton.IsPendingProperty, CompiledBinding.Create((ButtonViewModel model) => model.IsUploading));
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border
+            BorderBrush="{DynamicResource AlderBorder}"
+            BorderThickness="0,1,0,0"
+            Padding="24,11">
+            <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SamplePressedState" Title="{DynamicResource GalleryText.PressedState}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel>
+          <StackPanel.Styles>
+            <Style Selector="alder|AlderButton.hold">
+                <Setter Property="Content" Value="{DynamicResource GalleryText.PressMe}" />
+                <Setter Property="MinWidth" Value="100" />
+            </Style>
+            <Style Selector="alder|AlderButton.hold:pressed">
+                <Setter Property="Content" Value="{DynamicResource GalleryText.Pressed}" />
+            </Style>
+          </StackPanel.Styles>
+          <alder:AlderButton
+                  Classes="hold"
+                  Command="{Binding Demonstrate}"
+                  CommandParameter="ButtonReleased"
+                  Variant="Outline" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var button = new AlderButton
+        {
+            CommandParameter = "ButtonReleased",
+            Variant = ButtonVariant.Outline,
+        };
+        button.Classes.Add("hold");
+        button.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border
+            BorderBrush="{DynamicResource AlderBorder}"
+            BorderThickness="0,1,0,0"
+            Padding="24,11">
+            <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleRipple" Title="{DynamicResource GalleryText.Ripple}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton
+            Command="{Binding Demonstrate}"
+            CommandParameter="RippleClicked"
+            Content="{DynamicResource GalleryText.Ripple}"
+            IsRippleEnabled="True"
+            Variant="Secondary" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var button = new AlderButton
+        {
+            CommandParameter = "RippleClicked",
+            Content = "Ripple",
+            IsRippleEnabled = true,
+            Variant = ButtonVariant.Secondary,
+        };
+        button.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border
+            BorderBrush="{DynamicResource AlderBorder}"
+            BorderThickness="0,1,0,0"
+            Padding="24,11">
+            <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton Content="{DynamicResource GalleryText.Disabled}" IsEnabled="False" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var button = new AlderButton { Content = "Disabled", IsEnabled = false };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustomStyles" Title="{DynamicResource GalleryText.CustomStyles}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel>
+          <StackPanel.Styles>
+            <Style Selector="alder|AlderButton.upgrade">
+                <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+                <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+                <Setter Property="BorderThickness" Value="1.5" />
+                <Setter Property="BorderBrush" Value="{DynamicResource UpgradeBorder}" />
+            </Style>
+          </StackPanel.Styles>
+          <WrapPanel>
+              <alder:AlderButton
+                  Classes="upgrade"
+                  Command="{Binding Demonstrate}"
+                  CommandParameter="UpgradeClicked"
+                  Variant="Outline">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                      <alder:AlderTextBlock Text="{DynamicResource GalleryText.Upgrade}" />
+                      <alder:AlderPathIcon
+                          Data="{StaticResource AlderIconArrowUpRight}"
+                          Height="12"
+                          Width="12" />
+                  </StackPanel>
+              </alder:AlderButton>
+              <alder:AlderButton
+                  AutomationProperties.Name="{DynamicResource GalleryText.ClearFeedback}"
+                  Command="{Binding Demonstrate}"
+                  CommandParameter=""
+                  Theme="{StaticResource AlderCloseButtonTheme}"
+                  VerticalAlignment="Center" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var button = new AlderButton
+        {
+            CommandParameter = "UpgradeClicked",
+            Variant = ButtonVariant.Outline,
+        };
+        button.Classes.Add("upgrade");
+        button.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border
+            BorderBrush="{DynamicResource AlderBorder}"
+            BorderThickness="0,1,0,0"
+            Padding="24,11">
+            <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleFullWidth" Title="{DynamicResource GalleryText.FullWidth}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel
+            HorizontalAlignment="Stretch"
+            MaxWidth="400"
+            Spacing="8">
+            <alder:AlderButton
+                Command="{Binding Demonstrate}"
+                CommandParameter="PrimaryClicked"
+                Content="{DynamicResource GalleryText.PrimaryButton}"
+                FullWidth="True" />
+            <alder:AlderButton
+                Command="{Binding Demonstrate}"
+                CommandParameter="WithIconClicked"
+                Content="{DynamicResource GalleryText.WithIcon}"
+                FullWidth="True"
+                Icon="{StaticResource AlderIconPlus}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var button1 = new AlderButton
+        {
+            CommandParameter = "PrimaryClicked",
+            Content = "Primary Button",
+            FullWidth = true,
+        };
+        button1.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+
+        var button2 = new AlderButton
+        {
+            CommandParameter = "WithIconClicked",
+            Content = "With Icon",
+            FullWidth = true,
+            Icon = (Geometry)this.FindResource("AlderIconPlus")!,
+        };
+        button2.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border
+            BorderBrush="{DynamicResource AlderBorder}"
+            BorderThickness="0,1,0,0"
+            Padding="24,11">
+            <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleFullWidthSocialButton" Title="{DynamicResource GalleryText.FullWidthSocialButton}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton
+            Command="{Binding Demonstrate}"
+            CommandParameter="GitHubSignInExampleClicked"
+            FullWidth="True"
+            Variant="Tertiary">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <alder:AlderPathIcon
+                    Data="{StaticResource GalleryIconGitHub}"
+                    Height="16"
+                    Width="16" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.SignInWithGitHub}" />
+            </StackPanel>
+        </alder:AlderButton>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var button = new AlderButton
+        {
+            CommandParameter = "GitHubSignInExampleClicked",
+            FullWidth = true,
+            Variant = ButtonVariant.Tertiary,
+        };
+        button.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border
+            BorderBrush="{DynamicResource AlderBorder}"
+            BorderThickness="0,1,0,0"
+            Padding="24,11">
+            <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

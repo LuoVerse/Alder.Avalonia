@@ -1,0 +1,188 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:c="using:Avalonia.Data.Converters">
+  <x:String x:Key="AlderText.NavbarNavigation">Navigation</x:String>
+  <x:String x:Key="AlderText.NavbarOpenMenu">Open navigation menu</x:String>
+  <x:String x:Key="AlderText.NavbarCloseMenu">Close navigation menu</x:String>
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light"><SolidColorBrush x:Key="AlderNavbarBackground" Color="#F5F5F5" /></ResourceDictionary>
+    <ResourceDictionary x:Key="Dark"><SolidColorBrush x:Key="AlderNavbarBackground" Color="#060607" /></ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+  <ControlTheme x:Key="AlderNavbarToggleTheme" TargetType="alder:AlderButton" BasedOn="{StaticResource {x:Type alder:AlderButton}}">
+    <Setter Property="CornerRadius" Value="8" />
+  </ControlTheme>
+  <ControlTheme x:Key="AlderNavbarAccountButtonTheme" TargetType="alder:AlderButton" BasedOn="{StaticResource {x:Type alder:AlderButton}}">
+    <Setter Property="Variant" Value="Ghost" />
+    <Setter Property="IsIconOnly" Value="True" />
+    <Style Selector="^:flyout-open:not(:flyout-dismissing) /template/ alder|ButtonTint#Tint">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="^:flyout-open:not(:flyout-dismissing) /template/ alder|ButtonFeedback#Face">
+      <Setter Property="ActiveScale" Value="0.97" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderNavbarSearchTheme" TargetType="alder:AlderSearchField" BasedOn="{StaticResource {x:Type alder:AlderSearchField}}">
+    <Setter Property="Width" Value="200" />
+    <Setter Property="Height" Value="32" />
+    <Setter Property="MinHeight" Value="32" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Padding" Value="12,0,6,0" />
+    <Setter Property="Variant" Value="Secondary" />
+    <Style Selector="^ /template/ :is(ScrollViewer)#PART_ScrollViewer">
+      <Setter Property="Margin" Value="8,0,6,0" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderNavbarDropdownTheme" TargetType="MenuFlyoutPresenter">
+    <Setter Property="Width" Value="200" />
+    <Setter Property="MaxHeight" Value="440" />
+    <Setter Property="Margin" Value="32,22,32,46" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="ItemContainerTheme" Value="{DynamicResource AlderUserMenuItemTheme}" />
+    <Setter Property="KeyboardNavigation.TabNavigation" Value="Cycle" />
+    <Setter Property="ItemsPanel"><ItemsPanelTemplate><StackPanel Spacing="2" /></ItemsPanelTemplate></Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{DynamicResource AlderSurface}" CornerRadius="22" BoxShadow="{DynamicResource AlderToolbarShadow}" Padding="6">
+          <alder:AlderScrollViewer HorizontalScrollBarVisibility="Disabled" IsScrollChainingEnabled="False">
+            <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+          </alder:AlderScrollViewer>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderNavbarWorkspaceDropdownTheme" TargetType="MenuFlyoutPresenter" BasedOn="{StaticResource AlderNavbarDropdownTheme}">
+    <Setter Property="Width" Value="220" />
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderNavbar}" TargetType="alder:AlderNavbar">
+    <Setter Property="Background" Value="{DynamicResource AlderNavbarBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="Padding" Value="24,0" />
+    <Setter Property="ZIndex" Value="10" />
+    <Setter Property="AutomationProperties.ControlTypeOverride" Value="Group" />
+    <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.NavbarNavigation}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="PART_Header" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}">
+            <Border.RenderTransform><TranslateTransform /></Border.RenderTransform>
+            <Border MaxWidth="{TemplateBinding HeaderMaxWidth}" Padding="{TemplateBinding Padding}">
+              <Grid Name="HeaderLayout" Height="{TemplateBinding HeaderHeight}" ColumnDefinitions="Auto,Auto,*,Auto,Auto" ColumnSpacing="16">
+                <ContentPresenter Name="Brand" Content="{TemplateBinding Brand}" FontWeight="SemiBold" VerticalAlignment="Center"
+                                  IsVisible="{CompiledBinding Brand, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+                <ContentPresenter Name="Navigation" Grid.Column="1" Content="{TemplateBinding Navigation}" VerticalAlignment="Center"
+                                  IsVisible="{TemplateBinding IsNavigationVisible}" />
+                <ContentPresenter Name="Actions" Grid.Column="3" Content="{TemplateBinding Actions}" VerticalAlignment="Center"
+                                  IsVisible="{CompiledBinding Actions, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+                <alder:AlderButton Name="PART_Toggle" Grid.Column="4" Theme="{StaticResource AlderNavbarToggleTheme}" Variant="Ghost" IsIconOnly="True"
+                                   Size="{TemplateBinding Size}" Padding="0" VerticalAlignment="Center"
+                                   IsVisible="{TemplateBinding IsMenuToggleVisible}"
+                                   AutomationProperties.Name="{DynamicResource AlderText.NavbarOpenMenu}">
+                  <Grid Name="MenuToggleGlyph" Width="16" Height="16" IsHitTestVisible="False">
+                    <Border Name="MenuToggleTop" Width="14" Height="1.5" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Background="{TemplateBinding Foreground}" />
+                    <Border Name="MenuToggleBottom" Width="14" Height="1.5" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Background="{TemplateBinding Foreground}" />
+                  </Grid>
+                </alder:AlderButton>
+              </Grid>
+            </Border>
+          </Border>
+          <alder:AlderPopup Name="PART_Menu" Placement="BottomEdgeAlignedLeft" PlacementTarget="{Binding #PART_Header}"
+                 PlacementConstraintAdjustment="SlideX" InheritsTransform="True"
+                 IsOpen="{CompiledBinding IsMenuOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                 ShouldUseOverlayLayer="True" IsLightDismissEnabled="True" OverlayDismissEventPassThrough="False"
+                 OverlayInputPassThroughElement="{Binding #PART_Toggle}" WindowManagerAddShadowHint="False">
+            <Border Name="MenuSurface" Background="{TemplateBinding Background}" Width="{CompiledBinding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}}">
+              <alder:AlderScrollViewer Name="PART_MenuScroll" MaxHeight="440" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"
+                            IsScrollChainingEnabled="False" Padding="24,8,24,24">
+                <ContentPresenter Content="{TemplateBinding Menu}" />
+              </alder:AlderScrollViewer>
+            </Border>
+          </alder:AlderPopup>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Size=Small]">
+      <Setter Property="HeaderHeight" Value="48" /><Setter Property="Padding" Value="14,0" /><Setter Property="FontSize" Value="12" />
+      <Style Selector="^ /template/ Grid#HeaderLayout"><Setter Property="ColumnSpacing" Value="10" /></Style>
+    </Style>
+    <Style Selector="^[Size=Large]"><Setter Property="HeaderHeight" Value="80" /></Style>
+    <Style Selector="^[Position=Static]"><Setter Property="ZIndex" Value="0" /></Style>
+    <Style Selector="^[Position=Floating]">
+      <Setter Property="Margin" Value="8,6" /><Setter Property="CornerRadius" Value="16" /><Setter Property="BorderThickness" Value="1" />
+      <Style Selector="^ /template/ Border#PART_Header"><Setter Property="BoxShadow" Value="{DynamicResource AlderFieldShadow}" /></Style>
+    </Style>
+    <Style Selector="^:compact /template/ Grid#HeaderLayout">
+      <Setter Property="ColumnSpacing" Value="8" />
+    </Style>
+    <Style Selector="^:compact"><Setter Property="Padding" Value="12,0" /></Style>
+    <Style Selector="^:scroll-hidden /template/ Border#PART_Header">
+      <Setter Property="Opacity" Value="0" /><Setter Property="IsHitTestVisible" Value="False" />
+    </Style>
+    <Style Selector="^[IsMenuOpen=True] /template/ alder|AlderButton#PART_Toggle">
+      <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.NavbarCloseMenu}" />
+    </Style>
+    <Style Selector="^ /template/ Border#MenuToggleTop">
+      <Setter Property="RenderTransform" Value="translateY(-3.25px) rotate(0deg)" />
+    </Style>
+    <Style Selector="^ /template/ Border#MenuToggleBottom">
+      <Setter Property="RenderTransform" Value="translateY(3.25px) rotate(0deg)" />
+    </Style>
+    <Style Selector="^[IsMenuOpen=True] /template/ Border#MenuToggleTop">
+      <Setter Property="RenderTransform" Value="translateY(0px) rotate(45deg)" />
+    </Style>
+    <Style Selector="^[IsMenuOpen=True] /template/ Border#MenuToggleBottom">
+      <Setter Property="RenderTransform" Value="translateY(0px) rotate(-45deg)" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=False] /template/ Border#MenuToggleTop,
+                     ^[(alder|AlderMotion.Reduced)=False] /template/ Border#MenuToggleBottom">
+      <Setter Property="Transitions">
+        <Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" Easing="0.25,0.1,0.25,1" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=False] /template/ Border#PART_Header">
+      <Setter Property="Transitions"><Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.18" /></Transitions></Setter>
+    </Style>
+    <Style Selector="^[IsMenuOpen=True][(alder|AlderMotion.Reduced)=False] /template/ Border#MenuSurface">
+      <Style.Animations>
+        <Animation Duration="0:0:0.14" Easing="0.2,0.8,0.2,1">
+          <KeyFrame Cue="0%"><Setter Property="Opacity" Value="0.88" /></KeyFrame>
+          <KeyFrame Cue="100%"><Setter Property="Opacity" Value="1" /></KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderNavbarItem}" TargetType="alder:AlderNavbarItem" BasedOn="{StaticResource AlderButtonTheme}">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="8,4" />
+    <Setter Property="MinHeight" Value="32" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Style Selector="^:pointerover, ^:current"><Setter Property="Foreground" Value="{DynamicResource AlderInk}" /></Style>
+    <Style Selector="^:current"><Setter Property="AutomationProperties.ItemStatus" Value="{DynamicResource AlderText.CurrentPage}" /></Style>
+    <Style Selector="^[IsMenuItem=True]">
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Left" />
+      <Setter Property="Padding" Value="12,10" /><Setter Property="FontSize" Value="16" /><Setter Property="MinHeight" Value="44" />
+    </Style>
+    <Style Selector="^[IsMenuItem=True]:pointerover, ^[IsMenuItem=True]:current">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+    <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+    <Style Selector="^ /template/ PathIcon#LeadingIcon">
+      <Setter Property="Data" Value="{CompiledBinding Icon, RelativeSource={RelativeSource AncestorType=alder:AlderNavbarItem}}" />
+      <Setter Property="IsVisible" Value="{CompiledBinding Icon, RelativeSource={RelativeSource AncestorType=alder:AlderNavbarItem}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

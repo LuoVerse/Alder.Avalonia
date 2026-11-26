@@ -1,0 +1,585 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.NavbarExample" x:DataType="vm:NavbarViewModel">
+  <UserControl.Resources>
+    <StreamGeometry x:Key="DashboardSlash">M0 12 L6 0 H7 L1 12 Z</StreamGeometry>
+    <DataTemplate x:Key="DashboardWorkspaceOption" x:DataType="vm:NavbarOption">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <alder:AlderAvatar Width="22" Height="22" Fallback="{CompiledBinding Detail}" />
+        <alder:AlderTextBlock Text="{CompiledBinding Name}" VerticalAlignment="Center" />
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="DashboardTimezoneOption" x:DataType="vm:NavbarOption">
+      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+        <alder:AlderTextBlock Text="{CompiledBinding Name}" VerticalAlignment="Center" />
+        <alder:AlderTextBlock Grid.Column="1" Text="{CompiledBinding Detail}" FontSize="12" Foreground="{DynamicResource AlderMuted}"
+                   FlowDirection="LeftToRight" VerticalAlignment="Center" />
+      </Grid>
+    </DataTemplate>
+  </UserControl.Resources>
+  <UserControl.Styles>
+    <Style Selector="alder|AlderNavbar.dashboard /template/ Grid#HeaderLayout">
+      <Setter Property="ColumnSpacing" Value="8" />
+    </Style>
+    <Style Selector="PathIcon.dashboard-slash">
+      <Setter Property="Data" Value="{StaticResource DashboardSlash}" />
+      <Setter Property="Width" Value="7" />
+      <Setter Property="Height" Value="12" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderBorder}" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector=":is(Control).compact-action"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="alder|AlderNavbar:compact :is(Control).compact-action"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="alder|AlderNavbar:compact :is(Control).wide-action"><Setter Property="IsVisible" Value="False" /></Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="24">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderNavbar CollapseWidth="600" CurrentRoute="NavDemoFeatures" Position="Static"
+                           NavigateCommand="{CompiledBinding Navigate}">
+          <alder:AlderNavbar.Brand>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <alder:AlderPathIcon Data="{DynamicResource AlderIconCircleDashed}" Width="18" Height="18" VerticalAlignment="Center" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavbarBrand}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+            </StackPanel>
+          </alder:AlderNavbar.Brand>
+          <alder:AlderNavbar.Navigation>
+            <StackPanel Orientation="Horizontal" Spacing="4">
+              <alder:AlderNavbarItem Route="NavDemoFeatures" Content="{DynamicResource GalleryText.NavDemoFeatures}" />
+              <alder:AlderNavbarItem Route="NavbarCustomers" Content="{DynamicResource GalleryText.NavbarCustomers}" />
+              <alder:AlderNavbarItem Route="NavbarIntegrations" Content="{DynamicResource GalleryText.NavbarIntegrations}" />
+              <alder:AlderNavbarItem Route="NavbarPricing" Content="{DynamicResource GalleryText.NavbarPricing}" />
+            </StackPanel>
+          </alder:AlderNavbar.Navigation>
+          <alder:AlderNavbar.Actions>
+            <StackPanel Orientation="Horizontal" Spacing="4">
+              <alder:AlderButton Size="Small" Variant="Ghost" IsIconOnly="True" Icon="{DynamicResource AlderIconMagnifier}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.NavDemoSearchDocs}" Click="OpenSearch" />
+              <alder:AlderButton Size="Small" Variant="Ghost" IsIconOnly="True" Icon="{DynamicResource AlderIconBell}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.NavDemoNotifications}">
+                <alder:AlderButton.Flyout>
+                  <alder:AlderPopover Heading="{DynamicResource GalleryText.NavDemoNotifications}" Content="{DynamicResource GalleryText.NavDemoNoNotifications}" />
+                </alder:AlderButton.Flyout>
+              </alder:AlderButton>
+              <alder:AlderUserMenu x:Name="UsageAccount" Size="Medium" Padding="0" IsIconOnly="True"
+                                   Background="Transparent"
+                                   AutomationProperties.Name="{DynamicResource GalleryText.NavDemoAccount}"
+                                   MenuTheme="{StaticResource AlderNavbarDropdownTheme}">
+                <alder:AlderAvatar Width="28" Height="28" Fallback="AL" />
+                <alder:AlderUserMenu.Items>
+                  <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarYourAccount}" Classes="leading-icon"
+                            DataContext="{CompiledBinding #UsageAccount.DataContext}"
+                            Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                    <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconAvatarPerson}" /></MenuItem.Icon>
+                  </alder:AlderMenuItem>
+                  <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarPreferences}" Classes="leading-icon"
+                            DataContext="{CompiledBinding #UsageAccount.DataContext}"
+                            Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                    <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconGear}" /></MenuItem.Icon>
+                  </alder:AlderMenuItem>
+                  <alder:AlderMenuItem Header="-" />
+                  <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarSecurityPrivacy}" Classes="leading-icon"
+                            DataContext="{CompiledBinding #UsageAccount.DataContext}"
+                            Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                    <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconEye}" /></MenuItem.Icon>
+                  </alder:AlderMenuItem>
+                  <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarFeedback}" Classes="leading-icon"
+                            DataContext="{CompiledBinding #UsageAccount.DataContext}"
+                            Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                    <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconEnvelope}" /></MenuItem.Icon>
+                  </alder:AlderMenuItem>
+                  <alder:AlderMenuItem Header="-" />
+                  <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarLogOut}" Classes="leading-icon"
+                            DataContext="{CompiledBinding #UsageAccount.DataContext}"
+                            Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                    <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderUserMenuLogOutIcon}" /></MenuItem.Icon>
+                  </alder:AlderMenuItem>
+                </alder:AlderUserMenu.Items>
+              </alder:AlderUserMenu>
+            </StackPanel>
+          </alder:AlderNavbar.Actions>
+          <alder:AlderNavbar.Menu>
+            <StackPanel Orientation="Vertical" Spacing="4">
+              <alder:AlderNavbarItem Route="NavDemoFeatures" Content="{DynamicResource GalleryText.NavDemoFeatures}" IsMenuItem="True" />
+              <alder:AlderNavbarItem Route="NavbarCustomers" Content="{DynamicResource GalleryText.NavbarCustomers}" IsMenuItem="True" />
+              <alder:AlderNavbarItem Route="NavbarIntegrations" Content="{DynamicResource GalleryText.NavbarIntegrations}" IsMenuItem="True" />
+              <alder:AlderNavbarItem Route="NavbarPricing" Content="{DynamicResource GalleryText.NavbarPricing}" IsMenuItem="True" />
+            </StackPanel>
+          </alder:AlderNavbar.Menu>
+        </alder:AlderNavbar>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.Feedback>
+        <alder:AlderTextBlock Text="{CompiledBinding NavigationStatus}" IsVisible="{CompiledBinding HasNavigationStatus}" TextWrapping="Wrap"
+                   Foreground="{DynamicResource AlderMuted}" />
+      </gallery:ExampleCard.Feedback>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var account = new AlderUserMenu
+        {
+            Size = AlderSize.Medium,
+            IsIconOnly = true,
+            Padding = new Thickness(0),
+            Background = Brushes.Transparent,
+            Content = avatar,
+            MenuTheme = navbarDropdownTheme,
+            Items = { yourAccount, preferences, new AlderMenuItem { Header = "-" },
+                      security, feedback, new AlderMenuItem { Header = "-" }, logOut }
+        };
+        var bar = new AlderNavbar
+        {
+            Brand = brand,
+            Navigation = desktopLinks,
+            Actions = new StackPanel { Orientation = Orientation.Horizontal, Children = { search, notifications, account } },
+            Menu = compactLinks,
+            CurrentRoute = "features",
+            NavigateCommand = navigate
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDocs" Title="{DynamicResource GalleryText.NavbarDocsSite}">
+      <gallery:ExampleCard.Preview>
+        <ThemeVariantScope RequestedThemeVariant="{CompiledBinding DocsTheme}">
+          <StackPanel Orientation="Vertical" Spacing="4">
+            <alder:AlderNavbar CollapseWidth="600" CurrentRoute="NavbarDocs" Position="Static">
+              <alder:AlderNavbar.Brand>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <alder:AlderPathIcon Data="{DynamicResource AlderIconCircleDashed}" Width="18" Height="18" VerticalAlignment="Center" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavbarBrand}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                </StackPanel>
+              </alder:AlderNavbar.Brand>
+              <alder:AlderNavbar.Navigation>
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                  <alder:AlderNavbarItem Route="NavbarDocs" Content="{DynamicResource GalleryText.NavbarDocs}" />
+                  <alder:AlderNavbarItem Route="NavbarReference" Content="{DynamicResource GalleryText.NavbarReference}" />
+                  <alder:AlderNavbarItem Route="NavbarBlog" Content="{DynamicResource GalleryText.NavbarBlog}" />
+                </StackPanel>
+              </alder:AlderNavbar.Navigation>
+              <alder:AlderNavbar.Actions>
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                  <StackPanel Spacing="4" Classes="wide-action">
+                    <alder:AlderSearchField x:Name="DocsSearch" Theme="{StaticResource AlderNavbarSearchTheme}"
+                                            PlaceholderText="{DynamicResource GalleryText.NavDemoSearchDocs}" ShowClearButton="False"
+                                            Text="{CompiledBinding DocQuery, Mode=TwoWay}" SubmitCommand="{CompiledBinding SearchDocs}">
+                      <alder:AlderSearchField.InnerRightContent>
+                        <alder:AlderKbd Height="24" FontSize="12" CornerRadius="8" IsHitTestVisible="False" FlowDirection="LeftToRight">
+                          <alder:AlderKbdKey KeyValue="{CompiledBinding SearchModifier}" />
+                          <x:String>K</x:String>
+                        </alder:AlderKbd>
+                      </alder:AlderSearchField.InnerRightContent>
+                    </alder:AlderSearchField>
+                  </StackPanel>
+                  <alder:AlderButton Classes="compact-action" Size="Small" Variant="Ghost" IsIconOnly="True" Icon="{DynamicResource AlderIconMagnifier}"
+                                     AutomationProperties.Name="{DynamicResource GalleryText.NavDemoSearchDocs}" Click="OpenSearch" />
+                  <alder:AlderSegment Size="Small" SelectedKey="{CompiledBinding ThemeKey, Mode=TwoWay}"
+                                       AutomationProperties.Name="{DynamicResource GalleryText.NavDemoTheme}">
+                    <alder:AlderSegmentItem Key="light" Icon="{DynamicResource AlderIconSun}" Padding="6,0" AutomationProperties.Name="{DynamicResource GalleryText.NavDemoLight}" />
+                    <alder:AlderSegmentItem Key="dark" Icon="{DynamicResource AlderIconMoon}" Padding="6,0" AutomationProperties.Name="{DynamicResource GalleryText.NavDemoDark}" />
+                    <alder:AlderSegmentItem Key="system" Icon="{DynamicResource NavPreviewIconMonitor}" Padding="6,0" AutomationProperties.Name="{DynamicResource GalleryText.NavDemoSystem}" />
+                  </alder:AlderSegment>
+                </StackPanel>
+              </alder:AlderNavbar.Actions>
+              <alder:AlderNavbar.Menu>
+                <StackPanel Orientation="Vertical" Spacing="4">
+                  <alder:AlderNavbarItem Route="NavbarDocs" Content="{DynamicResource GalleryText.NavbarDocs}" IsMenuItem="True" />
+                  <alder:AlderNavbarItem Route="NavbarReference" Content="{DynamicResource GalleryText.NavbarReference}" IsMenuItem="True" />
+                  <alder:AlderNavbarItem Route="NavbarBlog" Content="{DynamicResource GalleryText.NavbarBlog}" IsMenuItem="True" />
+                </StackPanel>
+              </alder:AlderNavbar.Menu>
+            </alder:AlderNavbar>
+            <alder:AlderTextBlock Margin="12,0" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" Text="{CompiledBinding SearchStatus}" />
+          </StackPanel>
+        </ThemeVariantScope>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var bar = new AlderNavbar
+        {
+            Brand = wordmark,
+            Navigation = documentationLinks,
+            Actions = new StackPanel { Orientation = Orientation.Horizontal, Children = { searchField, themeSelector } },
+            Menu = compactLinks
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDropdowns" Title="{DynamicResource GalleryText.NavbarDropdowns}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderNavbar CollapseWidth="600" CurrentRoute="NavDemoDashboard" Position="Static">
+          <alder:AlderNavbar.Brand>
+            <alder:AlderButton Variant="Ghost" Size="Small" Padding="8,4" CornerRadius="8">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <alder:AlderAvatar Width="20" Height="20" Fallback="{CompiledBinding WorkspaceMark}" />
+                <alder:AlderTextBlock Text="{CompiledBinding Workspace}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                <alder:AlderPathIcon Width="10" Height="10" Data="{DynamicResource AlderIconChevronDown}" Foreground="{DynamicResource AlderMuted}"
+                          VerticalAlignment="Center" />
+              </StackPanel>
+              <alder:AlderButton.Flyout>
+                <alder:AlderMenuFlyout FlyoutPresenterTheme="{StaticResource AlderNavbarWorkspaceDropdownTheme}"
+                                      ItemContainerTheme="{StaticResource AlderUserMenuItemTheme}"
+                                      Placement="BottomEdgeAlignedLeft" VerticalOffset="8" Opening="PrepareDropdown">
+                  <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarTeamSettings}" Classes="leading-icon"
+                            Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                    <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconGear}" /></MenuItem.Icon>
+                  </alder:AlderMenuItem>
+                  <alder:AlderMenuItem Header="-" />
+                  <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarStudio}" Classes="leading-icon"
+                            Command="{CompiledBinding ChangeWorkspace}" CommandParameter="NavbarStudio">
+                    <MenuItem.Icon><alder:AlderAvatar Width="20" Height="20" Fallback="AL" /></MenuItem.Icon>
+                  </alder:AlderMenuItem>
+                  <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarPersonal}" Classes="leading-icon"
+                            Command="{CompiledBinding ChangeWorkspace}" CommandParameter="NavbarPersonal">
+                    <MenuItem.Icon><alder:AlderAvatar Width="20" Height="20" Fallback="PS" /></MenuItem.Icon>
+                  </alder:AlderMenuItem>
+                  <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarResearch}" Classes="leading-icon"
+                            Command="{CompiledBinding ChangeWorkspace}" CommandParameter="NavbarResearch">
+                    <MenuItem.Icon><alder:AlderAvatar Width="20" Height="20" Fallback="RS" /></MenuItem.Icon>
+                  </alder:AlderMenuItem>
+                  <alder:AlderMenuItem Header="-" />
+                  <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarCreateWorkspace}" Classes="leading-icon"
+                            Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                    <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconPlus}" /></MenuItem.Icon>
+                  </alder:AlderMenuItem>
+                </alder:AlderMenuFlyout>
+              </alder:AlderButton.Flyout>
+            </alder:AlderButton>
+          </alder:AlderNavbar.Brand>
+          <alder:AlderNavbar.Navigation>
+            <StackPanel Orientation="Horizontal" Spacing="4">
+              <alder:AlderNavbarItem Route="NavDemoDashboard" Content="{DynamicResource GalleryText.NavDemoDashboard}" />
+              <alder:AlderNavbarItem Route="NavbarProjects" Content="{DynamicResource GalleryText.NavbarProjects}" />
+              <alder:AlderNavbarItem Route="NavbarMembers" Content="{DynamicResource GalleryText.NavbarMembers}" />
+              <alder:AlderNavbarItem Route="NavbarBilling" Content="{DynamicResource GalleryText.NavbarBilling}" />
+            </StackPanel>
+          </alder:AlderNavbar.Navigation>
+          <alder:AlderNavbar.Actions>
+            <StackPanel Orientation="Horizontal" Spacing="4">
+              <alder:AlderButton Size="Small" Variant="Ghost" IsIconOnly="True" Icon="{DynamicResource AlderIconMagnifier}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.NavDemoSearchDocs}" Click="OpenSearch" />
+              <alder:AlderButton Size="Small" Variant="Ghost" IsIconOnly="True" Icon="{DynamicResource AlderIconBell}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.NavDemoNotifications}">
+                <alder:AlderButton.Flyout>
+                  <alder:AlderPopover Heading="{DynamicResource GalleryText.NavDemoNotifications}" Content="{DynamicResource GalleryText.NavDemoNoNotifications}" />
+                </alder:AlderButton.Flyout>
+              </alder:AlderButton>
+              <alder:AlderButton x:Name="DropdownsAccount" Theme="{StaticResource AlderNavbarAccountButtonTheme}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.NavDemoAccount}">
+                <alder:AlderAvatar Width="28" Height="28" Fallback="AJ" />
+                <alder:AlderButton.Flyout>
+                  <alder:AlderMenuFlyout FlyoutPresenterTheme="{StaticResource AlderNavbarDropdownTheme}"
+                                        ItemContainerTheme="{StaticResource AlderUserMenuItemTheme}"
+                                        Placement="BottomEdgeAlignedRight" VerticalOffset="8" Opening="PrepareDropdown">
+                    <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarYourAccount}" Classes="leading-icon"
+                              Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                      <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconAvatarPerson}" /></MenuItem.Icon>
+                    </alder:AlderMenuItem>
+                    <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarPreferences}" Classes="leading-icon"
+                              Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                      <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconGear}" /></MenuItem.Icon>
+                    </alder:AlderMenuItem>
+                    <alder:AlderMenuItem Header="-" />
+                    <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarSecurityPrivacy}" Classes="leading-icon"
+                              Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                      <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconEye}" /></MenuItem.Icon>
+                    </alder:AlderMenuItem>
+                    <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarFeedback}" Classes="leading-icon"
+                              Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                      <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconEnvelope}" /></MenuItem.Icon>
+                    </alder:AlderMenuItem>
+                    <alder:AlderMenuItem Header="-" />
+                    <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarLogOut}" Classes="leading-icon danger"
+                              Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                      <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderUserMenuLogOutIcon}" /></MenuItem.Icon>
+                    </alder:AlderMenuItem>
+                  </alder:AlderMenuFlyout>
+                </alder:AlderButton.Flyout>
+              </alder:AlderButton>
+            </StackPanel>
+          </alder:AlderNavbar.Actions>
+          <alder:AlderNavbar.Menu>
+            <StackPanel Orientation="Vertical" Spacing="4">
+              <alder:AlderNavbarItem Route="NavDemoDashboard" Content="{DynamicResource GalleryText.NavDemoDashboard}" IsMenuItem="True" />
+              <alder:AlderNavbarItem Route="NavbarProjects" Content="{DynamicResource GalleryText.NavbarProjects}" IsMenuItem="True" />
+              <alder:AlderNavbarItem Route="NavbarMembers" Content="{DynamicResource GalleryText.NavbarMembers}" IsMenuItem="True" />
+              <alder:AlderNavbarItem Route="NavbarBilling" Content="{DynamicResource GalleryText.NavbarBilling}" IsMenuItem="True" />
+            </StackPanel>
+          </alder:AlderNavbar.Menu>
+        </alder:AlderNavbar>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var workspace = new AlderButton { Content = workspaceName, Variant = ButtonVariant.Ghost };
+        workspace.Flyout = new AlderMenuFlyout { ItemsSource = workspaceOptions };
+        var accountMenu = new AlderButton { Theme = navbarAccountButtonTheme, Content = avatar, Flyout = userMenu };
+        var bar = new AlderNavbar { Brand = workspace, Navigation = workspaceLinks, Actions = accountMenu, Menu = mobileLinks };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleScroll" Title="{DynamicResource GalleryText.NavbarHideOnScroll}">
+      <gallery:ExampleCard.Preview>
+        <Grid Height="250" ClipToBounds="True">
+          <alder:AlderScrollViewer x:Name="HideScroll" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="20,82,20,12">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavbarScrollHint}" TextWrapping="Wrap" FontSize="14" Margin="0,0,0,20" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavbarContentOne}" TextWrapping="Wrap" FontSize="14" Margin="0,0,0,20" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavbarContentTwo}" TextWrapping="Wrap" FontSize="14" Margin="0,0,0,20" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavbarContentThree}" TextWrapping="Wrap" FontSize="14" Margin="0,0,0,20" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavbarContentFour}" TextWrapping="Wrap" FontSize="14" Margin="0,0,0,20" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavbarContentFive}" TextWrapping="Wrap" FontSize="14" Margin="0,0,0,20" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavbarContentSix}" TextWrapping="Wrap" FontSize="14" Margin="0,0,0,20" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavbarContentSeven}" TextWrapping="Wrap" FontSize="14" Margin="0,0,0,20" />
+            </StackPanel>
+          </alder:AlderScrollViewer>
+          <alder:AlderNavbar CollapseWidth="600" CurrentRoute="NavDemoFeatures" HideOnScroll="True" ScrollHost="{CompiledBinding #HideScroll}" BorderThickness="0,0,0,1" VerticalAlignment="Top">
+            <alder:AlderNavbar.Brand>
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <alder:AlderPathIcon Data="{DynamicResource AlderIconCircleDashed}" Width="18" Height="18" VerticalAlignment="Center" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavbarBrand}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+              </StackPanel>
+            </alder:AlderNavbar.Brand>
+            <alder:AlderNavbar.Navigation>
+              <StackPanel Orientation="Horizontal" Spacing="4">
+                <alder:AlderNavbarItem Route="NavDemoFeatures" Content="{DynamicResource GalleryText.NavDemoFeatures}" />
+                <alder:AlderNavbarItem Route="NavbarCustomers" Content="{DynamicResource GalleryText.NavbarCustomers}" />
+                <alder:AlderNavbarItem Route="NavbarIntegrations" Content="{DynamicResource GalleryText.NavbarIntegrations}" />
+                <alder:AlderNavbarItem Route="NavbarPricing" Content="{DynamicResource GalleryText.NavbarPricing}" />
+              </StackPanel>
+            </alder:AlderNavbar.Navigation>
+            <alder:AlderNavbar.Actions>
+              <StackPanel Orientation="Horizontal" Spacing="4">
+                <alder:AlderButton Size="Small" Variant="Ghost" IsIconOnly="True" Icon="{DynamicResource AlderIconMagnifier}"
+                                   AutomationProperties.Name="{DynamicResource GalleryText.NavDemoSearchDocs}" Click="OpenSearch" />
+                <alder:AlderButton Size="Small" Variant="Ghost" IsIconOnly="True" Icon="{DynamicResource AlderIconBell}"
+                                   AutomationProperties.Name="{DynamicResource GalleryText.NavDemoNotifications}">
+                  <alder:AlderButton.Flyout>
+                    <alder:AlderPopover Heading="{DynamicResource GalleryText.NavDemoNotifications}" Content="{DynamicResource GalleryText.NavDemoNoNotifications}" />
+                  </alder:AlderButton.Flyout>
+                </alder:AlderButton>
+              </StackPanel>
+            </alder:AlderNavbar.Actions>
+            <alder:AlderNavbar.Menu>
+              <StackPanel Orientation="Vertical" Spacing="4">
+                <alder:AlderNavbarItem Route="NavDemoFeatures" Content="{DynamicResource GalleryText.NavDemoFeatures}" IsMenuItem="True" />
+                <alder:AlderNavbarItem Route="NavbarCustomers" Content="{DynamicResource GalleryText.NavbarCustomers}" IsMenuItem="True" />
+                <alder:AlderNavbarItem Route="NavbarIntegrations" Content="{DynamicResource GalleryText.NavbarIntegrations}" IsMenuItem="True" />
+                <alder:AlderNavbarItem Route="NavbarPricing" Content="{DynamicResource GalleryText.NavbarPricing}" IsMenuItem="True" />
+              </StackPanel>
+            </alder:AlderNavbar.Menu>
+          </alder:AlderNavbar>
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var bar = new AlderNavbar { Brand = brand, Navigation = links, HideOnScroll = true, ScrollHost = scroll };
+        var preview = new Grid { Children = { scroll, bar } };
+        bar.VerticalAlignment = VerticalAlignment.Top;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDashboard" Title="{DynamicResource GalleryText.NavbarDashboard}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderNavbar Classes="dashboard" CollapseWidth="720" Position="Static" MaxWidth="1024"
+                           BorderThickness="1" CornerRadius="12">
+          <alder:AlderNavbar.Brand>
+            <alder:AlderPathIcon Data="{DynamicResource AlderIconCircleDashed}" Width="20" Height="20" VerticalAlignment="Center"
+                      AutomationProperties.Name="{DynamicResource GalleryText.NavbarBrand}" />
+          </alder:AlderNavbar.Brand>
+          <alder:AlderNavbar.Navigation>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <alder:AlderPathIcon Classes="dashboard-slash" />
+              <alder:AlderSelect Theme="{StaticResource AlderNavbarInlineSelectTheme}" DropDownMinWidth="220" Width="124" SelectedIndex="{CompiledBinding WorkspaceIndex, Mode=TwoWay}"
+                                 ItemsSource="{CompiledBinding Workspaces}" ItemTemplate="{StaticResource DashboardWorkspaceOption}" SelectionTemplate="{StaticResource DashboardWorkspaceOption}" AutomationProperties.Name="{DynamicResource GalleryText.NavDemoWorkspace}" />
+              <alder:AlderPathIcon Classes="dashboard-slash" />
+              <alder:AlderSelect Theme="{StaticResource AlderNavbarInlineSelectTheme}" Width="118" SelectedIndex="{CompiledBinding ProjectIndex, Mode=TwoWay}"
+                                 ItemsSource="{CompiledBinding Projects}" AutomationProperties.Name="{DynamicResource GalleryText.NavbarProjects}" />
+            </StackPanel>
+          </alder:AlderNavbar.Navigation>
+          <alder:AlderNavbar.Actions>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <StackPanel Orientation="Horizontal" Classes="wide-action" Spacing="8" VerticalAlignment="Center">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavbarCostLabel}" FontSize="11" LetterSpacing="0.5"
+                           Foreground="{DynamicResource AlderMuted}" VerticalAlignment="Center" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavbarCostValue}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                <alder:AlderSeparator Orientation="Vertical" Height="16" VerticalAlignment="Center" />
+              </StackPanel>
+              <alder:AlderSelect Theme="{StaticResource AlderNavbarInlineSelectTheme}" Width="78" SelectedIndex="0" DropDownHorizontalAlignment="Right"
+                                 ItemsSource="{CompiledBinding Timezones}" ItemTemplate="{StaticResource DashboardTimezoneOption}" AutomationProperties.Name="{DynamicResource GalleryText.NavbarTimezone}" />
+              <alder:AlderButton Size="Small" Variant="Ghost" Foreground="{DynamicResource AlderMuted}" IsIconOnly="True"
+                                 Icon="{DynamicResource AlderIconBell}" AutomationProperties.Name="{DynamicResource GalleryText.NavDemoNotifications}">
+                <alder:AlderButton.Flyout>
+                  <alder:AlderPopover Heading="{DynamicResource GalleryText.NavDemoNotifications}" Content="{DynamicResource GalleryText.NavDemoNoNotifications}" />
+                </alder:AlderButton.Flyout>
+              </alder:AlderButton>
+              <alder:AlderButton x:Name="DashboardAccount" Theme="{StaticResource AlderNavbarAccountButtonTheme}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.NavDemoAccount}">
+                <alder:AlderAvatar Width="28" Height="28" Fallback="AL" Variant="Soft" Color="Success" />
+                <alder:AlderButton.Flyout>
+                  <alder:AlderMenuFlyout FlyoutPresenterTheme="{StaticResource AlderNavbarDropdownTheme}"
+                                        ItemContainerTheme="{StaticResource AlderUserMenuItemTheme}"
+                                        Placement="BottomEdgeAlignedRight" VerticalOffset="8" Opening="PrepareDropdown">
+                    <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarYourAccount}" Classes="leading-icon"
+                              Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                      <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconAvatarPerson}" /></MenuItem.Icon>
+                    </alder:AlderMenuItem>
+                    <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarPreferences}" Classes="leading-icon"
+                              Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                      <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconGear}" /></MenuItem.Icon>
+                    </alder:AlderMenuItem>
+                    <alder:AlderMenuItem Header="-" />
+                    <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarSecurityPrivacy}" Classes="leading-icon"
+                              Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                      <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconEye}" /></MenuItem.Icon>
+                    </alder:AlderMenuItem>
+                    <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarFeedback}" Classes="leading-icon"
+                              Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                      <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconEnvelope}" /></MenuItem.Icon>
+                    </alder:AlderMenuItem>
+                    <alder:AlderMenuItem Header="-" />
+                    <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavbarLogOut}" Classes="leading-icon danger"
+                              Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                      <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderUserMenuLogOutIcon}" /></MenuItem.Icon>
+                    </alder:AlderMenuItem>
+                  </alder:AlderMenuFlyout>
+                </alder:AlderButton.Flyout>
+              </alder:AlderButton>
+            </StackPanel>
+          </alder:AlderNavbar.Actions>
+          <alder:AlderNavbar.Menu>
+            <StackPanel Orientation="Vertical" Spacing="4">
+              <alder:AlderSelect Theme="{StaticResource AlderNavbarInlineSelectTheme}" Width="148" SelectedIndex="{CompiledBinding WorkspaceIndex, Mode=TwoWay}"
+                                 ItemsSource="{CompiledBinding Workspaces}" ItemTemplate="{StaticResource DashboardWorkspaceOption}" SelectionTemplate="{StaticResource DashboardWorkspaceOption}" AutomationProperties.Name="{DynamicResource GalleryText.NavDemoWorkspace}" />
+              <alder:AlderSelect Theme="{StaticResource AlderNavbarInlineSelectTheme}" Width="148" SelectedIndex="{CompiledBinding ProjectIndex, Mode=TwoWay}"
+                                 ItemsSource="{CompiledBinding Projects}" AutomationProperties.Name="{DynamicResource GalleryText.NavbarProjects}" />
+            </StackPanel>
+          </alder:AlderNavbar.Menu>
+        </alder:AlderNavbar>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var accountButton = new AlderButton { Theme = navbarAccountButtonTheme, Content = avatar, Flyout = userMenu };
+        var bar = new AlderNavbar
+        {
+            Position = AlderNavbarPosition.Static,
+            BorderThickness = new Thickness(1),
+            CornerRadius = new CornerRadius(12),
+            Brand = brandMark,
+            Navigation = new StackPanel { Orientation = Orientation.Horizontal, Children = { brandSlash, workspaceSelect, workspaceSlash, projectSelect } },
+            Actions = new StackPanel { Orientation = Orientation.Horizontal, Children = { costs, timezoneSelect, notificationsButton, accountButton } },
+            Menu = compactSelectors
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleMenu" Title="{DynamicResource GalleryText.NavbarWithMenu}">
+      <gallery:ExampleCard.Preview>
+        <Grid MinHeight="320" Background="{DynamicResource AlderNavbarBackground}" RowDefinitions="Auto,*">
+          <Border Grid.Row="1" Padding="16" Margin="20,12,20,0" CornerRadius="10"
+                  Background="{DynamicResource AlderSurface}" BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" VerticalAlignment="Top">
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavbarMenuWorkspace}" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavbarContentOne}" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+            </StackPanel>
+          </Border>
+          <alder:AlderNavbar CollapseWidth="600" CurrentRoute="NavDemoDashboard" AlwaysShowMenuToggle="True" IsMenuOpen="{CompiledBinding IsMenuOpen, Mode=TwoWay}" Position="Static">
+            <alder:AlderNavbar.Brand>
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <alder:AlderPathIcon Data="{DynamicResource AlderIconCircleDashed}" Width="18" Height="18" VerticalAlignment="Center" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavbarBrand}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+              </StackPanel>
+            </alder:AlderNavbar.Brand>
+            <alder:AlderNavbar.Navigation>
+              <StackPanel Orientation="Horizontal" Spacing="4">
+                <alder:AlderNavbarItem Route="NavDemoDashboard" Content="{DynamicResource GalleryText.NavDemoDashboard}" />
+                <alder:AlderNavbarItem Route="NavbarTeam" Content="{DynamicResource GalleryText.NavbarTeam}" />
+                <alder:AlderNavbarItem Route="Settings" Content="{DynamicResource GalleryText.Settings}" />
+              </StackPanel>
+            </alder:AlderNavbar.Navigation>
+            <alder:AlderNavbar.Actions>
+              <StackPanel Orientation="Horizontal" Spacing="4">
+                <alder:AlderButton Size="Small" Variant="Ghost" IsIconOnly="True" Icon="{DynamicResource AlderIconMagnifier}"
+                                   AutomationProperties.Name="{DynamicResource GalleryText.NavDemoSearchDocs}" Click="OpenSearch" />
+                <alder:AlderButton Size="Small" Variant="Ghost" Padding="0" IsIconOnly="True"
+                                   AutomationProperties.Name="{DynamicResource GalleryText.NavDemoAccount}">
+                  <alder:AlderAvatar Width="28" Height="28" Fallback="AL" />
+                  <alder:AlderButton.Flyout>
+                    <alder:AlderMenuFlyout>
+                      <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavDemoProfile}"
+                                Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+                      <alder:AlderMenuItem Header="{DynamicResource GalleryText.Settings}"
+                                Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+                      <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavDemoSupport}"
+                                Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+                    </alder:AlderMenuFlyout>
+                  </alder:AlderButton.Flyout>
+                </alder:AlderButton>
+              </StackPanel>
+            </alder:AlderNavbar.Actions>
+            <alder:AlderNavbar.Menu>
+              <StackPanel Orientation="Vertical" Spacing="4" MinHeight="224">
+                <alder:AlderNavbarItem Route="NavDemoDashboard" Content="{DynamicResource GalleryText.NavDemoDashboard}" IsMenuItem="True" />
+                <alder:AlderNavbarItem Route="NavbarTeam" Content="{DynamicResource GalleryText.NavbarTeam}" IsMenuItem="True" />
+                <alder:AlderNavbarItem Route="Settings" Content="{DynamicResource GalleryText.Settings}" IsMenuItem="True" />
+              </StackPanel>
+            </alder:AlderNavbar.Menu>
+          </alder:AlderNavbar>
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var bar = new AlderNavbar { Brand = brand, Navigation = desktopLinks, Menu = mobileLinks, AlwaysShowMenuToggle = true };
+        toggle.Click += (_, _) => bar.IsMenuOpen = !bar.IsMenuOpen;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCompact" Title="{DynamicResource GalleryText.NavbarCompact}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderNavbar CollapseWidth="600" CurrentRoute="NavbarExplore" Size="Small" Position="Static">
+          <alder:AlderNavbar.Brand>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <alder:AlderPathIcon Data="{DynamicResource AlderIconCircleDashed}" Width="18" Height="18" VerticalAlignment="Center" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavbarBrand}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+            </StackPanel>
+          </alder:AlderNavbar.Brand>
+          <alder:AlderNavbar.Navigation>
+            <StackPanel Orientation="Horizontal" Spacing="4">
+              <alder:AlderNavbarItem Route="NavbarExplore" Content="{DynamicResource GalleryText.NavbarExplore}" />
+              <alder:AlderNavbarItem Route="NavbarCalendars" Content="{DynamicResource GalleryText.NavbarCalendars}" />
+              <alder:AlderNavbarItem Route="NavbarCommunity" Content="{DynamicResource GalleryText.NavbarCommunity}" />
+            </StackPanel>
+          </alder:AlderNavbar.Navigation>
+          <alder:AlderNavbar.Actions>
+            <StackPanel Orientation="Horizontal" Spacing="4">
+              <alder:AlderTextBlock Classes="wide-action" Text="{DynamicResource GalleryText.NavbarClock}" FontSize="12" Foreground="{DynamicResource AlderMuted}" VerticalAlignment="Center" />
+              <alder:AlderNavbarItem Route="NavbarHostEvent" Content="{DynamicResource GalleryText.NavbarHostEvent}" Icon="{DynamicResource AlderIconPlus}" />
+              <alder:AlderButton Size="Small" Variant="Ghost" IsIconOnly="True" Icon="{DynamicResource AlderIconMagnifier}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.NavDemoSearchDocs}" Click="OpenSearch" />
+              <alder:AlderButton Size="Small" Variant="Ghost" Padding="0" IsIconOnly="True"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.NavDemoAccount}">
+                <alder:AlderAvatar Width="28" Height="28" Fallback="JR" />
+                <alder:AlderButton.Flyout>
+                  <alder:AlderMenuFlyout>
+                    <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavDemoProfile}"
+                              Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+                    <alder:AlderMenuItem Header="{DynamicResource GalleryText.Settings}"
+                              Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+                    <alder:AlderMenuItem Header="{DynamicResource GalleryText.NavDemoSupport}"
+                              Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+                  </alder:AlderMenuFlyout>
+                </alder:AlderButton.Flyout>
+              </alder:AlderButton>
+            </StackPanel>
+          </alder:AlderNavbar.Actions>
+          <alder:AlderNavbar.Menu>
+            <StackPanel Orientation="Vertical" Spacing="4">
+              <alder:AlderNavbarItem Route="NavbarExplore" Content="{DynamicResource GalleryText.NavbarExplore}" IsMenuItem="True" />
+              <alder:AlderNavbarItem Route="NavbarCalendars" Content="{DynamicResource GalleryText.NavbarCalendars}" IsMenuItem="True" />
+              <alder:AlderNavbarItem Route="NavbarCommunity" Content="{DynamicResource GalleryText.NavbarCommunity}" IsMenuItem="True" />
+            </StackPanel>
+          </alder:AlderNavbar.Menu>
+        </alder:AlderNavbar>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var bar = new AlderNavbar
+        {
+            Size = AlderSize.Small,
+            HeaderHeight = 48,
+            Brand = brand,
+            Navigation = calendarLinks,
+            Actions = eventActions,
+            Menu = compactLinks
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

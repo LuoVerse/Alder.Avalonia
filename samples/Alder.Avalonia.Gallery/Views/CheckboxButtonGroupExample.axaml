@@ -1,0 +1,1032 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.CheckboxButtonGroupExample" x:DataType="vm:CheckboxButtonGroupViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="360">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardSelectFeatures}" FontSize="14" FontWeight="Medium" TextWrapping="Wrap" />
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardFeatureHint}" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+          <alder:AlderCheckboxButtonGroup SelectedKeys="security,storage"
+              AutomationProperties.Name="{DynamicResource GalleryText.CardSelectFeatures}">
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="security"
+                Description="{DynamicResource GalleryText.CardSecurityDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardSecurity}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardSecurity}" TextWrapping="Wrap" LineHeight="20" />
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="storage"
+                Description="{DynamicResource GalleryText.CardStorageDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardStorage}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardStorage}" TextWrapping="Wrap" LineHeight="20" />
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="analytics"
+                Description="{DynamicResource GalleryText.CardAnalyticsDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardAnalytics}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardAnalytics}" TextWrapping="Wrap" LineHeight="20" />
+            </alder:AlderCheckboxButtonGroupItem>
+          </alder:AlderCheckboxButtonGroup>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new StackPanel { Spacing = 12, MaxWidth = 360 };
+        var heading = new AlderTextBlock { Text = "Select features", FontSize = 14,
+            FontWeight = FontWeight.Medium, TextWrapping = TextWrapping.Wrap };
+        preview.Children.Add(heading);
+        var hint = new AlderTextBlock { FontSize = 12, LineHeight = 16, TextWrapping = TextWrapping.Wrap };
+        hint.Text = "Choose the features for your project.";
+        hint[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        preview.Children.Add(hint);
+
+        var group = new AlderCheckboxButtonGroup { SelectedKeys = ["security", "storage"] };
+        AutomationProperties.SetName(group, "Select features");
+        preview.Children.Add(group);
+
+        var item1 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Detect and block threats in real time"
+        };
+        AlderChoiceGroup.SetKey(item1, "security");
+        AutomationProperties.SetName(item1, "Security");
+        item1.Content = new AlderTextBlock { Text = "Security", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        group.Children.Add(item1);
+
+        var item2 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Cloud storage with automatic backups"
+        };
+        AlderChoiceGroup.SetKey(item2, "storage");
+        AutomationProperties.SetName(item2, "Storage");
+        item2.Content = new AlderTextBlock { Text = "Storage", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        group.Children.Add(item2);
+
+        var item3 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Usage trends and performance reports"
+        };
+        AlderChoiceGroup.SetKey(item3, "analytics");
+        AutomationProperties.SetName(item3, "Analytics");
+        item3.Content = new AlderTextBlock { Text = "Analytics", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        group.Children.Add(item3);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="360">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardAddOns}" FontSize="14" FontWeight="Medium" TextWrapping="Wrap" />
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardAddOnHint}" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+          <alder:AlderCheckboxButtonGroup SelectedKeys="{CompiledBinding SelectedAddOns, Mode=TwoWay}"
+              AutomationProperties.Name="{DynamicResource GalleryText.CardAddOns}">
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="backups"
+                Description="{DynamicResource GalleryText.CardBackupsDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardBackups}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardBackups}" TextWrapping="Wrap" LineHeight="20" />
+              <alder:AlderCheckboxButtonGroupItem.Details>
+                <alder:AlderTextBlock FontSize="14" LineHeight="20" TextWrapping="Wrap">
+                  <Run Text="{DynamicResource GalleryText.CardMonthly5}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.CardMonthlySuffix}" FontSize="12" FontWeight="Normal" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderTextBlock>
+              </alder:AlderCheckboxButtonGroupItem.Details>
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="monitoring"
+                Description="{DynamicResource GalleryText.CardMonitoringDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardMonitoring}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardMonitoring}" TextWrapping="Wrap" LineHeight="20" />
+              <alder:AlderCheckboxButtonGroupItem.Details>
+                <alder:AlderTextBlock FontSize="14" LineHeight="20" TextWrapping="Wrap">
+                  <Run Text="{DynamicResource GalleryText.CardMonthly12}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.CardMonthlySuffix}" FontSize="12" FontWeight="Normal" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderTextBlock>
+              </alder:AlderCheckboxButtonGroupItem.Details>
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="support"
+                Description="{DynamicResource GalleryText.CardSupportDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardSupport}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardSupport}" TextWrapping="Wrap" LineHeight="20" />
+              <alder:AlderCheckboxButtonGroupItem.Details>
+                <alder:AlderTextBlock FontSize="14" LineHeight="20" TextWrapping="Wrap">
+                  <Run Text="{DynamicResource GalleryText.CardMonthly8}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.CardMonthlySuffix}" FontSize="12" FontWeight="Normal" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderTextBlock>
+              </alder:AlderCheckboxButtonGroupItem.Details>
+            </alder:AlderCheckboxButtonGroupItem>
+          </alder:AlderCheckboxButtonGroup>
+          <alder:AlderTextBlock Text="{CompiledBinding SelectedAddOnsText}" Foreground="{DynamicResource AlderMuted}"
+                     TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new StackPanel { Spacing = 12, MaxWidth = 360 };
+        var heading = new AlderTextBlock { Text = "Add-ons", FontSize = 14,
+            FontWeight = FontWeight.Medium, TextWrapping = TextWrapping.Wrap };
+        preview.Children.Add(heading);
+        var hint = new AlderTextBlock { FontSize = 12, LineHeight = 16, TextWrapping = TextWrapping.Wrap };
+        hint.Text = "Select the add-ons you need.";
+        hint[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        preview.Children.Add(hint);
+
+        var group = new AlderCheckboxButtonGroup();
+        AutomationProperties.SetName(group, "Add-ons");
+        preview.Children.Add(group);
+        group.Bind(AlderChoiceGroup.SelectedKeysProperty,
+            CompiledBinding.Create((CheckboxButtonGroupViewModel vm) => vm.SelectedAddOns, mode: BindingMode.TwoWay));
+
+        var item1 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Automatic daily backups"
+        };
+        AlderChoiceGroup.SetKey(item1, "backups");
+        AutomationProperties.SetName(item1, "Backups");
+        item1.Content = new AlderTextBlock { Text = "Backups", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        var price1 = new Run { Text = "US$5.00", FontWeight = FontWeight.SemiBold };
+        var suffix1 = new Run { Text = "/mo", FontSize = 12, FontWeight = FontWeight.Normal };
+        suffix1[!Run.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        item1.Details = new AlderTextBlock { FontSize = 14, LineHeight = 20, TextWrapping = TextWrapping.Wrap, Inlines = new InlineCollection { price1, suffix1 } };
+        group.Children.Add(item1);
+
+        var item2 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Around-the-clock monitoring and alerts"
+        };
+        AlderChoiceGroup.SetKey(item2, "monitoring");
+        AutomationProperties.SetName(item2, "Monitoring");
+        item2.Content = new AlderTextBlock { Text = "Monitoring", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        var price2 = new Run { Text = "US$12.00", FontWeight = FontWeight.SemiBold };
+        var suffix2 = new Run { Text = "/mo", FontSize = 12, FontWeight = FontWeight.Normal };
+        suffix2[!Run.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        item2.Details = new AlderTextBlock { FontSize = 14, LineHeight = 20, TextWrapping = TextWrapping.Wrap, Inlines = new InlineCollection { price2, suffix2 } };
+        group.Children.Add(item2);
+
+        var item3 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Priority support by email or chat"
+        };
+        AlderChoiceGroup.SetKey(item3, "support");
+        AutomationProperties.SetName(item3, "Support");
+        item3.Content = new AlderTextBlock { Text = "Support", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        var price3 = new Run { Text = "US$8.00", FontWeight = FontWeight.SemiBold };
+        var suffix3 = new Run { Text = "/mo", FontSize = 12, FontWeight = FontWeight.Normal };
+        suffix3[!Run.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        item3.Details = new AlderTextBlock { FontSize = 14, LineHeight = 20, TextWrapping = TextWrapping.Wrap, Inlines = new InlineCollection { price3, suffix3 } };
+        group.Children.Add(item3);
+
+        var summary = new AlderTextBlock { TextWrapping = TextWrapping.Wrap };
+        AutomationProperties.SetLiveSetting(summary, AutomationLiveSetting.Polite);
+        summary[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        summary.Bind(TextBlock.TextProperty, CompiledBinding.Create((CheckboxButtonGroupViewModel vm) => vm.SelectedAddOnsText));
+        preview.Children.Add(summary);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleCustomIndicator" Title="{DynamicResource GalleryText.CardCustomIndicator}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="768">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardNotificationPreferences}" FontSize="14" FontWeight="Medium" TextWrapping="Wrap" />
+          <alder:AlderCheckboxButtonGroup Layout="Grid" Columns="3" SelectedKeys="updates,alerts"
+              AutomationProperties.Name="{DynamicResource GalleryText.CardNotificationPreferences}">
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="updates"
+                Description="{DynamicResource GalleryText.CardProductUpdatesDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardProductUpdates}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardProductUpdates}" TextWrapping="Wrap" LineHeight="20" />
+              <alder:AlderCheckboxButtonGroupItem.Indicator>
+                <alder:AlderPathIcon Width="20" Height="20" Data="{DynamicResource AlderIconCheckCircleFilled}" Foreground="{DynamicResource AlderAccent}" />
+              </alder:AlderCheckboxButtonGroupItem.Indicator>
+              <alder:AlderCheckboxButtonGroupItem.Details>
+                <alder:AlderTextBlock FontSize="14" LineHeight="20" TextWrapping="Wrap">
+                  <Run Text="4,200" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.CardSubscribersSuffix}" FontSize="12" FontWeight="Normal" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderTextBlock>
+              </alder:AlderCheckboxButtonGroupItem.Details>
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="alerts"
+                Description="{DynamicResource GalleryText.CardSecurityAlertsDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardSecurityAlerts}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardSecurityAlerts}" TextWrapping="Wrap" LineHeight="20" />
+              <alder:AlderCheckboxButtonGroupItem.Indicator>
+                <alder:AlderPathIcon Width="20" Height="20" Data="{DynamicResource AlderIconCheckCircleFilled}" Foreground="{DynamicResource AlderAccent}" />
+              </alder:AlderCheckboxButtonGroupItem.Indicator>
+              <alder:AlderCheckboxButtonGroupItem.Details>
+                <alder:AlderTextBlock FontSize="14" LineHeight="20" TextWrapping="Wrap">
+                  <Run Text="8,100" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.CardSubscribersSuffix}" FontSize="12" FontWeight="Normal" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderTextBlock>
+              </alder:AlderCheckboxButtonGroupItem.Details>
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="marketing"
+                Description="{DynamicResource GalleryText.CardMarketingDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardMarketing}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardMarketing}" TextWrapping="Wrap" LineHeight="20" />
+              <alder:AlderCheckboxButtonGroupItem.Indicator>
+                <alder:AlderPathIcon Width="20" Height="20" Data="{DynamicResource AlderIconCheckCircleFilled}" Foreground="{DynamicResource AlderAccent}" />
+              </alder:AlderCheckboxButtonGroupItem.Indicator>
+              <alder:AlderCheckboxButtonGroupItem.Details>
+                <alder:AlderTextBlock FontSize="14" LineHeight="20" TextWrapping="Wrap">
+                  <Run Text="2,300" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.CardSubscribersSuffix}" FontSize="12" FontWeight="Normal" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderTextBlock>
+              </alder:AlderCheckboxButtonGroupItem.Details>
+            </alder:AlderCheckboxButtonGroupItem>
+          </alder:AlderCheckboxButtonGroup>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new StackPanel { Spacing = 12, MaxWidth = 768 };
+        var heading = new AlderTextBlock { Text = "Notification preferences", FontSize = 14,
+            FontWeight = FontWeight.Medium, TextWrapping = TextWrapping.Wrap };
+        preview.Children.Add(heading);
+
+        var group = new AlderCheckboxButtonGroup { Layout = CheckboxButtonGroupLayout.Grid, Columns = 3, SelectedKeys = ["updates", "alerts"] };
+        AutomationProperties.SetName(group, "Notification preferences");
+        preview.Children.Add(group);
+
+        var item1 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Product news and practical tips"
+        };
+        AlderChoiceGroup.SetKey(item1, "updates");
+        AutomationProperties.SetName(item1, "Product Updates");
+        item1.Content = new AlderTextBlock { Text = "Product Updates", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        var indicator1 = new AlderPathIcon { Width = 20, Height = 20 };
+        indicator1[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconCheckCircleFilled");
+        indicator1[!PathIcon.ForegroundProperty] = new DynamicResourceExtension("AlderAccent");
+        item1.Indicator = indicator1;
+        var price1 = new Run { Text = "4,200", FontWeight = FontWeight.SemiBold };
+        var suffix1 = new Run { Text = " subscribers", FontSize = 12, FontWeight = FontWeight.Normal };
+        suffix1[!Run.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        item1.Details = new AlderTextBlock { FontSize = 14, LineHeight = 20, TextWrapping = TextWrapping.Wrap, Inlines = new InlineCollection { price1, suffix1 } };
+        group.Children.Add(item1);
+
+        var item2 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Security notices and maintenance alerts"
+        };
+        AlderChoiceGroup.SetKey(item2, "alerts");
+        AutomationProperties.SetName(item2, "Security Alerts");
+        item2.Content = new AlderTextBlock { Text = "Security Alerts", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        var indicator2 = new AlderPathIcon { Width = 20, Height = 20 };
+        indicator2[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconCheckCircleFilled");
+        indicator2[!PathIcon.ForegroundProperty] = new DynamicResourceExtension("AlderAccent");
+        item2.Indicator = indicator2;
+        var price2 = new Run { Text = "8,100", FontWeight = FontWeight.SemiBold };
+        var suffix2 = new Run { Text = " subscribers", FontSize = 12, FontWeight = FontWeight.Normal };
+        suffix2[!Run.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        item2.Details = new AlderTextBlock { FontSize = 14, LineHeight = 20, TextWrapping = TextWrapping.Wrap, Inlines = new InlineCollection { price2, suffix2 } };
+        group.Children.Add(item2);
+
+        var item3 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Promotions and special offers"
+        };
+        AlderChoiceGroup.SetKey(item3, "marketing");
+        AutomationProperties.SetName(item3, "Marketing");
+        item3.Content = new AlderTextBlock { Text = "Marketing", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        var indicator3 = new AlderPathIcon { Width = 20, Height = 20 };
+        indicator3[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconCheckCircleFilled");
+        indicator3[!PathIcon.ForegroundProperty] = new DynamicResourceExtension("AlderAccent");
+        item3.Indicator = indicator3;
+        var price3 = new Run { Text = "2,300", FontWeight = FontWeight.SemiBold };
+        var suffix3 = new Run { Text = " subscribers", FontSize = 12, FontWeight = FontWeight.Normal };
+        suffix3[!Run.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        item3.Details = new AlderTextBlock { FontSize = 14, LineHeight = 20, TextWrapping = TextWrapping.Wrap, Inlines = new InlineCollection { price3, suffix3 } };
+        group.Children.Add(item3);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDisabledGroup" Title="{DynamicResource GalleryText.CardDisabledGroup}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="360">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardSelectFeatures}" FontSize="14" FontWeight="Medium" TextWrapping="Wrap" />
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardFeaturePaused}" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+          <alder:AlderCheckboxButtonGroup IsEnabled="False" SelectedKeys="security"
+              AutomationProperties.Name="{DynamicResource GalleryText.CardSelectFeatures}">
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="security"
+                Description="{DynamicResource GalleryText.CardSecurityDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardSecurity}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardSecurity}" TextWrapping="Wrap" LineHeight="20" />
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="storage"
+                Description="{DynamicResource GalleryText.CardStorageDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardStorage}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardStorage}" TextWrapping="Wrap" LineHeight="20" />
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="analytics"
+                Description="{DynamicResource GalleryText.CardAnalyticsDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardAnalytics}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardAnalytics}" TextWrapping="Wrap" LineHeight="20" />
+            </alder:AlderCheckboxButtonGroupItem>
+          </alder:AlderCheckboxButtonGroup>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new StackPanel { Spacing = 12, MaxWidth = 360 };
+        var heading = new AlderTextBlock { Text = "Select features", FontSize = 14,
+            FontWeight = FontWeight.Medium, TextWrapping = TextWrapping.Wrap };
+        preview.Children.Add(heading);
+        var hint = new AlderTextBlock { FontSize = 12, LineHeight = 16, TextWrapping = TextWrapping.Wrap };
+        hint.Text = "Feature selection is temporarily unavailable.";
+        hint[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        preview.Children.Add(hint);
+
+        var group = new AlderCheckboxButtonGroup { IsEnabled = false, SelectedKeys = ["security"] };
+        AutomationProperties.SetName(group, "Select features");
+        preview.Children.Add(group);
+
+        var item1 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Detect and block threats in real time"
+        };
+        AlderChoiceGroup.SetKey(item1, "security");
+        AutomationProperties.SetName(item1, "Security");
+        item1.Content = new AlderTextBlock { Text = "Security", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        group.Children.Add(item1);
+
+        var item2 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Cloud storage with automatic backups"
+        };
+        AlderChoiceGroup.SetKey(item2, "storage");
+        AutomationProperties.SetName(item2, "Storage");
+        item2.Content = new AlderTextBlock { Text = "Storage", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        group.Children.Add(item2);
+
+        var item3 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Usage trends and performance reports"
+        };
+        AlderChoiceGroup.SetKey(item3, "analytics");
+        AutomationProperties.SetName(item3, "Analytics");
+        item3.Content = new AlderTextBlock { Text = "Analytics", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        group.Children.Add(item3);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGridLayout" Title="{DynamicResource GalleryText.CardGridLayout}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="672">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardAddOns}" FontSize="14" FontWeight="Medium" TextWrapping="Wrap" />
+          <alder:AlderCheckboxButtonGroup Layout="Grid" Columns="3" SelectedKeys="backups,monitoring"
+              AutomationProperties.Name="{DynamicResource GalleryText.CardAddOns}">
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="backups"
+                Description="{DynamicResource GalleryText.CardBackupsDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardBackups}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardBackups}" TextWrapping="Wrap" LineHeight="20" />
+              <alder:AlderCheckboxButtonGroupItem.Details>
+                <alder:AlderTextBlock FontSize="14" LineHeight="20" TextWrapping="Wrap">
+                  <Run Text="{DynamicResource GalleryText.CardMonthly5}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.CardMonthlySuffix}" FontSize="12" FontWeight="Normal" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderTextBlock>
+              </alder:AlderCheckboxButtonGroupItem.Details>
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="monitoring"
+                Description="{DynamicResource GalleryText.CardMonitoringDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardMonitoring}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardMonitoring}" TextWrapping="Wrap" LineHeight="20" />
+              <alder:AlderCheckboxButtonGroupItem.Details>
+                <alder:AlderTextBlock FontSize="14" LineHeight="20" TextWrapping="Wrap">
+                  <Run Text="{DynamicResource GalleryText.CardMonthly12}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.CardMonthlySuffix}" FontSize="12" FontWeight="Normal" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderTextBlock>
+              </alder:AlderCheckboxButtonGroupItem.Details>
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="support"
+                Description="{DynamicResource GalleryText.CardSupportDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardSupport}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardSupport}" TextWrapping="Wrap" LineHeight="20" />
+              <alder:AlderCheckboxButtonGroupItem.Details>
+                <alder:AlderTextBlock FontSize="14" LineHeight="20" TextWrapping="Wrap">
+                  <Run Text="{DynamicResource GalleryText.CardMonthly8}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.CardMonthlySuffix}" FontSize="12" FontWeight="Normal" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderTextBlock>
+              </alder:AlderCheckboxButtonGroupItem.Details>
+            </alder:AlderCheckboxButtonGroupItem>
+          </alder:AlderCheckboxButtonGroup>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new StackPanel { Spacing = 12, MaxWidth = 672 };
+        var heading = new AlderTextBlock { Text = "Add-ons", FontSize = 14,
+            FontWeight = FontWeight.Medium, TextWrapping = TextWrapping.Wrap };
+        preview.Children.Add(heading);
+
+        var group = new AlderCheckboxButtonGroup { Layout = CheckboxButtonGroupLayout.Grid, Columns = 3, SelectedKeys = ["backups", "monitoring"] };
+        AutomationProperties.SetName(group, "Add-ons");
+        preview.Children.Add(group);
+
+        var item1 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Automatic daily backups"
+        };
+        AlderChoiceGroup.SetKey(item1, "backups");
+        AutomationProperties.SetName(item1, "Backups");
+        item1.Content = new AlderTextBlock { Text = "Backups", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        var price1 = new Run { Text = "US$5.00", FontWeight = FontWeight.SemiBold };
+        var suffix1 = new Run { Text = "/mo", FontSize = 12, FontWeight = FontWeight.Normal };
+        suffix1[!Run.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        item1.Details = new AlderTextBlock { FontSize = 14, LineHeight = 20, TextWrapping = TextWrapping.Wrap, Inlines = new InlineCollection { price1, suffix1 } };
+        group.Children.Add(item1);
+
+        var item2 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Around-the-clock monitoring and alerts"
+        };
+        AlderChoiceGroup.SetKey(item2, "monitoring");
+        AutomationProperties.SetName(item2, "Monitoring");
+        item2.Content = new AlderTextBlock { Text = "Monitoring", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        var price2 = new Run { Text = "US$12.00", FontWeight = FontWeight.SemiBold };
+        var suffix2 = new Run { Text = "/mo", FontSize = 12, FontWeight = FontWeight.Normal };
+        suffix2[!Run.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        item2.Details = new AlderTextBlock { FontSize = 14, LineHeight = 20, TextWrapping = TextWrapping.Wrap, Inlines = new InlineCollection { price2, suffix2 } };
+        group.Children.Add(item2);
+
+        var item3 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Priority support by email or chat"
+        };
+        AlderChoiceGroup.SetKey(item3, "support");
+        AutomationProperties.SetName(item3, "Support");
+        item3.Content = new AlderTextBlock { Text = "Support", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        var price3 = new Run { Text = "US$8.00", FontWeight = FontWeight.SemiBold };
+        var suffix3 = new Run { Text = "/mo", FontSize = 12, FontWeight = FontWeight.Normal };
+        suffix3[!Run.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        item3.Details = new AlderTextBlock { FontSize = 14, LineHeight = 20, TextWrapping = TextWrapping.Wrap, Inlines = new InlineCollection { price3, suffix3 } };
+        group.Children.Add(item3);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleIconCards" Title="{DynamicResource GalleryText.CardIconCards}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="520">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardSecurityFeatures}" FontSize="14" FontWeight="Medium" TextWrapping="Wrap" />
+          <alder:AlderCheckboxButtonGroup SelectedKeys="2fa,encryption"
+              AutomationProperties.Name="{DynamicResource GalleryText.CardSecurityFeatures}">
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="2fa"
+                Description="{DynamicResource GalleryText.CardTwoFactorDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardTwoFactor}" Background="{DynamicResource AlderNeutral}">
+              <WrapPanel Orientation="Horizontal" ItemSpacing="10" LineSpacing="4" Margin="0,0,0,6">
+                <Border Width="32" Height="32" Background="{DynamicResource AlderSurface}" BoxShadow="{DynamicResource AlderFieldShadow}" CornerRadius="8">
+                  <alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconCheckCircle}" />
+                </Border>
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardTwoFactor}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                <alder:AlderChip Content="{DynamicResource GalleryText.CardRecommended}" Size="Small" Variant="Soft" Color="Success" VerticalAlignment="Center" />
+              </WrapPanel>
+              <alder:AlderCheckboxButtonGroupItem.Indicator>
+                <alder:AlderPathIcon Width="20" Height="20" Data="{DynamicResource AlderIconCheckCircleFilled}" Foreground="{DynamicResource AlderAccent}" />
+              </alder:AlderCheckboxButtonGroupItem.Indicator>
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="encryption"
+                Description="{DynamicResource GalleryText.CardEncryptionDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardEncryption}" Background="{DynamicResource AlderNeutral}">
+              <WrapPanel Orientation="Horizontal" ItemSpacing="10" LineSpacing="4" Margin="0,0,0,6">
+                <Border Width="32" Height="32" Background="{DynamicResource AlderSurface}" BoxShadow="{DynamicResource AlderFieldShadow}" CornerRadius="8">
+                  <alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconEyeSlash}" />
+                </Border>
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardEncryption}" FontWeight="SemiBold" VerticalAlignment="Center" />
+              </WrapPanel>
+              <alder:AlderCheckboxButtonGroupItem.Indicator>
+                <alder:AlderPathIcon Width="20" Height="20" Data="{DynamicResource AlderIconCheckCircleFilled}" Foreground="{DynamicResource AlderAccent}" />
+              </alder:AlderCheckboxButtonGroupItem.Indicator>
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="backup"
+                Description="{DynamicResource GalleryText.CardCloudBackupDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardCloudBackup}" Background="{DynamicResource AlderNeutral}">
+              <WrapPanel Orientation="Horizontal" ItemSpacing="10" LineSpacing="4" Margin="0,0,0,6">
+                <Border Width="32" Height="32" Background="{DynamicResource AlderSurface}" BoxShadow="{DynamicResource AlderFieldShadow}" CornerRadius="8">
+                  <alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconArchive}" />
+                </Border>
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardCloudBackup}" FontWeight="SemiBold" VerticalAlignment="Center" />
+              </WrapPanel>
+              <alder:AlderCheckboxButtonGroupItem.Indicator>
+                <alder:AlderPathIcon Width="20" Height="20" Data="{DynamicResource AlderIconCheckCircleFilled}" Foreground="{DynamicResource AlderAccent}" />
+              </alder:AlderCheckboxButtonGroupItem.Indicator>
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="alerts"
+                Description="{DynamicResource GalleryText.CardAlertSystemDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardAlertSystem}" Background="{DynamicResource AlderNeutral}">
+              <WrapPanel Orientation="Horizontal" ItemSpacing="10" LineSpacing="4" Margin="0,0,0,6">
+                <Border Width="32" Height="32" Background="{DynamicResource AlderSurface}" BoxShadow="{DynamicResource AlderFieldShadow}" CornerRadius="8">
+                  <alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconBell}" />
+                </Border>
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardAlertSystem}" FontWeight="SemiBold" VerticalAlignment="Center" />
+              </WrapPanel>
+              <alder:AlderCheckboxButtonGroupItem.Indicator>
+                <alder:AlderPathIcon Width="20" Height="20" Data="{DynamicResource AlderIconCheckCircleFilled}" Foreground="{DynamicResource AlderAccent}" />
+              </alder:AlderCheckboxButtonGroupItem.Indicator>
+            </alder:AlderCheckboxButtonGroupItem>
+          </alder:AlderCheckboxButtonGroup>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new StackPanel { Spacing = 12, MaxWidth = 520 };
+        var heading = new AlderTextBlock { Text = "Security features", FontSize = 14,
+            FontWeight = FontWeight.Medium, TextWrapping = TextWrapping.Wrap };
+        preview.Children.Add(heading);
+
+        var group = new AlderCheckboxButtonGroup { SelectedKeys = ["2fa", "encryption"] };
+        AutomationProperties.SetName(group, "Security features");
+        preview.Children.Add(group);
+
+        var item1 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Require two-factor authentication for all accounts."
+        };
+        AlderChoiceGroup.SetKey(item1, "2fa");
+        AutomationProperties.SetName(item1, "2FA");
+        item1[!TemplatedControl.BackgroundProperty] = new DynamicResourceExtension("AlderNeutral");
+        var header1 = new WrapPanel { Orientation = Orientation.Horizontal, ItemSpacing = 10, LineSpacing = 4, Margin = new Thickness(0, 0, 0, 6) };
+        var frame1 = new Border { Width = 32, Height = 32, CornerRadius = new CornerRadius(8) };
+        frame1[!Border.BackgroundProperty] = new DynamicResourceExtension("AlderSurface");
+        frame1[!Border.BoxShadowProperty] = new DynamicResourceExtension("AlderFieldShadow");
+        var icon1 = new AlderPathIcon { Width = 16, Height = 16 };
+        icon1[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconCheckCircle");
+        frame1.Child = icon1;
+        header1.Children.Add(frame1);
+        header1.Children.Add(new AlderTextBlock { Text = "2FA", FontWeight = FontWeight.SemiBold, VerticalAlignment = VerticalAlignment.Center });
+        item1.Content = header1;
+        header1.Children.Add(new AlderChip { Content = "Recommended", Size = AlderSize.Small, Variant = ChipVariant.Soft, Color = AlderStatusColor.Success, VerticalAlignment = VerticalAlignment.Center });
+        var indicator1 = new AlderPathIcon { Width = 20, Height = 20 };
+        indicator1[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconCheckCircleFilled");
+        indicator1[!PathIcon.ForegroundProperty] = new DynamicResourceExtension("AlderAccent");
+        item1.Indicator = indicator1;
+        group.Children.Add(item1);
+
+        var item2 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Encrypt stored data and network traffic."
+        };
+        AlderChoiceGroup.SetKey(item2, "encryption");
+        AutomationProperties.SetName(item2, "Encryption");
+        item2[!TemplatedControl.BackgroundProperty] = new DynamicResourceExtension("AlderNeutral");
+        var header2 = new WrapPanel { Orientation = Orientation.Horizontal, ItemSpacing = 10, LineSpacing = 4, Margin = new Thickness(0, 0, 0, 6) };
+        var frame2 = new Border { Width = 32, Height = 32, CornerRadius = new CornerRadius(8) };
+        frame2[!Border.BackgroundProperty] = new DynamicResourceExtension("AlderSurface");
+        frame2[!Border.BoxShadowProperty] = new DynamicResourceExtension("AlderFieldShadow");
+        var icon2 = new AlderPathIcon { Width = 16, Height = 16 };
+        icon2[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconEyeSlash");
+        frame2.Child = icon2;
+        header2.Children.Add(frame2);
+        header2.Children.Add(new AlderTextBlock { Text = "Encryption", FontWeight = FontWeight.SemiBold, VerticalAlignment = VerticalAlignment.Center });
+        item2.Content = header2;
+        var indicator2 = new AlderPathIcon { Width = 20, Height = 20 };
+        indicator2[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconCheckCircleFilled");
+        indicator2[!PathIcon.ForegroundProperty] = new DynamicResourceExtension("AlderAccent");
+        item2.Indicator = indicator2;
+        group.Children.Add(item2);
+
+        var item3 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Store automatic daily backups in the cloud."
+        };
+        AlderChoiceGroup.SetKey(item3, "backup");
+        AutomationProperties.SetName(item3, "Cloud Backup");
+        item3[!TemplatedControl.BackgroundProperty] = new DynamicResourceExtension("AlderNeutral");
+        var header3 = new WrapPanel { Orientation = Orientation.Horizontal, ItemSpacing = 10, LineSpacing = 4, Margin = new Thickness(0, 0, 0, 6) };
+        var frame3 = new Border { Width = 32, Height = 32, CornerRadius = new CornerRadius(8) };
+        frame3[!Border.BackgroundProperty] = new DynamicResourceExtension("AlderSurface");
+        frame3[!Border.BoxShadowProperty] = new DynamicResourceExtension("AlderFieldShadow");
+        var icon3 = new AlderPathIcon { Width = 16, Height = 16 };
+        icon3[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconArchive");
+        frame3.Child = icon3;
+        header3.Children.Add(frame3);
+        header3.Children.Add(new AlderTextBlock { Text = "Cloud Backup", FontWeight = FontWeight.SemiBold, VerticalAlignment = VerticalAlignment.Center });
+        item3.Content = header3;
+        var indicator3 = new AlderPathIcon { Width = 20, Height = 20 };
+        indicator3[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconCheckCircleFilled");
+        indicator3[!PathIcon.ForegroundProperty] = new DynamicResourceExtension("AlderAccent");
+        item3.Indicator = indicator3;
+        group.Children.Add(item3);
+
+        var item4 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Get notified when security incidents occur."
+        };
+        AlderChoiceGroup.SetKey(item4, "alerts");
+        AutomationProperties.SetName(item4, "Alert System");
+        item4[!TemplatedControl.BackgroundProperty] = new DynamicResourceExtension("AlderNeutral");
+        var header4 = new WrapPanel { Orientation = Orientation.Horizontal, ItemSpacing = 10, LineSpacing = 4, Margin = new Thickness(0, 0, 0, 6) };
+        var frame4 = new Border { Width = 32, Height = 32, CornerRadius = new CornerRadius(8) };
+        frame4[!Border.BackgroundProperty] = new DynamicResourceExtension("AlderSurface");
+        frame4[!Border.BoxShadowProperty] = new DynamicResourceExtension("AlderFieldShadow");
+        var icon4 = new AlderPathIcon { Width = 16, Height = 16 };
+        icon4[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconBell");
+        frame4.Child = icon4;
+        header4.Children.Add(frame4);
+        header4.Children.Add(new AlderTextBlock { Text = "Alert System", FontWeight = FontWeight.SemiBold, VerticalAlignment = VerticalAlignment.Center });
+        item4.Content = header4;
+        var indicator4 = new AlderPathIcon { Width = 20, Height = 20 };
+        indicator4[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconCheckCircleFilled");
+        indicator4[!PathIcon.ForegroundProperty] = new DynamicResourceExtension("AlderAccent");
+        item4.Indicator = indicator4;
+        group.Children.Add(item4);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleNoIndicator" Title="{DynamicResource GalleryText.CardNoIndicator}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="360">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardSelectFeatures}" FontSize="14" FontWeight="Medium" TextWrapping="Wrap" />
+          <alder:AlderCheckboxButtonGroup SelectedKeys="security"
+              AutomationProperties.Name="{DynamicResource GalleryText.CardSelectFeatures}">
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="security"
+                Description="{DynamicResource GalleryText.CardSecurityDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardSecurity}" ShowIndicator="False">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardSecurity}" TextWrapping="Wrap" LineHeight="20" />
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="storage"
+                Description="{DynamicResource GalleryText.CardStorageDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardStorage}" ShowIndicator="False">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardStorage}" TextWrapping="Wrap" LineHeight="20" />
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="analytics"
+                Description="{DynamicResource GalleryText.CardAnalyticsDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardAnalytics}" ShowIndicator="False">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardAnalytics}" TextWrapping="Wrap" LineHeight="20" />
+            </alder:AlderCheckboxButtonGroupItem>
+          </alder:AlderCheckboxButtonGroup>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new StackPanel { Spacing = 12, MaxWidth = 360 };
+        var heading = new AlderTextBlock { Text = "Select features", FontSize = 14,
+            FontWeight = FontWeight.Medium, TextWrapping = TextWrapping.Wrap };
+        preview.Children.Add(heading);
+
+        var group = new AlderCheckboxButtonGroup { SelectedKeys = ["security"] };
+        AutomationProperties.SetName(group, "Select features");
+        preview.Children.Add(group);
+
+        var item1 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Detect and block threats in real time", ShowIndicator = false
+        };
+        AlderChoiceGroup.SetKey(item1, "security");
+        AutomationProperties.SetName(item1, "Security");
+        item1.Content = new AlderTextBlock { Text = "Security", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        group.Children.Add(item1);
+
+        var item2 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Cloud storage with automatic backups", ShowIndicator = false
+        };
+        AlderChoiceGroup.SetKey(item2, "storage");
+        AutomationProperties.SetName(item2, "Storage");
+        item2.Content = new AlderTextBlock { Text = "Storage", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        group.Children.Add(item2);
+
+        var item3 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Usage trends and performance reports", ShowIndicator = false
+        };
+        AlderChoiceGroup.SetKey(item3, "analytics");
+        AutomationProperties.SetName(item3, "Analytics");
+        item3.Content = new AlderTextBlock { Text = "Analytics", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        group.Children.Add(item3);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSelectionAwareContent" Title="{DynamicResource GalleryText.CardSelectionAwareContent}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="360">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardSelectFeatures}" FontSize="14" FontWeight="Medium" TextWrapping="Wrap" />
+          <alder:AlderCheckboxButtonGroup
+              AutomationProperties.Name="{DynamicResource GalleryText.CardSelectFeatures}">
+            <alder:AlderCheckboxButtonGroup.Styles>
+              <Style Selector="alder|AlderCheckboxButtonGroupItem:checked Run.selectionPrice">
+                <Setter Property="Foreground" Value="{DynamicResource AlderAccent}" />
+              </Style>
+            </alder:AlderCheckboxButtonGroup.Styles>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="backups"
+                Description="{DynamicResource GalleryText.CardBackupsDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardBackups}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardBackups}" TextWrapping="Wrap" LineHeight="20" />
+              <alder:AlderCheckboxButtonGroupItem.Details>
+                <alder:AlderTextBlock FontSize="14" LineHeight="20" TextWrapping="Wrap">
+                  <Run Text="{DynamicResource GalleryText.CardMonthly5}" FontWeight="SemiBold" Classes="selectionPrice" /><Run Text="{DynamicResource GalleryText.CardMonthlySuffix}" FontSize="12" FontWeight="Normal" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderTextBlock>
+              </alder:AlderCheckboxButtonGroupItem.Details>
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="monitoring"
+                Description="{DynamicResource GalleryText.CardMonitoringDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardMonitoring}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardMonitoring}" TextWrapping="Wrap" LineHeight="20" />
+              <alder:AlderCheckboxButtonGroupItem.Details>
+                <alder:AlderTextBlock FontSize="14" LineHeight="20" TextWrapping="Wrap">
+                  <Run Text="{DynamicResource GalleryText.CardMonthly12}" FontWeight="SemiBold" Classes="selectionPrice" /><Run Text="{DynamicResource GalleryText.CardMonthlySuffix}" FontSize="12" FontWeight="Normal" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderTextBlock>
+              </alder:AlderCheckboxButtonGroupItem.Details>
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="support"
+                Description="{DynamicResource GalleryText.CardSupportDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardSupport}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardSupport}" TextWrapping="Wrap" LineHeight="20" />
+              <alder:AlderCheckboxButtonGroupItem.Details>
+                <alder:AlderTextBlock FontSize="14" LineHeight="20" TextWrapping="Wrap">
+                  <Run Text="{DynamicResource GalleryText.CardMonthly8}" FontWeight="SemiBold" Classes="selectionPrice" /><Run Text="{DynamicResource GalleryText.CardMonthlySuffix}" FontSize="12" FontWeight="Normal" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderTextBlock>
+              </alder:AlderCheckboxButtonGroupItem.Details>
+            </alder:AlderCheckboxButtonGroupItem>
+          </alder:AlderCheckboxButtonGroup>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new StackPanel { Spacing = 12, MaxWidth = 360 };
+        var heading = new AlderTextBlock { Text = "Select features", FontSize = 14,
+            FontWeight = FontWeight.Medium, TextWrapping = TextWrapping.Wrap };
+        preview.Children.Add(heading);
+
+        var group = new AlderCheckboxButtonGroup();
+        AutomationProperties.SetName(group, "Select features");
+        preview.Children.Add(group);
+        group.Styles.Add(new Style(x => x.OfType<AlderCheckboxButtonGroupItem>().Class(":checked")
+            .Descendant().OfType<Run>().Class("selectionPrice"))
+        {
+            Setters = { new Setter(Run.ForegroundProperty, new DynamicResourceExtension("AlderAccent")) }
+        });
+
+        var item1 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Automatic daily backups"
+        };
+        AlderChoiceGroup.SetKey(item1, "backups");
+        AutomationProperties.SetName(item1, "Backups");
+        item1.Content = new AlderTextBlock { Text = "Backups", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        var price1 = new Run { Text = "US$5.00", FontWeight = FontWeight.SemiBold };
+        var suffix1 = new Run { Text = "/mo", FontSize = 12, FontWeight = FontWeight.Normal };
+        suffix1[!Run.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        price1.Classes.Add("selectionPrice");
+        item1.Details = new AlderTextBlock { FontSize = 14, LineHeight = 20, TextWrapping = TextWrapping.Wrap, Inlines = new InlineCollection { price1, suffix1 } };
+        group.Children.Add(item1);
+
+        var item2 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Around-the-clock monitoring and alerts"
+        };
+        AlderChoiceGroup.SetKey(item2, "monitoring");
+        AutomationProperties.SetName(item2, "Monitoring");
+        item2.Content = new AlderTextBlock { Text = "Monitoring", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        var price2 = new Run { Text = "US$12.00", FontWeight = FontWeight.SemiBold };
+        var suffix2 = new Run { Text = "/mo", FontSize = 12, FontWeight = FontWeight.Normal };
+        suffix2[!Run.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        price2.Classes.Add("selectionPrice");
+        item2.Details = new AlderTextBlock { FontSize = 14, LineHeight = 20, TextWrapping = TextWrapping.Wrap, Inlines = new InlineCollection { price2, suffix2 } };
+        group.Children.Add(item2);
+
+        var item3 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Priority support by email or chat"
+        };
+        AlderChoiceGroup.SetKey(item3, "support");
+        AutomationProperties.SetName(item3, "Support");
+        item3.Content = new AlderTextBlock { Text = "Support", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        var price3 = new Run { Text = "US$8.00", FontWeight = FontWeight.SemiBold };
+        var suffix3 = new Run { Text = "/mo", FontSize = 12, FontWeight = FontWeight.Normal };
+        suffix3[!Run.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        price3.Classes.Add("selectionPrice");
+        item3.Details = new AlderTextBlock { FontSize = 14, LineHeight = 20, TextWrapping = TextWrapping.Wrap, Inlines = new InlineCollection { price3, suffix3 } };
+        group.Children.Add(item3);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSubscriptionPlans" Title="{DynamicResource GalleryText.CardSubscriptionPlans}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="420">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardChooseSubscription}" FontSize="28" FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center" />
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardChooseSubscriptionHint}" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" TextAlignment="Center" />
+          <alder:AlderCheckboxButtonGroup SelectedKeys="silver"
+              AutomationProperties.Name="{DynamicResource GalleryText.CardChooseSubscription}">
+            <alder:AlderCheckboxButtonGroup.Styles>
+              <Style Selector="alder|AlderCheckboxButtonGroupItem:checked Run.selectionPrice">
+                <Setter Property="Foreground" Value="{DynamicResource AlderAlertSuccessInk}" />
+              </Style>
+            </alder:AlderCheckboxButtonGroup.Styles>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="gold"
+                Description="{DynamicResource GalleryText.CardPlanGoldDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardPlanGold}" SelectionBrush="{DynamicResource AlderFeedbackSuccess}" FontSize="18" FontWeight="Bold">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardPlanGold}" TextWrapping="Wrap" LineHeight="22" />
+              <alder:AlderCheckboxButtonGroupItem.Indicator>
+                <alder:AlderPathIcon Width="20" Height="20" Data="{DynamicResource AlderIconCheckCircleFilled}" Foreground="{DynamicResource AlderFeedbackSuccess}" />
+              </alder:AlderCheckboxButtonGroupItem.Indicator>
+              <alder:AlderCheckboxButtonGroupItem.Details>
+                <alder:AlderTextBlock FontSize="14" LineHeight="20" TextWrapping="Wrap">
+                  <Run Text="{DynamicResource GalleryText.CardPlanGoldPrice}" FontWeight="SemiBold" Classes="selectionPrice" /><Run Text="{DynamicResource GalleryText.CardPlanGoldCycle}" FontSize="12" FontWeight="Normal" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderTextBlock>
+              </alder:AlderCheckboxButtonGroupItem.Details>
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="silver"
+                Description="{DynamicResource GalleryText.CardPlanSilverDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardPlanSilver}" SelectionBrush="{DynamicResource AlderFeedbackSuccess}" FontSize="18" FontWeight="Bold">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardPlanSilver}" TextWrapping="Wrap" LineHeight="22" />
+              <alder:AlderCheckboxButtonGroupItem.Indicator>
+                <alder:AlderPathIcon Width="20" Height="20" Data="{DynamicResource AlderIconCheckCircleFilled}" Foreground="{DynamicResource AlderFeedbackSuccess}" />
+              </alder:AlderCheckboxButtonGroupItem.Indicator>
+              <alder:AlderCheckboxButtonGroupItem.Details>
+                <alder:AlderTextBlock FontSize="14" LineHeight="20" TextWrapping="Wrap">
+                  <Run Text="{DynamicResource GalleryText.CardPlanSilverPrice}" FontWeight="SemiBold" Classes="selectionPrice" /><Run Text="{DynamicResource GalleryText.CardPlanSilverCycle}" FontSize="12" FontWeight="Normal" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderTextBlock>
+              </alder:AlderCheckboxButtonGroupItem.Details>
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="bronze"
+                Description="{DynamicResource GalleryText.CardPlanBronzeDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardPlanBronze}" SelectionBrush="{DynamicResource AlderFeedbackSuccess}" FontSize="18" FontWeight="Bold">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardPlanBronze}" TextWrapping="Wrap" LineHeight="22" />
+              <alder:AlderCheckboxButtonGroupItem.Indicator>
+                <alder:AlderPathIcon Width="20" Height="20" Data="{DynamicResource AlderIconCheckCircleFilled}" Foreground="{DynamicResource AlderFeedbackSuccess}" />
+              </alder:AlderCheckboxButtonGroupItem.Indicator>
+              <alder:AlderCheckboxButtonGroupItem.Details>
+                <alder:AlderTextBlock FontSize="14" LineHeight="20" TextWrapping="Wrap">
+                  <Run Text="{DynamicResource GalleryText.CardPlanBronzePrice}" FontWeight="SemiBold" Classes="selectionPrice" /><Run Text="{DynamicResource GalleryText.CardPlanBronzeCycle}" FontSize="12" FontWeight="Normal" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderTextBlock>
+              </alder:AlderCheckboxButtonGroupItem.Details>
+            </alder:AlderCheckboxButtonGroupItem>
+          </alder:AlderCheckboxButtonGroup>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new StackPanel { Spacing = 12, MaxWidth = 420 };
+        var heading = new AlderTextBlock { Text = "Choose a subscription", FontSize = 28,
+            FontWeight = FontWeight.Bold, TextWrapping = TextWrapping.Wrap, TextAlignment = TextAlignment.Center };
+        preview.Children.Add(heading);
+        var hint = new AlderTextBlock { FontSize = 12, LineHeight = 16, TextWrapping = TextWrapping.Wrap, TextAlignment = TextAlignment.Center };
+        hint.Text = "Pick a plan. The first month is on us.";
+        hint[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        preview.Children.Add(hint);
+
+        var group = new AlderCheckboxButtonGroup { SelectedKeys = ["silver"] };
+        AutomationProperties.SetName(group, "Choose a subscription");
+        preview.Children.Add(group);
+        group.Styles.Add(new Style(x => x.OfType<AlderCheckboxButtonGroupItem>().Class(":checked")
+            .Descendant().OfType<Run>().Class("selectionPrice"))
+        {
+            Setters = { new Setter(Run.ForegroundProperty, new DynamicResourceExtension("AlderAlertSuccessInk")) }
+        });
+
+        var item1 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Saving, investing, and learning tools for the whole family.", FontSize = 18, FontWeight = FontWeight.Bold
+        };
+        AlderChoiceGroup.SetKey(item1, "gold");
+        AutomationProperties.SetName(item1, "Gold");
+        item1[!AlderCheckboxButtonGroupItem.SelectionBrushProperty] = new DynamicResourceExtension("AlderFeedbackSuccess");
+        item1.Content = new AlderTextBlock { Text = "Gold", TextWrapping = TextWrapping.Wrap, LineHeight = 22 };
+        var indicator1 = new AlderPathIcon { Width = 20, Height = 20 };
+        indicator1[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconCheckCircleFilled");
+        indicator1[!PathIcon.ForegroundProperty] = new DynamicResourceExtension("AlderFeedbackSuccess");
+        item1.Indicator = indicator1;
+        var price1 = new Run { Text = "US$0.40/day", FontWeight = FontWeight.SemiBold };
+        var suffix1 = new Run { Text = " (US$12 billed monthly)", FontSize = 12, FontWeight = FontWeight.Normal };
+        suffix1[!Run.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        price1.Classes.Add("selectionPrice");
+        item1.Details = new AlderTextBlock { FontSize = 14, LineHeight = 20, TextWrapping = TextWrapping.Wrap, Inlines = new InlineCollection { price1, suffix1 } };
+        group.Children.Add(item1);
+
+        var item2 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "More tools to build your saving and investing skills.", FontSize = 18, FontWeight = FontWeight.Bold
+        };
+        AlderChoiceGroup.SetKey(item2, "silver");
+        AutomationProperties.SetName(item2, "Silver");
+        item2[!AlderCheckboxButtonGroupItem.SelectionBrushProperty] = new DynamicResourceExtension("AlderFeedbackSuccess");
+        item2.Content = new AlderTextBlock { Text = "Silver", TextWrapping = TextWrapping.Wrap, LineHeight = 22 };
+        var indicator2 = new AlderPathIcon { Width = 20, Height = 20 };
+        indicator2[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconCheckCircleFilled");
+        indicator2[!PathIcon.ForegroundProperty] = new DynamicResourceExtension("AlderFeedbackSuccess");
+        item2.Indicator = indicator2;
+        var price2 = new Run { Text = "US$0.20/day", FontWeight = FontWeight.SemiBold };
+        var suffix2 = new Run { Text = " (US$6 billed monthly)", FontSize = 12, FontWeight = FontWeight.Normal };
+        suffix2[!Run.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        price2.Classes.Add("selectionPrice");
+        item2.Details = new AlderTextBlock { FontSize = 14, LineHeight = 20, TextWrapping = TextWrapping.Wrap, Inlines = new InlineCollection { price2, suffix2 } };
+        group.Children.Add(item2);
+
+        var item3 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Basic tools for your first investments.", FontSize = 18, FontWeight = FontWeight.Bold
+        };
+        AlderChoiceGroup.SetKey(item3, "bronze");
+        AutomationProperties.SetName(item3, "Bronze");
+        item3[!AlderCheckboxButtonGroupItem.SelectionBrushProperty] = new DynamicResourceExtension("AlderFeedbackSuccess");
+        item3.Content = new AlderTextBlock { Text = "Bronze", TextWrapping = TextWrapping.Wrap, LineHeight = 22 };
+        var indicator3 = new AlderPathIcon { Width = 20, Height = 20 };
+        indicator3[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconCheckCircleFilled");
+        indicator3[!PathIcon.ForegroundProperty] = new DynamicResourceExtension("AlderFeedbackSuccess");
+        item3.Indicator = indicator3;
+        var price3 = new Run { Text = "US$0.10/day", FontWeight = FontWeight.SemiBold };
+        var suffix3 = new Run { Text = " (US$3 billed monthly)", FontSize = 12, FontWeight = FontWeight.Normal };
+        suffix3[!Run.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        price3.Classes.Add("selectionPrice");
+        item3.Details = new AlderTextBlock { FontSize = 14, LineHeight = 20, TextWrapping = TextWrapping.Wrap, Inlines = new InlineCollection { price3, suffix3 } };
+        group.Children.Add(item3);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleWithIcons" Title="{DynamicResource GalleryText.CardWithIcons}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="560">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardRolePermissions}" FontSize="14" FontWeight="Medium" TextWrapping="Wrap" />
+          <alder:AlderCheckboxButtonGroup Layout="Grid" Columns="2" SelectedKeys="content,analytics"
+              AutomationProperties.Name="{DynamicResource GalleryText.CardRolePermissions}">
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="content"
+                Description="{DynamicResource GalleryText.CardContentManagementDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardContentManagement}" ShowIndicator="False">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardContentManagement}" TextWrapping="Wrap" LineHeight="20" />
+              <alder:AlderCheckboxButtonGroupItem.Icon>
+                <alder:AlderPathIcon Width="22" Height="22" Data="{DynamicResource AlderIconPencil}" />
+              </alder:AlderCheckboxButtonGroupItem.Icon>
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="users"
+                Description="{DynamicResource GalleryText.CardUserAdministrationDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardUserAdministration}" ShowIndicator="False">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardUserAdministration}" TextWrapping="Wrap" LineHeight="20" />
+              <alder:AlderCheckboxButtonGroupItem.Icon>
+                <alder:AlderPathIcon Width="22" Height="22" Data="{DynamicResource AlderIconAvatarPerson}" />
+              </alder:AlderCheckboxButtonGroupItem.Icon>
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="analytics"
+                Description="{DynamicResource GalleryText.CardAnalyticsAccessDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardAnalyticsAccess}" ShowIndicator="False">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardAnalyticsAccess}" TextWrapping="Wrap" LineHeight="20" />
+              <alder:AlderCheckboxButtonGroupItem.Icon>
+                <alder:AlderPathIcon Width="22" Height="22" Data="{DynamicResource AlderIconChart}" />
+              </alder:AlderCheckboxButtonGroupItem.Icon>
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="settings"
+                Description="{DynamicResource GalleryText.CardWorkspaceSettingsDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardWorkspaceSettings}" ShowIndicator="False">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardWorkspaceSettings}" TextWrapping="Wrap" LineHeight="20" />
+              <alder:AlderCheckboxButtonGroupItem.Icon>
+                <alder:AlderPathIcon Width="22" Height="22" Data="{DynamicResource AlderIconGear}" />
+              </alder:AlderCheckboxButtonGroupItem.Icon>
+            </alder:AlderCheckboxButtonGroupItem>
+          </alder:AlderCheckboxButtonGroup>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new StackPanel { Spacing = 12, MaxWidth = 560 };
+        var heading = new AlderTextBlock { Text = "Role permissions", FontSize = 14,
+            FontWeight = FontWeight.Medium, TextWrapping = TextWrapping.Wrap };
+        preview.Children.Add(heading);
+
+        var group = new AlderCheckboxButtonGroup { Layout = CheckboxButtonGroupLayout.Grid, Columns = 2, SelectedKeys = ["content", "analytics"] };
+        AutomationProperties.SetName(group, "Role permissions");
+        preview.Children.Add(group);
+
+        var item1 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Create, edit, and remove content", ShowIndicator = false
+        };
+        AlderChoiceGroup.SetKey(item1, "content");
+        AutomationProperties.SetName(item1, "Content Management");
+        item1.Content = new AlderTextBlock { Text = "Content Management", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        var icon1 = new AlderPathIcon { Width = 22, Height = 22 };
+        icon1[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconPencil");
+        item1.Icon = icon1;
+        group.Children.Add(item1);
+
+        var item2 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Manage team members and roles", ShowIndicator = false
+        };
+        AlderChoiceGroup.SetKey(item2, "users");
+        AutomationProperties.SetName(item2, "User Administration");
+        item2.Content = new AlderTextBlock { Text = "User Administration", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        var icon2 = new AlderPathIcon { Width = 22, Height = 22 };
+        icon2[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconAvatarPerson");
+        item2.Icon = icon2;
+        group.Children.Add(item2);
+
+        var item3 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "View and export reports", ShowIndicator = false
+        };
+        AlderChoiceGroup.SetKey(item3, "analytics");
+        AutomationProperties.SetName(item3, "Analytics Access");
+        item3.Content = new AlderTextBlock { Text = "Analytics Access", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        var icon3 = new AlderPathIcon { Width = 22, Height = 22 };
+        icon3[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconChart");
+        item3.Icon = icon3;
+        group.Children.Add(item3);
+
+        var item4 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Configure workspace preferences", ShowIndicator = false
+        };
+        AlderChoiceGroup.SetKey(item4, "settings");
+        AutomationProperties.SetName(item4, "Settings");
+        item4.Content = new AlderTextBlock { Text = "Settings", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        var icon4 = new AlderPathIcon { Width = 22, Height = 22 };
+        icon4[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconGear");
+        item4.Icon = icon4;
+        group.Children.Add(item4);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleWithRipple" Title="{DynamicResource GalleryText.CardWithRipple}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="672">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardIntegrations}" FontSize="14" FontWeight="Medium" TextWrapping="Wrap" />
+          <alder:AlderCheckboxButtonGroup Layout="Grid" Columns="3" SelectedKeys="github"
+              AutomationProperties.Name="{DynamicResource GalleryText.CardIntegrations}">
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="github"
+                Description="{DynamicResource GalleryText.CardGitHubDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardGitHub}" IsRippleEnabled="True">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardGitHub}" TextWrapping="Wrap" LineHeight="20" />
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="slack"
+                Description="{DynamicResource GalleryText.CardSlackDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardSlack}" IsRippleEnabled="True">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardSlack}" TextWrapping="Wrap" LineHeight="20" />
+            </alder:AlderCheckboxButtonGroupItem>
+            <alder:AlderCheckboxButtonGroupItem alder:AlderChoiceGroup.Key="linear"
+                Description="{DynamicResource GalleryText.CardLinearDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CardLinear}" IsRippleEnabled="True">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardLinear}" TextWrapping="Wrap" LineHeight="20" />
+            </alder:AlderCheckboxButtonGroupItem>
+          </alder:AlderCheckboxButtonGroup>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new StackPanel { Spacing = 12, MaxWidth = 672 };
+        var heading = new AlderTextBlock { Text = "Integrations", FontSize = 14,
+            FontWeight = FontWeight.Medium, TextWrapping = TextWrapping.Wrap };
+        preview.Children.Add(heading);
+
+        var group = new AlderCheckboxButtonGroup { Layout = CheckboxButtonGroupLayout.Grid, Columns = 3, SelectedKeys = ["github"] };
+        AutomationProperties.SetName(group, "Integrations");
+        preview.Children.Add(group);
+
+        var item1 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Connect your code repositories", IsRippleEnabled = true
+        };
+        AlderChoiceGroup.SetKey(item1, "github");
+        AutomationProperties.SetName(item1, "GitHub");
+        item1.Content = new AlderTextBlock { Text = "GitHub", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        group.Children.Add(item1);
+
+        var item2 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Send notifications to your channels", IsRippleEnabled = true
+        };
+        AlderChoiceGroup.SetKey(item2, "slack");
+        AutomationProperties.SetName(item2, "Slack");
+        item2.Content = new AlderTextBlock { Text = "Slack", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        group.Children.Add(item2);
+
+        var item3 = new AlderCheckboxButtonGroupItem
+        {
+            Description = "Sync tasks with your projects", IsRippleEnabled = true
+        };
+        AlderChoiceGroup.SetKey(item3, "linear");
+        AutomationProperties.SetName(item3, "Linear");
+        item3.Content = new AlderTextBlock { Text = "Linear", TextWrapping = TextWrapping.Wrap, LineHeight = 20 };
+        group.Children.Add(item3);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

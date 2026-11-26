@@ -1,0 +1,143 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:c="using:Avalonia.Data.Converters" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.ListViewExample" x:DataType="vm:ProDataDisplayViewModel">
+  <UserControl.Styles>
+    <Style Selector="StackPanel#NoSelection, StackPanel#SingleSelection, StackPanel#MultipleSelection">
+      <Setter Property="Grid.ColumnSpan" Value="3" />
+    </Style>
+    <Style Selector="StackPanel#SingleSelection"><Setter Property="Grid.Row" Value="1" /></Style>
+    <Style Selector="StackPanel#MultipleSelection"><Setter Property="Grid.Row" Value="2" /></Style>
+    <ContainerQuery Name="SelectionModes" Query="min-width:680">
+      <Style Selector="StackPanel#NoSelection, StackPanel#SingleSelection, StackPanel#MultipleSelection">
+        <Setter Property="Grid.ColumnSpan" Value="1" />
+      </Style>
+      <Style Selector="StackPanel#SingleSelection">
+        <Setter Property="Grid.Row" Value="0" /><Setter Property="Grid.Column" Value="1" />
+      </Style>
+      <Style Selector="StackPanel#MultipleSelection">
+        <Setter Property="Grid.Row" Value="0" /><Setter Property="Grid.Column" Value="2" />
+      </Style>
+    </ContainerQuery>
+  </UserControl.Styles>
+  <UserControl.Resources>
+    <DataTemplate x:Key="FileRow" x:DataType="vm:DisplayExampleFile">
+      <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+        <alder:AlderPathIcon Classes.folder="{CompiledBinding IsFolder}" Width="16" Height="16" Foreground="{DynamicResource AlderMuted}">
+          <alder:AlderPathIcon.Styles>
+            <Style Selector="PathIcon"><Setter Property="Data" Value="{StaticResource AlderFileTreeFileIcon}" /></Style>
+            <Style Selector="PathIcon.folder"><Setter Property="Data" Value="{StaticResource AlderFileTreeFolderIcon}" /></Style>
+          </alder:AlderPathIcon.Styles>
+        </alder:AlderPathIcon>
+        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+          <alder:AlderTextBlock Text="{CompiledBinding Name}" FontSize="14" LineHeight="20" TextTrimming="CharacterEllipsis" />
+          <alder:AlderTextBlock Text="{CompiledBinding Detail}" FontSize="12" LineHeight="18" Foreground="{DynamicResource AlderMuted}"
+                     IsVisible="{CompiledBinding Detail, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+        </StackPanel>
+      </Grid>
+    </DataTemplate>
+  </UserControl.Resources>
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.ProDemoListViewUsage}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="452" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderListView ItemsSource="{CompiledBinding NavigationFiles}" ItemTemplate="{StaticResource FileRow}" SelectionMode="Multiple,Toggle" ActivateCommand="{CompiledBinding OpenFile}" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var files = new AlderListView
+        {
+            ItemsSource = model.NavigationFiles, ActivateCommand = model.OpenFile,
+            SelectionMode = SelectionMode.Multiple | SelectionMode.Toggle
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleActions" Title="{DynamicResource GalleryText.ProDemoListViewActions}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="452" Padding="2,10" HorizontalAlignment="Stretch">
+          <StackPanel Spacing="12" >
+            <alder:AlderListView ItemsSource="{CompiledBinding ActionFiles}" ItemTemplate="{StaticResource FileRow}" SelectionMode="Multiple,Toggle" SelectedItems="{CompiledBinding SelectedFiles}" ActivateCommand="{CompiledBinding OpenFile}" />
+            <alder:AlderActionBar IsOpen="{CompiledBinding HasSelectedFiles, Mode=OneWay}" DismissCommand="{CompiledBinding ClearFiles}">
+              <alder:AlderActionBar.Prefix>
+                <alder:AlderChip Size="Small" Variant="Soft" Content="{CompiledBinding SelectedFileCount}" />
+              </alder:AlderActionBar.Prefix>
+              <alder:AlderButton Size="Small" Variant="Ghost" Icon="{StaticResource AlderIconDownload}"
+                                 Content="{DynamicResource GalleryText.ProListDownload}" Command="{CompiledBinding DownloadFiles}" />
+              <alder:AlderActionBar.Suffix>
+                <alder:AlderButton Size="Small" Variant="Ghost" IsIconOnly="True" Icon="{StaticResource AlderIconXmark}"
+                                   AutomationProperties.Name="{DynamicResource GalleryText.ProDisplayClear}" Command="{CompiledBinding ClearFiles}" />
+              </alder:AlderActionBar.Suffix>
+            </alder:AlderActionBar>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var files = new AlderListView
+        {
+            ItemsSource = model.ActionFiles, ActivateCommand = model.OpenFile,
+            SelectionMode = SelectionMode.Multiple | SelectionMode.Toggle, SelectedItems = model.SelectedFiles
+        };
+        var actionBar = new AlderActionBar
+        {
+            DismissCommand = model.ClearFiles,
+            Content = new AlderButton { Content = "Download", Size = AlderSize.Small, Variant = ButtonVariant.Ghost, Command = model.DownloadFiles },
+            Suffix = new AlderButton { Content = "Clear", Size = AlderSize.Small, Variant = ButtonVariant.Ghost, Command = model.ClearFiles }
+        };
+        actionBar.Bind(AlderActionBar.IsOpenProperty, CompiledBinding.Create((ProDataDisplayViewModel vm) => vm.HasSelectedFiles, source: model));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.ProDemoListViewVariants}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="452" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderListView ItemsSource="{CompiledBinding SecondaryFiles}" ItemTemplate="{StaticResource FileRow}" SelectionMode="Multiple,Toggle" Variant="Secondary" ActivateCommand="{CompiledBinding OpenFile}" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var files = new AlderListView
+        {
+            ItemsSource = model.SecondaryFiles, ActivateCommand = model.OpenFile,
+            Variant = ListViewVariant.Secondary
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSelection" Title="{DynamicResource GalleryText.ProDemoListViewSelection}">
+      <g:ExampleCard.Preview>
+        <Border Container.Name="SelectionModes" Container.Sizing="Width" MaxWidth="738" Padding="2,10" HorizontalAlignment="Stretch">
+          <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="12">
+            <StackPanel Name="NoSelection" Spacing="6">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.ProDisplayNone}" FontWeight="SemiBold" />
+              <alder:AlderListView ItemsSource="{CompiledBinding SecondaryFiles}" ItemTemplate="{StaticResource FileRow}" SelectionMode="Single" SelectionEnabled="False" ActivateCommand="{CompiledBinding OpenFile}" />
+            </StackPanel>
+            <StackPanel Name="SingleSelection" Spacing="6">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.ProDisplaySingle}" FontWeight="SemiBold" />
+              <alder:AlderListView ItemsSource="{CompiledBinding SecondaryFiles}" ItemTemplate="{StaticResource FileRow}" ShowSelectionIndicator="False" SelectionMode="Single" ActivateCommand="{CompiledBinding OpenFile}" />
+            </StackPanel>
+            <StackPanel Name="MultipleSelection" Spacing="6">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.ProDisplayMultiple}" FontWeight="SemiBold" />
+              <alder:AlderListView ItemsSource="{CompiledBinding SecondaryFiles}" ItemTemplate="{StaticResource FileRow}" SelectionMode="Multiple,Toggle" ActivateCommand="{CompiledBinding OpenFile}" />
+            </StackPanel>
+          </Grid>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var readOnly = new AlderListView { ItemsSource = model.SecondaryFiles, SelectionEnabled = false };
+        var single = new AlderListView { ItemsSource = model.SecondaryFiles, SelectionMode = SelectionMode.Single };
+        var multiple = new AlderListView { ItemsSource = model.SecondaryFiles, SelectionMode = SelectionMode.Multiple | SelectionMode.Toggle };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.ProDemoListViewDisabled}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="452" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderListView ItemsSource="{CompiledBinding DisabledFiles}" ItemTemplate="{StaticResource FileRow}" SelectionMode="Multiple,Toggle" IsItemEnabled="{CompiledBinding CanOpenFile}" ActivateCommand="{CompiledBinding OpenFile}" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var files = new AlderListView
+        {
+            ItemsSource = model.DisabledFiles, ActivateCommand = model.OpenFile,
+            IsItemEnabled = model.CanOpenFile, SelectionMode = SelectionMode.Multiple | SelectionMode.Toggle
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

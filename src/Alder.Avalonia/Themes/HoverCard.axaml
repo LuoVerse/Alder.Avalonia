@@ -1,0 +1,15 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls">
+  <ControlTheme x:Key="{x:Type alder:AlderHoverCard}" TargetType="alder:AlderHoverCard">
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="Padding" Value="16" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <ContentPresenter Name="PART_Trigger" Content="{TemplateBinding Trigger}"
+                          HorizontalAlignment="Left" VerticalAlignment="Center" />
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+</ResourceDictionary>

@@ -1,0 +1,217 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" x:Class="Alder.Avalonia.Gallery.Views.ColorPickerExample"
+             x:DataType="vm:ColorsViewModel" FontFamily="fonts:Inter#Inter">
+  <Design.DataContext><vm:ColorsViewModel /></Design.DataContext>
+  <UserControl.Resources>
+        <DataTemplate x:Key="ColorSwatchesPopup" x:DataType="alder:AlderColorPicker">
+          <Border Margin="20,18,20,30" Padding="8,8,8,12" CornerRadius="20"
+                  Background="{DynamicResource AlderSurface}" BoxShadow="{DynamicResource AlderToolbarShadow}"
+                  Focusable="True" FocusAdorner="{x:Null}" KeyboardNavigation.IsTabStop="False" KeyboardNavigation.TabNavigation="Cycle">
+            <alder:AlderScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled" MaxHeight="460">
+              <StackPanel Width="232" Spacing="8">
+                <alder:AlderColorArea Width="232" Height="232" Value="{CompiledBinding DraftValue, Mode=TwoWay}" />
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,20" Margin="4,0" RowSpacing="4">
+                  <alder:AlderLabel Content="{DynamicResource GalleryText.ColorHue}" Target="{CompiledBinding #Hue}" />
+                  <alder:AlderTextBlock Grid.Column="1" Text="{CompiledBinding #Hue.ChannelText}" Foreground="{DynamicResource AlderMuted}" />
+                  <alder:AlderColorSlider x:Name="Hue" Grid.Row="1" Grid.ColumnSpan="2" Width="NaN"
+                                          ColorValue="{CompiledBinding DraftValue, Mode=TwoWay}" />
+                </Grid>
+                <alder:AlderColorSwatchPicker Size="ExtraSmall" HorizontalAlignment="Center"
+                                             ItemsSource="{x:Static vm:ColorsViewModel.PickerPresets}"
+                                             SelectedItem="{CompiledBinding DraftValue, Mode=TwoWay}"
+                                             AutomationProperties.Name="{DynamicResource GalleryText.ColorPickerSwatches}" />
+              </StackPanel>
+            </alder:AlderScrollViewer>
+          </Border>
+        </DataTemplate>
+        <DataTemplate x:Key="ColorFieldsPopup" x:DataType="alder:AlderColorPicker">
+          <Border Margin="20,18,20,30" Padding="8,8,8,12" CornerRadius="20"
+                  Background="{DynamicResource AlderSurface}" BoxShadow="{DynamicResource AlderToolbarShadow}"
+                  Focusable="True" FocusAdorner="{x:Null}" KeyboardNavigation.IsTabStop="False" KeyboardNavigation.TabNavigation="Cycle">
+            <alder:AlderScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled" MaxHeight="460">
+              <StackPanel Width="232" Spacing="8">
+                <alder:AlderColorArea Width="232" Height="232" Value="{CompiledBinding DraftValue, Mode=TwoWay}" />
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,20" Margin="4,0" RowSpacing="4">
+                  <alder:AlderLabel Content="{DynamicResource GalleryText.ColorHue}" Target="{CompiledBinding #Hue}" />
+                  <alder:AlderTextBlock Grid.Column="1" Text="{CompiledBinding #Hue.ChannelText}" Foreground="{DynamicResource AlderMuted}" />
+                  <alder:AlderColorSlider x:Name="Hue" Grid.Row="1" Grid.ColumnSpan="2" Width="NaN"
+                                          ColorValue="{CompiledBinding DraftValue, Mode=TwoWay}" />
+                </Grid>
+                <alder:AlderNativeSelect x:Name="FieldsSpace" ItemsSource="{x:Static vm:ColorsViewModel.PickerSpaceNames}"
+                                         SelectedIndex="1" Variant="Secondary" FullWidth="True"
+                                         AutomationProperties.Name="{DynamicResource GalleryText.ColorPickerSpace}" />
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                  <alder:AlderColorField Grid.Column="0" Variant="Secondary" FullWidth="True"
+                                         Value="{CompiledBinding DraftValue, Mode=TwoWay}" ColorSpace="{CompiledBinding #FieldsSpace.SelectedIndex, Converter={x:Static vm:ColorsViewModel.PickerSpace}}"
+                                         Channel="{CompiledBinding #FieldsSpace.SelectedIndex, Converter={x:Static vm:ColorsViewModel.PickerFirstChannel}}"
+                                         AutomationProperties.Name="{CompiledBinding $self.Channel, Converter={x:Static vm:ColorsViewModel.PickerChannelName}}" />
+                  <alder:AlderColorField Grid.Column="1" Variant="Secondary" FullWidth="True"
+                                         Value="{CompiledBinding DraftValue, Mode=TwoWay}" ColorSpace="{CompiledBinding #FieldsSpace.SelectedIndex, Converter={x:Static vm:ColorsViewModel.PickerSpace}}"
+                                         Channel="{CompiledBinding #FieldsSpace.SelectedIndex, Converter={x:Static vm:ColorsViewModel.PickerSecondChannel}}"
+                                         AutomationProperties.Name="{CompiledBinding $self.Channel, Converter={x:Static vm:ColorsViewModel.PickerChannelName}}" />
+                  <alder:AlderColorField Grid.Column="2" Variant="Secondary" FullWidth="True"
+                                         Value="{CompiledBinding DraftValue, Mode=TwoWay}" ColorSpace="{CompiledBinding #FieldsSpace.SelectedIndex, Converter={x:Static vm:ColorsViewModel.PickerSpace}}"
+                                         Channel="{CompiledBinding #FieldsSpace.SelectedIndex, Converter={x:Static vm:ColorsViewModel.PickerThirdChannel}}"
+                                         AutomationProperties.Name="{CompiledBinding $self.Channel, Converter={x:Static vm:ColorsViewModel.PickerChannelName}}" />
+                </Grid>
+              </StackPanel>
+            </alder:AlderScrollViewer>
+          </Border>
+        </DataTemplate>
+        <DataTemplate x:Key="ColorSlidersPopup" x:DataType="alder:AlderColorPicker">
+          <Border Margin="20,18,20,30" Padding="8,8,8,12" CornerRadius="20"
+                  Background="{DynamicResource AlderSurface}" BoxShadow="{DynamicResource AlderToolbarShadow}"
+                  Focusable="True" FocusAdorner="{x:Null}" KeyboardNavigation.IsTabStop="False" KeyboardNavigation.TabNavigation="Cycle">
+            <alder:AlderScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled" MaxHeight="460">
+              <StackPanel Width="232" Spacing="8">
+                <alder:AlderNativeSelect x:Name="SliderSpace" ItemsSource="{x:Static vm:ColorsViewModel.PickerSpaceNames}"
+                                         SelectedIndex="1" Variant="Secondary" FullWidth="True"
+                                         AutomationProperties.Name="{DynamicResource GalleryText.ColorPickerSpace}" />
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,20" Margin="4,0" RowSpacing="4">
+                  <alder:AlderLabel Content="{CompiledBinding #First.Channel, Converter={x:Static vm:ColorsViewModel.PickerChannelName}}" Target="{CompiledBinding #First}" />
+                  <alder:AlderTextBlock Grid.Column="1" Text="{CompiledBinding #First.ChannelText}" Foreground="{DynamicResource AlderMuted}" />
+                  <alder:AlderColorSlider x:Name="First" Grid.Row="1" Grid.ColumnSpan="2" Width="NaN"
+                                          ColorValue="{CompiledBinding DraftValue, Mode=TwoWay}" ColorSpace="{CompiledBinding #SliderSpace.SelectedIndex, Converter={x:Static vm:ColorsViewModel.PickerSpace}}" Channel="{CompiledBinding #SliderSpace.SelectedIndex, Converter={x:Static vm:ColorsViewModel.PickerFirstChannel}}" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,20" Margin="4,0" RowSpacing="4">
+                  <alder:AlderLabel Content="{CompiledBinding #Second.Channel, Converter={x:Static vm:ColorsViewModel.PickerChannelName}}" Target="{CompiledBinding #Second}" />
+                  <alder:AlderTextBlock Grid.Column="1" Text="{CompiledBinding #Second.ChannelText}" Foreground="{DynamicResource AlderMuted}" />
+                  <alder:AlderColorSlider x:Name="Second" Grid.Row="1" Grid.ColumnSpan="2" Width="NaN"
+                                          ColorValue="{CompiledBinding DraftValue, Mode=TwoWay}" ColorSpace="{CompiledBinding #SliderSpace.SelectedIndex, Converter={x:Static vm:ColorsViewModel.PickerSpace}}" Channel="{CompiledBinding #SliderSpace.SelectedIndex, Converter={x:Static vm:ColorsViewModel.PickerSecondChannel}}" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,20" Margin="4,0" RowSpacing="4">
+                  <alder:AlderLabel Content="{CompiledBinding #Third.Channel, Converter={x:Static vm:ColorsViewModel.PickerChannelName}}" Target="{CompiledBinding #Third}" />
+                  <alder:AlderTextBlock Grid.Column="1" Text="{CompiledBinding #Third.ChannelText}" Foreground="{DynamicResource AlderMuted}" />
+                  <alder:AlderColorSlider x:Name="Third" Grid.Row="1" Grid.ColumnSpan="2" Width="NaN"
+                                          ColorValue="{CompiledBinding DraftValue, Mode=TwoWay}" ColorSpace="{CompiledBinding #SliderSpace.SelectedIndex, Converter={x:Static vm:ColorsViewModel.PickerSpace}}" Channel="{CompiledBinding #SliderSpace.SelectedIndex, Converter={x:Static vm:ColorsViewModel.PickerThirdChannel}}" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,20" Margin="4,0" RowSpacing="4">
+                  <alder:AlderLabel Content="{CompiledBinding #Alpha.Channel, Converter={x:Static vm:ColorsViewModel.PickerChannelName}}" Target="{CompiledBinding #Alpha}" />
+                  <alder:AlderTextBlock Grid.Column="1" Text="{CompiledBinding #Alpha.ChannelText}" Foreground="{DynamicResource AlderMuted}" />
+                  <alder:AlderColorSlider x:Name="Alpha" Grid.Row="1" Grid.ColumnSpan="2" Width="NaN"
+                                          ColorValue="{CompiledBinding DraftValue, Mode=TwoWay}" ColorSpace="{CompiledBinding #SliderSpace.SelectedIndex, Converter={x:Static vm:ColorsViewModel.PickerSpace}}" Channel="Alpha" />
+                </Grid>
+              </StackPanel>
+            </alder:AlderScrollViewer>
+          </Border>
+        </DataTemplate>
+    <StreamGeometry x:Key="ColorShuffleIcon">F1 M12.7 1.7L16 4.5l-3.3 2.8V5.2h-1.1c-.7 0-1.2.2-1.6.8L8.9 7.5 7.8 6l.9-1.2c.7-.9 1.8-1.3 2.9-1.3h1.1ZM0 3.5h3.4c1.2 0 2.2.5 2.9 1.4l3.6 4.9c.4.6.9.8 1.6.8h1.2V8.7L16 11.5l-3.3 2.8v-1.9h-1.2c-1.2 0-2.2-.5-2.9-1.4L5 6.1c-.4-.6-.9-.9-1.6-.9H0Zm0 7.1h3.4c.7 0 1.2-.2 1.6-.8l1.1-1.4 1.1 1.5-.9 1.2c-.7.9-1.7 1.4-2.9 1.4H0Z</StreamGeometry>
+    <DataTemplate x:Key="ColorControlledPopup" x:DataType="alder:AlderColorPicker">
+      <Border Margin="20,18,20,30" Padding="8,8,8,12" CornerRadius="20"
+              Background="{DynamicResource AlderSurface}" BoxShadow="{DynamicResource AlderToolbarShadow}"
+              Focusable="True" FocusAdorner="{x:Null}" KeyboardNavigation.IsTabStop="False" KeyboardNavigation.TabNavigation="Cycle">
+        <alder:AlderScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled" MaxHeight="460">
+          <StackPanel Width="232" Spacing="8">
+            <alder:AlderColorSwatchPicker Size="ExtraSmall" HorizontalAlignment="Center"
+                                         ItemsSource="{x:Static vm:ColorsViewModel.PickerPresets}"
+                                         SelectedItem="{CompiledBinding DraftValue, Mode=TwoWay}"
+                                         AutomationProperties.Name="{DynamicResource GalleryText.ColorPickerSwatches}" />
+            <alder:AlderColorArea Width="232" Height="232" Value="{CompiledBinding DraftValue, Mode=TwoWay}" />
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+              <alder:AlderColorSlider Width="NaN" VerticalAlignment="Center" ColorValue="{CompiledBinding DraftValue, Mode=TwoWay}"
+                                      AutomationProperties.Name="{DynamicResource GalleryText.ColorHue}" />
+              <alder:AlderButton Grid.Column="1" Size="Small" Variant="Tertiary" IsIconOnly="True"
+                                  Icon="{StaticResource ColorShuffleIcon}"
+                                  Command="{CompiledBinding ((vm:ColorsViewModel)DataContext).ShuffleColor}"
+                                  AutomationProperties.Name="{DynamicResource GalleryText.ColorPickerShuffle}" />
+            </Grid>
+            <alder:AlderColorField x:Name="PART_Field" FullWidth="True" Variant="Secondary" Value="{CompiledBinding DraftValue, Mode=TwoWay}"
+                                  AutomationProperties.Name="{DynamicResource GalleryText.ColorField}">
+              <alder:AlderColorField.Prefix>
+                <alder:AlderColorSwatch Size="ExtraSmall" Color="{CompiledBinding DraftValue, Converter={x:Static alder:AlderColorRendering.ToColor}}" />
+              </alder:AlderColorField.Prefix>
+            </alder:AlderColorField>
+          </StackPanel>
+        </alder:AlderScrollViewer>
+      </Border>
+    </DataTemplate>
+  </UserControl.Resources>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderColorPicker Value="{CompiledBinding Color, Mode=TwoWay}" Label="{DynamicResource GalleryText.ColorChoose}" HorizontalAlignment="Center" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderColorPicker();
+        picker.Bind(AlderColorPicker.ValueProperty, CompiledBinding.Create((ColorsViewModel model) => model.Color, mode: BindingMode.TwoWay));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Width="240" Spacing="16" HorizontalAlignment="Center">
+          <alder:AlderColorPicker Value="{CompiledBinding ControlledColor, Mode=TwoWay}" PopupTemplate="{StaticResource ColorControlledPopup}" />
+          <StackPanel Orientation="Horizontal" Spacing="4" TextBlock.Foreground="{DynamicResource AlderMuted}">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.ColorPickerSelected}" />
+            <alder:AlderTextBlock Text="{CompiledBinding ControlledColor}" FontWeight="Medium" AutomationProperties.LiveSetting="Polite" />
+          </StackPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderColorPicker { PopupTemplate = (IDataTemplate)Resources["ColorControlledPopup"]! };
+        picker.Bind(AlderColorPicker.ValueProperty,
+            CompiledBinding.Create((ColorsViewModel model) => model.ControlledColor, mode: BindingMode.TwoWay));
+        var selected = new AlderTextBlock();
+        selected.Bind(AlderTextBlock.TextProperty,
+            CompiledBinding.Create((ColorsViewModel model) => model.ControlledColor.ToString()));
+        var preview = new StackPanel
+        {
+            Width = 240, HorizontalAlignment = HorizontalAlignment.Center, Spacing = 16,
+            Children = { picker, selected }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleColorPickerSwatches" Title="{DynamicResource GalleryText.ColorPickerSwatches}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderColorPicker Value="#F43F5E" Label="{DynamicResource GalleryText.ColorBrand}"
+                                HorizontalAlignment="Center" PopupTemplate="{StaticResource ColorSwatchesPopup}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderColorPicker
+        {
+            Value = AlderColorValue.Parse("#F43F5E"), Label = "Brand Color",
+            HorizontalAlignment = HorizontalAlignment.Center,
+            PopupTemplate = (IDataTemplate)Resources["ColorSwatchesPopup"]!
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleColorPickerFields" Title="{DynamicResource GalleryText.ColorPickerFields}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderColorPicker Value="hsla(220, 90%, 50%, 0.8)" Label="{DynamicResource GalleryText.ColorChoose}"
+                                HorizontalAlignment="Center" PopupTemplate="{StaticResource ColorFieldsPopup}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderColorPicker
+        {
+            Value = AlderColorValue.Parse("hsla(220, 90%, 50%, 0.8)"),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            PopupTemplate = (IDataTemplate)Resources["ColorFieldsPopup"]!
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleColorPickerSliders" Title="{DynamicResource GalleryText.ColorPickerSliders}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderColorPicker Value="hsl(219, 58%, 93%)" Label="{DynamicResource GalleryText.ColorChoose}"
+                                HorizontalAlignment="Center" PopupTemplate="{StaticResource ColorSlidersPopup}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderColorPicker
+        {
+            Value = AlderColorValue.Parse("hsl(219, 58%, 93%)"),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            PopupTemplate = (IDataTemplate)Resources["ColorSlidersPopup"]!
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleColorPickerAlpha" Title="{DynamicResource GalleryText.ColorAlpha}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderColorPicker Value="{CompiledBinding AlternateColor, Mode=TwoWay}" Label="{DynamicResource GalleryText.ColorBrand}"
+                           ShowAlpha="True" ShowField="True" HorizontalAlignment="Center" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderColorPicker { ShowAlpha = true, ShowField = true };
+        picker.Bind(AlderColorPicker.ValueProperty, CompiledBinding.Create((ColorsViewModel model) => model.AlternateColor, mode: BindingMode.TwoWay));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

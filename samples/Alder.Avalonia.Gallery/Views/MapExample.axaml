@@ -1,0 +1,325 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:views="using:Alder.Avalonia.Gallery.Views" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.MapExample" x:DataType="vm:MapViewModel">
+
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.ProDemoMapUsage}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="1020" Padding="2,10" HorizontalAlignment="Stretch" DataContext="{CompiledBinding Usage}">
+          <alder:AlderMap x:DataType="vm:MapScene" Height="420" WheelZoomRequiresFocus="True"
+                          Center="{CompiledBinding Center}" Zoom="{CompiledBinding Zoom}" SelectedMarker="{CompiledBinding SelectedMarker}"
+                          Basemap="{CompiledBinding Basemap}" RoadLayers="{CompiledBinding Roads}" Paths="{CompiledBinding Paths}" Markers="{CompiledBinding Markers}"
+                          ClusterMarkers="{CompiledBinding Clusters}" ShowLabels="{CompiledBinding Labels}" ShowCompass="{CompiledBinding Compass}"
+                          ShowZoomControls="{CompiledBinding ZoomControls}" Attribution="{CompiledBinding Attribution}"
+                          AutomationProperties.Name="{CompiledBinding Title}"
+                            FullscreenCommand="{CompiledBinding Fullscreen}">
+            <alder:AlderMap.OverlayContent>
+                <views:MapScenarioPanel />
+            </alder:AlderMap.OverlayContent>
+          </alder:AlderMap>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var scene = model.Usage;
+        var map = new AlderMap
+        {
+            Height = 420, WheelZoomRequiresFocus = true, Attribution = scene.Attribution,
+            Basemap = scene.Basemap, RoadLayers = scene.Roads, Paths = scene.Paths, Markers = scene.Markers,
+            ClusterMarkers = scene.Clusters, ShowLabels = scene.Labels,
+            ShowCompass = scene.Compass, ShowZoomControls = scene.ZoomControls,
+            FullscreenCommand = scene.Fullscreen,
+            OverlayContent = new MapScenarioPanel { DataContext = scene }
+        };
+        map.Bind(AlderMap.CenterProperty, CompiledBinding.Create((MapScene vm) => vm.Center, source: scene));
+        map.Bind(AlderMap.ZoomProperty, CompiledBinding.Create((MapScene vm) => vm.Zoom, source: scene));
+        map.Bind(AlderMap.SelectedMarkerProperty, CompiledBinding.Create((MapScene vm) => vm.SelectedMarker, source: scene));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleVisitors" Title="{DynamicResource GalleryText.ProDemoMapVisitors}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="1020" Padding="2,10" HorizontalAlignment="Stretch" DataContext="{CompiledBinding Visitors}">
+          <alder:AlderMap x:DataType="vm:MapScene" Height="420" WheelZoomRequiresFocus="True"
+                          Center="{CompiledBinding Center}" Zoom="{CompiledBinding Zoom}" SelectedMarker="{CompiledBinding SelectedMarker}"
+                          Basemap="{CompiledBinding Basemap}" RoadLayers="{CompiledBinding Roads}" Paths="{CompiledBinding Paths}" Markers="{CompiledBinding Markers}"
+                          ClusterMarkers="{CompiledBinding Clusters}" ShowLabels="{CompiledBinding Labels}" ShowCompass="{CompiledBinding Compass}"
+                          ShowZoomControls="{CompiledBinding ZoomControls}" Attribution="{CompiledBinding Attribution}"
+                          AutomationProperties.Name="{CompiledBinding Title}"
+                            OverlayHorizontalAlignment="Right" OverlayVerticalAlignment="Bottom">
+            <alder:AlderMap.OverlayContent>
+                <Border Background="{DynamicResource AlderInk}" CornerRadius="12" Padding="8,4" Margin="0,0,0,22">
+                  <StackPanel Orientation="Horizontal" Spacing="5">
+                    <Border Width="6" Height="6" CornerRadius="3" VerticalAlignment="Center" Background="#3ACD87" />
+                    <alder:AlderTextBlock FontSize="11" Text="{CompiledBinding Title}" Foreground="{DynamicResource AlderCanvas}" />
+                  </StackPanel>
+                </Border>
+            </alder:AlderMap.OverlayContent>
+          </alder:AlderMap>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var scene = model.Visitors;
+        var map = new AlderMap
+        {
+            Height = 420, WheelZoomRequiresFocus = true, Attribution = scene.Attribution,
+            Basemap = scene.Basemap, RoadLayers = scene.Roads, Paths = scene.Paths, Markers = scene.Markers,
+            ClusterMarkers = scene.Clusters, ShowLabels = scene.Labels,
+            ShowCompass = scene.Compass, ShowZoomControls = scene.ZoomControls,
+            OverlayHorizontalAlignment = HorizontalAlignment.Right, OverlayVerticalAlignment = VerticalAlignment.Bottom,
+            OverlayContent = new AlderChip { Content = scene.Title }
+        };
+        map.Bind(AlderMap.CenterProperty, CompiledBinding.Create((MapScene vm) => vm.Center, source: scene));
+        map.Bind(AlderMap.ZoomProperty, CompiledBinding.Create((MapScene vm) => vm.Zoom, source: scene));
+        map.Bind(AlderMap.SelectedMarkerProperty, CompiledBinding.Create((MapScene vm) => vm.SelectedMarker, source: scene));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleProperties" Title="{DynamicResource GalleryText.ProDemoMapProperties}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="1020" Padding="2,10" HorizontalAlignment="Stretch" DataContext="{CompiledBinding Properties}">
+          <alder:AlderMap x:DataType="vm:MapScene" Height="420" WheelZoomRequiresFocus="True"
+                          Center="{CompiledBinding Center}" Zoom="{CompiledBinding Zoom}" SelectedMarker="{CompiledBinding SelectedMarker}"
+                          Basemap="{CompiledBinding Basemap}" RoadLayers="{CompiledBinding Roads}" Paths="{CompiledBinding Paths}" Markers="{CompiledBinding Markers}"
+                          ClusterMarkers="{CompiledBinding Clusters}" ShowLabels="{CompiledBinding Labels}" ShowCompass="{CompiledBinding Compass}"
+                          ShowZoomControls="{CompiledBinding ZoomControls}" Attribution="{CompiledBinding Attribution}"
+                          AutomationProperties.Name="{CompiledBinding Title}">
+            <alder:AlderMap.OverlayContent>
+                <views:MapScenarioPanel />
+            </alder:AlderMap.OverlayContent>
+          </alder:AlderMap>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var scene = model.Properties;
+        var map = new AlderMap
+        {
+            Height = 420, WheelZoomRequiresFocus = true, Attribution = scene.Attribution,
+            Basemap = scene.Basemap, RoadLayers = scene.Roads, Paths = scene.Paths, Markers = scene.Markers,
+            ClusterMarkers = scene.Clusters, ShowLabels = scene.Labels,
+            ShowCompass = scene.Compass, ShowZoomControls = scene.ZoomControls,
+            OverlayContent = new MapScenarioPanel { DataContext = scene }
+        };
+        map.Bind(AlderMap.CenterProperty, CompiledBinding.Create((MapScene vm) => vm.Center, source: scene));
+        map.Bind(AlderMap.ZoomProperty, CompiledBinding.Create((MapScene vm) => vm.Zoom, source: scene));
+        map.Bind(AlderMap.SelectedMarkerProperty, CompiledBinding.Create((MapScene vm) => vm.SelectedMarker, source: scene));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleTracking" Title="{DynamicResource GalleryText.ProDemoMapTracking}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="1020" Padding="2,10" HorizontalAlignment="Stretch" DataContext="{CompiledBinding Tracking}">
+          <alder:AlderMap x:DataType="vm:MapScene" Height="420" WheelZoomRequiresFocus="True"
+                          Center="{CompiledBinding Center}" Zoom="{CompiledBinding Zoom}" SelectedMarker="{CompiledBinding SelectedMarker}"
+                          Basemap="{CompiledBinding Basemap}" RoadLayers="{CompiledBinding Roads}" Paths="{CompiledBinding Paths}" Markers="{CompiledBinding Markers}"
+                          ClusterMarkers="{CompiledBinding Clusters}" ShowLabels="{CompiledBinding Labels}" ShowCompass="{CompiledBinding Compass}"
+                          ShowZoomControls="{CompiledBinding ZoomControls}" Attribution="{CompiledBinding Attribution}"
+                          AutomationProperties.Name="{CompiledBinding Title}">
+            <alder:AlderMap.OverlayContent>
+                <views:MapScenarioPanel />
+            </alder:AlderMap.OverlayContent>
+          </alder:AlderMap>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var scene = model.Tracking;
+        var map = new AlderMap
+        {
+            Height = 420, WheelZoomRequiresFocus = true, Attribution = scene.Attribution,
+            Basemap = scene.Basemap, RoadLayers = scene.Roads, Paths = scene.Paths, Markers = scene.Markers,
+            ClusterMarkers = scene.Clusters, ShowLabels = scene.Labels,
+            ShowCompass = scene.Compass, ShowZoomControls = scene.ZoomControls,
+            OverlayContent = new MapScenarioPanel { DataContext = scene }
+        };
+        map.Bind(AlderMap.CenterProperty, CompiledBinding.Create((MapScene vm) => vm.Center, source: scene));
+        map.Bind(AlderMap.ZoomProperty, CompiledBinding.Create((MapScene vm) => vm.Zoom, source: scene));
+        map.Bind(AlderMap.SelectedMarkerProperty, CompiledBinding.Create((MapScene vm) => vm.SelectedMarker, source: scene));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleStores" Title="{DynamicResource GalleryText.ProDemoMapStores}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="1020" Padding="2,10" HorizontalAlignment="Stretch" DataContext="{CompiledBinding Stores}">
+          <alder:AlderMap x:DataType="vm:MapScene" Height="420" WheelZoomRequiresFocus="True"
+                          Center="{CompiledBinding Center}" Zoom="{CompiledBinding Zoom}" SelectedMarker="{CompiledBinding SelectedMarker}"
+                          Basemap="{CompiledBinding Basemap}" RoadLayers="{CompiledBinding Roads}" Paths="{CompiledBinding Paths}" Markers="{CompiledBinding Markers}"
+                          ClusterMarkers="{CompiledBinding Clusters}" ShowLabels="{CompiledBinding Labels}" ShowCompass="{CompiledBinding Compass}"
+                          ShowZoomControls="{CompiledBinding ZoomControls}" Attribution="{CompiledBinding Attribution}"
+                          AutomationProperties.Name="{CompiledBinding Title}"
+                            LocateCommand="{CompiledBinding Recenter}">
+            <alder:AlderMap.OverlayContent>
+                <views:MapScenarioPanel />
+            </alder:AlderMap.OverlayContent>
+          </alder:AlderMap>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var scene = model.Stores;
+        var map = new AlderMap
+        {
+            Height = 420, WheelZoomRequiresFocus = true, Attribution = scene.Attribution,
+            Basemap = scene.Basemap, RoadLayers = scene.Roads, Paths = scene.Paths, Markers = scene.Markers,
+            ClusterMarkers = scene.Clusters, ShowLabels = scene.Labels,
+            ShowCompass = scene.Compass, ShowZoomControls = scene.ZoomControls,
+            LocateCommand = scene.Recenter,
+            OverlayContent = new MapScenarioPanel { DataContext = scene }
+        };
+        map.Bind(AlderMap.CenterProperty, CompiledBinding.Create((MapScene vm) => vm.Center, source: scene));
+        map.Bind(AlderMap.ZoomProperty, CompiledBinding.Create((MapScene vm) => vm.Zoom, source: scene));
+        map.Bind(AlderMap.SelectedMarkerProperty, CompiledBinding.Create((MapScene vm) => vm.SelectedMarker, source: scene));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleFleet" Title="{DynamicResource GalleryText.ProDemoMapFleet}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="1020" Padding="2,10" HorizontalAlignment="Stretch" DataContext="{CompiledBinding Fleet}">
+          <alder:AlderMap x:DataType="vm:MapScene" Height="420" WheelZoomRequiresFocus="True"
+                          Center="{CompiledBinding Center}" Zoom="{CompiledBinding Zoom}" SelectedMarker="{CompiledBinding SelectedMarker}"
+                          Basemap="{CompiledBinding Basemap}" RoadLayers="{CompiledBinding Roads}" Paths="{CompiledBinding Paths}" Markers="{CompiledBinding Markers}"
+                          ClusterMarkers="{CompiledBinding Clusters}" ShowLabels="{CompiledBinding Labels}" ShowCompass="{CompiledBinding Compass}"
+                          ShowZoomControls="{CompiledBinding ZoomControls}" Attribution="{CompiledBinding Attribution}"
+                          AutomationProperties.Name="{CompiledBinding Title}"
+                            FullscreenCommand="{CompiledBinding Fullscreen}">
+            <alder:AlderMap.OverlayContent>
+                <views:MapScenarioPanel />
+            </alder:AlderMap.OverlayContent>
+          </alder:AlderMap>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var scene = model.Fleet;
+        var map = new AlderMap
+        {
+            Height = 420, WheelZoomRequiresFocus = true, Attribution = scene.Attribution,
+            Basemap = scene.Basemap, RoadLayers = scene.Roads, Paths = scene.Paths, Markers = scene.Markers,
+            ClusterMarkers = scene.Clusters, ShowLabels = scene.Labels,
+            ShowCompass = scene.Compass, ShowZoomControls = scene.ZoomControls,
+            FullscreenCommand = scene.Fullscreen,
+            OverlayContent = new MapScenarioPanel { DataContext = scene }
+        };
+        map.Bind(AlderMap.CenterProperty, CompiledBinding.Create((MapScene vm) => vm.Center, source: scene));
+        map.Bind(AlderMap.ZoomProperty, CompiledBinding.Create((MapScene vm) => vm.Zoom, source: scene));
+        map.Bind(AlderMap.SelectedMarkerProperty, CompiledBinding.Create((MapScene vm) => vm.SelectedMarker, source: scene));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleCoverage" Title="{DynamicResource GalleryText.ProDemoMapCoverage}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="1020" Padding="2,10" HorizontalAlignment="Stretch" DataContext="{CompiledBinding Coverage}">
+          <alder:AlderMap x:DataType="vm:MapScene" Height="420" WheelZoomRequiresFocus="True"
+                          Center="{CompiledBinding Center}" Zoom="{CompiledBinding Zoom}" SelectedMarker="{CompiledBinding SelectedMarker}"
+                          Basemap="{CompiledBinding Basemap}" RoadLayers="{CompiledBinding Roads}" Paths="{CompiledBinding Paths}" Markers="{CompiledBinding Markers}"
+                          ClusterMarkers="{CompiledBinding Clusters}" ShowLabels="{CompiledBinding Labels}" ShowCompass="{CompiledBinding Compass}"
+                          ShowZoomControls="{CompiledBinding ZoomControls}" Attribution="{CompiledBinding Attribution}"
+                          AutomationProperties.Name="{CompiledBinding Title}">
+            <alder:AlderMap.OverlayContent>
+                <views:MapScenarioPanel />
+            </alder:AlderMap.OverlayContent>
+          </alder:AlderMap>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var scene = model.Coverage;
+        var map = new AlderMap
+        {
+            Height = 420, WheelZoomRequiresFocus = true, Attribution = scene.Attribution,
+            Basemap = scene.Basemap, RoadLayers = scene.Roads, Paths = scene.Paths, Markers = scene.Markers,
+            ClusterMarkers = scene.Clusters, ShowLabels = scene.Labels,
+            ShowCompass = scene.Compass, ShowZoomControls = scene.ZoomControls,
+            OverlayContent = new MapScenarioPanel { DataContext = scene }
+        };
+        map.Bind(AlderMap.CenterProperty, CompiledBinding.Create((MapScene vm) => vm.Center, source: scene));
+        map.Bind(AlderMap.ZoomProperty, CompiledBinding.Create((MapScene vm) => vm.Zoom, source: scene));
+        map.Bind(AlderMap.SelectedMarkerProperty, CompiledBinding.Create((MapScene vm) => vm.SelectedMarker, source: scene));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleHeatmap" Title="{DynamicResource GalleryText.ProDemoMapHeatmap}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="1020" Padding="2,10" HorizontalAlignment="Stretch" DataContext="{CompiledBinding Heatmap}">
+          <alder:AlderMap x:DataType="vm:MapScene" Height="420" WheelZoomRequiresFocus="True"
+                          Center="{CompiledBinding Center}" Zoom="{CompiledBinding Zoom}" SelectedMarker="{CompiledBinding SelectedMarker}"
+                          Basemap="{CompiledBinding Basemap}" RoadLayers="{CompiledBinding Roads}" Paths="{CompiledBinding Paths}" Markers="{CompiledBinding Markers}"
+                          ClusterMarkers="{CompiledBinding Clusters}" ShowLabels="{CompiledBinding Labels}" ShowCompass="{CompiledBinding Compass}"
+                          ShowZoomControls="{CompiledBinding ZoomControls}" Attribution="{CompiledBinding Attribution}"
+                          AutomationProperties.Name="{CompiledBinding Title}"
+                            ShowHeatmap="True">
+            <alder:AlderMap.OverlayContent>
+                <views:MapScenarioPanel />
+            </alder:AlderMap.OverlayContent>
+          </alder:AlderMap>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var scene = model.Heatmap;
+        var map = new AlderMap
+        {
+            Height = 420, WheelZoomRequiresFocus = true, Attribution = scene.Attribution,
+            Basemap = scene.Basemap, RoadLayers = scene.Roads, Paths = scene.Paths, Markers = scene.Markers,
+            ClusterMarkers = scene.Clusters, ShowLabels = scene.Labels,
+            ShowCompass = scene.Compass, ShowZoomControls = scene.ZoomControls,
+            ShowHeatmap = true,
+            OverlayContent = new MapScenarioPanel { DataContext = scene }
+        };
+        map.Bind(AlderMap.CenterProperty, CompiledBinding.Create((MapScene vm) => vm.Center, source: scene));
+        map.Bind(AlderMap.ZoomProperty, CompiledBinding.Create((MapScene vm) => vm.Zoom, source: scene));
+        map.Bind(AlderMap.SelectedMarkerProperty, CompiledBinding.Create((MapScene vm) => vm.SelectedMarker, source: scene));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleFlights" Title="{DynamicResource GalleryText.ProDemoMapFlights}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="1020" Padding="2,10" HorizontalAlignment="Stretch" DataContext="{CompiledBinding Flights}">
+          <alder:AlderMap x:DataType="vm:MapScene" Height="420" WheelZoomRequiresFocus="True"
+                          Center="{CompiledBinding Center}" Zoom="{CompiledBinding Zoom}" SelectedMarker="{CompiledBinding SelectedMarker}"
+                          Basemap="{CompiledBinding Basemap}" RoadLayers="{CompiledBinding Roads}" Paths="{CompiledBinding Paths}" Markers="{CompiledBinding Markers}"
+                          ClusterMarkers="{CompiledBinding Clusters}" ShowLabels="{CompiledBinding Labels}" ShowCompass="{CompiledBinding Compass}"
+                          ShowZoomControls="{CompiledBinding ZoomControls}" Attribution="{CompiledBinding Attribution}"
+                          AutomationProperties.Name="{CompiledBinding Title}">
+            <alder:AlderMap.OverlayContent>
+                <views:MapScenarioPanel />
+            </alder:AlderMap.OverlayContent>
+          </alder:AlderMap>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var scene = model.Flights;
+        var map = new AlderMap
+        {
+            Height = 420, WheelZoomRequiresFocus = true, Attribution = scene.Attribution,
+            Basemap = scene.Basemap, RoadLayers = scene.Roads, Paths = scene.Paths, Markers = scene.Markers,
+            ClusterMarkers = scene.Clusters, ShowLabels = scene.Labels,
+            ShowCompass = scene.Compass, ShowZoomControls = scene.ZoomControls,
+            OverlayContent = new MapScenarioPanel { DataContext = scene }
+        };
+        map.Bind(AlderMap.CenterProperty, CompiledBinding.Create((MapScene vm) => vm.Center, source: scene));
+        map.Bind(AlderMap.ZoomProperty, CompiledBinding.Create((MapScene vm) => vm.Zoom, source: scene));
+        map.Bind(AlderMap.SelectedMarkerProperty, CompiledBinding.Create((MapScene vm) => vm.SelectedMarker, source: scene));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleIncidents" Title="{DynamicResource GalleryText.ProDemoMapIncidents}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="1020" Padding="2,10" HorizontalAlignment="Stretch" DataContext="{CompiledBinding Incidents}">
+          <alder:AlderMap x:DataType="vm:MapScene" Height="420" WheelZoomRequiresFocus="True"
+                          Center="{CompiledBinding Center}" Zoom="{CompiledBinding Zoom}" SelectedMarker="{CompiledBinding SelectedMarker}"
+                          Basemap="{CompiledBinding Basemap}" RoadLayers="{CompiledBinding Roads}" Paths="{CompiledBinding Paths}" Markers="{CompiledBinding Markers}"
+                          ClusterMarkers="{CompiledBinding Clusters}" ShowLabels="{CompiledBinding Labels}" ShowCompass="{CompiledBinding Compass}"
+                          ShowZoomControls="{CompiledBinding ZoomControls}" Attribution="{CompiledBinding Attribution}"
+                          AutomationProperties.Name="{CompiledBinding Title}"
+                            FullscreenCommand="{CompiledBinding Fullscreen}">
+            <alder:AlderMap.OverlayContent>
+                <views:MapScenarioPanel />
+            </alder:AlderMap.OverlayContent>
+          </alder:AlderMap>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var scene = model.Incidents;
+        var map = new AlderMap
+        {
+            Height = 420, WheelZoomRequiresFocus = true, Attribution = scene.Attribution,
+            Basemap = scene.Basemap, RoadLayers = scene.Roads, Paths = scene.Paths, Markers = scene.Markers,
+            ClusterMarkers = scene.Clusters, ShowLabels = scene.Labels,
+            ShowCompass = scene.Compass, ShowZoomControls = scene.ZoomControls,
+            FullscreenCommand = scene.Fullscreen,
+            OverlayContent = new MapScenarioPanel { DataContext = scene }
+        };
+        map.Bind(AlderMap.CenterProperty, CompiledBinding.Create((MapScene vm) => vm.Center, source: scene));
+        map.Bind(AlderMap.ZoomProperty, CompiledBinding.Create((MapScene vm) => vm.Zoom, source: scene));
+        map.Bind(AlderMap.SelectedMarkerProperty, CompiledBinding.Create((MapScene vm) => vm.SelectedMarker, source: scene));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

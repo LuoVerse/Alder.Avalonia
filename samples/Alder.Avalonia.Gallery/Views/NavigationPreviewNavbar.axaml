@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             xmlns:views="using:Alder.Avalonia.Gallery.Views"
+             x:Class="Alder.Avalonia.Gallery.Views.NavigationPreviewNavbar"
+             x:DataType="vm:NavigationPreview">
+  <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="7">
+      <alder:AlderPathIcon Width="16" Height="16" VerticalAlignment="Center" Data="{Binding SelectedIcon, Converter={StaticResource NavigationPreviewIconConverter}}" />
+      <alder:AlderTextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+    </StackPanel>
+    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="3" VerticalAlignment="Center">
+      <alder:AlderButton Size="Small" Variant="Ghost" IsIconOnly="True" Icon="{StaticResource AlderIconBell}"
+                         IsVisible="{Binding ShowNavbarActions}"
+                         AutomationProperties.Name="{DynamicResource GalleryText.NavDemoNotifications}">
+        <alder:AlderButton.Flyout>
+          <alder:AlderPopover Placement="BottomEdgeAlignedRight" Heading="{DynamicResource GalleryText.NavDemoNotifications}"
+                               Content="{DynamicResource GalleryText.NavDemoNoNotifications}" />
+        </alder:AlderButton.Flyout>
+      </alder:AlderButton>
+      <views:NavigationPreviewAccount IsVisible="{Binding ShowNavbarActions}" ShowThemeSwitcher="True" />
+      <views:NavigationPreviewAccount IsVisible="{Binding AccountInNavbarOnly}" ShowLabel="True" />
+      <alder:AlderSegment Size="Small" IsVisible="{Binding ShowNavbarThemeSwitcher}" SelectedKey="{Binding ThemeKey, Mode=TwoWay}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.NavDemoTheme}">
+        <alder:AlderSegmentItem Key="light" Icon="{StaticResource AlderIconSun}" Padding="6,0"
+                                AutomationProperties.Name="{DynamicResource GalleryText.NavDemoLight}" />
+        <alder:AlderSegmentItem Key="dark" Icon="{StaticResource AlderIconMoon}" Padding="6,0"
+                                AutomationProperties.Name="{DynamicResource GalleryText.NavDemoDark}" />
+        <alder:AlderSegmentItem Key="system" Icon="{StaticResource NavPreviewIconMonitor}" Padding="6,0"
+                                AutomationProperties.Name="{DynamicResource GalleryText.NavDemoSystem}" />
+      </alder:AlderSegment>
+    </StackPanel>
+  </Grid>
+</UserControl>

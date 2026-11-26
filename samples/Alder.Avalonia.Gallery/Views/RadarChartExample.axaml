@@ -1,0 +1,166 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.RadarChartExample" x:DataType="vm:ChartsViewModel">
+  <StackPanel Spacing="24">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="420" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+          <StackPanel Spacing="12">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartSkillAssessment}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+            <alder:AlderRadarChart Categories="{CompiledBinding SkillAxes}" Series="{CompiledBinding SkillSeries}" Height="280"
+                                  AutomationProperties.Name="{DynamicResource GalleryText.ChartSkillAssessment}" />
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var chart = new AlderRadarChart
+        {
+            Categories = viewModel.SkillAxes,
+            Series = viewModel.SkillSeries,
+            Height = 280,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleComparison" Title="{DynamicResource GalleryText.ChartComparison}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="460" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+          <StackPanel Spacing="12">
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartPlatformComparison}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+              <WrapPanel ItemSpacing="12" LineSpacing="7" HorizontalAlignment="Right" Grid.Column="1">
+                <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                  <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries1}" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartTeamA}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                  <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries2}" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartTeamB}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                </StackPanel>
+              </WrapPanel>
+            </Grid>
+            <alder:AlderRadarChart Categories="{CompiledBinding PlatformAxes}" Series="{CompiledBinding TeamSeries}"
+                                  Height="300"
+                                  AutomationProperties.Name="{DynamicResource GalleryText.ChartPlatformComparison}" />
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var chart = new AlderRadarChart
+        {
+            Categories = viewModel.PlatformAxes,
+            Series = viewModel.TeamSeries,
+            Height = 300,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDots" Title="{DynamicResource GalleryText.ChartDotsOnly}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="420" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+          <StackPanel Spacing="12">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartPerformanceMetrics}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+            <alder:AlderRadarChart Categories="{CompiledBinding SkillAxes}" Series="{CompiledBinding SkillDots}" Height="280"
+                                  AutomationProperties.Name="{DynamicResource GalleryText.ChartPerformanceMetrics}"
+                                  FillOpacity="0" />
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var chart = new AlderRadarChart
+        {
+            Categories = viewModel.SkillAxes,
+            Series = viewModel.SkillDots,
+            Height = 280,
+            FillOpacity = 0,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleMulti" Title="{DynamicResource GalleryText.ChartMultiSeries}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="480" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+          <StackPanel Spacing="12">
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartDeviceUsage}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+              <WrapPanel ItemSpacing="12" LineSpacing="7" HorizontalAlignment="Right" Grid.Column="1">
+                <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                  <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries4}" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartDesktop}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                  <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries1}" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartMobile}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                  <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries2}" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartTablet}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                </StackPanel>
+              </WrapPanel>
+            </Grid>
+            <alder:AlderRadarChart Categories="{CompiledBinding HalfYear}" Series="{CompiledBinding DeviceSeries}" Height="300"
+                                  AutomationProperties.Name="{DynamicResource GalleryText.ChartDeviceUsage}" FillOpacity=".16" />
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var chart = new AlderRadarChart
+        {
+            Categories = viewModel.HalfYear,
+            Series = viewModel.DeviceSeries,
+            Height = 300,
+            FillOpacity = .16,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleRadiusAxis" Title="{DynamicResource GalleryText.ChartRadiusAxis}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="460" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+          <StackPanel Spacing="12">
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartSprintVelocity}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+              <WrapPanel ItemSpacing="12" LineSpacing="7" HorizontalAlignment="Right" Grid.Column="1">
+                <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                  <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries4}" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartCurrent}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                  <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries2}" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartTarget}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                </StackPanel>
+              </WrapPanel>
+            </Grid>
+            <alder:AlderRadarChart Categories="{CompiledBinding PlatformAxes}" Series="{CompiledBinding SprintSeries}"
+                                  Height="300" AutomationProperties.Name="{DynamicResource GalleryText.ChartSprintVelocity}"
+                                  ShowRadiusAxis="True" FillOpacity=".13" />
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var chart = new AlderRadarChart
+        {
+            Categories = viewModel.PlatformAxes,
+            Series = viewModel.SprintSeries,
+            Height = 300,
+            ShowRadiusAxis = true,
+            FillOpacity = .13,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

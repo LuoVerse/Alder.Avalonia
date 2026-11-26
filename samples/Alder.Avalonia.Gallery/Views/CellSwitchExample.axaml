@@ -1,0 +1,74 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.CellSwitchExample" x:DataType="vm:CellSwitchViewModel">
+  <StackPanel x:Name="Examples" Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="252">
+          <alder:AlderCellSwitch Content="{DynamicResource GalleryText.CellAnimations}" IsChecked="True" />
+          <alder:AlderCellSwitch Content="{DynamicResource GalleryText.CellSounds}" IsChecked="False" />
+          <alder:AlderCellSwitch Content="{DynamicResource GalleryText.CellHaptics}" IsChecked="True" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleAnnouncement" Title="{DynamicResource GalleryText.CellAnnouncement}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="320">
+          <alder:AlderCellSwitch Background="Transparent" BoxShadow="none" BorderBrush="{DynamicResource AlderBorder}" BorderThickness="1"
+              Description="{DynamicResource GalleryText.CellSidebarDetail}" AutomationProperties.Name="{DynamicResource GalleryText.CellSidebarTitle}">
+            <WrapPanel ItemSpacing="6" LineSpacing="4">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CellSidebarTitle}" FontWeight="SemiBold" LineHeight="20" VerticalAlignment="Center" />
+              <alder:AlderChip Content="{DynamicResource GalleryText.CellNew}" Size="Small" Variant="Soft" Color="Accent" VerticalAlignment="Center" />
+            </WrapPanel>
+          </alder:AlderCellSwitch>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSecondary" Title="{DynamicResource GalleryText.CellSecondaryGroup}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="252">
+          <alder:AlderCellSwitch Content="{DynamicResource GalleryText.CellNotifications}" IsChecked="True" Variant="Secondary" />
+          <alder:AlderCellSwitch Content="{DynamicResource GalleryText.CellEmails}" IsChecked="False" Variant="Secondary" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleBasic" Title="{DynamicResource GalleryText.CellLabelBasic}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="252">
+          <alder:AlderCellSwitch Content="{DynamicResource GalleryText.CellAnimations}" IsChecked="True" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.Variants}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="252">
+          <StackPanel>
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.CellVariantPrimary}" FontSize="14" LineHeight="20" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderCellSwitch Content="{DynamicResource GalleryText.CellAnimations}" IsChecked="True" />
+          </StackPanel>
+          <StackPanel>
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.CellVariantSecondary}" FontSize="14" LineHeight="20" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderCellSwitch Content="{DynamicResource GalleryText.CellAnimations}" IsChecked="True" Variant="Secondary" />
+          </StackPanel>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="252">
+          <alder:AlderCellSwitch Content="{DynamicResource GalleryText.CellAnimations}" IsChecked="True" IsEnabled="False" />
+          <alder:AlderCellSwitch Content="{DynamicResource GalleryText.CellAnimations}" IsChecked="False" IsEnabled="False" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="252">
+          <alder:AlderCellSwitch Content="{DynamicResource GalleryText.CellAnimations}" IsChecked="{CompiledBinding Animations, Mode=TwoWay}" />
+          <alder:AlderTextBlock Text="{CompiledBinding AnimationsResult}" FontSize="12" LineHeight="20" Foreground="{DynamicResource AlderMuted}" AutomationProperties.LiveSetting="Polite" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

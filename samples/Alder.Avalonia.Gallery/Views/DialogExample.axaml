@@ -1,0 +1,157 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             xmlns:conv="using:Avalonia.Data.Converters"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             x:Class="Alder.Avalonia.Gallery.Views.DialogExample" x:DataType="vm:DialogViewModel">
+  <Design.DataContext><vm:DialogViewModel /></Design.DataContext>
+  <StackPanel Spacing="24">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton HorizontalAlignment="Center" Variant="Secondary" Command="{CompiledBinding OpenUsageCommand}"
+                           Content="{DynamicResource GalleryText.DialogUsageTrigger}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var openDialog = ReactiveCommand.CreateFromTask(async () =>
+        {
+            var continueButton = new AlderButton { Content = "Continue", FullWidth = true };
+            continueButton.Click += (_, _) => Dialog.Close(continueButton, DialogResult.OK);
+            var icon = Application.Current?.FindResource("AlderIconCircleDashed") as Geometry;
+            await Dialog.ShowModalAsync("Build accessible desktop applications with Avalonia.",
+                new DialogOptions { Title = "Welcome to Alder", Icon = icon, MaxWidth = 360, Footer = continueButton });
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleModalDialog" Title="{DynamicResource GalleryText.ModalDialog}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="12">
+          <alder:AlderTextBlock Text="{CompiledBinding ProjectSummary}" TextWrapping="Wrap" TextAlignment="Center"
+                     Foreground="{DynamicResource AlderInk}" />
+          <WrapPanel ItemSpacing="8" LineSpacing="8" HorizontalAlignment="Center">
+            <alder:AlderButton Command="{CompiledBinding OpenModalCommand}" CommandParameter="{x:Static alder:DialogPlacement.Center}"
+                          Content="{DynamicResource GalleryText.DialogEditProject}" />
+            <alder:AlderButton Command="{CompiledBinding OpenModalCommand}" CommandParameter="{x:Static alder:DialogPlacement.Top}" Variant="Secondary"
+                          Content="{DynamicResource GalleryText.DialogAtTop}" />
+            <alder:AlderButton Command="{CompiledBinding OpenModalCommand}" CommandParameter="{x:Static alder:DialogPlacement.Bottom}" Variant="Secondary"
+                          Content="{DynamicResource GalleryText.DialogAtBottom}" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.Feedback>
+        <alder:AlderTextBlock Text="{CompiledBinding ModalFeedback}" TextWrapping="Wrap"
+                   AutomationProperties.LiveSetting="Polite" Foreground="{DynamicResource AlderMuted}"
+                   IsVisible="{CompiledBinding ModalFeedback, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+      </gallery:ExampleCard.Feedback>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        // Wrap the application's content in a DialogHost.
+        var editor = new ProjectEditorViewModel(ProjectName);
+        var result = await Dialog.ShowModalAsync<ProjectEditorView>(editor, new DialogOptions
+        {
+            Title = "Edit project",
+            Placement = DialogPlacement.Center,
+        });
+        if (result == DialogResult.OK)
+            ProjectName = editor.ProjectName;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleWindowDialog" Title="{DynamicResource GalleryText.WindowDialog}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="12">
+          <alder:AlderTextBlock Text="{CompiledBinding ProjectSummary}" TextWrapping="Wrap" TextAlignment="Center"
+                     Foreground="{DynamicResource AlderInk}" />
+          <alder:AlderButton Command="{CompiledBinding OpenWindowCommand}"
+                        Content="{DynamicResource GalleryText.OpenWindowDialog}"
+                        HorizontalAlignment="Center" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.Feedback>
+        <alder:AlderTextBlock Text="{CompiledBinding WindowFeedback}" TextWrapping="Wrap"
+                   AutomationProperties.LiveSetting="Polite" Foreground="{DynamicResource AlderMuted}"
+                   IsVisible="{CompiledBinding WindowFeedback, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+      </gallery:ExampleCard.Feedback>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var editor = new ProjectEditorViewModel(ProjectName);
+        var result = await Dialog.ShowWindowAsync<ProjectEditorView>(editor, new DialogOptions
+        {
+            Title = "Edit project",
+        });
+        if (result == DialogResult.OK)
+            ProjectName = editor.ProjectName;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDialogSizes" Title="{DynamicResource GalleryText.OverlaySizes}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogSize.ExtraSmall}" Content="{DynamicResource GalleryText.OverlaySizeExtraSmall}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogSize.Small}" Content="{DynamicResource GalleryText.OverlaySizeSmall}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogSize.Medium}" Content="{DynamicResource GalleryText.OverlaySizeMedium}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogSize.Large}" Content="{DynamicResource GalleryText.OverlaySizeLarge}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogSize.Cover}" Content="{DynamicResource GalleryText.OverlaySizeCover}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogSize.Full}" Content="{DynamicResource GalleryText.OverlaySizeFull}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        await Dialog.ShowModalAsync(content, new DialogOptions { Size = DialogSize.Cover });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDialogScroll" Title="{DynamicResource GalleryText.OverlayScrolling}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogScrollMode.Inside}" Content="{DynamicResource GalleryText.OverlayScrollInside}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogScrollMode.Outside}" Content="{DynamicResource GalleryText.OverlayScrollOutside}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        await Dialog.ShowModalAsync(longContent, new DialogOptions { ScrollMode = DialogScrollMode.Outside });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDialogBackdrops" Title="{DynamicResource GalleryText.OverlayBackdrops}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogBackdrop.Opaque}" Content="{DynamicResource GalleryText.OverlayBackdropOpaque}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogBackdrop.Blur}" Content="{DynamicResource GalleryText.OverlayBackdropBlur}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogBackdrop.Transparent}" Content="{DynamicResource GalleryText.OverlayBackdropTransparent}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        await Dialog.ShowModalAsync(content, new DialogOptions { Backdrop = DialogBackdrop.Blur });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDialogCustom" Title="{DynamicResource GalleryText.OverlayCustomization}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="Gradient" Content="{DynamicResource GalleryText.OverlayGradient}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="Motion" Content="{DynamicResource GalleryText.OverlayMotion}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="Locked" Content="{DynamicResource GalleryText.OverlayLocked}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="CustomClose" Content="{DynamicResource GalleryText.OverlayCustomClose}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="IconTrigger" IsIconOnly="True"
+                          Icon="{StaticResource AlderIconGear}" AutomationProperties.Name="{DynamicResource GalleryText.OverlayIconTrigger}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var options = new DialogOptions
+        {
+            BackdropBrush = new SolidColorBrush(Color.Parse("#832B2567")),
+            Animation = new DialogAnimation { EnterScale = .9, EnterOffset = new Vector(0, 24) },
+        };
+        await Dialog.ShowModalAsync(content, options);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDialogLocal" Title="{DynamicResource GalleryText.OverlayLocalHost}">
+      <gallery:ExampleCard.Preview>
+        <alder:DialogHost HostId="sample-overlay" Height="216">
+          <Border Padding="12" Background="{DynamicResource AlderNeutral}" CornerRadius="14">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+              <alder:AlderButton Command="{CompiledBinding OpenLocalCommand}" Variant="Secondary" Content="{DynamicResource GalleryText.OverlayOpenLocal}" />
+            </StackPanel>
+          </Border>
+        </alder:DialogHost>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        await Dialog.ShowModalAsync(content, new DialogOptions { Size = DialogSize.ExtraSmall },
+            hostId: "sample-overlay");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,179 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls">
+  <x:String x:Key="AlderText.CarouselPrevious">Previous slide</x:String>
+  <x:String x:Key="AlderText.CarouselNext">Next slide</x:String>
+  <x:String x:Key="AlderText.CarouselGoToSlide">Go to slide {0}</x:String>
+  <x:String x:Key="AlderText.CarouselPlay">Play</x:String>
+  <x:String x:Key="AlderText.CarouselPause">Pause</x:String>
+
+  <ControlTheme x:Key="AlderCarouselArrowTheme" TargetType="Button">
+    <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Width" Value="32" />
+    <Setter Property="Height" Value="32" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="Face" CornerRadius="11" BorderThickness="1"
+                BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+          <Border.Transitions>
+            <Transitions><BrushTransition Property="Background" Duration="0:0:0.12" /></Transitions>
+          </Border.Transitions>
+          <ContentPresenter Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}"
+                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
+    <Style Selector="^:pressed"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
+    <Style Selector="^:focus-visible"><Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value=".5" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#Face">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderCarouselDotTheme" TargetType="Button">
+    <Setter Property="Width" Value="22" />
+    <Setter Property="Height" Value="24" />
+    <Setter Property="Background" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="DotFocus" CornerRadius="8" BorderBrush="Transparent" BorderThickness="1" Background="Transparent">
+          <Border Name="Mark" Width="7" Height="7" CornerRadius="4" Background="{TemplateBinding Background}"
+                  HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border.Transitions>
+              <Transitions><BrushTransition Property="Background" Duration="0:0:0.14" /></Transitions>
+            </Border.Transitions>
+          </Border>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover"><Setter Property="Background" Value="{DynamicResource AlderMuted}" /></Style>
+    <Style Selector="^.selected"><Setter Property="Background" Value="{DynamicResource AlderAccent}" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#DotFocus">
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#Mark">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderCarouselThumbnailTheme" TargetType="Button">
+    <Setter Property="Width" Value="64" />
+    <Setter Property="Height" Value="64" />
+    <Setter Property="Padding" Value="2" />
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="Transparent">
+          <Border Name="ThumbnailFace" BorderThickness="1.5" CornerRadius="14" Padding="{TemplateBinding Padding}"
+                  Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}">
+            <Border.Transitions>
+              <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.14" />
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.14" Easing="CubicEaseOut" />
+              </Transitions>
+            </Border.Transitions>
+            <Border ClipToBounds="True" CornerRadius="10">
+              <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                Foreground="{TemplateBinding Foreground}"
+                                HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+            </Border>
+          </Border>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover /template/ Border#ThumbnailFace"><Setter Property="Opacity" Value=".85" /></Style>
+    <Style Selector="^:pressed /template/ Border#ThumbnailFace"><Setter Property="RenderTransform" Value="scale(0.95)" /></Style>
+    <Style Selector="^.selected, ^:focus-visible"><Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#ThumbnailFace">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderCarouselItem}" TargetType="alder:AlderCarouselItem">
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <ContentPresenter Name="PART_ContentPresenter"
+                          Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                          Padding="{TemplateBinding Padding}"
+                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderCarousel}" TargetType="alder:AlderCarousel">
+    <Setter Property="Focusable" Value="True" />
+    <Setter Property="Background" Value="{DynamicResource AlderSurfaceSecondary}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="20" />
+    <Setter Property="PreviousIcon" Value="{StaticResource AlderIconChevronLeft}" />
+    <Setter Property="NextIcon" Value="{StaticResource AlderIconChevronRight}" />
+    <Setter Property="ItemsPanel">
+      <ItemsPanelTemplate><alder:AlderCarouselTrack UseLayoutRounding="False" /></ItemsPanelTemplate>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid RowDefinitions="*,Auto,Auto">
+          <Grid Name="PART_Stage" MaxWidth="{TemplateBinding StageMaxWidth}" ColumnDefinitions="Auto,*,Auto">
+            <alder:AlderCarouselViewport Name="PART_Viewport" Grid.Column="1" MinHeight="96" ClipToBounds="True"
+                    AspectRatio="{TemplateBinding ViewportAspectRatio}"
+                    Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}">
+              <ItemsPresenter ItemsPanel="{TemplateBinding ItemsPanel}" />
+            </alder:AlderCarouselViewport>
+            <alder:AlderButton Name="PART_Previous" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"
+                    Theme="{StaticResource AlderCarouselArrowTheme}" AutomationProperties.Name="{DynamicResource AlderText.CarouselPrevious}">
+              <alder:AlderPathIcon Width="14" Height="14" Data="{TemplateBinding PreviousIcon}" />
+            </alder:AlderButton>
+            <alder:AlderButton Name="PART_Next" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right"
+                    Theme="{StaticResource AlderCarouselArrowTheme}" AutomationProperties.Name="{DynamicResource AlderText.CarouselNext}">
+              <alder:AlderPathIcon Width="14" Height="14" Data="{TemplateBinding NextIcon}" />
+            </alder:AlderButton>
+          </Grid>
+          <Grid Grid.Row="1" ColumnDefinitions="*,Auto,*">
+            <alder:AlderScrollViewer Name="PART_DotStrip" Grid.ColumnSpan="3" Margin="2,8,2,0" HorizontalAlignment="Center"
+                          HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled" Focusable="False">
+              <StackPanel Name="PART_Dots" Orientation="Horizontal" />
+            </alder:AlderScrollViewer>
+            <alder:AlderButton Name="PART_PlayPause" Grid.Column="2" Size="Small" Variant="Ghost"
+                               Margin="4,4,0,0" HorizontalAlignment="Right" />
+          </Grid>
+          <Grid Name="PART_MiniatureBar" Grid.Row="2" ColumnDefinitions="Auto,*,Auto">
+            <alder:AlderScrollShadow Name="PART_ThumbnailStrip" Grid.Column="1" Margin="0,8,0,0"
+                                     Orientation="Horizontal" HideScrollBar="True" ShadowSize="12" Focusable="False">
+              <StackPanel Name="PART_Thumbnails" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="6" Margin="2" />
+            </alder:AlderScrollShadow>
+          </Grid>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:not(:modal):not(:miniatures) /template/ :is(Button)#PART_Previous">
+      <Setter Property="Margin" Value="20,0,0,0" />
+    </Style>
+    <Style Selector="^:not(:modal):not(:miniatures) /template/ :is(Button)#PART_Next">
+      <Setter Property="Margin" Value="0,0,20,0" />
+    </Style>
+    <Style Selector="^:modal /template/ :is(Button)#PART_Previous"><Setter Property="Margin" Value="0,0,28,0" /></Style>
+    <Style Selector="^:modal /template/ :is(Button)#PART_Next"><Setter Property="Margin" Value="28,0,0,0" /></Style>
+    <Style Selector="^:modal:compact /template/ :is(Button)#PART_Previous"><Setter Property="Margin" Value="0,0,12,0" /></Style>
+    <Style Selector="^:modal:compact /template/ :is(Button)#PART_Next"><Setter Property="Margin" Value="12,0,0,0" /></Style>
+    <Style Selector="^:modal /template/ alder|AlderScrollShadow#PART_ThumbnailStrip"><Setter Property="Margin" Value="0,32,0,0" /></Style>
+    <Style Selector="^:miniatures /template/ :is(Button)#PART_Previous"><Setter Property="Margin" Value="0,0,8,0" /></Style>
+    <Style Selector="^:miniatures /template/ :is(Button)#PART_Next"><Setter Property="Margin" Value="8,0,0,0" /></Style>
+    <Style Selector="^:miniatures /template/ Grid#PART_MiniatureBar"><Setter Property="Margin" Value="0,10,0,0" /></Style>
+    <Style Selector="^:miniatures /template/ alder|AlderScrollShadow#PART_ThumbnailStrip"><Setter Property="Margin" Value="0" /></Style>
+    <Style Selector="^:dragging /template/ Border#PART_Viewport"><Setter Property="Cursor" Value="SizeWestEast" /></Style>
+  </ControlTheme>
+</ResourceDictionary>

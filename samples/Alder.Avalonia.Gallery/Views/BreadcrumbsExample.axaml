@@ -1,0 +1,299 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.BreadcrumbsExample" x:DataType="vm:BreadcrumbsViewModel" FontFamily="fonts:Inter#Inter">
+  <Design.DataContext><vm:BreadcrumbsViewModel /></Design.DataContext>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderBreadcrumbs x:Name="BasicPath">
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbHome}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbHome" />
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbProducts}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbProducts" />
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbElectronics}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbElectronics" />
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbLaptop}" />
+          </alder:AlderBreadcrumbs>
+          <alder:AlderTextBlock Classes="detail" Text="{Binding PreviewLocation}" IsVisible="{Binding PreviewLocation, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                     AutomationProperties.LiveSetting="Polite" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var breadcrumbs = new AlderBreadcrumbs();
+
+        var breadcrumbItem1 = new AlderBreadcrumbItem
+        {
+            Content = "Home",
+            CommandParameter = "BreadcrumbHome",
+        };
+        breadcrumbItem1.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs.Items.Add(breadcrumbItem1);
+
+        var breadcrumbItem2 = new AlderBreadcrumbItem
+        {
+            Content = "Products",
+            CommandParameter = "BreadcrumbProducts",
+        };
+        breadcrumbItem2.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs.Items.Add(breadcrumbItem2);
+
+        var breadcrumbItem3 = new AlderBreadcrumbItem
+        {
+            Content = "Electronics",
+            CommandParameter = "BreadcrumbElectronics",
+        };
+        breadcrumbItem3.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs.Items.Add(breadcrumbItem3);
+        breadcrumbs.Items.Add(new AlderBreadcrumbItem { Content = "Laptops" });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleBreadcrumbLevels" Title="{DynamicResource GalleryText.BreadcrumbLevels}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderBreadcrumbs>
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbHome}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbHome" />
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbCollections}" />
+          </alder:AlderBreadcrumbs>
+          <alder:AlderBreadcrumbs>
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbHome}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbHome" />
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbProducts}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbProducts" />
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbElectronics}" />
+          </alder:AlderBreadcrumbs>
+          <alder:AlderBreadcrumbs>
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbHome}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbHome" />
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbProducts}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbProducts" />
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbElectronics}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbElectronics" />
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbLaptop}" />
+          </alder:AlderBreadcrumbs>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var breadcrumbs1 = new AlderBreadcrumbs();
+
+        var breadcrumbItem1 = new AlderBreadcrumbItem
+        {
+            Content = "Home",
+            CommandParameter = "BreadcrumbHome",
+        };
+        breadcrumbItem1.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs1.Items.Add(breadcrumbItem1);
+        breadcrumbs1.Items.Add(new AlderBreadcrumbItem { Content = "Collections" });
+
+        var breadcrumbs2 = new AlderBreadcrumbs();
+
+        var breadcrumbItem3 = new AlderBreadcrumbItem
+        {
+            Content = "Home",
+            CommandParameter = "BreadcrumbHome",
+        };
+        breadcrumbItem3.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs2.Items.Add(breadcrumbItem3);
+
+        var breadcrumbItem4 = new AlderBreadcrumbItem
+        {
+            Content = "Products",
+            CommandParameter = "BreadcrumbProducts",
+        };
+        breadcrumbItem4.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs2.Items.Add(breadcrumbItem4);
+        breadcrumbs2.Items.Add(new AlderBreadcrumbItem { Content = "Electronics" });
+
+        var breadcrumbs3 = new AlderBreadcrumbs();
+
+        var breadcrumbItem6 = new AlderBreadcrumbItem
+        {
+            Content = "Home",
+            CommandParameter = "BreadcrumbHome",
+        };
+        breadcrumbItem6.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs3.Items.Add(breadcrumbItem6);
+
+        var breadcrumbItem7 = new AlderBreadcrumbItem
+        {
+            Content = "Products",
+            CommandParameter = "BreadcrumbProducts",
+        };
+        breadcrumbItem7.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs3.Items.Add(breadcrumbItem7);
+
+        var breadcrumbItem8 = new AlderBreadcrumbItem
+        {
+            Content = "Electronics",
+            CommandParameter = "BreadcrumbElectronics",
+        };
+        breadcrumbItem8.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs3.Items.Add(breadcrumbItem8);
+        breadcrumbs3.Items.Add(new AlderBreadcrumbItem { Content = "Laptops" });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabledState" Title="{DynamicResource GalleryText.DisabledState}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderBreadcrumbs x:Name="DisabledPath" IsEnabled="False">
+          <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbHome}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbHome" />
+          <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbProducts}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbProducts" />
+          <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbElectronics}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbElectronics" />
+          <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbLaptop}" />
+        </alder:AlderBreadcrumbs>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var breadcrumbs = new AlderBreadcrumbs { IsEnabled = false };
+
+        var breadcrumbItem1 = new AlderBreadcrumbItem
+        {
+            Content = "Home",
+            CommandParameter = "BreadcrumbHome",
+        };
+        breadcrumbItem1.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs.Items.Add(breadcrumbItem1);
+
+        var breadcrumbItem2 = new AlderBreadcrumbItem
+        {
+            Content = "Products",
+            CommandParameter = "BreadcrumbProducts",
+        };
+        breadcrumbItem2.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs.Items.Add(breadcrumbItem2);
+
+        var breadcrumbItem3 = new AlderBreadcrumbItem
+        {
+            Content = "Electronics",
+            CommandParameter = "BreadcrumbElectronics",
+        };
+        breadcrumbItem3.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs.Items.Add(breadcrumbItem3);
+        breadcrumbs.Items.Add(new AlderBreadcrumbItem { Content = "Laptops" });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleBreadcrumbSeparator" Title="{DynamicResource GalleryText.BreadcrumbSeparator}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderBreadcrumbs x:Name="SlashPath" Separator="/">
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbHome}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbHome" />
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbProducts}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbProducts" />
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbElectronics}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbElectronics" />
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbLaptop}" />
+          </alder:AlderBreadcrumbs>
+          <alder:AlderBreadcrumbs SeparatorIcon="{StaticResource AlderIconArrowUpRight}">
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbHome}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbHome" />
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbProducts}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbProducts" />
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbElectronics}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbElectronics" />
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbLaptop}" />
+          </alder:AlderBreadcrumbs>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var breadcrumbs1 = new AlderBreadcrumbs { Separator = "/" };
+
+        var breadcrumbItem1 = new AlderBreadcrumbItem
+        {
+            Content = "Home",
+            CommandParameter = "BreadcrumbHome",
+        };
+        breadcrumbItem1.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs1.Items.Add(breadcrumbItem1);
+
+        var breadcrumbItem2 = new AlderBreadcrumbItem
+        {
+            Content = "Products",
+            CommandParameter = "BreadcrumbProducts",
+        };
+        breadcrumbItem2.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs1.Items.Add(breadcrumbItem2);
+
+        var breadcrumbItem3 = new AlderBreadcrumbItem
+        {
+            Content = "Electronics",
+            CommandParameter = "BreadcrumbElectronics",
+        };
+        breadcrumbItem3.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs1.Items.Add(breadcrumbItem3);
+        breadcrumbs1.Items.Add(new AlderBreadcrumbItem { Content = "Laptops" });
+
+        var breadcrumbs2 = new AlderBreadcrumbs { SeparatorIcon = (Geometry)this.FindResource("AlderIconArrowUpRight")! };
+
+        var breadcrumbItem5 = new AlderBreadcrumbItem
+        {
+            Content = "Home",
+            CommandParameter = "BreadcrumbHome",
+        };
+        breadcrumbItem5.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs2.Items.Add(breadcrumbItem5);
+
+        var breadcrumbItem6 = new AlderBreadcrumbItem
+        {
+            Content = "Products",
+            CommandParameter = "BreadcrumbProducts",
+        };
+        breadcrumbItem6.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs2.Items.Add(breadcrumbItem6);
+
+        var breadcrumbItem7 = new AlderBreadcrumbItem
+        {
+            Content = "Electronics",
+            CommandParameter = "BreadcrumbElectronics",
+        };
+        breadcrumbItem7.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs2.Items.Add(breadcrumbItem7);
+        breadcrumbs2.Items.Add(new AlderBreadcrumbItem { Content = "Laptops" });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleBreadcrumbDataPath" Title="{DynamicResource GalleryText.BreadcrumbDataPath}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderBreadcrumbs x:Name="DataPath" ItemsSource="{Binding Trail}">
+            <alder:AlderBreadcrumbs.ItemContainerTheme>
+              <ControlTheme TargetType="alder:AlderBreadcrumbItem" BasedOn="{StaticResource {x:Type alder:AlderBreadcrumbItem}}" x:DataType="vm:BreadcrumbExampleStep">
+                <Setter Property="Command" Value="{Binding Navigate}" />
+                <Setter Property="CommandParameter" Value="{Binding Level}" />
+                <Setter Property="AutomationProperties.Name" Value="{Binding Label}" />
+              </ControlTheme>
+            </alder:AlderBreadcrumbs.ItemContainerTheme>
+            <alder:AlderBreadcrumbs.ItemTemplate>
+              <DataTemplate x:DataType="vm:BreadcrumbExampleStep"><alder:AlderTextBlock Text="{Binding Label}" /></DataTemplate>
+            </alder:AlderBreadcrumbs.ItemTemplate>
+          </alder:AlderBreadcrumbs>
+          <alder:AlderTextBlock Classes="detail" Text="{Binding Location}" AutomationProperties.LiveSetting="Polite" />
+          <alder:AlderButton Variant="Secondary" Size="Small" HorizontalAlignment="Left" Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding RestorePath}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var breadcrumbs = new AlderBreadcrumbs();
+        breadcrumbs.Bind(AlderBreadcrumbs.ItemsSourceProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.Trail));
+
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.RestorePath));
+        var preview = new StackPanel { Spacing = 8, Children = { breadcrumbs, reset } };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustomStyles" Title="{DynamicResource GalleryText.CustomStyles}">
+      <gallery:ExampleCard.Preview>
+        <Border Background="{DynamicResource AlderSurfaceSecondary}" CornerRadius="8" Padding="12,8" HorizontalAlignment="Left">
+          <alder:AlderBreadcrumbs>
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbHome}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbHome" />
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbProducts}" Command="{Binding PreviewNavigate}" CommandParameter="BreadcrumbProducts" />
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.BreadcrumbLaptop}" />
+          </alder:AlderBreadcrumbs>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var breadcrumbs = new AlderBreadcrumbs();
+
+        var breadcrumbItem1 = new AlderBreadcrumbItem
+        {
+            Content = "Home",
+            CommandParameter = "BreadcrumbHome",
+        };
+        breadcrumbItem1.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs.Items.Add(breadcrumbItem1);
+
+        var breadcrumbItem2 = new AlderBreadcrumbItem
+        {
+            Content = "Products",
+            CommandParameter = "BreadcrumbProducts",
+        };
+        breadcrumbItem2.Bind(AlderBreadcrumbItem.CommandProperty, CompiledBinding.Create((BreadcrumbsViewModel model) => model.PreviewNavigate));
+        breadcrumbs.Items.Add(breadcrumbItem2);
+        breadcrumbs.Items.Add(new AlderBreadcrumbItem { Content = "Laptops" });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

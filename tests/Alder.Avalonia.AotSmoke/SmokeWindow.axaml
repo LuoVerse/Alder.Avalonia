@@ -1,0 +1,204 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:alder="using:Alder.Avalonia.Controls" xmlns:smoke="using:Alder.Avalonia.AotSmoke"
+        x:Class="Alder.Avalonia.AotSmoke.SmokeWindow" x:DataType="smoke:SmokeModel" Width="1060" Height="840">
+  <Window.Resources>
+    <DataTemplate x:Key="DialogSmokeForm" x:DataType="smoke:SmokeModel">
+      <alder:AlderInput x:Name="DialogInput" Text="{CompiledBinding Text, Mode=TwoWay}" />
+    </DataTemplate>
+  </Window.Resources>
+  <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12" Margin="12">
+    <StackPanel Spacing="6">
+      <alder:AlderButtonGroup>
+        <alder:AlderButton x:Name="ActionButton" Icon="{CompiledBinding Icon}" Command="{CompiledBinding Activate}" Content="Run" />
+        <alder:AlderButton x:Name="MenuButton" Content="Menu">
+          <alder:AlderButton.Flyout>
+            <alder:AlderMenuFlyout>
+              <MenuItem Header="Run from menu" Command="{CompiledBinding Activate}" />
+            </alder:AlderMenuFlyout>
+          </alder:AlderButton.Flyout>
+        </alder:AlderButton>
+      </alder:AlderButtonGroup>
+      <alder:AlderToolbar>
+        <alder:AlderToggleButton x:Name="Toggle" IsChecked="{CompiledBinding Checked, Mode=TwoWay}" Content="Toggle" />
+        <alder:AlderSwitch IsChecked="{CompiledBinding Checked, Mode=TwoWay}" />
+        <alder:AlderSlider Value="{CompiledBinding Position, Mode=TwoWay}" />
+      </alder:AlderToolbar>
+      <alder:AlderChoiceGroup SelectedKeys="{CompiledBinding SelectedKeys}">
+        <alder:AlderToggleButton alder:AlderChoiceGroup.Key="first" Content="Choice" />
+      </alder:AlderChoiceGroup>
+      <alder:AlderToggleButtonGroup SelectedKeys="{CompiledBinding SelectedKeys}">
+        <alder:AlderToggleButton alder:AlderChoiceGroup.Key="first" Content="Toggle choice" />
+      </alder:AlderToggleButtonGroup>
+      <alder:AlderCheckboxGroup SelectedKeys="{CompiledBinding SelectedKeys}">
+        <alder:AlderCheckBox alder:AlderChoiceGroup.Key="first" Content="Check choice" />
+      </alder:AlderCheckboxGroup>
+      <alder:AlderRadioGroup x:Name="Radios" SelectedKeys="{CompiledBinding SelectedKeys}">
+        <alder:AlderRadioButton x:Name="FirstRadio" alder:AlderChoiceGroup.Key="first" Content="First"
+                     Description="{CompiledBinding Description}" />
+        <alder:AlderRadioButton x:Name="SecondRadio" alder:AlderChoiceGroup.Key="second" Content="Second" />
+      </alder:AlderRadioGroup>
+      <alder:AlderCheckBox x:Name="Check" IsChecked="{CompiledBinding Checked, Mode=TwoWay}"
+                      Description="{CompiledBinding Description}" CheckedIcon="{CompiledBinding Icon}" Content="Check" />
+      <alder:AlderRangeSlider x:Name="RangeSlider" LowerValue="{CompiledBinding Position}" UpperValue="85" />
+      <Label x:Name="FieldLabel" Theme="{StaticResource AlderLabelTheme}" Target="{CompiledBinding #Input}" Content="Name" />
+      <Label x:Name="StandaloneLabel" Theme="{StaticResource AlderLabelTheme}" Content="Standalone label" />
+      <alder:AlderInput x:Name="Input" Text="{CompiledBinding Text, Mode=TwoWay}"
+                   IsRequired="{CompiledBinding Required}" IsInvalid="{CompiledBinding Invalid}" />
+      <alder:AlderInputGroup x:Name="InputGroup" Prefix="{CompiledBinding Prefix}" Text="{CompiledBinding Text, Mode=TwoWay}" />
+      <alder:AlderSearchField x:Name="Search" Text="{CompiledBinding Text, Mode=TwoWay}" SubmitCommand="{CompiledBinding Activate}" />
+      <alder:AlderNumberField x:Name="Number" Value="{CompiledBinding Number}" />
+      <NumericUpDown Theme="{StaticResource AlderNumericInputTheme}" Value="{CompiledBinding Number}" />
+      <alder:AlderInputOtp x:Name="Otp" Text="{CompiledBinding Code, Mode=TwoWay}" />
+      <alder:AlderTextArea x:Name="Notes" Rows="{CompiledBinding Rows}" Text="{CompiledBinding Text, Mode=TwoWay}" />
+    </StackPanel>
+
+    <StackPanel Grid.Column="1" Spacing="6">
+      <alder:AlderDateField x:Name="Date" Value="{CompiledBinding Date}" />
+      <alder:AlderTimeField x:Name="Time" Value="{CompiledBinding Time}" />
+      <alder:AlderDatePicker x:Name="DatePicker" Value="{CompiledBinding Date}" />
+      <alder:AlderDateRangePicker x:Name="RangePicker" Value="{CompiledBinding Dates}" />
+      <alder:AlderCalendar x:Name="Calendar" Value="{CompiledBinding Date}" />
+      <alder:AlderRangeCalendar x:Name="RangeCalendar" Value="{CompiledBinding Dates}" />
+      <alder:AlderAlert x:Name="Alert" Title="{CompiledBinding Description}" Color="Danger" BorderBrush="Orange"
+                   BorderThickness="1,2,3,4" BoxShadow="0 1 3 #20000000" />
+      <alder:AlderSurface x:Name="Surface" Variant="Secondary">
+        <alder:AlderCard x:Name="Card" Variant="Tertiary" Spacing="8" Title="{CompiledBinding Description}" Footer="{CompiledBinding Text}">
+          <StackPanel>
+            <alder:AlderSeparator x:Name="Separator" Variant="Secondary" />
+            <alder:AlderSurface>
+              <alder:AlderSeparator x:Name="DecorativeSeparator" Orientation="Vertical" IsDecorative="True"
+                               HorizontalAlignment="Left" Height="16" />
+            </alder:AlderSurface>
+          </StackPanel>
+        </alder:AlderCard>
+      </alder:AlderSurface>
+      <alder:AlderMeter x:Name="Meter" Label="Load" Minimum="10" Maximum="90" Value="{CompiledBinding Position}" />
+      <alder:AlderProgressBar x:Name="ProgressBar" Label="Transfer" Value="{CompiledBinding Position}"
+                         IsIndeterminate="{CompiledBinding Expanded}" />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <alder:AlderProgressCircle x:Name="ProgressCircle" Size="Large" Value="{CompiledBinding Position}" StrokeThickness="5"
+                              TrackStrokeThickness="2" StrokeLineCap="Flat"
+                              IsIndeterminate="{CompiledBinding Expanded}" ShowValue="True" />
+        <alder:AlderSpinner x:Name="Spinner" Size="ExtraLarge" />
+        <alder:AlderSkeleton x:Name="Skeleton" Width="40" Height="12" />
+      </StackPanel>
+    </StackPanel>
+
+    <StackPanel Grid.Column="2" Spacing="6">
+      <alder:AlderDisclosure x:Name="Disclosure" Header="Disclosure" IsExpanded="{CompiledBinding Expanded}" Content="Body" />
+      <alder:AlderDisclosureGroup x:Name="Disclosures" ItemsSource="{CompiledBinding Items}" ExpandedKeys="{CompiledBinding ExpandedKeys}">
+        <alder:AlderDisclosureGroup.ItemContainerTheme>
+          <ControlTheme TargetType="alder:AlderDisclosure" BasedOn="{StaticResource {x:Type alder:AlderDisclosure}}" x:DataType="smoke:SmokeItem">
+            <Setter Property="Key" Value="{CompiledBinding Key}" />
+            <Setter Property="Header" Value="{CompiledBinding Label}" />
+            <Setter Property="Content" Value="{CompiledBinding Body}" />
+          </ControlTheme>
+        </alder:AlderDisclosureGroup.ItemContainerTheme>
+      </alder:AlderDisclosureGroup>
+      <alder:AlderAccordion x:Name="Accordion" ItemsSource="{CompiledBinding Items}" ExpandedKeys="{CompiledBinding ExpandedKeys}">
+        <alder:AlderAccordion.ItemContainerTheme>
+          <ControlTheme TargetType="alder:AlderAccordionItem" BasedOn="{StaticResource {x:Type alder:AlderAccordionItem}}" x:DataType="smoke:SmokeItem">
+            <Setter Property="Key" Value="{CompiledBinding Key}" />
+            <Setter Property="Header" Value="{CompiledBinding Label}" />
+            <Setter Property="Content" Value="{CompiledBinding Body}" />
+          </ControlTheme>
+        </alder:AlderAccordion.ItemContainerTheme>
+      </alder:AlderAccordion>
+      <alder:AlderBreadcrumbs x:Name="Breadcrumbs" ItemsSource="{CompiledBinding Items}">
+        <alder:AlderBreadcrumbs.ItemTemplate>
+          <DataTemplate x:DataType="smoke:SmokeItem"><TextBlock Text="{CompiledBinding Label}" /></DataTemplate>
+        </alder:AlderBreadcrumbs.ItemTemplate>
+      </alder:AlderBreadcrumbs>
+      <alder:AlderLink x:Name="Link" Content="Open" Icon="{CompiledBinding Icon}" Command="{CompiledBinding Activate}" Underline="Always" />
+      <alder:AlderPagination x:Name="Pagination" PageCount="20" CurrentPage="{CompiledBinding Page}"
+                        PageItems="{CompiledBinding PageItems}" Summary="{CompiledBinding Description}" ShowNavigationLabels="False" />
+      <alder:AlderTabs x:Name="Tabs" ItemsSource="{CompiledBinding Items}" SelectedIndex="{CompiledBinding SelectedTab}"
+                  HeaderAlignment="{CompiledBinding TabAlignment}">
+        <alder:AlderTabs.ItemTemplate>
+          <DataTemplate x:DataType="smoke:SmokeItem"><TextBlock Text="{CompiledBinding Label}" /></DataTemplate>
+        </alder:AlderTabs.ItemTemplate>
+        <alder:AlderTabs.ContentTemplate>
+          <DataTemplate x:DataType="smoke:SmokeItem"><TextBlock Text="{CompiledBinding Body}" /></DataTemplate>
+        </alder:AlderTabs.ContentTemplate>
+      </alder:AlderTabs>
+      <alder:AlderTabs x:Name="Morphing" Variant="Morphing" MinHeight="100" CloseTabCommand="{CompiledBinding CloseMorphTab}"
+                  ReorderTabCommand="{CompiledBinding MoveMorphTab}" ItemsSource="{CompiledBinding MorphItems}"
+                  SelectedItem="{CompiledBinding SelectedMorphTab, Mode=TwoWay}">
+        <alder:AlderTabs.ItemTemplate>
+          <DataTemplate x:DataType="smoke:SmokeItem"><TextBlock Text="{CompiledBinding Label}" /></DataTemplate>
+        </alder:AlderTabs.ItemTemplate>
+        <alder:AlderTabs.ContentTemplate>
+          <DataTemplate x:DataType="smoke:SmokeItem"><TextBlock Text="{CompiledBinding Body}" /></DataTemplate>
+        </alder:AlderTabs.ContentTemplate>
+      </alder:AlderTabs>
+      <alder:AlderAvatarGroup x:Name="AvatarGroup" Max="1" Size="Small" ItemsSource="{CompiledBinding Items}">
+        <alder:AlderAvatarGroup.ItemTemplate>
+          <DataTemplate x:DataType="smoke:SmokeItem">
+            <alder:AlderAvatar Fallback="{CompiledBinding Label}" Alt="{CompiledBinding Body}" />
+          </DataTemplate>
+        </alder:AlderAvatarGroup.ItemTemplate>
+      </alder:AlderAvatarGroup>
+      <alder:AlderSelect x:Name="PickerSelect" Label="Select" ItemsSource="{CompiledBinding PickerChoices}"
+                    SelectedItem="{CompiledBinding PickerChoice}" />
+      <alder:AlderAutocomplete x:Name="PickerAutocomplete" Label="Autocomplete" ItemsSource="{CompiledBinding PickerChoices}"
+                          SelectionMode="Multiple" ShowSelectionTags="True" SelectedItems="{CompiledBinding PickerSelections}" />
+      <alder:AlderComboBox x:Name="PickerCombo" Label="ComboBox" ItemsSource="{CompiledBinding PickerChoices}"
+                      Text="{CompiledBinding PickerText}" />
+      <alder:AlderProse>
+        <alder:AlderHeading x:Name="TypographyHeading" Level="{CompiledBinding HeadingLevel}" Text="{CompiledBinding Description}" />
+        <alder:AlderParagraph Size="Small">
+          <Run Text="Shortcut " />
+          <InlineUIContainer BaselineAlignment="Center">
+            <alder:AlderKbd>
+              <alder:AlderKbdKey x:Name="KbdModifier" KeyValue="{CompiledBinding ShortcutKey}" />
+              <TextBlock Text="K" />
+            </alder:AlderKbd>
+          </InlineUIContainer>
+        </alder:AlderParagraph>
+      </alder:AlderProse>
+      <alder:AlderBadgeAnchor>
+        <alder:AlderAvatar Fallback="AB" />
+        <alder:AlderBadge x:Name="SmokeBadge" Size="Small" Color="Danger" Content="{CompiledBinding Code}" />
+      </alder:AlderBadgeAnchor>
+      <alder:AlderChip x:Name="SmokeChip" Color="Success" Variant="Soft" Content="{CompiledBinding Description}" />
+      <Grid ColumnDefinitions="*,Auto">
+        <alder:AlderScrollShadow x:Name="SmokeScrollShadow" Height="48" HideScrollBar="True"
+                            ShadowVisibility="{CompiledBinding ShadowVisibility}" Content="{CompiledBinding Description}">
+          <alder:AlderScrollShadow.ContentTemplate>
+            <DataTemplate x:DataType="x:String">
+              <TextBlock Height="144" Text="{CompiledBinding}" />
+            </DataTemplate>
+          </alder:AlderScrollShadow.ContentTemplate>
+        </alder:AlderScrollShadow>
+        <TextBlock Grid.Column="1" x:Name="SmokeScrollShadowState" Text="{CompiledBinding #SmokeScrollShadow.VisibleShadows}" />
+      </Grid>
+      <alder:AlderTable x:Name="SmokeTable" Height="130" ItemsSource="{CompiledBinding Items}" RowKeySelector="{CompiledBinding TableRowKey}"
+                   SelectionMode="Multiple" SelectedKeys="{CompiledBinding TableSelection}" ShowSelectionCheckboxes="True">
+        <alder:AlderTableColumn Key="label" Header="Name" Width="*" Binding="{CompiledBinding Label}" x:DataType="smoke:SmokeItem" />
+        <alder:AlderTableColumn Key="description" Header="Description" Width="*" Binding="{CompiledBinding Body}" x:DataType="smoke:SmokeItem" />
+      </alder:AlderTable>
+      <alder:AlderDataGrid x:Name="SmokeDataGrid" Height="138" Width="420" RowHeight="43"
+                          ItemsSource="{CompiledBinding Items}" RowKeySelector="{CompiledBinding TableRowKey}"
+                          SelectionMode="Multiple" SelectedKeys="{CompiledBinding TableSelection}">
+        <alder:AlderTableColumn Key="label" Header="Name" Width="126" Pin="Start"
+                                Binding="{CompiledBinding Label}" x:DataType="smoke:SmokeItem" />
+        <alder:AlderTableColumn Key="description" Header="Description" Width="370"
+                                Binding="{CompiledBinding Body}" x:DataType="smoke:SmokeItem" />
+        <alder:AlderTableColumn Key="labelEnd" Width="82" Pin="End" CellTheme="{StaticResource AlderDataGridActionsCellTheme}">
+          <alder:AlderTableColumn.CellTemplate>
+            <DataTemplate x:DataType="smoke:SmokeItem">
+              <alder:AlderButton Theme="{StaticResource AlderDataGridRowActionsButtonTheme}" AutomationProperties.Name="Row actions">
+                <alder:AlderButton.Flyout>
+                  <alder:AlderDropdownFlyout MinMenuWidth="180">
+                    <MenuItem Header="{CompiledBinding Label}" />
+                  </alder:AlderDropdownFlyout>
+                </alder:AlderButton.Flyout>
+              </alder:AlderButton>
+            </DataTemplate>
+          </alder:AlderTableColumn.CellTemplate>
+        </alder:AlderTableColumn>
+      </alder:AlderDataGrid>
+    </StackPanel>
+  </Grid>
+</Window>

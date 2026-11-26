@@ -1,0 +1,329 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.SeparatorExample" x:DataType="vm:LayoutViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="SeparatorLinks" x:DataType="vm:LayoutViewModel">
+      <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnSpacing="16" Height="20" HorizontalAlignment="Left">
+        <alder:AlderTextBlock Text="{DynamicResource GalleryText.LayoutBlog}" FontSize="16" LineHeight="20" TextWrapping="Wrap" Grid.Column="0" />
+        <alder:AlderSeparator Grid.Column="1" Orientation="Vertical" Height="20" VerticalAlignment="Top" />
+        <alder:AlderTextBlock Text="{DynamicResource GalleryText.LayoutDocs}" FontSize="16" LineHeight="20" TextWrapping="Wrap" Grid.Column="2" />
+        <alder:AlderSeparator Grid.Column="3" Orientation="Vertical" Height="20" VerticalAlignment="Top" />
+        <alder:AlderTextBlock Text="{DynamicResource GalleryText.LayoutSource}" FontSize="16" LineHeight="20" TextWrapping="Wrap" Grid.Column="4" />
+      </Grid>
+    </DataTemplate>
+    <DataTemplate x:Key="SeparatorOverview" x:DataType="vm:LayoutViewModel">
+      <StackPanel MaxWidth="448">
+        <StackPanel Spacing="4">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.LayoutDemoTitle}" FontSize="16" LineHeight="28" TextWrapping="Wrap" FontWeight="Medium" AutomationProperties.HeadingLevel="4" />
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.LayoutDemoTagline}" FontSize="16" LineHeight="28" TextWrapping="Wrap" />
+        </StackPanel>
+        <alder:AlderSeparator Margin="0,16" />
+        <ContentPresenter Content="{CompiledBinding}" ContentTemplate="{StaticResource SeparatorLinks}"
+                          ClipToBounds="False" HorizontalAlignment="Left" VerticalAlignment="Center" />
+      </StackPanel>
+    </DataTemplate>
+  </UserControl.Resources>
+  <UserControl.Styles>
+    <Style Selector="Border.layoutPreview">
+      <Setter Property="TextElement.FontFamily" Value="fonts:Inter#Inter" />
+      <Setter Property="TextElement.Foreground" Value="{DynamicResource AlderTertiaryInk}" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleBasic" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="layoutPreview" Padding="8,12" MinHeight="300">
+          <ContentPresenter Content="{CompiledBinding}" ContentTemplate="{StaticResource SeparatorOverview}"
+                            ClipToBounds="False" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var row = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            Spacing = 16,
+            Height = 20,
+            Children =
+            {
+                new AlderTextBlock { Text = "Blog", FontSize = 16, LineHeight = 20 },
+                new AlderSeparator { Orientation = Orientation.Vertical, Height = 20 },
+                new AlderTextBlock { Text = "Docs", FontSize = 16, LineHeight = 20 },
+                new AlderSeparator { Orientation = Orientation.Vertical, Height = 20 },
+                new AlderTextBlock { Text = "Source", FontSize = 16, LineHeight = 20 }
+            }
+        };
+
+        var header = new StackPanel
+        {
+            Spacing = 4,
+            Children =
+            {
+                new AlderTextBlock { Text = "Alder Components", FontSize = 16, LineHeight = 28, FontWeight = FontWeight.Medium },
+                new AlderTextBlock { Text = "Cross-platform UI components for Avalonia.", FontSize = 16, LineHeight = 28, TextWrapping = TextWrapping.Wrap }
+            }
+        };
+        var overview = new StackPanel
+        {
+            MaxWidth = 448,
+            Children = { header, new AlderSeparator { Margin = new Thickness(0, 16) }, row }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.Variants}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="layoutPreview" Padding="8,12" MinHeight="180">
+          <StackPanel Spacing="12" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.SeparatorDefaultVariant}" FontSize="16" LineHeight="28" TextWrapping="Wrap" TextAlignment="Center" />
+            <alder:AlderSeparator Variant="Default" />
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.SeparatorSecondaryVariant}" FontSize="16" LineHeight="28" TextWrapping="Wrap" TextAlignment="Center" />
+            <alder:AlderSeparator Variant="Secondary" />
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.SeparatorTertiaryVariant}" FontSize="16" LineHeight="28" TextWrapping="Wrap" TextAlignment="Center" />
+            <alder:AlderSeparator Variant="Tertiary" />
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var group = new StackPanel { Spacing = 12, HorizontalAlignment = HorizontalAlignment.Center };
+        foreach (var (name, variant) in new (string, SeparatorVariant)[]
+        {
+            ("Default Variant", SeparatorVariant.Default),
+            ("Secondary Variant", SeparatorVariant.Secondary),
+            ("Tertiary Variant", SeparatorVariant.Tertiary)
+        })
+        {
+            group.Children.Add(new AlderTextBlock { Text = name, FontSize = 16, LineHeight = 28, TextAlignment = TextAlignment.Center });
+            group.Children.Add(new AlderSeparator { Variant = variant });
+        }
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSurfaces" Title="{DynamicResource GalleryText.SeparatorWithSurface}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="layoutPreview" Padding="8,12" MinHeight="180">
+          <StackPanel MaxWidth="320" Spacing="32" VerticalAlignment="Center">
+            <alder:AlderSurface Variant="Default" Padding="24" CornerRadius="24">
+              <StackPanel Spacing="12">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.SeparatorDefaultSurface}" FontSize="16" LineHeight="24" TextWrapping="Wrap" FontWeight="SemiBold" AutomationProperties.HeadingLevel="3" />
+                <alder:AlderSeparator Variant="Default" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.SurfaceContent}" FontSize="14" LineHeight="20" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" />
+              </StackPanel>
+            </alder:AlderSurface>
+            <alder:AlderSurface Variant="Secondary" Padding="24" CornerRadius="24">
+              <StackPanel Spacing="12">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.SeparatorSecondarySurface}" FontSize="16" LineHeight="24" TextWrapping="Wrap" FontWeight="SemiBold" AutomationProperties.HeadingLevel="3" />
+                <alder:AlderSeparator Variant="Secondary" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.SurfaceContent}" FontSize="14" LineHeight="20" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" />
+              </StackPanel>
+            </alder:AlderSurface>
+            <alder:AlderSurface Variant="Tertiary" Padding="24" CornerRadius="24">
+              <StackPanel Spacing="12">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.SeparatorTertiarySurface}" FontSize="16" LineHeight="24" TextWrapping="Wrap" FontWeight="SemiBold" AutomationProperties.HeadingLevel="3" />
+                <alder:AlderSeparator Variant="Tertiary" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.SurfaceContent}" FontSize="14" LineHeight="20" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" />
+              </StackPanel>
+            </alder:AlderSurface>
+            <alder:AlderSurface Variant="Transparent" Padding="24" CornerRadius="23.5" BorderThickness="1" BorderBrush="{DynamicResource AlderBorder}">
+              <StackPanel Spacing="12">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.SeparatorTransparentSurface}" FontSize="16" LineHeight="24" TextWrapping="Wrap" FontWeight="SemiBold" AutomationProperties.HeadingLevel="3" />
+                <alder:AlderSeparator Variant="Default" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.SurfaceContent}" FontSize="14" LineHeight="20" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" />
+              </StackPanel>
+            </alder:AlderSurface>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        AlderSurface Example(string title, SurfaceVariant surfaceVariant, SeparatorVariant separatorVariant)
+        {
+            var surface = new AlderSurface
+            {
+                Variant = surfaceVariant,
+                Padding = new Thickness(24),
+                CornerRadius = new CornerRadius(24),
+                Content = new StackPanel
+                {
+                    Spacing = 12,
+                    Children =
+                    {
+                        new AlderTextBlock { Text = title, FontSize = 16, LineHeight = 24, FontWeight = FontWeight.SemiBold },
+                        new AlderSeparator { Variant = separatorVariant },
+                        new AlderTextBlock { Text = "Surface Content", FontSize = 14, LineHeight = 20 }
+                    }
+                }
+            };
+
+            if (surfaceVariant == SurfaceVariant.Transparent)
+            {
+                surface.BorderThickness = new Thickness(1);
+                surface.CornerRadius = new CornerRadius(23.5);
+                surface[!AlderSurface.BorderBrushProperty] = new DynamicResourceExtension("AlderBorder");
+            }
+
+            return surface;
+        }
+
+        var surfaces = new StackPanel
+        {
+            MaxWidth = 320, Spacing = 32,
+            Children =
+            {
+                Example("Default Surface", SurfaceVariant.Default, SeparatorVariant.Default),
+                Example("Secondary Surface", SurfaceVariant.Secondary, SeparatorVariant.Secondary),
+                Example("Tertiary Surface", SurfaceVariant.Tertiary, SeparatorVariant.Tertiary),
+                Example("Transparent Surface", SurfaceVariant.Transparent, SeparatorVariant.Default)
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVertical" Title="{DynamicResource GalleryText.Vertical}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="layoutPreview" Padding="8,12" MinHeight="180">
+          <ContentPresenter Content="{CompiledBinding}" ContentTemplate="{StaticResource SeparatorLinks}"
+                            ClipToBounds="False" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var row = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            Spacing = 16,
+            Height = 20,
+            Children =
+            {
+                new AlderTextBlock { Text = "Blog", FontSize = 16, LineHeight = 20 },
+                new AlderSeparator { Orientation = Orientation.Vertical, Height = 20 },
+                new AlderTextBlock { Text = "Docs", FontSize = 16, LineHeight = 20 },
+                new AlderSeparator { Orientation = Orientation.Vertical, Height = 20 },
+                new AlderTextBlock { Text = "Source", FontSize = 16, LineHeight = 20 }
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleContent" Title="{DynamicResource GalleryText.LayoutWithContent}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="layoutPreview" Padding="8,12" MinHeight="180">
+          <StackPanel Spacing="16" MaxWidth="448" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid ColumnDefinitions="48,*" ColumnSpacing="12">
+              <alder:AlderImage Width="48" Height="48" Stretch="Uniform" VerticalAlignment="Center"
+                     Source="avares://Alder.Avalonia.Gallery/Assets/Separator/bell-small.png" AutomationProperties.AccessibilityView="Raw" />
+              <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.SeparatorNotifications}" FontSize="16" LineHeight="28" TextWrapping="Wrap" FontWeight="Medium" AutomationProperties.HeadingLevel="4" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.SeparatorNotificationsDescription}" FontSize="14" LineHeight="20" TextWrapping="Wrap"
+                           Foreground="{DynamicResource AlderMuted}" />
+              </StackPanel>
+            </Grid>
+            <alder:AlderSeparator />
+            <Grid ColumnDefinitions="48,*" ColumnSpacing="12">
+              <alder:AlderImage Width="48" Height="48" Stretch="Uniform" VerticalAlignment="Center"
+                     Source="avares://Alder.Avalonia.Gallery/Assets/Separator/compass-small.png" AutomationProperties.AccessibilityView="Raw" />
+              <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.SeparatorExtension}" FontSize="16" LineHeight="28" TextWrapping="Wrap" FontWeight="Medium" AutomationProperties.HeadingLevel="4" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.SeparatorExtensionDescription}" FontSize="14" LineHeight="20" TextWrapping="Wrap"
+                           Foreground="{DynamicResource AlderMuted}" />
+              </StackPanel>
+            </Grid>
+            <alder:AlderSeparator />
+            <Grid ColumnDefinitions="48,*" ColumnSpacing="12">
+              <alder:AlderImage Width="48" Height="48" Stretch="Uniform" VerticalAlignment="Center"
+                     Source="avares://Alder.Avalonia.Gallery/Assets/Separator/mint-collective-small.png" AutomationProperties.AccessibilityView="Raw" />
+              <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.SeparatorCollectible}" FontSize="16" LineHeight="28" TextWrapping="Wrap" FontWeight="Medium" AutomationProperties.HeadingLevel="4" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.SeparatorCollectibleDescription}" FontSize="14" LineHeight="20" TextWrapping="Wrap"
+                           Foreground="{DynamicResource AlderMuted}" />
+              </StackPanel>
+            </Grid>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        Grid CreateItem(string icon, string title, string description)
+        {
+            using var stream = AssetLoader.Open(new Uri($"avares://Alder.Avalonia.Gallery/Assets/Separator/{icon}"));
+            var text = new StackPanel
+            {
+                VerticalAlignment = VerticalAlignment.Center,
+                Children =
+                {
+                    new AlderTextBlock { Text = title, FontSize = 16, LineHeight = 28, FontWeight = FontWeight.Medium },
+                    new AlderTextBlock { Text = description, FontSize = 14, LineHeight = 20, TextWrapping = TextWrapping.Wrap }
+                }
+            };
+            Grid.SetColumn(text, 1);
+            return new Grid
+            {
+                ColumnDefinitions = new ColumnDefinitions("48,*"), ColumnSpacing = 12,
+                Children = { new AlderImage { Source = new Bitmap(stream), Width = 48, Height = 48 }, text }
+            };
+        }
+
+        var content = new StackPanel
+        {
+            Spacing = 16,
+            Children =
+            {
+                CreateItem("bell-small.png", "Set Up Notifications", "Receive account activity updates"),
+                new AlderSeparator(),
+                CreateItem("compass-small.png", "Set up Browser Extension", "Connect your browser to your account"),
+                new AlderSeparator(),
+                CreateItem("mint-collective-small.png", "Mint Collectible", "Create your first collectible")
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDecorative" Title="{DynamicResource GalleryText.LayoutDecorative}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="layoutPreview" Padding="8,12" MinHeight="180">
+          <alder:AlderSeparator Width="160" HorizontalAlignment="Center" VerticalAlignment="Center" IsDecorative="True" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var divider = new AlderSeparator { IsDecorative = true };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleRenderFunction" Title="{DynamicResource GalleryText.SeparatorRenderFunction}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="layoutPreview" Padding="8,12" MinHeight="180">
+          <ContentPresenter Content="{CompiledBinding}" ContentTemplate="{StaticResource SeparatorOverview}"
+                            ClipToBounds="False" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var presenter = new ContentPresenter
+        {
+            Content = viewModel,
+            ContentTemplate = new FuncDataTemplate<LayoutViewModel>((_, _) =>
+                new AlderSeparator { Margin = new Thickness(0, 16) }),
+            ClipToBounds = false
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustom" Title="{DynamicResource GalleryText.CustomStyles}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="layoutPreview" Padding="8,12" MinHeight="180">
+          <StackPanel MaxWidth="320" Spacing="16" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.SeparatorAccountSettings}" FontSize="14" LineHeight="20" TextWrapping="Wrap" FontWeight="Medium" Foreground="{DynamicResource AlderInk}" />
+            <alder:AlderSeparator Background="{DynamicResource AlderSeparatorSecondary}" />
+            <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnSpacing="12" Height="20" HorizontalAlignment="Left">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.LayoutProfile}" FontSize="14" LineHeight="20" TextWrapping="Wrap" Grid.Column="0" Foreground="{DynamicResource AlderMuted}" />
+              <alder:AlderSeparator Grid.Column="1" Orientation="Vertical" Height="16" VerticalAlignment="Top" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.DisclosureBilling}" FontSize="14" LineHeight="20" TextWrapping="Wrap" Grid.Column="2" Foreground="{DynamicResource AlderMuted}" />
+              <alder:AlderSeparator Grid.Column="3" Orientation="Vertical" Height="16" VerticalAlignment="Top" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.AccordionSecurity}" FontSize="14" LineHeight="20" TextWrapping="Wrap" Grid.Column="4" Foreground="{DynamicResource AlderMuted}" />
+            </Grid>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var horizontal = new AlderSeparator();
+        horizontal[!AlderSeparator.BackgroundProperty] = new DynamicResourceExtension("AlderSeparatorSecondary");
+
+        var vertical = new AlderSeparator
+        {
+            Orientation = Orientation.Vertical,
+            Height = 16,
+            VerticalAlignment = VerticalAlignment.Top
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

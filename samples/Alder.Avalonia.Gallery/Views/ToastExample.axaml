@@ -1,0 +1,185 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:conv="using:Avalonia.Data.Converters"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             x:Class="Alder.Avalonia.Gallery.Views.ToastExample" x:DataType="vm:ToastViewModel">
+  <Design.DataContext><vm:ToastViewModel /></Design.DataContext>
+  <UserControl.Resources>
+    <DataTemplate x:Key="ToastContentPreview" x:DataType="vm:ToastMessageDemo">
+      <StackPanel Spacing="6">
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <alder:AlderPathIcon Width="16" Height="16" Data="{StaticResource AlderIconCalendar}" Foreground="{DynamicResource AlderSoftInk}" />
+          <alder:AlderTextBlock FontWeight="SemiBold" Text="{CompiledBinding Title}" Foreground="{DynamicResource AlderInk}" />
+        </StackPanel>
+        <alder:AlderTextBlock Text="{CompiledBinding Detail}" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+      </StackPanel>
+    </DataTemplate>
+  </UserControl.Resources>
+  <StackPanel Spacing="24">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton HorizontalAlignment="Center" Variant="Secondary" Size="Small" Command="{CompiledBinding ShowUsageCommand}"
+                           Content="{DynamicResource GalleryText.ToastUsageTrigger}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var showToast = ReactiveCommand.Create(() =>
+        {
+            ToastHandle? toast = null;
+            toast = Toast.Show(new ToastOptions("You have been invited to join a team")
+            {
+                Description = "Bob sent you an invitation to join the Alder team.",
+                Indicator = Application.Current?.FindResource("AlderIconAvatarPerson") as Geometry,
+                ActionText = "Dismiss",
+                Action = ReactiveCommand.Create(() => toast?.Close())
+            });
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleToastVariants" Title="{DynamicResource GalleryText.ToastVariants}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="8" LineSpacing="8" HorizontalAlignment="Center">
+          <alder:AlderButton Variant="Secondary" Command="{CompiledBinding ShowVariant}"
+                        CommandParameter="{x:Static alder:ToastVariant.Default}" Content="{DynamicResource GalleryText.ToastDefaultLabel}" />
+          <alder:AlderButton Variant="Secondary" Command="{CompiledBinding ShowVariant}"
+                        CommandParameter="{x:Static alder:ToastVariant.Accent}" Content="{DynamicResource GalleryText.ToastAccentLabel}" />
+          <alder:AlderButton Variant="Secondary" Command="{CompiledBinding ShowVariant}"
+                        CommandParameter="{x:Static alder:ToastVariant.Success}" Content="{DynamicResource GalleryText.ToastSuccessLabel}" />
+          <alder:AlderButton Variant="Secondary" Command="{CompiledBinding ShowVariant}"
+                        CommandParameter="{x:Static alder:ToastVariant.Warning}" Content="{DynamicResource GalleryText.ToastWarningLabel}" />
+          <alder:AlderButton Variant="Secondary" Command="{CompiledBinding ShowVariant}"
+                        CommandParameter="{x:Static alder:ToastVariant.Danger}" Content="{DynamicResource GalleryText.ToastDangerLabel}" />
+          <alder:AlderButton Variant="Secondary" Command="{CompiledBinding ShowVariant}"
+                        CommandParameter="{x:Static alder:ToastVariant.Loading}" Content="{DynamicResource GalleryText.ToastLoadingLabel}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        // The application registers its default ToastHost when the window opens.
+        var toast = Toast.Show(new ToastOptions("Changes saved")
+        {
+            Variant = ToastVariant.Success,
+            Description = "The workspace is up to date.",
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleToastPlacement" Title="{DynamicResource GalleryText.DrawerPlacement}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="8" LineSpacing="8" HorizontalAlignment="Center">
+          <alder:AlderButton Variant="Secondary" Command="{CompiledBinding ShowPlacement}"
+                        CommandParameter="{x:Static alder:ToastPlacement.TopStart}" Content="{DynamicResource GalleryText.ToastTopStart}" />
+          <alder:AlderButton Variant="Secondary" Command="{CompiledBinding ShowPlacement}"
+                        CommandParameter="{x:Static alder:ToastPlacement.Top}" Content="{DynamicResource GalleryText.ToastTop}" />
+          <alder:AlderButton Variant="Secondary" Command="{CompiledBinding ShowPlacement}"
+                        CommandParameter="{x:Static alder:ToastPlacement.TopEnd}" Content="{DynamicResource GalleryText.ToastTopEnd}" />
+          <alder:AlderButton Variant="Secondary" Command="{CompiledBinding ShowPlacement}"
+                        CommandParameter="{x:Static alder:ToastPlacement.BottomStart}" Content="{DynamicResource GalleryText.ToastBottomStart}" />
+          <alder:AlderButton Variant="Secondary" Command="{CompiledBinding ShowPlacement}"
+                        CommandParameter="{x:Static alder:ToastPlacement.Bottom}" Content="{DynamicResource GalleryText.ToastBottom}" />
+          <alder:AlderButton Variant="Secondary" Command="{CompiledBinding ShowPlacement}"
+                        CommandParameter="{x:Static alder:ToastPlacement.BottomEnd}" Content="{DynamicResource GalleryText.ToastBottomEnd}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        Toast.Show(new ToastOptions("Changes saved") { Placement = ToastPlacement.TopStart });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleToastStack" Title="{DynamicResource GalleryText.ToastStack}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="8" LineSpacing="8" HorizontalAlignment="Center">
+          <alder:AlderButton Command="{CompiledBinding ShowStack}" Content="{DynamicResource GalleryText.ToastShowStack}" />
+          <alder:AlderButton Command="{CompiledBinding ShowAction}" Variant="Secondary" Content="{DynamicResource GalleryText.ToastShowAction}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        Toast.Show(new ToastOptions("Project archived")
+        {
+            ActionText = "Undo",
+            Action = UndoCommand,
+            Duration = Timeout.InfiniteTimeSpan,
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleToastStackLimit" Title="{DynamicResource GalleryText.ToastStackLimit}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel HorizontalAlignment="Center" Spacing="6">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.ToastMaxVisible}" />
+          <WrapPanel ItemSpacing="8" LineSpacing="8">
+            <alder:AlderNumberField Width="120" Minimum="1" Maximum="8" Increment="1" FormatString="0"
+                                    ClipValueToMinMax="True" Value="{CompiledBinding StackLimit, Mode=TwoWay}"
+                                    AutomationProperties.Name="{DynamicResource GalleryText.ToastMaxVisible}" />
+            <alder:AlderButton Command="{CompiledBinding AddToLimitedStackCommand}"
+                               CommandParameter="{CompiledBinding $parent[TopLevel]}"
+                               Content="{DynamicResource GalleryText.ToastAddToStack}" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        // In the view model's command. Use the same host for every notification in the stack.
+        var host = Toast.Register(window, "ToastLimited");
+        host.MaxVisible = (int)Math.Clamp(StackLimit ?? 5, 1, 8);
+        Toast.Show(new ToastOptions($"Activity {++stackSequence}") { Duration = TimeSpan.FromSeconds(8) },
+            owner: window, hostId: "ToastLimited");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleToastSimple" Title="{DynamicResource GalleryText.OverlayToastLooks}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Command="{CompiledBinding ShowSimpleCommand}" Variant="Secondary" Content="{DynamicResource GalleryText.OverlaySimple}" />
+            <alder:AlderButton Command="{CompiledBinding ShowCustomIconCommand}" Variant="Secondary" Content="{DynamicResource GalleryText.OverlayCustomIcon}" />
+            <alder:AlderButton Command="{CompiledBinding ShowCustomContentCommand}" Variant="Secondary" CommandParameter="{StaticResource ToastContentPreview}" Content="{DynamicResource GalleryText.OverlayToastCustom}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        Toast.Show(new ToastOptions("Workspace updated") { ShowIndicator = false });
+        Toast.Show(new ToastOptions("Workspace updated") { Content = data, ContentTemplate = template });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleToastProviders" Title="{DynamicResource GalleryText.OverlayToastProviders}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Command="{CompiledBinding ShowExpandedCommand}" CommandParameter="{CompiledBinding $parent[TopLevel]}" Variant="Secondary" Content="{DynamicResource GalleryText.OverlayToastExpanded}" />
+            <alder:AlderButton Command="{CompiledBinding ShowIsolatedCommand}" CommandParameter="{CompiledBinding $parent[TopLevel]}" Variant="Secondary" Content="{DynamicResource GalleryText.OverlayToastIsolated}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var queue = Toast.Register(window, "jobs");
+        queue.IsExpanded = true;
+        queue.Placement = ToastPlacement.TopEnd;
+        Toast.Show(new ToastOptions("Workspace updated"), owner: window, hostId: "jobs");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleToastCallbacks" Title="{DynamicResource GalleryText.OverlayToastCallbacks}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Command="{CompiledBinding ObserveCloseCommand}" Variant="Secondary" Content="{DynamicResource GalleryText.OverlayToastObserve}" />
+            <alder:AlderButton Command="{CompiledBinding ShowVariant}" CommandParameter="{x:Static alder:ToastVariant.Loading}" Variant="Secondary" Content="{DynamicResource GalleryText.OverlayToastPromise}" />
+            <alder:AlderButton Command="{CompiledBinding ShowPendingFailureCommand}" Variant="Secondary" Content="{DynamicResource GalleryText.OverlayToastFailure}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.Feedback>
+        <alder:AlderTextBlock Text="{CompiledBinding CloseFeedback}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"
+                   Foreground="{DynamicResource AlderMuted}" IsVisible="{CompiledBinding CloseFeedback, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+      </gallery:ExampleCard.Feedback>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var handle = Toast.Show(new ToastOptions("Operation complete"));
+        ToastCloseReason reason = await handle.Completion;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleToastCompact" Title="{DynamicResource GalleryText.OverlayToastResponsive}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+          <alder:AlderButton Variant="Secondary" Command="{CompiledBinding ShowAction}" Content="{DynamicResource GalleryText.OverlayToastInline}" />
+          <alder:AlderButton Variant="Secondary" Command="{CompiledBinding ShowCompactCommand}" CommandParameter="{CompiledBinding $parent[TopLevel]}" Content="{DynamicResource GalleryText.OverlayToastBelow}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var host = Toast.Register(window, "compact");
+        host.ToastWidth = 320;
+        host.Gap = 12;
+        host.StackScaleFactor = .05;
+        Toast.Show(new ToastOptions("Project archived") { ActionText = "Undo", Action = undo }, owner: window, hostId: "compact");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

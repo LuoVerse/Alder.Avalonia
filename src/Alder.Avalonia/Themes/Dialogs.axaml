@@ -1,0 +1,46 @@
+<ResourceDictionary
+    xmlns="https://github.com/avaloniaui"
+    xmlns:alder="using:Alder.Avalonia.Controls"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:String x:Key="AlderText.ResizeSheet">Resize sheet</x:String>
+  <x:String x:Key="AlderText.Dialog.OK">OK</x:String>
+  <x:String x:Key="AlderText.Dialog.Cancel">Cancel</x:String>
+  <x:String x:Key="AlderText.Dialog.Yes">Yes</x:String>
+  <x:String x:Key="AlderText.Dialog.No">No</x:String>
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderDialogBackdrop" Color="#80000000" />
+      <SolidColorBrush x:Key="AlderSheetBlurTint" Color="#03FFFFFF" />
+      <SolidColorBrush x:Key="AlderDialogSuccessSoft" Color="#2617C964" />
+      <SolidColorBrush x:Key="AlderDialogSuccessInk" Color="#0B6B39" />
+      <SolidColorBrush x:Key="AlderDialogWarningSoft" Color="#26FFB224" />
+      <SolidColorBrush x:Key="AlderDialogWarningInk" Color="#815000" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderDialogBackdrop" Color="#99000000" />
+      <SolidColorBrush x:Key="AlderSheetBlurTint" Color="#03000000" />
+      <SolidColorBrush x:Key="AlderDialogSuccessSoft" Color="#2621C76A" />
+      <SolidColorBrush x:Key="AlderDialogSuccessInk" Color="#62D294" />
+      <SolidColorBrush x:Key="AlderDialogWarningSoft" Color="#26FFB224" />
+      <SolidColorBrush x:Key="AlderDialogWarningInk" Color="#FFD17A" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+
+  <ControlTheme x:Key="{x:Type alder:DialogHost}" TargetType="alder:DialogHost">
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid ClipToBounds="True">
+          <ContentPresenter
+              x:Name="PART_ContentPresenter"
+              Content="{TemplateBinding Content}"
+              ContentTemplate="{TemplateBinding ContentTemplate}"
+              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+          <Grid x:Name="PART_Overlays" />
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+</ResourceDictionary>

@@ -1,0 +1,141 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:md="using:Alder.NativeMarkdown.UI"
+             x:Class="Alder.Avalonia.Gallery.Controls.ExampleCard"
+             x:Name="Card" x:DataType="local:ExampleCard">
+  <UserControl.Styles>
+    <Style Selector="Border#PreviewPanel">
+      <Setter Property="Background" Value="{DynamicResource GalleryPreviewSurface}" />
+      <Setter Property="ClipToBounds" Value="True" />
+    </Style>
+    <Style Selector="Border#CardSurface"><Setter Property="Background" Value="{DynamicResource GalleryCodeSurface}" /></Style>
+    <Style Selector="Grid#PreviewLayout"><Setter Property="Margin" Value="8,0,8,8" /></Style>
+    <Style Selector="ContentControl#PreviewPresenter"><Setter Property="Padding" Value="24,20" /></Style>
+    <Style Selector="local|ExampleCard.flush-preview ContentControl#PreviewPresenter">
+      <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style Selector="local|ExampleCard.chat-message-preview.compact-preview ContentControl#PreviewPresenter">
+      <Setter Property="Padding" Value="8,20" />
+    </Style>
+    <Style Selector="local|ExampleCard.layout-preview Border#PreviewPanel">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="local|ExampleCard.inline-preview Border#CardSurface, local|ExampleCard.inline-preview Border#PreviewPanel">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="ClipToBounds" Value="False" />
+    </Style>
+    <Style Selector="local|ExampleCard.inline-preview Grid#Header">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="local|ExampleCard.inline-preview Grid#PreviewLayout">
+      <Setter Property="Margin" Value="0" />
+    </Style>
+    <Style Selector="local|ExampleCard.inline-preview ContentControl#PreviewPresenter">
+      <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style Selector="ContentControl#FeedbackPresenter > TextBlock">
+      <Setter Property="Margin" Value="24,0,24,14" />
+    </Style>
+    <Style Selector=":is(ListBox).segment">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+      <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+      <Setter Property="ItemsPanel"><ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate></Setter>
+    </Style>
+    <Style Selector=":is(ListBox).segment ListBoxItem">
+      <Setter Property="Padding" Value="12,7" />
+      <Setter Property="Foreground" Value="{DynamicResource GalleryMuted}" />
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="MinHeight" Value="30" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Name="SegmentSurface" Background="Transparent" CornerRadius="8">
+            <ContentPresenter Content="{TemplateBinding Content}" Margin="{TemplateBinding Padding}"
+                              VerticalAlignment="Center" HorizontalAlignment="Center" />
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector=":is(ListBox).segment ListBoxItem:pointerover /template/ Border#SegmentSurface">
+      <Setter Property="Background" Value="{DynamicResource AlderBorder}" />
+    </Style>
+    <Style Selector=":is(ListBox).segment ListBoxItem:selected /template/ Border#SegmentSurface">
+      <Setter Property="Background" Value="{DynamicResource GallerySelectedTab}" />
+    </Style>
+    <Style Selector=":is(ListBox).segment ListBoxItem:selected"><Setter Property="Foreground" Value="{DynamicResource AlderInk}" /></Style>
+    <Style Selector=":is(ListBox).segment ListBoxItem:focus-visible /template/ Border#SegmentSurface">
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" /><Setter Property="BorderThickness" Value="1" />
+    </Style>
+  </UserControl.Styles>
+  <Border x:Name="CardSurface" CornerRadius="20">
+    <Grid RowDefinitions="Auto,Auto">
+      <Grid x:Name="Header" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" Margin="22,18">
+        <alder:AlderTextBlock Text="{Binding #Card.Title}" TextWrapping="Wrap" FontSize="18" FontWeight="SemiBold"
+                   Foreground="{DynamicResource AlderInk}" VerticalAlignment="Center" />
+        <Border Grid.Column="1" x:Name="SegmentBar" HorizontalAlignment="Right" VerticalAlignment="Top"
+                CornerRadius="11" Padding="3" Background="{DynamicResource GalleryPreviewSurface}">
+          <alder:AlderListBox x:Name="Modes" Classes="segment" SelectedIndex="0" AutoScrollToSelectedItem="False"
+                   AutomationProperties.Name="{DynamicResource GalleryText.ExampleView}" SelectionChanged="ModeChanged">
+            <alder:AlderListBoxItem Content="{DynamicResource GalleryText.Preview}" /><alder:AlderListBoxItem Content="AXAML" /><alder:AlderListBoxItem Content="C#" />
+          </alder:AlderListBox>
+        </Border>
+      </Grid>
+      <Grid Grid.Row="1" x:Name="PreviewLayout" MinHeight="40">
+        <Border x:Name="PreviewPanel" CornerRadius="14">
+          <StackPanel>
+            <alder:AlderContentControl x:Name="PreviewPresenter" Content="{Binding #Card.Preview}" HorizontalContentAlignment="Stretch" />
+            <alder:AlderContentControl x:Name="FeedbackPresenter" Content="{Binding #Card.Feedback}" IsVisible="{Binding #Card.HasFeedback}"
+                            HorizontalContentAlignment="Stretch" />
+          </StackPanel>
+        </Border>
+        <Grid x:Name="CodePanel" IsVisible="False" RowDefinitions="Auto,Auto" Background="{DynamicResource GalleryCodeSurface}">
+          <Border Padding="6,0,6,6"
+                  BorderBrush="{DynamicResource AlderBorder}" BorderThickness="0,0,0,1">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+              <alder:AlderScrollViewer x:Name="CodeTabs" IsVisible="False"
+                            HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                <Panel>
+                  <alder:AlderListBox x:Name="AxamlKinds" Classes="segment" AutoScrollToSelectedItem="False"
+                           AutomationProperties.Name="AXAML" SelectionChanged="ModeChanged" />
+                  <alder:AlderListBox x:Name="CodeKinds" Classes="segment" AutoScrollToSelectedItem="False"
+                           AutomationProperties.Name="{DynamicResource GalleryText.CSharpSourceKind}" SelectionChanged="ModeChanged" />
+                </Panel>
+              </alder:AlderScrollViewer>
+              <alder:AlderButton x:Name="CopyCodeButton" Grid.Column="1" Size="Small" Variant="Ghost"
+                                 VerticalAlignment="Center" Icon="{DynamicResource AlderIconCopy}" Click="CopyCode">
+                <alder:AlderButton.Styles>
+                  <Style Selector="alder|AlderButton#CopyCodeButton">
+                    <Setter Property="Content" Value="{DynamicResource GalleryText.Copy}" />
+                  </Style>
+                  <Style Selector="alder|AlderButton#CopyCodeButton.copied">
+                    <Setter Property="Content" Value="{DynamicResource GalleryText.CopiedCode}" />
+                  </Style>
+                  <Style Selector="alder|AlderButton#CopyCodeButton.copyFailed">
+                    <Setter Property="Content" Value="{DynamicResource GalleryText.ClipboardIsUnavailable}" />
+                  </Style>
+                </alder:AlderButton.Styles>
+              </alder:AlderButton>
+            </Grid>
+          </Border>
+          <alder:AlderCodeBlock x:Name="SourceCode" Grid.Row="1" FlowDirection="LeftToRight" Margin="0,4,0,6"
+                                AutomationProperties.Name="{DynamicResource GalleryText.FormattedExampleSource}">
+            <alder:AlderCodeBlock.Resources>
+              <md:MarkdownResourceAlias x:Key="Md.CodeBackground"><x:Arguments><x:String>GalleryCodeSurface</x:String></x:Arguments></md:MarkdownResourceAlias>
+              <md:MarkdownResourceAlias x:Key="Md.CodeForeground"><x:Arguments><x:String>GalleryCodeInk</x:String></x:Arguments></md:MarkdownResourceAlias>
+              <md:MarkdownResourceAlias x:Key="Md.SecondaryForeground"><x:Arguments><x:String>GalleryMuted</x:String></x:Arguments></md:MarkdownResourceAlias>
+              <md:MarkdownResourceAlias x:Key="Md.SelectionBackground"><x:Arguments><x:String>GalleryCodeSelection</x:String></x:Arguments></md:MarkdownResourceAlias>
+              <FontFamily x:Key="Md.MonospaceFontFamily">Menlo,Consolas,DejaVu Sans Mono,monospace</FontFamily>
+              <x:Double x:Key="Md.CodeFontSize">13</x:Double>
+              <x:Double x:Key="Md.CodeLineHeight">18.2</x:Double>
+              <CornerRadius x:Key="Md.CornerRadius">0</CornerRadius>
+            </alder:AlderCodeBlock.Resources>
+          </alder:AlderCodeBlock>
+        </Grid>
+      </Grid>
+    </Grid>
+  </Border>
+</UserControl>

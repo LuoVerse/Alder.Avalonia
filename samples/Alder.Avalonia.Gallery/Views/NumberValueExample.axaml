@@ -1,0 +1,207 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.NumberValueExample" x:DataType="vm:NumberValueViewModel">
+  <UserControl.Resources >
+    <alder:NumberValueFormatOptions x:Key="CompactCurrency" Notation="Compact" MaximumFractionDigits="1" />
+    <alder:NumberValueFormatOptions x:Key="AccountingCurrency" Accounting="True" />
+  </UserControl.Resources>
+  <UserControl.Styles >
+    <Style Selector="TextBlock.feedback-muted">
+      <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="LineHeight" Value="16" />
+      <Setter Property="TextWrapping" Value="NoWrap" />
+      <Setter Property="FontWeight" Value="Normal" />
+    </Style>
+    <Style Selector="TextBlock.feedback-muted.baseline">
+      <Setter Property="Margin" Value="0,8,0,0" />
+    </Style>
+    <Style Selector="alder|AlderNumberValue.metric">
+      <Setter Property="FontSize" Value="24" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="MinHeight" Value="32" />
+    </Style>
+    <Style Selector="alder|AlderNumberValue.signed">
+      <Setter Property="FontSize" Value="16" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="MinHeight" Value="24" />
+    </Style>
+    <Style Selector="alder|AlderNumberValue.tabular">
+      <Setter Property="FontSize" Value="20" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="MinHeight" Value="28" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20" x:Name="Examples">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="12" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="USD" Classes="feedback-muted baseline" Width="48" VerticalAlignment="Center"/>
+              <alder:AlderNumberValue Value="228441" Culture="{CompiledBinding Culture}" Style="Currency" Currency="USD" Classes="metric"/>
+            </StackPanel>
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="EUR" Classes="feedback-muted baseline" Width="48" VerticalAlignment="Center"/>
+              <alder:AlderNumberValue Value="228441" Culture="{CompiledBinding Culture}" Style="Currency" Currency="EUR" Classes="metric"/>
+            </StackPanel>
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="JPY" Classes="feedback-muted baseline" Width="48" VerticalAlignment="Center"/>
+              <alder:AlderNumberValue Value="228441" Culture="{CompiledBinding Culture}" Style="Currency" Currency="JPY" Classes="metric"/>
+            </StackPanel>
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="GBP" Classes="feedback-muted baseline" Width="48" VerticalAlignment="Center"/>
+              <alder:AlderNumberValue Value="228441" Culture="{CompiledBinding Culture}" Style="Currency" Currency="GBP" Classes="metric"/>
+            </StackPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleCurrency" Title="{DynamicResource GalleryText.NumberValueCurrency}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="12" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="USD" Classes="feedback-muted baseline" Width="48" VerticalAlignment="Center"/>
+              <alder:AlderNumberValue Value="228441" Culture="{CompiledBinding Culture}" Style="Currency" Currency="USD" Classes="metric"/>
+            </StackPanel>
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="EUR" Classes="feedback-muted baseline" Width="48" VerticalAlignment="Center"/>
+              <alder:AlderNumberValue Value="228441" Culture="{CompiledBinding Culture}" Style="Currency" Currency="EUR" Classes="metric"/>
+            </StackPanel>
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="JPY" Classes="feedback-muted baseline" Width="48" VerticalAlignment="Center"/>
+              <alder:AlderNumberValue Value="228441" Culture="{CompiledBinding Culture}" Style="Currency" Currency="JPY" Classes="metric"/>
+            </StackPanel>
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="GBP" Classes="feedback-muted baseline" Width="48" VerticalAlignment="Center"/>
+              <alder:AlderNumberValue Value="228441" Culture="{CompiledBinding Culture}" Style="Currency" Currency="GBP" Classes="metric"/>
+            </StackPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SamplePercent" Title="{DynamicResource GalleryText.NumberValuePercent}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="12" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <alder:AlderNumberValue Value="0.033" Culture="{CompiledBinding Culture}" Classes="metric" Style="Percent" MaximumFractionDigits="1"/>
+            <alder:AlderNumberValue Value="0.985" Culture="{CompiledBinding Culture}" Classes="metric" Style="Percent" MaximumFractionDigits="1"/>
+            <alder:AlderNumberValue Value="-0.02" Culture="{CompiledBinding Culture}" Classes="metric" Style="Percent" MaximumFractionDigits="1"/>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleCompact" Title="{DynamicResource GalleryText.NumberValueCompact}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="12" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="1,234" Classes="feedback-muted baseline" Width="80" VerticalAlignment="Center"/>
+              <alder:AlderNumberValue Value="1234" Culture="{CompiledBinding Culture}" Notation="Compact" Classes="metric"/>
+            </StackPanel>
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="45,678" Classes="feedback-muted baseline" Width="80" VerticalAlignment="Center"/>
+              <alder:AlderNumberValue Value="45678" Culture="{CompiledBinding Culture}" Notation="Compact" Classes="metric"/>
+            </StackPanel>
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="1,234,567" Classes="feedback-muted baseline" Width="80" VerticalAlignment="Center"/>
+              <alder:AlderNumberValue Value="1234567" Culture="{CompiledBinding Culture}" Notation="Compact" Classes="metric"/>
+            </StackPanel>
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="9,876,543,210" Classes="feedback-muted baseline" Width="80" VerticalAlignment="Center"/>
+              <alder:AlderNumberValue Value="9876543210" Culture="{CompiledBinding Culture}" Notation="Compact" Classes="metric"/>
+            </StackPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSign" Title="{DynamicResource GalleryText.NumberValueSign}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="12" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="auto" Classes="feedback-muted baseline" Width="96" VerticalAlignment="Center"/>
+              <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
+                <alder:AlderNumberValue Value="42" Culture="{CompiledBinding Culture}" SignDisplay="Auto" Classes="signed" TabularNumbers="True"/>
+                <alder:AlderNumberValue Value="0" Culture="{CompiledBinding Culture}" SignDisplay="Auto" Classes="signed" TabularNumbers="True"/>
+                <alder:AlderNumberValue Value="-42" Culture="{CompiledBinding Culture}" SignDisplay="Auto" Classes="signed" TabularNumbers="True"/>
+              </StackPanel>
+            </StackPanel>
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="always" Classes="feedback-muted baseline" Width="96" VerticalAlignment="Center"/>
+              <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
+                <alder:AlderNumberValue Value="42" Culture="{CompiledBinding Culture}" SignDisplay="Always" Classes="signed" TabularNumbers="True"/>
+                <alder:AlderNumberValue Value="0" Culture="{CompiledBinding Culture}" SignDisplay="Always" Classes="signed" TabularNumbers="True"/>
+                <alder:AlderNumberValue Value="-42" Culture="{CompiledBinding Culture}" SignDisplay="Always" Classes="signed" TabularNumbers="True"/>
+              </StackPanel>
+            </StackPanel>
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="exceptZero" Classes="feedback-muted baseline" Width="96" VerticalAlignment="Center"/>
+              <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
+                <alder:AlderNumberValue Value="42" Culture="{CompiledBinding Culture}" SignDisplay="ExceptZero" Classes="signed" TabularNumbers="True"/>
+                <alder:AlderNumberValue Value="0" Culture="{CompiledBinding Culture}" SignDisplay="ExceptZero" Classes="signed" TabularNumbers="True"/>
+                <alder:AlderNumberValue Value="-42" Culture="{CompiledBinding Culture}" SignDisplay="ExceptZero" Classes="signed" TabularNumbers="True"/>
+              </StackPanel>
+            </StackPanel>
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="never" Classes="feedback-muted baseline" Width="96" VerticalAlignment="Center"/>
+              <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
+                <alder:AlderNumberValue Value="42" Culture="{CompiledBinding Culture}" SignDisplay="Never" Classes="signed" TabularNumbers="True"/>
+                <alder:AlderNumberValue Value="0" Culture="{CompiledBinding Culture}" SignDisplay="Never" Classes="signed" TabularNumbers="True"/>
+                <alder:AlderNumberValue Value="-42" Culture="{CompiledBinding Culture}" SignDisplay="Never" Classes="signed" TabularNumbers="True"/>
+              </StackPanel>
+            </StackPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleOptions" Title="{DynamicResource GalleryText.NumberValueOptions}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="12" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.NumberValueCompactCurrency}" Classes="feedback-muted baseline" Width="128" VerticalAlignment="Center"/>
+              <alder:AlderNumberValue Value="1234567" Culture="{CompiledBinding Culture}" Style="Currency" Currency="USD" Classes="metric" FormatOptions="{StaticResource CompactCurrency}"/>
+            </StackPanel>
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.NumberValueAccounting}" Classes="feedback-muted baseline" Width="128" VerticalAlignment="Center"/>
+              <alder:AlderNumberValue Value="-1234.56" Culture="{CompiledBinding Culture}" Style="Currency" Currency="USD" Classes="metric" FormatOptions="{StaticResource AccountingCurrency}"/>
+            </StackPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleAffixes" Title="{DynamicResource GalleryText.NumberValueAffixes}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Center" MinWidth="158">
+            <alder:AlderNumberValue Classes="metric" Value="228441" Culture="{CompiledBinding Culture}" >
+              <alder:AlderNumberValue.Suffix>
+                <alder:AlderTextBlock Classes="feedback-muted" Text="{DynamicResource GalleryText.NumberValueRevenue}" Margin="0,5,0,0" />
+              </alder:AlderNumberValue.Suffix>
+            </alder:AlderNumberValue>
+            <alder:AlderNumberValue Classes="metric" Value="1200000" Culture="{CompiledBinding Culture}" Notation="Compact">
+              <alder:AlderNumberValue.Suffix>
+                <alder:AlderTextBlock Classes="feedback-muted" Text="{DynamicResource GalleryText.NumberValueUsers}" Margin="0,5,0,0" />
+              </alder:AlderNumberValue.Suffix>
+            </alder:AlderNumberValue>
+            <alder:AlderNumberValue Classes="metric" Value="99.99" Culture="{CompiledBinding Culture}" Style="Currency" Currency="USD">
+              <alder:AlderNumberValue.Suffix>
+                <alder:AlderTextBlock Classes="feedback-muted" Text="{DynamicResource GalleryText.NumberValuePerMonth}" Margin="0,5,0,0" />
+              </alder:AlderNumberValue.Suffix>
+            </alder:AlderNumberValue>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleTabular" Title="{DynamicResource GalleryText.NumberValueTabular}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="4" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <alder:AlderNumberValue Value="228441" Culture="{CompiledBinding Culture}" Classes="tabular" Style="Currency" Currency="USD" TabularNumbers="True" HorizontalAlignment="Right"/>
+            <alder:AlderNumberValue Value="71887" Culture="{CompiledBinding Culture}" Classes="tabular" Style="Currency" Currency="USD" TabularNumbers="True" HorizontalAlignment="Right"/>
+            <alder:AlderNumberValue Value="156540" Culture="{CompiledBinding Culture}" Classes="tabular" Style="Currency" Currency="USD" TabularNumbers="True" HorizontalAlignment="Right"/>
+            <alder:AlderNumberValue Value="1234" Culture="{CompiledBinding Culture}" Classes="tabular" Style="Currency" Currency="USD" TabularNumbers="True" HorizontalAlignment="Right"/>
+            <alder:AlderNumberValue Value="98234" Culture="{CompiledBinding Culture}" Classes="tabular" Style="Currency" Currency="USD" TabularNumbers="True" HorizontalAlignment="Right"/>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

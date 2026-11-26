@@ -1,0 +1,59 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.CellColorPickerExample" x:DataType="vm:CellColorPickerViewModel">
+  <StackPanel x:Name="Examples" Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="252">
+          <alder:AlderCellColorPicker Label="{DynamicResource GalleryText.CellAccent}" Value="#3B82F6" />
+          <alder:AlderCellColorPicker Label="{DynamicResource GalleryText.CellSuccess}" Value="#22C55E" />
+          <alder:AlderCellColorPicker Label="{DynamicResource GalleryText.CellDanger}" Value="#EF4444" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="252">
+          <alder:AlderCellColorPicker Label="{DynamicResource GalleryText.CellAccent}" Value="{CompiledBinding Accent, Mode=TwoWay}" />
+          <alder:AlderTextBlock Text="{CompiledBinding AccentResult}" FontSize="12" LineHeight="20" Foreground="{DynamicResource AlderMuted}" AutomationProperties.LiveSetting="Polite" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="252">
+          <alder:AlderCellColorPicker Label="{DynamicResource GalleryText.CellAccent}" Value="#3B82F6" IsEnabled="False" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSettings" Title="{DynamicResource GalleryText.CellSingleSetting}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="252">
+          <alder:AlderCellColorPicker Label="{DynamicResource GalleryText.CellAccent}" Value="#3B82F6" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.Variants}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="252">
+          <StackPanel>
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.CellVariantPrimary}" FontSize="14" LineHeight="20" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderCellColorPicker Label="{DynamicResource GalleryText.CellAccent}" Value="#3B82F6" />
+          </StackPanel>
+          <StackPanel>
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.CellVariantSecondary}" FontSize="14" LineHeight="20" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderCellColorPicker Label="{DynamicResource GalleryText.CellAccent}" Value="#3B82F6" Variant="Secondary" />
+          </StackPanel>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SamplePresets" Title="{DynamicResource GalleryText.CellWithPresets}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="252">
+          <alder:AlderCellColorPicker Label="{DynamicResource GalleryText.CellBrandColor}" Value="#3B82F6" Presets="{CompiledBinding BrandPalette}" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

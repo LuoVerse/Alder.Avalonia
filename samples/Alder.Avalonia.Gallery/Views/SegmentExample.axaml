@@ -1,0 +1,258 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.SegmentExample" x:DataType="vm:SegmentViewModel">
+  <Design.DataContext><vm:SegmentViewModel /></Design.DataContext>
+  <UserControl.Resources>
+    <StreamGeometry x:Key="SegmentHomeIcon">F0 M1,7 L8,1 L15,7 L14,8 L13.5,7.6 V14 H2.5 V7.6 L2,8 Z M4,6.3 V12.5 H6 V9 H10 V12.5 H12 V6.3 L8,2.9 Z</StreamGeometry>
+    <StreamGeometry x:Key="SegmentChatIcon">F0 M3,2 H13 A2,2 0 0 1 15,4 V10 A2,2 0 0 1 13,12 H7 L3,15 V12 A2,2 0 0 1 1,10 V4 A2,2 0 0 1 3,2 Z M3,3.5 Q2.5,3.5 2.5,4 V10 Q2.5,10.5 3,10.5 H4.5 V12 L6.5,10.5 H13 Q13.5,10.5 13.5,10 V4 Q13.5,3.5 13,3.5 Z</StreamGeometry>
+    <StreamGeometry x:Key="SegmentDashboardIcon">F0 M2,2 H14 V14 H2 Z M3.5,3.5 V6.5 H7 V3.5 Z M8.5,3.5 V6.5 H12.5 V3.5 Z M3.5,8 V12.5 H7 V8 Z M8.5,8 V12.5 H12.5 V8 Z</StreamGeometry>
+  </UserControl.Resources>
+
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleTheme" Title="{DynamicResource GalleryText.SegmentTheme}">
+      <gallery:ExampleCard.Preview>
+        <ThemeVariantScope RequestedThemeVariant="{Binding PreviewTheme}">
+          <Border Background="{DynamicResource GalleryPreviewSurface}">
+            <alder:AlderSegment x:Name="ThemeSegment" SelectedKey="{Binding ThemeKey, Mode=TwoWay}" Size="Small">
+              <alder:AlderSegmentItem Key="light" Icon="{StaticResource AlderThemeLightIcon}" AutomationProperties.Name="{DynamicResource GalleryText.SegmentLight}" />
+              <alder:AlderSegmentItem Key="dark" Icon="{StaticResource AlderThemeDarkIcon}" AutomationProperties.Name="{DynamicResource GalleryText.SegmentDark}" />
+              <alder:AlderSegmentItem Key="system" Icon="{StaticResource AlderThemeSystemIcon}" AutomationProperties.Name="{DynamicResource GalleryText.SegmentSystem}" />
+            </alder:AlderSegment>
+          </Border>
+        </ThemeVariantScope>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var segment = new AlderSegment { Size = AlderSegmentSize.Small, SelectedKey = "system" };
+        var light = new AlderSegmentItem { Key = "light", Icon = lightIcon };
+        AutomationProperties.SetName(light, "Light");
+        segment.Items.Add(light);
+        var dark = new AlderSegmentItem { Key = "dark", Icon = darkIcon };
+        AutomationProperties.SetName(dark, "Dark");
+        segment.Items.Add(dark);
+        var system = new AlderSegmentItem { Key = "system", Icon = systemIcon };
+        AutomationProperties.SetName(system, "System");
+        segment.Items.Add(system);
+        segment.Bind(AlderSegment.SelectedKeyProperty,
+            CompiledBinding.Create((SegmentViewModel model) => model.ThemeKey, mode: BindingMode.TwoWay));
+        var preview = new ThemeVariantScope { Content = segment };
+        preview.Bind(ThemeVariantScope.RequestedThemeVariantProperty,
+            CompiledBinding.Create((SegmentViewModel model) => model.PreviewTheme));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleIconExpand" Title="{DynamicResource GalleryText.SegmentIconExpand}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderSegment x:Name="ExpandingSegment" SelectedKey="meetings" Variant="Ghost" ExpandSelectedItem="True">
+          <alder:AlderSegmentItem Key="home" Content="{DynamicResource GalleryText.SegmentHome}" Icon="{StaticResource SegmentHomeIcon}" AutomationProperties.Name="{DynamicResource GalleryText.SegmentHome}" />
+          <alder:AlderSegmentItem Key="chat" Content="{DynamicResource GalleryText.SegmentChat}" Icon="{StaticResource SegmentChatIcon}" AutomationProperties.Name="{DynamicResource GalleryText.SegmentChat}" />
+          <alder:AlderSegmentItem Key="meetings" Content="{DynamicResource GalleryText.SegmentMeetings}" Icon="{StaticResource AlderIconCalendar}" AutomationProperties.Name="{DynamicResource GalleryText.SegmentMeetings}" />
+          <alder:AlderSegmentItem Key="inbox" Content="{DynamicResource GalleryText.SegmentInbox}" Icon="{StaticResource AlderIconEnvelope}" AutomationProperties.Name="{DynamicResource GalleryText.SegmentInbox}" />
+        </alder:AlderSegment>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var segment = new AlderSegment { Variant = AlderSegmentVariant.Ghost, ExpandSelectedItem = true, SelectedKey = "meetings" };
+        segment.Items.Add(new AlderSegmentItem { Key = "home", Content = "Home", Icon = homeIcon });
+        segment.Items.Add(new AlderSegmentItem { Key = "chat", Content = "Chat", Icon = chatIcon });
+        segment.Items.Add(new AlderSegmentItem { Key = "meetings", Content = "Meetings", Icon = meetingsIcon });
+        segment.Items.Add(new AlderSegmentItem { Key = "inbox", Content = "Inbox", Icon = inboxIcon });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleBasic" Title="{DynamicResource GalleryText.SegmentBasic}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderSegment x:Name="BasicSegment" SelectedKey="dashboard">
+          <alder:AlderSegmentItem Key="dashboard" Content="{DynamicResource GalleryText.SegmentDashboard}" />
+          <alder:AlderSegmentItem Key="analytics" Content="{DynamicResource GalleryText.SegmentAnalytics}" />
+          <alder:AlderSegmentItem Key="reports" Content="{DynamicResource GalleryText.SegmentReports}" />
+          <alder:AlderSegmentItem Key="settings" Content="{DynamicResource GalleryText.SegmentSettings}" />
+        </alder:AlderSegment>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var segment = new AlderSegment { SelectedKey = "dashboard" };
+        segment.Items.Add(new AlderSegmentItem { Key = "dashboard", Content = "Dashboard" });
+        segment.Items.Add(new AlderSegmentItem { Key = "analytics", Content = "Analytics" });
+        segment.Items.Add(new AlderSegmentItem { Key = "reports", Content = "Reports" });
+        segment.Items.Add(new AlderSegmentItem { Key = "settings", Content = "Settings" });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleTwo" Title="{DynamicResource GalleryText.SegmentTwo}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderSegment x:Name="TwoSegment" SelectedKey="monthly" Size="Small">
+          <alder:AlderSegmentItem Key="monthly" Content="{DynamicResource GalleryText.SegmentMonthly}" />
+          <alder:AlderSegmentItem Key="yearly" Content="{DynamicResource GalleryText.SegmentYearly}" />
+        </alder:AlderSegment>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var segment = new AlderSegment { Size = AlderSegmentSize.Small, SelectedKey = "monthly" };
+        segment.Items.Add(new AlderSegmentItem { Key = "monthly", Content = "Monthly" });
+        segment.Items.Add(new AlderSegmentItem { Key = "yearly", Content = "Yearly" });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleGhost" Title="{DynamicResource GalleryText.SegmentGhost}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderSegment x:Name="GhostSegment" SelectedKey="mtd" Variant="Ghost" Size="Small">
+          <alder:AlderSegmentItem Key="1w" Content="{DynamicResource GalleryText.SegmentOneWeek}" />
+          <alder:AlderSegmentItem Key="4w" Content="{DynamicResource GalleryText.SegmentFourWeeks}" />
+          <alder:AlderSegmentItem Key="1y" Content="{DynamicResource GalleryText.SegmentOneYear}" />
+          <alder:AlderSegmentItem Key="mtd" Content="{DynamicResource GalleryText.SegmentMonthToDate}" />
+          <alder:AlderSegmentItem Key="qtd" Content="{DynamicResource GalleryText.SegmentQuarterToDate}" />
+          <alder:AlderSegmentItem Key="ytd" Content="{DynamicResource GalleryText.SegmentYearToDate}" />
+          <alder:AlderSegmentItem Key="all" Content="{DynamicResource GalleryText.SegmentAllHistory}" />
+        </alder:AlderSegment>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var segment = new AlderSegment { Variant = AlderSegmentVariant.Ghost, Size = AlderSegmentSize.Small, SelectedKey = "mtd" };
+        segment.Items.Add(new AlderSegmentItem { Key = "1w", Content = "1W" });
+        segment.Items.Add(new AlderSegmentItem { Key = "4w", Content = "4W" });
+        segment.Items.Add(new AlderSegmentItem { Key = "1y", Content = "1Y" });
+        segment.Items.Add(new AlderSegmentItem { Key = "mtd", Content = "MTD" });
+        segment.Items.Add(new AlderSegmentItem { Key = "qtd", Content = "QTD" });
+        segment.Items.Add(new AlderSegmentItem { Key = "ytd", Content = "YTD" });
+        segment.Items.Add(new AlderSegmentItem { Key = "all", Content = "ALL" });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleSizes" Title="{DynamicResource GalleryText.SegmentSizes}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="24">
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.SegmentSmall}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderSegment x:Name="SmallSegment" SelectedKey="dashboard" Size="Small">
+              <alder:AlderSegmentItem Key="dashboard" Content="{DynamicResource GalleryText.SegmentDashboard}" />
+              <alder:AlderSegmentItem Key="analytics" Content="{DynamicResource GalleryText.SegmentAnalytics}" />
+              <alder:AlderSegmentItem Key="reports" Content="{DynamicResource GalleryText.SegmentReports}" />
+              <alder:AlderSegmentItem Key="settings" Content="{DynamicResource GalleryText.SegmentSettings}" />
+            </alder:AlderSegment>
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.SegmentMedium}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderSegment x:Name="MediumSegment" SelectedKey="dashboard" Size="Medium">
+              <alder:AlderSegmentItem Key="dashboard" Content="{DynamicResource GalleryText.SegmentDashboard}" />
+              <alder:AlderSegmentItem Key="analytics" Content="{DynamicResource GalleryText.SegmentAnalytics}" />
+              <alder:AlderSegmentItem Key="reports" Content="{DynamicResource GalleryText.SegmentReports}" />
+              <alder:AlderSegmentItem Key="settings" Content="{DynamicResource GalleryText.SegmentSettings}" />
+            </alder:AlderSegment>
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.SegmentLarge}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderSegment x:Name="LargeSegment" SelectedKey="dashboard" Size="Large">
+              <alder:AlderSegmentItem Key="dashboard" Content="{DynamicResource GalleryText.SegmentDashboard}" />
+              <alder:AlderSegmentItem Key="analytics" Content="{DynamicResource GalleryText.SegmentAnalytics}" />
+              <alder:AlderSegmentItem Key="reports" Content="{DynamicResource GalleryText.SegmentReports}" />
+              <alder:AlderSegmentItem Key="settings" Content="{DynamicResource GalleryText.SegmentSettings}" />
+            </alder:AlderSegment>
+          </StackPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var segment = new AlderSegment { Size = AlderSegmentSize.Large, SelectedKey = "dashboard" };
+        segment.Items.Add(new AlderSegmentItem { Key = "dashboard", Content = "Dashboard" });
+        segment.Items.Add(new AlderSegmentItem { Key = "analytics", Content = "Analytics" });
+        segment.Items.Add(new AlderSegmentItem { Key = "reports", Content = "Reports" });
+        segment.Items.Add(new AlderSegmentItem { Key = "settings", Content = "Settings" });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleIcons" Title="{DynamicResource GalleryText.SegmentIcons}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderSegment x:Name="IconSegment" SelectedKey="dashboard">
+          <alder:AlderSegmentItem Key="dashboard" Content="{DynamicResource GalleryText.SegmentDashboard}" Icon="{StaticResource SegmentDashboardIcon}" />
+          <alder:AlderSegmentItem Key="analytics" Content="{DynamicResource GalleryText.SegmentAnalytics}" Icon="{StaticResource AlderIconChart}" />
+          <alder:AlderSegmentItem Key="team" Content="{DynamicResource GalleryText.SegmentTeam}" Icon="{StaticResource AlderIconAvatarPerson}" />
+          <alder:AlderSegmentItem Key="settings" Content="{DynamicResource GalleryText.SegmentSettings}" Icon="{StaticResource AlderIconGear}" />
+        </alder:AlderSegment>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var segment = new AlderSegment { SelectedKey = "dashboard" };
+        segment.Items.Add(new AlderSegmentItem { Key = "dashboard", Content = "Dashboard", Icon = dashboardIcon });
+        segment.Items.Add(new AlderSegmentItem { Key = "analytics", Content = "Analytics", Icon = analyticsIcon });
+        segment.Items.Add(new AlderSegmentItem { Key = "team", Content = "Team", Icon = teamIcon });
+        segment.Items.Add(new AlderSegmentItem { Key = "settings", Content = "Settings", Icon = settingsIcon });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleSeparators" Title="{DynamicResource GalleryText.SegmentSeparators}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderSegment x:Name="SeparatorSegment" SelectedKey="dashboard" ShowSeparators="True">
+          <alder:AlderSegmentItem Key="dashboard" Content="{DynamicResource GalleryText.SegmentDashboard}" />
+          <alder:AlderSegmentItem Key="analytics" Content="{DynamicResource GalleryText.SegmentAnalytics}" />
+          <alder:AlderSegmentItem Key="reports" Content="{DynamicResource GalleryText.SegmentReports}" />
+          <alder:AlderSegmentItem Key="settings" Content="{DynamicResource GalleryText.SegmentSettings}" />
+        </alder:AlderSegment>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var segment = new AlderSegment { ShowSeparators = true, SelectedKey = "dashboard" };
+        segment.Items.Add(new AlderSegmentItem { Key = "dashboard", Content = "Dashboard" });
+        segment.Items.Add(new AlderSegmentItem { Key = "analytics", Content = "Analytics" });
+        segment.Items.Add(new AlderSegmentItem { Key = "reports", Content = "Reports" });
+        segment.Items.Add(new AlderSegmentItem { Key = "settings", Content = "Settings" });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.SegmentDisabled}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderSegment x:Name="DisabledSegment" SelectedKey="dashboard" IsEnabled="False">
+          <alder:AlderSegmentItem Key="dashboard" Content="{DynamicResource GalleryText.SegmentDashboard}" />
+          <alder:AlderSegmentItem Key="analytics" Content="{DynamicResource GalleryText.SegmentAnalytics}" />
+          <alder:AlderSegmentItem Key="reports" Content="{DynamicResource GalleryText.SegmentReports}" />
+          <alder:AlderSegmentItem Key="settings" Content="{DynamicResource GalleryText.SegmentSettings}" />
+        </alder:AlderSegment>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var segment = new AlderSegment { IsEnabled = false, SelectedKey = "dashboard" };
+        segment.Items.Add(new AlderSegmentItem { Key = "dashboard", Content = "Dashboard" });
+        segment.Items.Add(new AlderSegmentItem { Key = "analytics", Content = "Analytics" });
+        segment.Items.Add(new AlderSegmentItem { Key = "reports", Content = "Reports" });
+        segment.Items.Add(new AlderSegmentItem { Key = "settings", Content = "Settings" });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleDisabledItem" Title="{DynamicResource GalleryText.SegmentDisabledItem}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderSegment x:Name="DisabledItemSegment" SelectedKey="dashboard">
+          <alder:AlderSegmentItem Key="dashboard" Content="{DynamicResource GalleryText.SegmentDashboard}" />
+          <alder:AlderSegmentItem Key="analytics" Content="{DynamicResource GalleryText.SegmentAnalytics}" IsEnabled="False" />
+          <alder:AlderSegmentItem Key="reports" Content="{DynamicResource GalleryText.SegmentReports}" />
+        </alder:AlderSegment>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var segment = new AlderSegment { SelectedKey = "dashboard" };
+        segment.Items.Add(new AlderSegmentItem { Key = "dashboard", Content = "Dashboard" });
+        segment.Items.Add(new AlderSegmentItem { Key = "analytics", Content = "Analytics", IsEnabled = false });
+        segment.Items.Add(new AlderSegmentItem { Key = "reports", Content = "Reports" });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.SegmentControlled}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="12">
+          <alder:AlderSegment x:Name="ControlledSegment" SelectedKey="{Binding SelectedViewKey, Mode=TwoWay}">
+            <alder:AlderSegmentItem Key="dashboard" Content="{DynamicResource GalleryText.SegmentDashboard}" />
+            <alder:AlderSegmentItem Key="analytics" Content="{DynamicResource GalleryText.SegmentAnalytics}" />
+            <alder:AlderSegmentItem Key="reports" Content="{DynamicResource GalleryText.SegmentReports}" />
+            <alder:AlderSegmentItem Key="settings" Content="{DynamicResource GalleryText.SegmentSettings}" />
+          </alder:AlderSegment>
+          <alder:AlderTextBlock Text="{Binding SelectedViewText}" Foreground="{DynamicResource AlderMuted}" FontSize="14"
+                     AutomationProperties.LiveSetting="Polite" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var segment = new AlderSegment { SelectedKey = "analytics" };
+        segment.Items.Add(new AlderSegmentItem { Key = "dashboard", Content = "Dashboard" });
+        segment.Items.Add(new AlderSegmentItem { Key = "analytics", Content = "Analytics" });
+        segment.Items.Add(new AlderSegmentItem { Key = "reports", Content = "Reports" });
+        segment.Items.Add(new AlderSegmentItem { Key = "settings", Content = "Settings" });
+        segment.Bind(AlderSegment.SelectedKeyProperty,
+            CompiledBinding.Create((SegmentViewModel model) => model.SelectedViewKey, mode: BindingMode.TwoWay));
+        var status = new AlderTextBlock();
+        AutomationProperties.SetLiveSetting(status, AutomationLiveSetting.Polite);
+        status.Bind(TextBlock.TextProperty,
+            CompiledBinding.Create((SegmentViewModel model) => model.SelectedViewText));
+        var preview = new StackPanel { Spacing = 12, Children = { segment, status } };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

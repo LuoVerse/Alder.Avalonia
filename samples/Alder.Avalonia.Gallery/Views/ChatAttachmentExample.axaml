@@ -1,0 +1,124 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" x:Class="Alder.Avalonia.Gallery.Views.ChatAttachmentExample"
+             x:DataType="vm:ChatAttachmentViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleDefault" Title="{DynamicResource GalleryText.AiDefault}">
+      <g:ExampleCard.Preview>
+        <StackPanel Margin="8,24" Spacing="8">
+          <a:AlderChatAttachment HorizontalAlignment="Right" FileName="screenshot.png" FileSize="248832" Preview="/Assets/Card/egg.jpeg" />
+          <a:AlderChatMessage IsUser="True" FontSize="14" Content="{DynamicResource GalleryText.AiFileQuestion}" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        using var stream = AssetLoader.Open(new Uri("avares://Alder.Avalonia.Gallery/Assets/Card/egg.jpeg"));
+        var thumbnail = new Bitmap(stream);
+        var conversation = new StackPanel { Margin = new Thickness(8, 24), Spacing = 8 };
+        conversation.Children.Add(new AlderChatAttachment
+        {
+            HorizontalAlignment = HorizontalAlignment.Right,
+            FileName = "screenshot.png",
+            FileSize = 248_832,
+            Preview = thumbnail
+        });
+        conversation.Children.Add(new AlderChatMessage
+        {
+            IsUser = true,
+            FontSize = 14,
+            [!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.AiFileQuestion")
+        });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleComposer" Title="{DynamicResource GalleryText.AiVariantComposer}">
+      <g:ExampleCard.Preview>
+        <a:AlderPromptInput Theme="{StaticResource AlderAttachmentComposerTheme}" Margin="8,24" MaxWidth="576" Classes.has-files="{CompiledBinding HasFiles}"
+                            Text="{CompiledBinding Draft}" SendCommand="{CompiledBinding Send}"
+                            AttachCommand="{CompiledBinding Attach}" FileDropCommand="{CompiledBinding DropFiles}"
+                            Placeholder="{DynamicResource GalleryText.AiFilesHint}">
+          <a:AlderPromptInput.Attachments>
+            <a:AlderItemsControl Margin="0,4" ItemsSource="{CompiledBinding Files}" IsVisible="{CompiledBinding HasFiles}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate><WrapPanel ItemSpacing="8" LineSpacing="8" /></ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:ChatAttachmentFile">
+                  <a:AlderChatAttachment FileName="{CompiledBinding Name}" FileSize="{CompiledBinding Size}" Preview="{CompiledBinding Preview}"
+                                         RemoveCommand="{CompiledBinding $parent[a:AlderItemsControl].((vm:ChatAttachmentViewModel)DataContext).Remove}"
+                                         CommandParameter="{CompiledBinding}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </a:AlderItemsControl>
+          </a:AlderPromptInput.Attachments>
+        </a:AlderPromptInput>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var composer = new AlderPromptInput
+        {
+            DataContext = model,
+            MaxWidth = 576,
+            Margin = new Thickness(8, 24),
+            AttachCommand = model.Attach,
+            FileDropCommand = model.DropFiles,
+            SendCommand = model.Send,
+            Theme = (ControlTheme)Application.Current!.FindResource("AlderAttachmentComposerTheme")!,
+            [!AlderPromptInput.PlaceholderProperty] = new DynamicResourceExtension("GalleryText.AiFilesHint")
+        };
+        composer.Bind(AlderPromptInput.TextProperty,
+            CompiledBinding.Create((ChatAttachmentViewModel vm) => vm.Draft, mode: BindingMode.TwoWay));
+        composer.Classes.Set("has-files", model.HasFiles);
+        model.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(ChatAttachmentViewModel.HasFiles))
+                composer.Classes.Set("has-files", model.HasFiles);
+        };
+        var attachments = new AlderItemsControl
+        {
+            ItemsSource = model.Files,
+            Margin = new Thickness(0, 4),
+            ItemsPanel = new FuncTemplate<Panel?>(() => new WrapPanel { ItemSpacing = 8, LineSpacing = 8 }),
+            ItemTemplate = new FuncDataTemplate<ChatAttachmentFile>((file, _) => new AlderChatAttachment
+            {
+                FileName = file!.Name, FileSize = file.Size, Preview = file.Preview,
+                RemoveCommand = model.Remove, CommandParameter = file
+            })
+        };
+        attachments.Bind(Visual.IsVisibleProperty, CompiledBinding.Create((ChatAttachmentViewModel vm) => vm.HasFiles));
+        composer.Attachments = attachments;
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGrouped" Title="{DynamicResource GalleryText.AiVariantGrouped}">
+      <g:ExampleCard.Preview>
+        <WrapPanel Margin="8,24" ItemSpacing="8" LineSpacing="8">
+          <a:AlderChatAttachment FileName="project-brief.pdf" FileSize="824120" />
+          <a:AlderChatAttachment FileName="design-assets.zip" FileSize="15204352" />
+          <a:AlderChatAttachment FileName="quarterly-report.xlsx" FileSize="98304" />
+          <a:AlderChatAttachment FileName="notes.docx" FileSize="41984" />
+          <a:AlderChatAttachment FileName="MainWindow.axaml" FileSize="4096" />
+          <a:AlderChatAttachment FileName="final-v2-annual-financial-summary-report.pdf" FileSize="2411725" />
+          <a:AlderChatAttachment FileName="wireframe.png" FileSize="512000" Preview="/Assets/Card/egg.jpeg" />
+          <a:AlderChatAttachment FileName="screenshot.png" FileSize="248832" Preview="/Assets/Card/egg.jpeg" />
+        </WrapPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        using var stream = AssetLoader.Open(new Uri("avares://Alder.Avalonia.Gallery/Assets/Card/egg.jpeg"));
+        var thumbnail = new Bitmap(stream);
+        var files = new WrapPanel { Margin = new Thickness(8, 24), ItemSpacing = 8, LineSpacing = 8 };
+        foreach (var (name, size) in new (string, ulong)[]
+        {
+            ("project-brief.pdf", 824_120), ("design-assets.zip", 15_204_352),
+            ("quarterly-report.xlsx", 98_304), ("notes.docx", 41_984), ("MainWindow.axaml", 4096),
+            ("final-v2-annual-financial-summary-report.pdf", 2_411_725),
+            ("wireframe.png", 512_000), ("screenshot.png", 248_832)
+        })
+        {
+            files.Children.Add(new AlderChatAttachment
+            {
+                FileName = name,
+                FileSize = size,
+                Preview = name.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ? thumbnail : null
+            });
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

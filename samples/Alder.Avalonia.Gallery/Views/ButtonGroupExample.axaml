@@ -1,0 +1,864 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.ButtonGroupExample" x:DataType="vm:ButtonGroupViewModel">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+          <BoxShadows x:Key="MergeMenuShadow">0 2 8 0 #0F000000, 0 -6 12 0 #08000000, 0 14 28 0 #14000000</BoxShadows>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+          <BoxShadows x:Key="MergeMenuShadow">inset 0 0 1 0 #4DFFFFFF</BoxShadows>
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+      <ControlTheme x:Key="MergeMenuPresenterTheme" TargetType="MenuFlyoutPresenter">
+        <Setter Property="Width" Value="290" />
+        <!-- Reserve room for the shadow without changing the menu's anchor. -->
+        <Setter Property="Margin" Value="32,20,32,44" />
+        <Setter Property="ClipToBounds" Value="False" />
+        <Setter Property="ItemsPanel">
+          <ItemsPanelTemplate>
+            <StackPanel Spacing="2" />
+          </ItemsPanelTemplate>
+        </Setter>
+        <Setter Property="Template">
+          <ControlTemplate>
+            <Border Name="MenuSurface" Padding="6" CornerRadius="22"
+                    Background="{DynamicResource AlderSurface}" BoxShadow="{DynamicResource MergeMenuShadow}">
+              <alder:AlderScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}"
+                                Grid.IsSharedSizeScope="True" />
+              </alder:AlderScrollViewer>
+            </Border>
+          </ControlTemplate>
+        </Setter>
+      </ControlTheme>
+      <ControlTheme x:Key="MergeMenuItemTheme" TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+        <Setter Property="FontFamily" Value="fonts:Inter#Inter" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Padding" Value="10,6" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Style Selector="^ /template/ TextBlock#PART_InputGestureText">
+          <Setter Property="IsVisible" Value="False" />
+        </Style>
+        <Style Selector="^:selected /template/ Border#PART_LayoutRoot">
+          <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+        </Style>
+        <Style Selector="^:pressed /template/ Border#PART_LayoutRoot">
+          <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+        </Style>
+        <Style Selector="^:focus-visible /template/ Border#PART_LayoutRoot">
+          <Setter Property="BoxShadow" Value="inset 0 0 0 1 #0485F7" />
+        </Style>
+      </ControlTheme>
+      <alder:AlderMenuFlyout x:Key="MergeOptionsFlyout" Placement="BottomEdgeAlignedRight" VerticalOffset="8"
+                      FlyoutPresenterTheme="{StaticResource MergeMenuPresenterTheme}"
+                      ItemContainerTheme="{StaticResource MergeMenuItemTheme}" Opening="OnMergeMenuOpening">
+        <alder:AlderMenuItem Command="{Binding ChooseMergeMethod}" CommandParameter="CreateAMergeCommit" AutomationProperties.Name="{DynamicResource GalleryText.CreateAMergeCommit}">
+          <MenuItem.Header>
+            <StackPanel Spacing="4">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CreateAMergeCommit}" Classes="menuTitle" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.AllCommitsFromThisBranchWillBeAddedTo}" Classes="menuDescription" />
+            </StackPanel>
+          </MenuItem.Header>
+        </alder:AlderMenuItem>
+        <alder:AlderMenuItem Command="{Binding ChooseMergeMethod}" CommandParameter="SquashAndMerge" AutomationProperties.Name="{DynamicResource GalleryText.SquashAndMerge}">
+          <MenuItem.Header>
+            <StackPanel Spacing="4">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.SquashAndMerge}" Classes="menuTitle" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.The14CommitsFromThisBranchWillBeCombined}" Classes="menuDescription" />
+            </StackPanel>
+          </MenuItem.Header>
+        </alder:AlderMenuItem>
+        <alder:AlderMenuItem Command="{Binding ChooseMergeMethod}" CommandParameter="RebaseAndMerge" AutomationProperties.Name="{DynamicResource GalleryText.RebaseAndMerge}">
+          <MenuItem.Header>
+            <StackPanel Spacing="4">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.RebaseAndMerge}" Classes="menuTitle" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.The14CommitsFromThisBranchWillBeRebased}" Classes="menuDescription" />
+            </StackPanel>
+          </MenuItem.Header>
+        </alder:AlderMenuItem>
+      </alder:AlderMenuFlyout>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <UserControl.Styles>
+    <Style Selector="TextBlock.menuTitle">
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="FontWeight" Value="Medium" />
+      <Setter Property="LineHeight" Value="20" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    </Style>
+    <Style Selector="TextBlock.menuDescription">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="LineHeight" Value="16" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    </Style>
+    <Style Selector="alder|AlderButton.mergeMenuTrigger:flyout-open /template/ alder|ButtonTint#Tint">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="TextBlock.groupLabel">
+      <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+      <Setter Property="FontSize" Value="13" />
+    </Style>
+    <Style Selector="alder|AlderButtonGroup">
+      <Setter Property="HorizontalAlignment" Value="Left" />
+    </Style>
+    <Style Selector="alder|AlderButtonGroup[FullWidth=True]">
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+    </Style>
+    <Style Selector="alder|AlderButtonGroup alder|AlderButton">
+      <Setter Property="FontFamily" Value="fonts:Inter#Inter" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleSplitAction" Title="{DynamicResource GalleryText.SplitAction}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButtonGroup AutomationProperties.Name="{DynamicResource GalleryText.MergeActions}">
+          <alder:AlderButton Content="{DynamicResource GalleryText.MergePullRequest}" Command="{Binding Merge}" />
+          <alder:AlderButton x:Name="MergeOptionsButton" IsIconOnly="True" Icon="{StaticResource AlderIconChevronDown}" AutomationProperties.Name="{DynamicResource GalleryText.MergeOptions}"
+                        Classes="mergeMenuTrigger" Flyout="{StaticResource MergeOptionsFlyout}" />
+        </alder:AlderButtonGroup>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var buttonGroup = new AlderButtonGroup();
+        AutomationProperties.SetName(buttonGroup, "Merge actions");
+
+        var button1 = new AlderButton { Content = "Merge pull request" };
+        button1.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Merge));
+        buttonGroup.Children.Add(button1);
+
+        var button2 = new AlderButton
+        {
+            IsIconOnly = true,
+            Icon = (Geometry)this.FindResource("AlderIconChevronDown")!,
+            Flyout = (FlyoutBase)this.FindResource("MergeOptionsFlyout")!,
+        };
+        AutomationProperties.SetName(button2, "Merge options");
+        button2.Classes.Add("mergeMenuTrigger");
+        buttonGroup.Children.Add(button2);
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource AlderBorder}" Padding="24,11">
+          <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleNavigation" Title="{DynamicResource GalleryText.Navigation}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButtonGroup Variant="Tertiary" AutomationProperties.Name="{DynamicResource GalleryText.PageNavigation}">
+          <alder:AlderButton Content="{DynamicResource GalleryText.Previous}" Icon="{StaticResource AlderIconChevronLeft}" Command="{Binding StepPage}" CommandParameter="-1" />
+          <alder:AlderButton Command="{Binding StepPage}" CommandParameter="1" AutomationProperties.Name="{DynamicResource GalleryText.Next}">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.Next}" VerticalAlignment="Center" />
+              <alder:AlderPathIcon Data="{StaticResource AlderIconChevronRight}" Width="16" Height="16" IsHitTestVisible="False" />
+            </StackPanel>
+          </alder:AlderButton>
+        </alder:AlderButtonGroup>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var buttonGroup = new AlderButtonGroup { Variant = ButtonVariant.Tertiary };
+        AutomationProperties.SetName(buttonGroup, "Page navigation");
+
+        var button1 = new AlderButton
+        {
+            Content = "Previous",
+            Icon = (Geometry)this.FindResource("AlderIconChevronLeft")!,
+            CommandParameter = "-1",
+        };
+        button1.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.StepPage));
+        buttonGroup.Children.Add(button1);
+
+        var button2 = new AlderButton { CommandParameter = "1" };
+        button2.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.StepPage));
+        AutomationProperties.SetName(button2, "Next");
+        buttonGroup.Children.Add(button2);
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource AlderBorder}" Padding="24,11">
+          <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.Variants}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="16" LineSpacing="14">
+          <StackPanel Spacing="6">
+            <alder:AlderTextBlock Classes="groupLabel" Text="{DynamicResource GalleryText.Primary}" />
+            <alder:AlderButtonGroup Variant="Primary" AutomationProperties.Name="{DynamicResource GalleryText.Primary}">
+              <alder:AlderButton Content="{DynamicResource GalleryText.First}" Command="{Binding Report}" CommandParameter="First" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Second}" Command="{Binding Report}" CommandParameter="Second" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Third}" Command="{Binding Report}" CommandParameter="Third" />
+            </alder:AlderButtonGroup>
+          </StackPanel>
+          <StackPanel Spacing="6">
+            <alder:AlderTextBlock Classes="groupLabel" Text="{DynamicResource GalleryText.Secondary}" />
+            <alder:AlderButtonGroup Variant="Secondary" AutomationProperties.Name="{DynamicResource GalleryText.Secondary}">
+              <alder:AlderButton Content="{DynamicResource GalleryText.First}" Command="{Binding Report}" CommandParameter="First" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Second}" Command="{Binding Report}" CommandParameter="Second" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Third}" Command="{Binding Report}" CommandParameter="Third" />
+            </alder:AlderButtonGroup>
+          </StackPanel>
+          <StackPanel Spacing="6">
+            <alder:AlderTextBlock Classes="groupLabel" Text="{DynamicResource GalleryText.Tertiary}" />
+            <alder:AlderButtonGroup Variant="Tertiary" AutomationProperties.Name="{DynamicResource GalleryText.Tertiary}">
+              <alder:AlderButton Content="{DynamicResource GalleryText.First}" Command="{Binding Report}" CommandParameter="First" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Second}" Command="{Binding Report}" CommandParameter="Second" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Third}" Command="{Binding Report}" CommandParameter="Third" />
+            </alder:AlderButtonGroup>
+          </StackPanel>
+          <StackPanel Spacing="6">
+            <alder:AlderTextBlock Classes="groupLabel" Text="{DynamicResource GalleryText.Outline}" />
+            <alder:AlderButtonGroup Variant="Outline" AutomationProperties.Name="{DynamicResource GalleryText.Outline}">
+              <alder:AlderButton Content="{DynamicResource GalleryText.First}" Command="{Binding Report}" CommandParameter="First" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Second}" Command="{Binding Report}" CommandParameter="Second" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Third}" Command="{Binding Report}" CommandParameter="Third" />
+            </alder:AlderButtonGroup>
+          </StackPanel>
+          <StackPanel Spacing="6">
+            <alder:AlderTextBlock Classes="groupLabel" Text="{DynamicResource GalleryText.Ghost}" />
+            <alder:AlderButtonGroup Variant="Ghost" AutomationProperties.Name="{DynamicResource GalleryText.Ghost}">
+              <alder:AlderButton Content="{DynamicResource GalleryText.First}" Command="{Binding Report}" CommandParameter="First" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Second}" Command="{Binding Report}" CommandParameter="Second" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Third}" Command="{Binding Report}" CommandParameter="Third" />
+            </alder:AlderButtonGroup>
+          </StackPanel>
+          <StackPanel Spacing="6">
+            <alder:AlderTextBlock Classes="groupLabel" Text="{DynamicResource GalleryText.Danger}" />
+            <alder:AlderButtonGroup Variant="Danger" AutomationProperties.Name="{DynamicResource GalleryText.Danger}">
+              <alder:AlderButton Content="{DynamicResource GalleryText.First}" Command="{Binding Report}" CommandParameter="First" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Second}" Command="{Binding Report}" CommandParameter="Second" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Third}" Command="{Binding Report}" CommandParameter="Third" />
+            </alder:AlderButtonGroup>
+          </StackPanel>
+          <StackPanel Spacing="6">
+            <alder:AlderTextBlock Classes="groupLabel" Text="{DynamicResource GalleryText.DangerSoft}" />
+            <alder:AlderButtonGroup Variant="DangerSoft" AutomationProperties.Name="{DynamicResource GalleryText.DangerSoft}">
+              <alder:AlderButton Content="{DynamicResource GalleryText.First}" Command="{Binding Report}" CommandParameter="First" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Second}" Command="{Binding Report}" CommandParameter="Second" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Third}" Command="{Binding Report}" CommandParameter="Third" />
+            </alder:AlderButtonGroup>
+          </StackPanel>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var buttonGroup1 = new AlderButtonGroup { Variant = ButtonVariant.Primary };
+        AutomationProperties.SetName(buttonGroup1, "Primary");
+
+        var button1 = new AlderButton { Content = "First", CommandParameter = "First" };
+        button1.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup1.Children.Add(button1);
+
+        var button2 = new AlderButton { Content = "Second", CommandParameter = "Second" };
+        button2.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup1.Children.Add(button2);
+
+        var button3 = new AlderButton { Content = "Third", CommandParameter = "Third" };
+        button3.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup1.Children.Add(button3);
+
+        var buttonGroup2 = new AlderButtonGroup { Variant = ButtonVariant.Secondary };
+        AutomationProperties.SetName(buttonGroup2, "Secondary");
+
+        var button4 = new AlderButton { Content = "First", CommandParameter = "First" };
+        button4.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup2.Children.Add(button4);
+
+        var button5 = new AlderButton { Content = "Second", CommandParameter = "Second" };
+        button5.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup2.Children.Add(button5);
+
+        var button6 = new AlderButton { Content = "Third", CommandParameter = "Third" };
+        button6.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup2.Children.Add(button6);
+
+        var buttonGroup3 = new AlderButtonGroup { Variant = ButtonVariant.Tertiary };
+        AutomationProperties.SetName(buttonGroup3, "Tertiary");
+
+        var button7 = new AlderButton { Content = "First", CommandParameter = "First" };
+        button7.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup3.Children.Add(button7);
+
+        var button8 = new AlderButton { Content = "Second", CommandParameter = "Second" };
+        button8.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup3.Children.Add(button8);
+
+        var button9 = new AlderButton { Content = "Third", CommandParameter = "Third" };
+        button9.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup3.Children.Add(button9);
+
+        var buttonGroup4 = new AlderButtonGroup { Variant = ButtonVariant.Outline };
+        AutomationProperties.SetName(buttonGroup4, "Outline");
+
+        var button10 = new AlderButton { Content = "First", CommandParameter = "First" };
+        button10.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup4.Children.Add(button10);
+
+        var button11 = new AlderButton { Content = "Second", CommandParameter = "Second" };
+        button11.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup4.Children.Add(button11);
+
+        var button12 = new AlderButton { Content = "Third", CommandParameter = "Third" };
+        button12.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup4.Children.Add(button12);
+
+        var buttonGroup5 = new AlderButtonGroup { Variant = ButtonVariant.Ghost };
+        AutomationProperties.SetName(buttonGroup5, "Ghost");
+
+        var button13 = new AlderButton { Content = "First", CommandParameter = "First" };
+        button13.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup5.Children.Add(button13);
+
+        var button14 = new AlderButton { Content = "Second", CommandParameter = "Second" };
+        button14.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup5.Children.Add(button14);
+
+        var button15 = new AlderButton { Content = "Third", CommandParameter = "Third" };
+        button15.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup5.Children.Add(button15);
+
+        var buttonGroup6 = new AlderButtonGroup { Variant = ButtonVariant.Danger };
+        AutomationProperties.SetName(buttonGroup6, "Danger");
+
+        var button16 = new AlderButton { Content = "First", CommandParameter = "First" };
+        button16.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup6.Children.Add(button16);
+
+        var button17 = new AlderButton { Content = "Second", CommandParameter = "Second" };
+        button17.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup6.Children.Add(button17);
+
+        var button18 = new AlderButton { Content = "Third", CommandParameter = "Third" };
+        button18.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup6.Children.Add(button18);
+
+        var buttonGroup7 = new AlderButtonGroup { Variant = ButtonVariant.DangerSoft };
+        AutomationProperties.SetName(buttonGroup7, "Danger Soft");
+
+        var button19 = new AlderButton { Content = "First", CommandParameter = "First" };
+        button19.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup7.Children.Add(button19);
+
+        var button20 = new AlderButton { Content = "Second", CommandParameter = "Second" };
+        button20.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup7.Children.Add(button20);
+
+        var button21 = new AlderButton { Content = "Third", CommandParameter = "Third" };
+        button21.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup7.Children.Add(button21);
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource AlderBorder}" Padding="24,11">
+          <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSizes" Title="{DynamicResource GalleryText.Sizes}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="16" LineSpacing="14">
+          <StackPanel Spacing="6">
+            <alder:AlderTextBlock Classes="groupLabel" Text="{DynamicResource GalleryText.Small}" />
+            <alder:AlderButtonGroup Size="Small" Variant="Secondary" AutomationProperties.Name="{DynamicResource GalleryText.Small}">
+              <alder:AlderButton Content="{DynamicResource GalleryText.First}" Command="{Binding Report}" CommandParameter="First" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Second}" Command="{Binding Report}" CommandParameter="Second" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Third}" Command="{Binding Report}" CommandParameter="Third" />
+            </alder:AlderButtonGroup>
+          </StackPanel>
+          <StackPanel Spacing="6">
+            <alder:AlderTextBlock Classes="groupLabel" Text="{DynamicResource GalleryText.Medium}" />
+            <alder:AlderButtonGroup Size="Medium" Variant="Secondary" AutomationProperties.Name="{DynamicResource GalleryText.Medium}">
+              <alder:AlderButton Content="{DynamicResource GalleryText.First}" Command="{Binding Report}" CommandParameter="First" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Second}" Command="{Binding Report}" CommandParameter="Second" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Third}" Command="{Binding Report}" CommandParameter="Third" />
+            </alder:AlderButtonGroup>
+          </StackPanel>
+          <StackPanel Spacing="6">
+            <alder:AlderTextBlock Classes="groupLabel" Text="{DynamicResource GalleryText.Large}" />
+            <alder:AlderButtonGroup Size="Large" Variant="Secondary" AutomationProperties.Name="{DynamicResource GalleryText.Large}">
+              <alder:AlderButton Content="{DynamicResource GalleryText.First}" Command="{Binding Report}" CommandParameter="First" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Second}" Command="{Binding Report}" CommandParameter="Second" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Third}" Command="{Binding Report}" CommandParameter="Third" />
+            </alder:AlderButtonGroup>
+          </StackPanel>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var buttonGroup1 = new AlderButtonGroup
+        {
+            Size = AlderSize.Small,
+            Variant = ButtonVariant.Secondary,
+        };
+        AutomationProperties.SetName(buttonGroup1, "Small");
+
+        var button1 = new AlderButton { Content = "First", CommandParameter = "First" };
+        button1.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup1.Children.Add(button1);
+
+        var button2 = new AlderButton { Content = "Second", CommandParameter = "Second" };
+        button2.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup1.Children.Add(button2);
+
+        var button3 = new AlderButton { Content = "Third", CommandParameter = "Third" };
+        button3.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup1.Children.Add(button3);
+
+        var buttonGroup2 = new AlderButtonGroup
+        {
+            Size = AlderSize.Medium,
+            Variant = ButtonVariant.Secondary,
+        };
+        AutomationProperties.SetName(buttonGroup2, "Medium");
+
+        var button4 = new AlderButton { Content = "First", CommandParameter = "First" };
+        button4.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup2.Children.Add(button4);
+
+        var button5 = new AlderButton { Content = "Second", CommandParameter = "Second" };
+        button5.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup2.Children.Add(button5);
+
+        var button6 = new AlderButton { Content = "Third", CommandParameter = "Third" };
+        button6.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup2.Children.Add(button6);
+
+        var buttonGroup3 = new AlderButtonGroup
+        {
+            Size = AlderSize.Large,
+            Variant = ButtonVariant.Secondary,
+        };
+        AutomationProperties.SetName(buttonGroup3, "Large");
+
+        var button7 = new AlderButton { Content = "First", CommandParameter = "First" };
+        button7.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup3.Children.Add(button7);
+
+        var button8 = new AlderButton { Content = "Second", CommandParameter = "Second" };
+        button8.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup3.Children.Add(button8);
+
+        var button9 = new AlderButton { Content = "Third", CommandParameter = "Third" };
+        button9.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup3.Children.Add(button9);
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource AlderBorder}" Padding="24,11">
+          <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleOrientation" Title="{DynamicResource GalleryText.Orientation}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="32" LineSpacing="14">
+          <StackPanel Spacing="6">
+            <alder:AlderTextBlock Classes="groupLabel" Text="{DynamicResource GalleryText.Horizontal}" />
+            <alder:AlderButtonGroup Variant="Tertiary" AutomationProperties.Name="{DynamicResource GalleryText.HorizontalAlignmentTools}">
+              <alder:AlderButton IsIconOnly="True" Icon="{StaticResource AlderIconAlignLeft}" AutomationProperties.Name="{DynamicResource GalleryText.AlignLeft}" Command="{Binding Report}" CommandParameter="AlignLeft" />
+              <alder:AlderButton IsIconOnly="True" Icon="{StaticResource AlderIconAlignCenter}" AutomationProperties.Name="{DynamicResource GalleryText.AlignCenter}" Command="{Binding Report}" CommandParameter="AlignCenter" />
+              <alder:AlderButton IsIconOnly="True" Icon="{StaticResource AlderIconAlignRight}" AutomationProperties.Name="{DynamicResource GalleryText.AlignRight}" Command="{Binding Report}" CommandParameter="AlignRight" />
+              <alder:AlderButton IsIconOnly="True" Icon="{StaticResource AlderIconAlignJustify}" AutomationProperties.Name="{DynamicResource GalleryText.Justify}" Command="{Binding Report}" CommandParameter="Justify" />
+            </alder:AlderButtonGroup>
+          </StackPanel>
+          <StackPanel Spacing="6">
+            <alder:AlderTextBlock Classes="groupLabel" Text="{DynamicResource GalleryText.Vertical}" />
+            <alder:AlderButtonGroup Variant="Tertiary" Orientation="Vertical" AutomationProperties.Name="{DynamicResource GalleryText.VerticalAlignmentTools}">
+              <alder:AlderButton IsIconOnly="True" Icon="{StaticResource AlderIconAlignLeft}" AutomationProperties.Name="{DynamicResource GalleryText.AlignLeft}" Command="{Binding Report}" CommandParameter="AlignLeft" />
+              <alder:AlderButton IsIconOnly="True" Icon="{StaticResource AlderIconAlignCenter}" AutomationProperties.Name="{DynamicResource GalleryText.AlignCenter}" Command="{Binding Report}" CommandParameter="AlignCenter" />
+              <alder:AlderButton IsIconOnly="True" Icon="{StaticResource AlderIconAlignRight}" AutomationProperties.Name="{DynamicResource GalleryText.AlignRight}" Command="{Binding Report}" CommandParameter="AlignRight" />
+              <alder:AlderButton IsIconOnly="True" Icon="{StaticResource AlderIconAlignJustify}" AutomationProperties.Name="{DynamicResource GalleryText.Justify}" Command="{Binding Report}" CommandParameter="Justify" />
+            </alder:AlderButtonGroup>
+          </StackPanel>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var buttonGroup1 = new AlderButtonGroup { Variant = ButtonVariant.Tertiary };
+        AutomationProperties.SetName(buttonGroup1, "Horizontal alignment tools");
+
+        var button1 = new AlderButton
+        {
+            IsIconOnly = true,
+            Icon = (Geometry)this.FindResource("AlderIconAlignLeft")!,
+            CommandParameter = "AlignLeft",
+        };
+        AutomationProperties.SetName(button1, "Align left");
+        button1.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup1.Children.Add(button1);
+
+        var button2 = new AlderButton
+        {
+            IsIconOnly = true,
+            Icon = (Geometry)this.FindResource("AlderIconAlignCenter")!,
+            CommandParameter = "AlignCenter",
+        };
+        AutomationProperties.SetName(button2, "Align center");
+        button2.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup1.Children.Add(button2);
+
+        var button3 = new AlderButton
+        {
+            IsIconOnly = true,
+            Icon = (Geometry)this.FindResource("AlderIconAlignRight")!,
+            CommandParameter = "AlignRight",
+        };
+        AutomationProperties.SetName(button3, "Align right");
+        button3.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup1.Children.Add(button3);
+
+        var button4 = new AlderButton
+        {
+            IsIconOnly = true,
+            Icon = (Geometry)this.FindResource("AlderIconAlignJustify")!,
+            CommandParameter = "Justify",
+        };
+        AutomationProperties.SetName(button4, "Justify");
+        button4.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup1.Children.Add(button4);
+
+        var buttonGroup2 = new AlderButtonGroup
+        {
+            Variant = ButtonVariant.Tertiary,
+            Orientation = Orientation.Vertical,
+        };
+        AutomationProperties.SetName(buttonGroup2, "Vertical alignment tools");
+
+        var button5 = new AlderButton
+        {
+            IsIconOnly = true,
+            Icon = (Geometry)this.FindResource("AlderIconAlignLeft")!,
+            CommandParameter = "AlignLeft",
+        };
+        AutomationProperties.SetName(button5, "Align left");
+        button5.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup2.Children.Add(button5);
+
+        var button6 = new AlderButton
+        {
+            IsIconOnly = true,
+            Icon = (Geometry)this.FindResource("AlderIconAlignCenter")!,
+            CommandParameter = "AlignCenter",
+        };
+        AutomationProperties.SetName(button6, "Align center");
+        button6.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup2.Children.Add(button6);
+
+        var button7 = new AlderButton
+        {
+            IsIconOnly = true,
+            Icon = (Geometry)this.FindResource("AlderIconAlignRight")!,
+            CommandParameter = "AlignRight",
+        };
+        AutomationProperties.SetName(button7, "Align right");
+        button7.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup2.Children.Add(button7);
+
+        var button8 = new AlderButton
+        {
+            IsIconOnly = true,
+            Icon = (Geometry)this.FindResource("AlderIconAlignJustify")!,
+            CommandParameter = "Justify",
+        };
+        AutomationProperties.SetName(button8, "Justify");
+        button8.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup2.Children.Add(button8);
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource AlderBorder}" Padding="24,11">
+          <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleWithIcons" Title="{DynamicResource GalleryText.WithIcons}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="16" LineSpacing="14">
+          <alder:AlderButtonGroup Variant="Secondary" AutomationProperties.Name="{DynamicResource GalleryText.ActionsWithIcons}">
+            <alder:AlderButton Icon="{StaticResource AlderIconGlobe}" Content="{DynamicResource GalleryText.Search}" Command="{Binding Report}" CommandParameter="Search" />
+            <alder:AlderButton Icon="{StaticResource AlderIconPlus}" Content="{DynamicResource GalleryText.Add}" Command="{Binding Report}" CommandParameter="Add" />
+            <alder:AlderButton Icon="{StaticResource AlderIconTrash}" Content="{DynamicResource GalleryText.Delete}" Command="{Binding Report}" CommandParameter="Delete" />
+          </alder:AlderButtonGroup>
+          <alder:AlderButtonGroup Variant="Tertiary" AutomationProperties.Name="{DynamicResource GalleryText.IconOnlyActions}">
+            <alder:AlderButton Icon="{StaticResource AlderIconGlobe}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.Search}" Command="{Binding Report}" CommandParameter="Search" />
+            <alder:AlderButton Icon="{StaticResource AlderIconPlus}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.Add}" Command="{Binding Report}" CommandParameter="Add" />
+            <alder:AlderButton Icon="{StaticResource AlderIconTrash}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.Delete}" Command="{Binding Report}" CommandParameter="Delete" />
+          </alder:AlderButtonGroup>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var buttonGroup1 = new AlderButtonGroup { Variant = ButtonVariant.Secondary };
+        AutomationProperties.SetName(buttonGroup1, "Actions with icons");
+
+        var button1 = new AlderButton
+        {
+            Icon = (Geometry)this.FindResource("AlderIconGlobe")!,
+            Content = "Search",
+            CommandParameter = "Search",
+        };
+        button1.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup1.Children.Add(button1);
+
+        var button2 = new AlderButton
+        {
+            Icon = (Geometry)this.FindResource("AlderIconPlus")!,
+            Content = "Add",
+            CommandParameter = "Add",
+        };
+        button2.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup1.Children.Add(button2);
+
+        var button3 = new AlderButton
+        {
+            Icon = (Geometry)this.FindResource("AlderIconTrash")!,
+            Content = "Delete",
+            CommandParameter = "Delete",
+        };
+        button3.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup1.Children.Add(button3);
+
+        var buttonGroup2 = new AlderButtonGroup { Variant = ButtonVariant.Tertiary };
+        AutomationProperties.SetName(buttonGroup2, "Icon-only actions");
+
+        var button4 = new AlderButton
+        {
+            Icon = (Geometry)this.FindResource("AlderIconGlobe")!,
+            IsIconOnly = true,
+            CommandParameter = "Search",
+        };
+        AutomationProperties.SetName(button4, "Search");
+        button4.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup2.Children.Add(button4);
+
+        var button5 = new AlderButton
+        {
+            Icon = (Geometry)this.FindResource("AlderIconPlus")!,
+            IsIconOnly = true,
+            CommandParameter = "Add",
+        };
+        AutomationProperties.SetName(button5, "Add");
+        button5.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup2.Children.Add(button5);
+
+        var button6 = new AlderButton
+        {
+            Icon = (Geometry)this.FindResource("AlderIconTrash")!,
+            IsIconOnly = true,
+            CommandParameter = "Delete",
+        };
+        AutomationProperties.SetName(button6, "Delete");
+        button6.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup2.Children.Add(button6);
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource AlderBorder}" Padding="24,11">
+          <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleFullWidth" Title="{DynamicResource GalleryText.FullWidth}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="400" Spacing="9">
+          <alder:AlderButtonGroup FullWidth="True" AutomationProperties.Name="{DynamicResource GalleryText.FullWidthTextButtons}">
+            <alder:AlderButton Content="{DynamicResource GalleryText.First}" Command="{Binding Report}" CommandParameter="First" />
+            <alder:AlderButton Content="{DynamicResource GalleryText.Second}" Command="{Binding Report}" CommandParameter="Second" />
+            <alder:AlderButton Content="{DynamicResource GalleryText.Third}" Command="{Binding Report}" CommandParameter="Third" />
+          </alder:AlderButtonGroup>
+          <alder:AlderButtonGroup FullWidth="True" AutomationProperties.Name="{DynamicResource GalleryText.FullWidthIconButtons}">
+            <alder:AlderButton IsIconOnly="True" Icon="{StaticResource AlderIconAlignLeft}" AutomationProperties.Name="{DynamicResource GalleryText.AlignLeft}" Command="{Binding Report}" CommandParameter="AlignLeft" />
+            <alder:AlderButton IsIconOnly="True" Icon="{StaticResource AlderIconAlignCenter}" AutomationProperties.Name="{DynamicResource GalleryText.AlignCenter}" Command="{Binding Report}" CommandParameter="AlignCenter" />
+            <alder:AlderButton IsIconOnly="True" Icon="{StaticResource AlderIconAlignRight}" AutomationProperties.Name="{DynamicResource GalleryText.AlignRight}" Command="{Binding Report}" CommandParameter="AlignRight" />
+          </alder:AlderButtonGroup>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var buttonGroup1 = new AlderButtonGroup { FullWidth = true };
+        AutomationProperties.SetName(buttonGroup1, "Full-width text buttons");
+
+        var button1 = new AlderButton { Content = "First", CommandParameter = "First" };
+        button1.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup1.Children.Add(button1);
+
+        var button2 = new AlderButton { Content = "Second", CommandParameter = "Second" };
+        button2.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup1.Children.Add(button2);
+
+        var button3 = new AlderButton { Content = "Third", CommandParameter = "Third" };
+        button3.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup1.Children.Add(button3);
+
+        var buttonGroup2 = new AlderButtonGroup { FullWidth = true };
+        AutomationProperties.SetName(buttonGroup2, "Full-width icon buttons");
+
+        var button4 = new AlderButton
+        {
+            IsIconOnly = true,
+            Icon = (Geometry)this.FindResource("AlderIconAlignLeft")!,
+            CommandParameter = "AlignLeft",
+        };
+        AutomationProperties.SetName(button4, "Align left");
+        button4.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup2.Children.Add(button4);
+
+        var button5 = new AlderButton
+        {
+            IsIconOnly = true,
+            Icon = (Geometry)this.FindResource("AlderIconAlignCenter")!,
+            CommandParameter = "AlignCenter",
+        };
+        AutomationProperties.SetName(button5, "Align center");
+        button5.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup2.Children.Add(button5);
+
+        var button6 = new AlderButton
+        {
+            IsIconOnly = true,
+            Icon = (Geometry)this.FindResource("AlderIconAlignRight")!,
+            CommandParameter = "AlignRight",
+        };
+        AutomationProperties.SetName(button6, "Align right");
+        button6.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup2.Children.Add(button6);
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource AlderBorder}" Padding="24,11">
+          <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabledState" Title="{DynamicResource GalleryText.DisabledState}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="16" LineSpacing="14">
+          <StackPanel Spacing="6">
+            <alder:AlderTextBlock Classes="groupLabel" Text="{DynamicResource GalleryText.AllDisabled}" />
+            <alder:AlderButtonGroup IsDisabled="True" AutomationProperties.Name="{DynamicResource GalleryText.AllDisabled}">
+              <alder:AlderButton Content="{DynamicResource GalleryText.First}" Command="{Binding Report}" CommandParameter="First" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Second}" Command="{Binding Report}" CommandParameter="Second" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Third}" Command="{Binding Report}" CommandParameter="Third" />
+            </alder:AlderButtonGroup>
+          </StackPanel>
+          <StackPanel Spacing="6">
+            <alder:AlderTextBlock Classes="groupLabel" Text="{DynamicResource GalleryText.OneButtonEnabled}" />
+            <alder:AlderButtonGroup IsDisabled="True" AutomationProperties.Name="{DynamicResource GalleryText.OneButtonEnabled}">
+              <alder:AlderButton Content="{DynamicResource GalleryText.First}" Command="{Binding Report}" CommandParameter="First" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Second}" Command="{Binding Report}" CommandParameter="Second" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.ThirdEnabled}" Command="{Binding Report}" CommandParameter="ThirdEnabled" IsEnabled="True" />
+            </alder:AlderButtonGroup>
+          </StackPanel>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var buttonGroup1 = new AlderButtonGroup { IsDisabled = true };
+        AutomationProperties.SetName(buttonGroup1, "All disabled");
+
+        var button1 = new AlderButton { Content = "First", CommandParameter = "First" };
+        button1.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup1.Children.Add(button1);
+
+        var button2 = new AlderButton { Content = "Second", CommandParameter = "Second" };
+        button2.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup1.Children.Add(button2);
+
+        var button3 = new AlderButton { Content = "Third", CommandParameter = "Third" };
+        button3.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup1.Children.Add(button3);
+
+        var buttonGroup2 = new AlderButtonGroup { IsDisabled = true };
+        AutomationProperties.SetName(buttonGroup2, "One button enabled");
+
+        var button4 = new AlderButton { Content = "First", CommandParameter = "First" };
+        button4.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup2.Children.Add(button4);
+
+        var button5 = new AlderButton { Content = "Second", CommandParameter = "Second" };
+        button5.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup2.Children.Add(button5);
+
+        var button6 = new AlderButton
+        {
+            Content = "Third (enabled)",
+            CommandParameter = "ThirdEnabled",
+            IsEnabled = true,
+        };
+        button6.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup2.Children.Add(button6);
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource AlderBorder}" Padding="24,11">
+          <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleWithoutSeparators" Title="{DynamicResource GalleryText.WithoutSeparators}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButtonGroup ShowSeparators="False" AutomationProperties.Name="{DynamicResource GalleryText.SeamlessButtons}">
+          <alder:AlderButton Content="{DynamicResource GalleryText.First}" Command="{Binding Report}" CommandParameter="First" />
+          <alder:AlderButton Content="{DynamicResource GalleryText.Second}" Command="{Binding Report}" CommandParameter="Second" />
+          <alder:AlderButton Content="{DynamicResource GalleryText.Third}" Command="{Binding Report}" CommandParameter="Third" />
+        </alder:AlderButtonGroup>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var buttonGroup = new AlderButtonGroup { ShowSeparators = false };
+        AutomationProperties.SetName(buttonGroup, "Seamless buttons");
+
+        var button1 = new AlderButton { Content = "First", CommandParameter = "First" };
+        button1.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup.Children.Add(button1);
+
+        var button2 = new AlderButton { Content = "Second", CommandParameter = "Second" };
+        button2.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup.Children.Add(button2);
+
+        var button3 = new AlderButton { Content = "Third", CommandParameter = "Third" };
+        button3.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Report));
+        buttonGroup.Children.Add(button3);
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource AlderBorder}" Padding="24,11">
+          <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustomStyles" Title="{DynamicResource GalleryText.CustomStyles}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel>
+          <StackPanel.Styles>
+            <Style Selector="alder|AlderButtonGroup.square alder|AlderButton">
+              <Setter Property="Background" Value="#08872B" />
+              <Setter Property="CornerRadius" Value="0" />
+            </Style>
+            <Style Selector="alder|AlderButtonGroup.square alder|AlderButton /template/ alder|ButtonTint#Tint">
+              <Setter Property="Background" Value="#0FBF3E" />
+            </Style>
+          </StackPanel.Styles>
+          <alder:AlderButtonGroup Classes="square" AutomationProperties.Name="{DynamicResource GalleryText.MergeActions}">
+            <alder:AlderButton Content="{DynamicResource GalleryText.MergePullRequest}" Command="{Binding Merge}" />
+            <alder:AlderButton IsIconOnly="True" Icon="{StaticResource AlderIconChevronDown}" AutomationProperties.Name="{DynamicResource GalleryText.MergeOptions}"
+                          Classes="mergeMenuTrigger" Flyout="{StaticResource MergeOptionsFlyout}" />
+          </alder:AlderButtonGroup>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var buttonGroup = new AlderButtonGroup();
+        buttonGroup.Classes.Add("square");
+        AutomationProperties.SetName(buttonGroup, "Merge actions");
+
+        var button1 = new AlderButton { Content = "Merge pull request" };
+        button1.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonGroupViewModel model) => model.Merge));
+        buttonGroup.Children.Add(button1);
+
+        var button2 = new AlderButton
+        {
+            IsIconOnly = true,
+            Icon = (Geometry)this.FindResource("AlderIconChevronDown")!,
+            Flyout = (FlyoutBase)this.FindResource("MergeOptionsFlyout")!,
+        };
+        AutomationProperties.SetName(button2, "Merge options");
+        button2.Classes.Add("mergeMenuTrigger");
+        buttonGroup.Children.Add(button2);
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource AlderBorder}" Padding="24,11">
+          <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

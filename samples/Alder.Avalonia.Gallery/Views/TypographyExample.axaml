@@ -1,0 +1,267 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.TypographyExample" x:DataType="vm:TypographyViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="360" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel MaxWidth="576" Spacing="16" VerticalAlignment="Center">
+            <alder:AlderTypography Type="H1" Text="{CompiledBinding Heading}" />
+            <alder:AlderTypography Type="H2" Text="{DynamicResource GalleryText.TypographySemanticHeading}" />
+            <alder:AlderTypography Type="H3" Text="{DynamicResource GalleryText.TypographyComposeHeading}" />
+            <alder:AlderTypography Type="H4" Text="{DynamicResource GalleryText.TypographySmallHeading}" />
+            <alder:AlderTypography Text="{DynamicResource GalleryText.TypographyLeadBody}" />
+            <alder:AlderTypography Type="BodySmall" Color="Muted" Text="{DynamicResource GalleryText.TypographyLeadSecondary}" />
+            <alder:AlderTypography Type="Code" Text="dotnet add package Alder.Avalonia" FlowDirection="LeftToRight" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var title = new AlderTypography { Type = TypographyType.H1 };
+        title.Bind(TextBlock.TextProperty, CompiledBinding.Create((TypographyViewModel model) => model.Heading));
+
+        var description = new AlderTypography { Type = TypographyType.BodySmall, Color = TypographyColor.Muted };
+        description[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.TypographyLeadSecondary");
+        var install = new AlderTypography { Type = TypographyType.Code, Text = "dotnet add package Alder.Avalonia" };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleScale" Title="{DynamicResource GalleryText.TypographyScale}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" TextElement.FontFamily="fonts:Inter#Inter"
+                Container.Name="TypographyScale" Container.Sizing="Width">
+          <Border.Styles>
+            <Style Selector="Grid.typographyScaleRow">
+              <Setter Property="ColumnSpacing" Value="32" />
+            </Style>
+            <Style Selector="StackPanel.typographyScaleLabel">
+              <Setter Property="Width" Value="160" />
+            </Style>
+            <Style Selector="alder|AlderTypography.typographyScaleSample">
+              <Setter Property="Grid.Column" Value="1" />
+            </Style>
+            <Style Selector="alder|AlderTypography.typographyScaleSample[Type=Code]">
+              <Setter Property="FlowDirection" Value="LeftToRight" />
+            </Style>
+            <ContainerQuery Name="TypographyScale" Query="max-width:480">
+              <Style Selector="Grid.typographyScaleRow">
+                <Setter Property="ColumnSpacing" Value="0" />
+                <Setter Property="RowSpacing" Value="8" />
+              </Style>
+              <Style Selector="StackPanel.typographyScaleLabel, alder|AlderTypography.typographyScaleSample">
+                <Setter Property="Grid.ColumnSpan" Value="2" />
+              </Style>
+              <Style Selector="StackPanel.typographyScaleLabel">
+                <Setter Property="Width" Value="NaN" />
+              </Style>
+              <Style Selector="alder|AlderTypography.typographyScaleSample">
+                <Setter Property="Grid.Column" Value="0" />
+                <Setter Property="Grid.Row" Value="1" />
+              </Style>
+            </ContainerQuery>
+          </Border.Styles>
+          <alder:AlderItemsControl ItemsSource="{CompiledBinding Scale}">
+            <alder:AlderItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:TypographyScaleExample">
+                <StackPanel>
+                  <Grid Classes="typographyScaleRow" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" Margin="0,20">
+                    <StackPanel Classes="typographyScaleLabel" Spacing="2" VerticalAlignment="Center">
+                      <alder:AlderTextBlock Text="{CompiledBinding Name}" FontSize="14" LineHeight="20" FontWeight="SemiBold"
+                                 Foreground="{DynamicResource AlderInk}" TextWrapping="Wrap" />
+                      <alder:AlderTextBlock Text="{CompiledBinding Metrics}" FontSize="12" LineHeight="16"
+                                 Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <alder:AlderTypography Classes="typographyScaleSample" VerticalAlignment="Center"
+                                      Type="{CompiledBinding Type}" Text="{CompiledBinding Sample}" />
+                  </Grid>
+                  <alder:AlderSeparator IsVisible="{CompiledBinding ShowSeparator}" Background="{DynamicResource AlderBorder}" />
+                </StackPanel>
+              </DataTemplate>
+            </alder:AlderItemsControl.ItemTemplate>
+          </alder:AlderItemsControl>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var scale = new AlderItemsControl();
+        scale.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((TypographyViewModel model) => model.Scale));
+        scale.ItemTemplate = new FuncDataTemplate<TypographyScaleExample>((row, _) => new AlderTypography
+        {
+            Type = row.Type,
+            Text = row.Sample
+        });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SamplePrimitives" Title="{DynamicResource GalleryText.TypographyPrimitives}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="216" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel MaxWidth="576" Spacing="16" VerticalAlignment="Center">
+            <alder:AlderHeading Text="{DynamicResource GalleryText.TypographyWorkspace}" />
+            <alder:AlderParagraph Text="{DynamicResource GalleryText.TypographyPrimitiveBody}" />
+            <alder:AlderParagraph Size="Small" Color="Muted" Text="{DynamicResource GalleryText.TypographyParagraphSizes}" />
+            <alder:AlderCode Text="AlderHeading" FlowDirection="LeftToRight" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var heading = new AlderHeading { Level = 1, Text = "Workspace" };
+        var paragraph = new AlderParagraph { Size = TypographyParagraphSize.Small, Color = TypographyColor.Muted };
+        paragraph[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.TypographyParagraphSizes");
+        var code = new AlderCode { Text = "AlderHeading" };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleProse" Title="{DynamicResource GalleryText.TypographyProseTitle}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="248" TextElement.FontFamily="fonts:Inter#Inter">
+          <alder:AlderProse MaxWidth="576" Spacing="12" VerticalAlignment="Center">
+            <alder:AlderHeading Text="{DynamicResource GalleryText.TypographyArticleTitle}" />
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.TypographyArticleIntro}" />
+            <alder:AlderHeading Level="2" Text="{DynamicResource GalleryText.TypographyArticleSection}" />
+            <alder:AlderParagraph>
+              <Run Text="{DynamicResource GalleryText.TypographyCodeInlineBefore}" /><InlineUIContainer BaselineAlignment="Center"><alder:AlderCode Text="TextWrapping" FlowDirection="LeftToRight" /></InlineUIContainer><Run Text="{DynamicResource GalleryText.TypographyCodeInlineAfter}" />
+            </alder:AlderParagraph>
+          </alder:AlderProse>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var prose = new AlderProse
+        {
+            Spacing = 12,
+            Children =
+            {
+                new AlderHeading { Text = "Writing an article" },
+                new AlderParagraph
+                {
+                    Inlines = new InlineCollection
+                    {
+                        new Run("Use "),
+                        new InlineUIContainer(new AlderCode { Text = "TextWrapping" }) { BaselineAlignment = BaselineAlignment.Center },
+                        new Run(" when a paragraph needs to fit a narrow column.")
+                    }
+                }
+            }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleRichContent" Title="{DynamicResource GalleryText.TypographyRichContent}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <alder:AlderProse MaxWidth="576" VerticalAlignment="Center">
+            <alder:AlderHeading Level="3" Text="{DynamicResource GalleryText.TypographyReadingNotes}" />
+            <alder:AlderTextBlock>
+              <Run Text="{DynamicResource GalleryText.TypographyStrong}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.TypographyRichMiddle}" /><Run Text="{DynamicResource GalleryText.TypographyEmphasis}" FontStyle="Italic" /><Run Text="." />
+            </alder:AlderTextBlock>
+            <Border Classes="prose-quote">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.TypographyQuote}" />
+            </Border>
+            <StackPanel Classes="prose-list">
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                <alder:AlderTextBlock Text="•" />
+                <alder:AlderTextBlock Grid.Column="1" Text="{DynamicResource GalleryText.TypographyListOne}" />
+              </Grid>
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                <alder:AlderTextBlock Text="•" />
+                <alder:AlderTextBlock Grid.Column="1" Text="{DynamicResource GalleryText.TypographyListTwo}" />
+              </Grid>
+            </StackPanel>
+            <alder:AlderLink Content="{DynamicResource GalleryText.TypographyReference}"
+                        NavigateUri="https://docs.avaloniaui.net/docs/styling/typography" />
+            <alder:AlderSeparator Classes="prose-rule" />
+            <alder:AlderHeading Level="4" Text="{DynamicResource GalleryText.TypographyCodeBlock}" />
+            <Border Classes="prose-pre">
+              <alder:AlderScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                <alder:AlderSelectableTextBlock Text="dotnet add package Alder.Avalonia&#10;dotnet build" />
+              </alder:AlderScrollViewer>
+            </Border>
+          </alder:AlderProse>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var quote = new Border
+        {
+            Classes = { "prose-quote" },
+            Child = new AlderTextBlock { Text = "Make the next step visible." }
+        };
+
+        var block = new Border
+        {
+            Classes = { "prose-pre" },
+            Child = new AlderScrollViewer
+            {
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                Content = new AlderSelectableTextBlock { Text = "dotnet add package Alder.Avalonia\ndotnet build" }
+            }
+        };
+
+        var reference = new AlderLink { NavigateUri = new Uri("https://docs.avaloniaui.net/docs/styling/typography") };
+        reference[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.TypographyReference");
+        var prose = new AlderProse { Children = { quote, reference, block } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSemantics" Title="{DynamicResource GalleryText.TypographySemanticOverrides}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel MaxWidth="576" Spacing="16" VerticalAlignment="Center">
+            <alder:AlderTypography Type="H1" AutomationProperties.HeadingLevel="2"
+                              Text="{DynamicResource GalleryText.TypographyLevelOverride}" />
+            <alder:AlderParagraph Text="{DynamicResource GalleryText.TypographyLevelDetails}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var heading = new AlderTypography { Type = TypographyType.H1 };
+        AutomationProperties.SetHeadingLevel(heading, 2);
+        heading[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.TypographyLevelOverride");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleCustom" Title="{DynamicResource GalleryText.CustomStyles}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <Border Padding="16" CornerRadius="12" Background="{DynamicResource AlderSurfaceSecondary}"
+                  BorderBrush="{DynamicResource AlderBorder}" BorderThickness="1"
+                  MaxWidth="448" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel Spacing="8">
+              <alder:AlderTypography Type="BodyExtraSmall" FontWeight="Medium" LetterSpacing="0.3"
+                                Foreground="{DynamicResource AlderAccent}" Text="{DynamicResource GalleryText.TypographyChangelog}" />
+              <alder:AlderHeading Level="4" Text="{DynamicResource GalleryText.TypographyChangelogTitle}" />
+              <alder:AlderParagraph Size="Small" Color="Muted" LineHeight="22.75"
+                               Text="{DynamicResource GalleryText.TypographyChangelogBody}" />
+            </StackPanel>
+          </Border>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var category = new AlderTypography
+        {
+            Type = TypographyType.BodyExtraSmall,
+            LetterSpacing = 0.3,
+            FontWeight = FontWeight.Medium
+        };
+        category[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderAccent");
+        category[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.TypographyChangelog");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleOptions" Title="{DynamicResource GalleryText.TypographyTextOptions}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel MaxWidth="360" Spacing="10" VerticalAlignment="Center">
+            <alder:AlderParagraph Text="{DynamicResource GalleryText.TypographyAlignStart}" TextAlignment="Start" />
+            <alder:AlderParagraph Text="{DynamicResource GalleryText.TypographyAlignCenter}" TextAlignment="Center" FontWeight="Medium" />
+            <alder:AlderParagraph Text="{DynamicResource GalleryText.TypographyAlignEnd}" TextAlignment="End" FontWeight="Bold" />
+            <alder:AlderParagraph Text="{DynamicResource GalleryText.TypographyAlignJustify}" TextAlignment="Justify" Color="Muted" />
+            <alder:AlderParagraph Text="{DynamicResource GalleryText.TypographyTruncatedText}" Truncate="True"
+                             alder:AlderToolTip.Tip="{DynamicResource GalleryText.TypographyTruncatedText}" />
+            <alder:AlderCode Text="AlderCode" FlowDirection="LeftToRight" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new AlderParagraph { Truncate = true };
+        preview[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.TypographyTruncatedText");
+        preview[!AlderToolTip.TipProperty] = new DynamicResourceExtension("GalleryText.TypographyTruncatedText");
+        var centered = new AlderParagraph { TextAlignment = TextAlignment.Center, FontWeight = FontWeight.Medium };
+        centered[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.TypographyAlignCenter");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

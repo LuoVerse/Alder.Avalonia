@@ -1,0 +1,288 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.KpiExample" x:DataType="vm:ProDataDisplayViewModel">
+  <UserControl.Styles>
+    <Style Selector="FlexPanel.kpiCards > alder|AlderKpi">
+      <Setter Property="Flex.Basis" Value="168" />
+      <Setter Property="Flex.Grow" Value="1" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.ProDemoKpiUsage}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="856" Padding="8,12" HorizontalAlignment="Stretch">
+          <FlexPanel Classes="kpiCards" Wrap="Wrap" ColumnSpacing="12" RowSpacing="12">
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiTotalRevenue}" Value="228451" Prefix="$" Trend="+33%" TrendColor="Success" MinHeight="100" />
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiTotalExpenses}" Value="71887" Prefix="$" Trend="+13.0%" TrendColor="Danger" MinHeight="100" />
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiTotalProfit}" Value="156540" Prefix="$" Trend="0.0%" TrendColor="Default" MinHeight="100" />
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiNewCustomers}" Value="1234" Trend="+1.0%" TrendColor="Success" MinHeight="100" />
+          </FlexPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var metrics = new FlexPanel { Wrap = FlexWrap.Wrap, ColumnSpacing = 12, RowSpacing = 12 };
+        metrics.Children.Add(new AlderKpi { Title = "Total Revenue", Value = 228451, Prefix = "$", Trend = "+33%", TrendColor = AlderStatusColor.Success, MinHeight = 100 });
+        metrics.Children.Add(new AlderKpi { Title = "Total Expenses", Value = 71887, Prefix = "$", Trend = "+13.0%", TrendColor = AlderStatusColor.Danger, MinHeight = 100 });
+        metrics.Children.Add(new AlderKpi { Title = "Total Profit", Value = 156540, Prefix = "$", Trend = "0.0%", TrendColor = AlderStatusColor.Default, MinHeight = 100 });
+        metrics.Children.Add(new AlderKpi { Title = "New Customers", Value = 1234, Trend = "+1.0%", TrendColor = AlderStatusColor.Success, MinHeight = 100 });
+        var basis = FlexBasis.Parse("168");
+        foreach (var metric in metrics.Children)
+        {
+            Flex.SetBasis(metric, basis);
+            Flex.SetGrow(metric, 1);
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleBottom" Title="{DynamicResource GalleryText.ProDemoKpiBottom}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="856" Padding="8,12" HorizontalAlignment="Stretch">
+          <FlexPanel Classes="kpiCards" Wrap="Wrap" ColumnSpacing="12" RowSpacing="12">
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiTotalRevenue}" Value="228451" Prefix="$" Trend="+3.3%" TrendColor="Success" MinHeight="184">
+              <alder:AlderKpi.Chart><alder:AlderAreaChart Height="86" Categories="{CompiledBinding Categories}" Series="{CompiledBinding Revenue}" ShowGrid="False" ShowXAxis="False" ShowYAxis="False" ShowTooltip="False" /></alder:AlderKpi.Chart>
+            </alder:AlderKpi>
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiBaerLimitedBal}" Value="49.33" Prefix="$" ValueFormat="N2" Trend="−1.9%" TrendColor="Danger" MinHeight="184">
+              <alder:AlderKpi.Actions><alder:AlderButton Size="Small" Variant="Ghost" IsIconOnly="True" Icon="{StaticResource AlderIconEllipsis}" AutomationProperties.Name="{DynamicResource GalleryText.ProDisplayDetails}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayDetails" /></alder:AlderKpi.Actions>
+              <alder:AlderKpi.Chart><alder:AlderLineChart Height="86" Categories="{CompiledBinding Categories}" Series="{CompiledBinding Traffic}" ShowGrid="False" ShowXAxis="False" ShowYAxis="False" ShowTooltip="False" /></alder:AlderKpi.Chart>
+            </alder:AlderKpi>
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiActiveUsers}" Value="100000" Trend="10.9%" TrendColor="Success" MinHeight="184">
+              <alder:AlderKpi.Chart><alder:AlderAreaChart Height="86" Categories="{CompiledBinding Categories}" Series="{CompiledBinding Revenue}" ShowGrid="False" ShowXAxis="False" ShowYAxis="False" ShowTooltip="False" /></alder:AlderKpi.Chart>
+            </alder:AlderKpi>
+          </FlexPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var metrics = new FlexPanel { Wrap = FlexWrap.Wrap, ColumnSpacing = 12, RowSpacing = 12 };
+        metrics.Children.Add(new AlderKpi { Title = "Total Revenue", Value = 228451, Prefix = "$", Trend = "+3.3%", TrendColor = AlderStatusColor.Success, MinHeight = 184, Chart = new AlderAreaChart { Height = 86, Categories = model.Categories, Series = model.Revenue, ShowGrid = false, ShowXAxis = false, ShowYAxis = false, ShowTooltip = false } });
+        metrics.Children.Add(new AlderKpi { Title = "Baer Limited (BAL)", Value = 49.33, Prefix = "$", ValueFormat = "N2", Trend = "−1.9%", TrendColor = AlderStatusColor.Danger, MinHeight = 184, Actions = new AlderButton { Size = AlderSize.Small, Variant = ButtonVariant.Ghost, IsIconOnly = true, Icon = (Geometry)this.FindResource("AlderIconEllipsis")!, Command = model.Report, CommandParameter = "ProDisplayDetails" }, Chart = new AlderLineChart { Height = 86, Categories = model.Categories, Series = model.Traffic, ShowGrid = false, ShowXAxis = false, ShowYAxis = false, ShowTooltip = false } });
+        metrics.Children.Add(new AlderKpi { Title = "Active Users", Value = 100000, Trend = "10.9%", TrendColor = AlderStatusColor.Success, MinHeight = 184, Chart = new AlderAreaChart { Height = 86, Categories = model.Categories, Series = model.Revenue, ShowGrid = false, ShowXAxis = false, ShowYAxis = false, ShowTooltip = false } });
+        var basis = FlexBasis.Parse("168");
+        foreach (var metric in metrics.Children)
+        {
+            Flex.SetBasis(metric, basis);
+            Flex.SetGrow(metric, 1);
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleIcon" Title="{DynamicResource GalleryText.ProDemoKpiIcon}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="856" Padding="8,12" HorizontalAlignment="Stretch">
+          <FlexPanel Classes="kpiCards" Wrap="Wrap" ColumnSpacing="12" RowSpacing="12">
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiTotalUsers}" Value="5400" Trend="+33%" TrendColor="Success" MinHeight="112">
+              <alder:AlderKpi.Icon><alder:AlderPathIcon Data="{StaticResource AlderIconAvatarPerson}" Width="16" Height="16" /></alder:AlderKpi.Icon>
+            </alder:AlderKpi>
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiTotalSales}" Value="15400" Prefix="$" Trend="0.0%" TrendColor="Default" MinHeight="112">
+              <alder:AlderKpi.Icon><alder:AlderPathIcon Data="{StaticResource AlderIconChart}" Width="16" Height="16" /></alder:AlderKpi.Icon>
+            </alder:AlderKpi>
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiNetProfit}" Value="10400" Prefix="$" Trend="−3.3%" TrendColor="Danger" MinHeight="112">
+              <alder:AlderKpi.Icon><alder:AlderPathIcon Data="{StaticResource AlderIconArchive}" Width="16" Height="16" /></alder:AlderKpi.Icon>
+            </alder:AlderKpi>
+          </FlexPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var metrics = new FlexPanel { Wrap = FlexWrap.Wrap, ColumnSpacing = 12, RowSpacing = 12 };
+        metrics.Children.Add(new AlderKpi { Title = "Total Users", Value = 5400, Trend = "+33%", TrendColor = AlderStatusColor.Success, MinHeight = 112, Icon = new AlderPathIcon { Data = (Geometry)this.FindResource("AlderIconAvatarPerson")!, Width = 16, Height = 16 } });
+        metrics.Children.Add(new AlderKpi { Title = "Total Sales", Value = 15400, Prefix = "$", Trend = "0.0%", TrendColor = AlderStatusColor.Default, MinHeight = 112, Icon = new AlderPathIcon { Data = (Geometry)this.FindResource("AlderIconChart")!, Width = 16, Height = 16 } });
+        metrics.Children.Add(new AlderKpi { Title = "Net Profit", Value = 10400, Prefix = "$", Trend = "−3.3%", TrendColor = AlderStatusColor.Danger, MinHeight = 112, Icon = new AlderPathIcon { Data = (Geometry)this.FindResource("AlderIconArchive")!, Width = 16, Height = 16 } });
+        var basis = FlexBasis.Parse("168");
+        foreach (var metric in metrics.Children)
+        {
+            Flex.SetBasis(metric, basis);
+            Flex.SetGrow(metric, 1);
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleProgress" Title="{DynamicResource GalleryText.ProDemoKpiProgress}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="856" Padding="8,12" HorizontalAlignment="Stretch">
+          <FlexPanel Classes="kpiCards" Wrap="Wrap" ColumnSpacing="12" RowSpacing="12">
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiServerLoad}" Value="38" Suffix="%" Progress="38" MinHeight="124" />
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiServerLoad}" Value="98" Suffix="%" Progress="98" MinHeight="124" />
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiAverageMemoryUsed}" Value="64" Suffix="%" Progress="64" MinHeight="124" />
+          </FlexPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var metrics = new FlexPanel { Wrap = FlexWrap.Wrap, ColumnSpacing = 12, RowSpacing = 12 };
+        metrics.Children.Add(new AlderKpi { Title = "Server Load", Value = 38, Suffix = "%", Progress = 38, MinHeight = 124 });
+        metrics.Children.Add(new AlderKpi { Title = "Server Load", Value = 98, Suffix = "%", Progress = 98, MinHeight = 124 });
+        metrics.Children.Add(new AlderKpi { Title = "Average Memory Used", Value = 64, Suffix = "%", Progress = 64, MinHeight = 124 });
+        var basis = FlexBasis.Parse("168");
+        foreach (var metric in metrics.Children)
+        {
+            Flex.SetBasis(metric, basis);
+            Flex.SetGrow(metric, 1);
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleActions" Title="{DynamicResource GalleryText.ProDemoKpiActions}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="856" Padding="8,12" HorizontalAlignment="Stretch">
+          <FlexPanel Classes="kpiCards" Wrap="Wrap" ColumnSpacing="12" RowSpacing="12">
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiConversionRate}" Value="3.8" Suffix="%" ValueFormat="N1" Trend="+1.7%" TrendColor="Success" MinHeight="124">
+              <alder:AlderKpi.Actions><alder:AlderButton Size="Small" Variant="Ghost" IsIconOnly="True" Icon="{StaticResource AlderIconEllipsis}" AutomationProperties.Name="{DynamicResource GalleryText.ProDisplayDetails}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayDetails" /></alder:AlderKpi.Actions>
+            </alder:AlderKpi>
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiBounceRate}" Value="42.3" Suffix="%" ValueFormat="N1" Trend="−5.9%" TrendColor="Danger" MinHeight="124">
+              <alder:AlderKpi.Actions><alder:AlderButton Size="Small" Variant="Ghost" IsIconOnly="True" Icon="{StaticResource AlderIconEllipsis}" AutomationProperties.Name="{DynamicResource GalleryText.ProDisplayDetails}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayDetails" /></alder:AlderKpi.Actions>
+            </alder:AlderKpi>
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiLoadTime}" Value="856" Suffix=" ms" MinHeight="124">
+              <alder:AlderKpi.Actions><alder:AlderButton Size="Small" Variant="Ghost" IsIconOnly="True" Icon="{StaticResource AlderIconEllipsis}" AutomationProperties.Name="{DynamicResource GalleryText.ProDisplayDetails}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayDetails" /></alder:AlderKpi.Actions>
+            </alder:AlderKpi>
+          </FlexPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var metrics = new FlexPanel { Wrap = FlexWrap.Wrap, ColumnSpacing = 12, RowSpacing = 12 };
+        metrics.Children.Add(new AlderKpi { Title = "Conversion Rate", Value = 3.8, Suffix = "%", ValueFormat = "N1", Trend = "+1.7%", TrendColor = AlderStatusColor.Success, MinHeight = 124, Actions = new AlderButton { Size = AlderSize.Small, Variant = ButtonVariant.Ghost, IsIconOnly = true, Icon = (Geometry)this.FindResource("AlderIconEllipsis")!, Command = model.Report, CommandParameter = "ProDisplayDetails" } });
+        metrics.Children.Add(new AlderKpi { Title = "Bounce Rate", Value = 42.3, Suffix = "%", ValueFormat = "N1", Trend = "−5.9%", TrendColor = AlderStatusColor.Danger, MinHeight = 124, Actions = new AlderButton { Size = AlderSize.Small, Variant = ButtonVariant.Ghost, IsIconOnly = true, Icon = (Geometry)this.FindResource("AlderIconEllipsis")!, Command = model.Report, CommandParameter = "ProDisplayDetails" } });
+        metrics.Children.Add(new AlderKpi { Title = "Load Time", Value = 856, Suffix = " ms", MinHeight = 124, Actions = new AlderButton { Size = AlderSize.Small, Variant = ButtonVariant.Ghost, IsIconOnly = true, Icon = (Geometry)this.FindResource("AlderIconEllipsis")!, Command = model.Report, CommandParameter = "ProDisplayDetails" } });
+        var basis = FlexBasis.Parse("168");
+        foreach (var metric in metrics.Children)
+        {
+            Flex.SetBasis(metric, basis);
+            Flex.SetGrow(metric, 1);
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleFooter" Title="{DynamicResource GalleryText.ProDemoKpiFooter}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="856" Padding="8,12" HorizontalAlignment="Stretch">
+          <FlexPanel Classes="kpiCards" Wrap="Wrap" ColumnSpacing="12" RowSpacing="12">
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiTotalSubscribers}" Value="71897" Trend="+122" TrendColor="Success" MinHeight="144">
+              <alder:AlderKpi.Footer><alder:AlderButton Size="Small" Variant="Ghost" Content="{DynamicResource GalleryText.ProKpiViewAll}" Command="{CompiledBinding Report}" CommandParameter="ProKpiViewAll" /></alder:AlderKpi.Footer>
+            </alder:AlderKpi>
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiMonthlyRevenue}" Value="45231" Prefix="$" Trend="+20.1%" TrendColor="Success" MinHeight="144">
+              <alder:AlderKpi.Footer><alder:AlderButton Size="Small" Variant="Ghost" Content="{DynamicResource GalleryText.ProKpiViewReport}" Command="{CompiledBinding Report}" CommandParameter="ProKpiViewReport" /></alder:AlderKpi.Footer>
+            </alder:AlderKpi>
+          </FlexPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var metrics = new FlexPanel { Wrap = FlexWrap.Wrap, ColumnSpacing = 12, RowSpacing = 12 };
+        metrics.Children.Add(new AlderKpi { Title = "Total Subscribers", Value = 71897, Trend = "+122", TrendColor = AlderStatusColor.Success, MinHeight = 144, Footer = new AlderButton { Size = AlderSize.Small, Variant = ButtonVariant.Ghost, Content = "View all", Command = model.Report, CommandParameter = "ProKpiViewAll" } });
+        metrics.Children.Add(new AlderKpi { Title = "Monthly Revenue", Value = 45231, Prefix = "$", Trend = "+20.1%", TrendColor = AlderStatusColor.Success, MinHeight = 144, Footer = new AlderButton { Size = AlderSize.Small, Variant = ButtonVariant.Ghost, Content = "View report", Command = model.Report, CommandParameter = "ProKpiViewReport" } });
+        var basis = FlexBasis.Parse("168");
+        foreach (var metric in metrics.Children)
+        {
+            Flex.SetBasis(metric, basis);
+            Flex.SetGrow(metric, 1);
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleInline" Title="{DynamicResource GalleryText.ProDemoKpiInline}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="856" Padding="8,12" HorizontalAlignment="Stretch">
+          <FlexPanel Classes="kpiCards" Wrap="Wrap" ColumnSpacing="12" RowSpacing="12">
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiTotalClicks}" Value="2441" Trend="3.5%" TrendColor="Success" ChartPlacement="Inline" MinHeight="138">
+              <alder:AlderKpi.Chart><alder:AlderLineChart Height="60" Categories="{CompiledBinding Categories}" Series="{CompiledBinding Revenue}" ShowGrid="False" ShowXAxis="False" ShowYAxis="False" ShowTooltip="False" /></alder:AlderKpi.Chart>
+            </alder:AlderKpi>
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiBounceRate}" Value="42.3" Suffix="%" ValueFormat="N1" Trend="5.9%" TrendColor="Danger" ChartPlacement="Inline" MinHeight="138">
+              <alder:AlderKpi.Chart><alder:AlderLineChart Height="60" Categories="{CompiledBinding Categories}" Series="{CompiledBinding Traffic}" ShowGrid="False" ShowXAxis="False" ShowYAxis="False" ShowTooltip="False" /></alder:AlderKpi.Chart>
+            </alder:AlderKpi>
+          </FlexPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var metrics = new FlexPanel { Wrap = FlexWrap.Wrap, ColumnSpacing = 12, RowSpacing = 12 };
+        metrics.Children.Add(new AlderKpi { Title = "Total Clicks", Value = 2441, Trend = "3.5%", TrendColor = AlderStatusColor.Success, ChartPlacement = KpiChartPlacement.Inline, MinHeight = 138, Chart = new AlderLineChart { Height = 60, Categories = model.Categories, Series = model.Revenue, ShowGrid = false, ShowXAxis = false, ShowYAxis = false, ShowTooltip = false } });
+        metrics.Children.Add(new AlderKpi { Title = "Bounce Rate", Value = 42.3, Suffix = "%", ValueFormat = "N1", Trend = "5.9%", TrendColor = AlderStatusColor.Danger, ChartPlacement = KpiChartPlacement.Inline, MinHeight = 138, Chart = new AlderLineChart { Height = 60, Categories = model.Categories, Series = model.Traffic, ShowGrid = false, ShowXAxis = false, ShowYAxis = false, ShowTooltip = false } });
+        var basis = FlexBasis.Parse("168");
+        foreach (var metric in metrics.Children)
+        {
+            Flex.SetBasis(metric, basis);
+            Flex.SetGrow(metric, 1);
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleTooltip" Title="{DynamicResource GalleryText.ProDemoKpiTooltip}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="424" Padding="8,12" HorizontalAlignment="Stretch">
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiMonthlyRevenue}" Value="21300" Prefix="$" Trend="11.5%" TrendColor="Success" MinHeight="150">
+              <alder:AlderKpi.Chart><alder:AlderAreaChart Height="56" Categories="{CompiledBinding Categories}" Series="{CompiledBinding Revenue}" ShowGrid="False" ShowXAxis="False" ShowYAxis="False" ShowTooltip="True" /></alder:AlderKpi.Chart>
+            </alder:AlderKpi>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var metric = new AlderKpi { Title = "Monthly Revenue", Value = 21300, Prefix = "$", Trend = "11.5%", TrendColor = AlderStatusColor.Success, MinHeight = 150, Chart = new AlderAreaChart { Height = 56, Categories = model.Categories, Series = model.Revenue, ShowGrid = false, ShowXAxis = false, ShowYAxis = false, ShowTooltip = true } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGaps" Title="{DynamicResource GalleryText.ProDemoKpiGaps}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="856" Padding="8,12" HorizontalAlignment="Stretch">
+          <FlexPanel Classes="kpiCards" Wrap="Wrap" ColumnSpacing="12" RowSpacing="12">
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiTimeToFirstResponse}" Value="16" Suffix=" min" Trend="27%" TrendColor="Success" MinHeight="138">
+              <alder:AlderKpi.Chart><alder:AlderLineChart Height="54" Categories="{CompiledBinding Categories}" Series="{CompiledBinding Missing}" ShowGrid="False" ShowXAxis="False" ShowYAxis="False" ShowTooltip="True" /></alder:AlderKpi.Chart>
+            </alder:AlderKpi>
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProKpiTimeToResolve}" Value="141" Suffix=" min" Trend="20%" TrendColor="Success" MinHeight="138">
+              <alder:AlderKpi.Chart><alder:AlderLineChart Height="54" Categories="{CompiledBinding Categories}" Series="{CompiledBinding Connected}" ShowGrid="False" ShowXAxis="False" ShowYAxis="False" ShowTooltip="True" /></alder:AlderKpi.Chart>
+            </alder:AlderKpi>
+          </FlexPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var metrics = new FlexPanel { Wrap = FlexWrap.Wrap, ColumnSpacing = 12, RowSpacing = 12 };
+        metrics.Children.Add(new AlderKpi { Title = "Time to First Response", Value = 16, Suffix = " min", Trend = "27%", TrendColor = AlderStatusColor.Success, MinHeight = 138, Chart = new AlderLineChart { Height = 54, Categories = model.Categories, Series = model.Missing, ShowGrid = false, ShowXAxis = false, ShowYAxis = false, ShowTooltip = true } });
+        metrics.Children.Add(new AlderKpi { Title = "Time to Resolve", Value = 141, Suffix = " min", Trend = "20%", TrendColor = AlderStatusColor.Success, MinHeight = 138, Chart = new AlderLineChart { Height = 54, Categories = model.Categories, Series = model.Connected, ShowGrid = false, ShowXAxis = false, ShowYAxis = false, ShowTooltip = true } });
+        var basis = FlexBasis.Parse("168");
+        foreach (var metric in metrics.Children)
+        {
+            Flex.SetBasis(metric, basis);
+            Flex.SetGrow(metric, 1);
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupHorizontal" Title="{DynamicResource GalleryText.ProDemoKpiGroupHorizontal}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="820" Padding="8,12" HorizontalAlignment="Stretch">
+          <alder:AlderKpiGroup Columns="3">
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProDisplaySubscribers}" Value="71897" Trend="+1.2%" TrendColor="Success" />
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProDisplayOpenRate}" Value="58.16" Suffix="%" ValueFormat="N1" Trend="+2.02%" TrendColor="Success" />
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProDisplayClickRate}" Value="24.57" Suffix="%" ValueFormat="N1" Trend="−4.05%" TrendColor="Danger" />
+          </alder:AlderKpiGroup>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var metrics = new AlderKpiGroup { Columns = 3 };
+        metrics.Items.Add(new AlderKpi { Title = "Subscribers", Value = 71897, Trend = "+1.2%", TrendColor = AlderStatusColor.Success });
+        metrics.Items.Add(new AlderKpi { Title = "Open rate", Value = 58.16, Trend = "+2.02%", TrendColor = AlderStatusColor.Success });
+        metrics.Items.Add(new AlderKpi { Title = "Click rate", Value = 24.57, Trend = "−4.05%", TrendColor = AlderStatusColor.Danger });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupVertical" Title="{DynamicResource GalleryText.ProDemoKpiGroupVertical}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="510" Padding="8,12" HorizontalAlignment="Stretch">
+          <alder:AlderKpiGroup Columns="3" Orientation="Vertical">
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProDisplaySubscribers}" Value="71897" Trend="+1.2%" TrendColor="Success" />
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProDisplayOpenRate}" Value="58.16" Suffix="%" ValueFormat="N1" Trend="+2.02%" TrendColor="Success" />
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProDisplayClickRate}" Value="24.57" Suffix="%" ValueFormat="N1" Trend="−4.05%" TrendColor="Danger" />
+          </alder:AlderKpiGroup>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var metrics = new AlderKpiGroup { Columns = 3, Orientation = Orientation.Vertical };
+        metrics.Items.Add(new AlderKpi { Title = "Subscribers", Value = 71897, Trend = "+1.2%", TrendColor = AlderStatusColor.Success });
+        metrics.Items.Add(new AlderKpi { Title = "Open rate", Value = 58.16, Trend = "+2.02%", TrendColor = AlderStatusColor.Success });
+        metrics.Items.Add(new AlderKpi { Title = "Click rate", Value = 24.57, Trend = "−4.05%", TrendColor = AlderStatusColor.Danger });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupComparison" Title="{DynamicResource GalleryText.ProDemoKpiGroupComparison}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="820" Padding="8,12" HorizontalAlignment="Stretch">
+          <alder:AlderKpiGroup Columns="3">
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProDisplaySubscribers}" Value="71897" Trend="+1.2%" TrendColor="Success" Footer="{DynamicResource GalleryText.ProDisplayFrom}" />
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProDisplayOpenRate}" Value="58.16" Suffix="%" ValueFormat="N1" Trend="+2.02%" TrendColor="Success" Footer="{DynamicResource GalleryText.ProDisplayFrom}" />
+            <alder:AlderKpi Title="{DynamicResource GalleryText.ProDisplayClickRate}" Value="24.57" Suffix="%" ValueFormat="N1" Trend="−4.05%" TrendColor="Danger" Footer="{DynamicResource GalleryText.ProDisplayFrom}" />
+          </alder:AlderKpiGroup>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var metrics = new AlderKpiGroup { Columns = 3 };
+        metrics.Items.Add(new AlderKpi { Title = "Subscribers", Value = 71897, Trend = "+1.2%", TrendColor = AlderStatusColor.Success });
+        metrics.Items.Add(new AlderKpi { Title = "Open rate", Value = 58.16, Trend = "+2.02%", TrendColor = AlderStatusColor.Success });
+        metrics.Items.Add(new AlderKpi { Title = "Click rate", Value = 24.57, Trend = "−4.05%", TrendColor = AlderStatusColor.Danger });
+        foreach (var metric in metrics.Items.OfType<AlderKpi>()) metric.Footer = "Compared with October";
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

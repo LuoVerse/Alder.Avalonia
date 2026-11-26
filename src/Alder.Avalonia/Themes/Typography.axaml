@@ -1,0 +1,149 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls">
+  <x:String x:Key="AlderText.KbdCommand">Command</x:String>
+  <x:String x:Key="AlderText.KbdShift">Shift</x:String>
+  <x:String x:Key="AlderText.KbdCtrl">Control</x:String>
+  <x:String x:Key="AlderText.KbdOption">Option</x:String>
+  <x:String x:Key="AlderText.KbdEnter">Enter</x:String>
+  <x:String x:Key="AlderText.KbdDelete">Delete</x:String>
+  <x:String x:Key="AlderText.KbdEscape">Escape</x:String>
+  <x:String x:Key="AlderText.KbdTab">Tab</x:String>
+  <x:String x:Key="AlderText.KbdCapsLock">Caps Lock</x:String>
+  <x:String x:Key="AlderText.KbdUp">Up</x:String>
+  <x:String x:Key="AlderText.KbdRight">Right</x:String>
+  <x:String x:Key="AlderText.KbdDown">Down</x:String>
+  <x:String x:Key="AlderText.KbdLeft">Left</x:String>
+  <x:String x:Key="AlderText.KbdPageUp">Page Up</x:String>
+  <x:String x:Key="AlderText.KbdPageDown">Page Down</x:String>
+  <x:String x:Key="AlderText.KbdHome">Home</x:String>
+  <x:String x:Key="AlderText.KbdEnd">End</x:String>
+  <x:String x:Key="AlderText.KbdHelp">Help</x:String>
+  <x:String x:Key="AlderText.KbdSpace">Space</x:String>
+  <x:String x:Key="AlderText.KbdFn">Fn</x:String>
+  <x:String x:Key="AlderText.KbdWin">Win</x:String>
+  <x:String x:Key="AlderText.KbdAlt">Alt</x:String>
+  <FontFamily x:Key="AlderTypographyMonoFont">Menlo,Consolas,DejaVu Sans Mono,monospace</FontFamily>
+  <ControlTheme x:Key="{x:Type alder:AlderSelectableTextBlock}" TargetType="alder:AlderSelectableTextBlock">
+    <Setter Property="SelectionBrush" Value="{DynamicResource AlderSoftHover}" />
+    <Style Selector="^[IsEnabled=True]">
+      <Setter Property="Cursor" Value="IBeam" />
+      <Setter Property="ContextFlyout" Value="{DynamicResource AlderTextSelectionMenu}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderKbd}" TargetType="alder:AlderKbd">
+    <Setter Property="MinHeight" Value="24" />
+    <Setter Property="TextBlock.BaselineOffset" Value="17" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Padding" Value="8,0" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="ItemsPanel">
+      <ItemsPanelTemplate>
+        <StackPanel Orientation="Horizontal" Spacing="2" />
+      </ItemsPanelTemplate>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="PART_Chrome" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}"
+                CornerRadius="{TemplateBinding CornerRadius}" BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}">
+          <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}"
+                          VerticalAlignment="Center" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Variant=Light]">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderKbdKey}" TargetType="alder:AlderKbdKey">
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="alder:AlderToolTip.Tip" Value="{CompiledBinding Title, RelativeSource={RelativeSource Self}}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <alder:AlderTextBlock Text="{TemplateBinding Glyph}" LineHeight="20" AutomationProperties.AccessibilityView="Raw" />
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderTypography}" TargetType="alder:AlderTypography">
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="FontWeight" Value="Normal" />
+    <Setter Property="LineHeight" Value="28" />
+    <Setter Property="TextAlignment" Value="Start" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+    <Style Selector="^[Type=H1], ^[Type=H2], ^[Type=H3], ^[Type=H4], ^[Type=H5], ^[Type=H6]">
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="^[Type=H1]">
+      <Setter Property="FontSize" Value="36" />
+      <Setter Property="LineHeight" Value="40" />
+      <Setter Property="LetterSpacing" Value="-0.9" />
+      <Setter Property="AutomationProperties.HeadingLevel" Value="1" />
+    </Style>
+    <Style Selector="^[Type=H2]">
+      <Setter Property="FontSize" Value="30" />
+      <Setter Property="LineHeight" Value="36" />
+      <Setter Property="LetterSpacing" Value="-0.75" />
+      <Setter Property="AutomationProperties.HeadingLevel" Value="2" />
+    </Style>
+    <Style Selector="^[Type=H3]">
+      <Setter Property="FontSize" Value="24" />
+      <Setter Property="LineHeight" Value="32" />
+      <Setter Property="LetterSpacing" Value="-0.6" />
+      <Setter Property="AutomationProperties.HeadingLevel" Value="3" />
+    </Style>
+    <Style Selector="^[Type=H4]">
+      <Setter Property="FontSize" Value="20" />
+      <Setter Property="LineHeight" Value="28" />
+      <Setter Property="LetterSpacing" Value="-0.5" />
+      <Setter Property="AutomationProperties.HeadingLevel" Value="4" />
+    </Style>
+    <Style Selector="^[Type=H5]">
+      <Setter Property="FontSize" Value="18" />
+      <Setter Property="LineHeight" Value="28" />
+      <Setter Property="LetterSpacing" Value="-0.45" />
+      <Setter Property="AutomationProperties.HeadingLevel" Value="5" />
+    </Style>
+    <Style Selector="^[Type=H6]">
+      <Setter Property="FontSize" Value="16" />
+      <Setter Property="LineHeight" Value="24" />
+      <Setter Property="LetterSpacing" Value="-0.4" />
+      <Setter Property="AutomationProperties.HeadingLevel" Value="6" />
+    </Style>
+    <Style Selector="^[Type=BodySmall]">
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="LineHeight" Value="24" />
+    </Style>
+    <Style Selector="^[Type=BodyExtraSmall]">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="LineHeight" Value="20" />
+    </Style>
+    <Style Selector="^[Type=Code]">
+      <Setter Property="FontFamily" Value="{DynamicResource AlderTypographyMonoFont}" />
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="LineHeight" Value="20" />
+      <Setter Property="BaselineOffset" Value="17" />
+      <Setter Property="CodeBackground" Value="{DynamicResource AlderNeutral}" />
+      <Setter Property="Padding" Value="6,2" />
+      <Setter Property="HorizontalAlignment" Value="Left" />
+    </Style>
+    <Style Selector="^[Color=Muted]">
+      <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    </Style>
+    <Style Selector="^[Truncate=True]">
+      <Setter Property="TextWrapping" Value="NoWrap" />
+      <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+      <Setter Property="MaxLines" Value="1" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderProse}" TargetType="alder:AlderProse">
+    <Setter Property="TextElement.Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="TextElement.FontSize" Value="16" />
+  </ControlTheme>
+</ResourceDictionary>

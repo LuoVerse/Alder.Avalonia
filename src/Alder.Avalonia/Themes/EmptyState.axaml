@@ -1,0 +1,51 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls" xmlns:conv="using:Avalonia.Data.Converters">
+  <ControlTheme x:Key="{x:Type alder:AlderEmptyState}" TargetType="alder:AlderEmptyState">
+    <Setter Property="Padding" Value="24,32" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" Padding="{TemplateBinding Padding}">
+            <StackPanel Name="Layout" Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Center">
+              <StackPanel Spacing="8">
+                <Border Name="MediaSurface" HorizontalAlignment="Center" CornerRadius="50"
+                        IsVisible="{TemplateBinding Media, Converter={x:Static conv:ObjectConverters.IsNotNull}}">
+                  <ContentPresenter Content="{TemplateBinding Media}" ContentTemplate="{TemplateBinding MediaTemplate}"
+                                    Foreground="{DynamicResource AlderInk}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                </Border>
+                <alder:AlderTextBlock Name="Title" Text="{TemplateBinding Title}" FontSize="18" FontWeight="SemiBold" TextAlignment="Center" TextWrapping="Wrap"
+                           AutomationProperties.HeadingLevel="3"
+                           IsVisible="{TemplateBinding Title, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+                <alder:AlderTextBlock Name="Description" Text="{TemplateBinding Description}" FontSize="14" LineHeight="20" TextAlignment="Center" TextWrapping="Wrap"
+                           Foreground="{DynamicResource AlderMuted}"
+                           IsVisible="{TemplateBinding Description, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+              </StackPanel>
+              <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                HorizontalAlignment="Center" IsVisible="{TemplateBinding Content, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+            </StackPanel>
+          </Border>
+          <Rectangle Name="Outline" RadiusX="16" RadiusY="16" Margin="0.5" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1"
+                     StrokeDashArray="4,3" IsVisible="False" IsHitTestVisible="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Variant=Outline] /template/ Rectangle#Outline"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^[Variant=Filled]"><Setter Property="Background" Value="{DynamicResource AlderSurfaceSecondary}" /></Style>
+    <Style Selector="^[MediaVariant=Icon] /template/ Border#MediaSurface">
+      <Setter Property="Width" Value="48" /><Setter Property="Height" Value="48" />
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+    <Style Selector="^[Size=Small]"><Setter Property="Padding" Value="16,24" /></Style>
+    <Style Selector="^[Size=Small] /template/ StackPanel#Layout"><Setter Property="Spacing" Value="12" /></Style>
+    <Style Selector="^[Size=Small] /template/ TextBlock#Title"><Setter Property="FontSize" Value="16" /></Style>
+    <Style Selector="^[Size=Small] /template/ TextBlock#Description"><Setter Property="FontSize" Value="12" /></Style>
+    <Style Selector="^[Size=Small][MediaVariant=Icon] /template/ Border#MediaSurface"><Setter Property="Width" Value="40" /><Setter Property="Height" Value="40" /></Style>
+    <Style Selector="^[Size=Large]"><Setter Property="Padding" Value="32,40" /></Style>
+    <Style Selector="^[Size=Large] /template/ StackPanel#Layout"><Setter Property="Spacing" Value="20" /></Style>
+    <Style Selector="^[Size=Large] /template/ TextBlock#Title"><Setter Property="FontSize" Value="20" /></Style>
+    <Style Selector="^[Size=Large][MediaVariant=Icon] /template/ Border#MediaSurface"><Setter Property="Width" Value="56" /><Setter Property="Height" Value="56" /></Style>
+  </ControlTheme>
+</ResourceDictionary>

@@ -1,0 +1,215 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             x:Class="Alder.Avalonia.Gallery.Views.PopoverExample" x:DataType="vm:PopoverViewModel">
+  <Design.DataContext><vm:PopoverViewModel /></Design.DataContext>
+  <UserControl.Resources>
+    <DataTemplate x:Key="PopoverRenderBody" x:DataType="vm:PopoverViewModel">
+      <StackPanel Spacing="8">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <alder:AlderPathIcon Width="18" Height="18" Foreground="{DynamicResource AlderSoftInk}" Data="{StaticResource AlderIconChart}" />
+          <alder:AlderTextBlock FontWeight="SemiBold" Text="{DynamicResource GalleryText.ToolTipTrigger}" Foreground="{DynamicResource AlderInk}" />
+        </StackPanel>
+        <alder:AlderTextBlock Text="{CompiledBinding RenderedDescription}" TextWrapping="Wrap" />
+      </StackPanel>
+    </DataTemplate>
+  </UserControl.Resources>
+  <StackPanel Spacing="24">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton Content="{DynamicResource GalleryText.PopoverUsageTrigger}" HorizontalAlignment="Center">
+          <alder:AlderButton.Flyout>
+            <alder:AlderPopover Heading="{DynamicResource GalleryText.PopoverUsageHeading}" Placement="Bottom" MaxContentWidth="256">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.PopoverUsageDescription}" TextWrapping="Wrap"
+                                    Foreground="{DynamicResource AlderMuted}" />
+            </alder:AlderPopover>
+          </alder:AlderButton.Flyout>
+        </alder:AlderButton>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var trigger = new AlderButton { Content = "Click me", HorizontalAlignment = HorizontalAlignment.Center };
+        var body = new AlderTextBlock
+        {
+            Text = "This is the popover content. You can put any content here.",
+            TextWrapping = TextWrapping.Wrap
+        };
+        body[!AlderTextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        trigger.Flyout = new AlderPopover
+        {
+            Heading = "Popover Title", Placement = PlacementMode.Bottom, MaxContentWidth = 256, Content = body
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SamplePopover" Title="{DynamicResource GalleryText.PopoverInteractive}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton Content="{DynamicResource GalleryText.PopoverOpen}" HorizontalAlignment="Center">
+          <alder:AlderButton.Flyout>
+            <alder:AlderPopover Heading="{DynamicResource GalleryText.PopoverHeading}" Placement="Bottom" MaxContentWidth="256">
+              <StackPanel Spacing="10">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.PopoverDescription}" TextWrapping="Wrap" />
+                <alder:AlderCheckBox Content="{DynamicResource GalleryText.PopoverArchived}"
+                                IsChecked="{CompiledBinding IncludeArchived, Mode=TwoWay}" />
+              </StackPanel>
+            </alder:AlderPopover>
+          </alder:AlderButton.Flyout>
+        </alder:AlderButton>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var archived = new AlderCheckBox { Content = "Include archived projects" };
+        archived.Bind(AlderCheckBox.IsCheckedProperty,
+            CompiledBinding.Create((PopoverViewModel vm) => vm.IncludeArchived, source: viewModel, mode: BindingMode.TwoWay));
+        trigger.Flyout = new AlderPopover
+        {
+            Heading = "Display options",
+            Content = new StackPanel
+            {
+                Spacing = 10,
+                Children =
+                {
+                    new AlderTextBlock { Text = "Choose which projects appear in your workspace.", TextWrapping = TextWrapping.Wrap },
+                    archived
+                }
+            },
+            Placement = PlacementMode.Bottom,
+            MaxContentWidth = 256,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SamplePopoverArrows" Title="{DynamicResource GalleryText.OverlayWithArrow}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="8" LineSpacing="8" HorizontalAlignment="Center">
+          <alder:AlderButton Variant="Secondary" Content="{DynamicResource GalleryText.OverlayWithArrow}">
+            <alder:AlderButton.Flyout>
+              <alder:AlderPopover ShowArrow="True" MaxContentWidth="256"
+                             Heading="{DynamicResource GalleryText.OverlayWithArrow}" Content="{DynamicResource GalleryText.OverlayArrowHint}" />
+            </alder:AlderButton.Flyout>
+          </alder:AlderButton>
+          <alder:AlderButton Variant="Tertiary" IsIconOnly="True" Icon="{StaticResource AlderIconEllipsis}"
+                        AutomationProperties.Name="{DynamicResource GalleryText.MoreOptions}">
+            <alder:AlderButton.Flyout>
+              <alder:AlderPopover Placement="BottomEdgeAlignedRight" ShowArrow="True" Offset="16" MaxContentWidth="256"
+                             Heading="{DynamicResource GalleryText.MoreOptions}" Content="{DynamicResource GalleryText.OverlayArrowHint}" />
+            </alder:AlderButton.Flyout>
+          </alder:AlderButton>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        trigger.Flyout = new AlderPopover
+        {
+            ShowArrow = true, Offset = 16, Placement = PlacementMode.BottomEdgeAlignedRight,
+            MaxContentWidth = 256, Heading = "More options", Content = "The arrow points to the trigger.",
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SamplePopoverProfile" Title="{DynamicResource GalleryText.OverlayProfile}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton Variant="Tertiary" HorizontalAlignment="Center">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Border Width="26" Height="26" CornerRadius="13" Background="{DynamicResource AlderSoft}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.OverlayProfileInitials}" FontSize="11" FontWeight="SemiBold"
+                         HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource AlderSoftInk}" />
+            </Border>
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.OverlayProfileName}" VerticalAlignment="Center" />
+          </StackPanel>
+          <alder:AlderButton.Flyout>
+            <alder:AlderPopover ShowArrow="True" MaxContentWidth="280">
+              <StackPanel Spacing="10">
+                <StackPanel Spacing="2">
+                  <alder:AlderTextBlock FontWeight="SemiBold" Foreground="{DynamicResource AlderInk}" Text="{DynamicResource GalleryText.OverlayProfileName}" />
+                  <alder:AlderTextBlock Text="alex@example.com" FontSize="12" />
+                </StackPanel>
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.OverlayProfileBio}" TextWrapping="Wrap" MaxWidth="234" />
+                <alder:AlderToggleButton Theme="{StaticResource AlderToggleButtonTheme}" HorizontalAlignment="Left"
+                              IsChecked="{CompiledBinding IsFollowing, Mode=TwoWay}" Content="{CompiledBinding FollowLabel}" />
+              </StackPanel>
+            </alder:AlderPopover>
+          </alder:AlderButton.Flyout>
+        </alder:AlderButton>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        public bool IsFollowing
+        {
+            get => field;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref field, value);
+                this.RaisePropertyChanged(nameof(FollowLabel));
+            }
+        }
+
+        public string FollowLabel => Text(IsFollowing ? "OverlayProfileFollowing" : "OverlayProfileFollow");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SamplePopoverPlacement" Title="{DynamicResource GalleryText.DrawerPlacement}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="8" LineSpacing="8" HorizontalAlignment="Center">
+          <alder:AlderButton Variant="Secondary" Content="{DynamicResource GalleryText.DrawerTop}">
+            <alder:AlderButton.Flyout><alder:AlderPopover Placement="Top" Content="{DynamicResource GalleryText.DrawerTop}" /></alder:AlderButton.Flyout>
+          </alder:AlderButton>
+          <alder:AlderButton Variant="Secondary" Content="{DynamicResource GalleryText.DrawerBottom}">
+            <alder:AlderButton.Flyout><alder:AlderPopover Placement="Bottom" Content="{DynamicResource GalleryText.DrawerBottom}" /></alder:AlderButton.Flyout>
+          </alder:AlderButton>
+          <alder:AlderButton Variant="Secondary" Content="{DynamicResource GalleryText.DrawerLeft}">
+            <alder:AlderButton.Flyout><alder:AlderPopover Placement="Left" Content="{DynamicResource GalleryText.DrawerLeft}" /></alder:AlderButton.Flyout>
+          </alder:AlderButton>
+          <alder:AlderButton Variant="Secondary" Content="{DynamicResource GalleryText.DrawerRight}">
+            <alder:AlderButton.Flyout><alder:AlderPopover Placement="Right" Content="{DynamicResource GalleryText.DrawerRight}" /></alder:AlderButton.Flyout>
+          </alder:AlderButton>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        trigger.Flyout = new AlderPopover { Placement = PlacementMode.Top, Content = "Top" };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SamplePopoverCustom" Title="{DynamicResource GalleryText.OverlayPopoverRender}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton Variant="Outline" Content="{DynamicResource GalleryText.OverlayPopoverRender}" HorizontalAlignment="Center">
+          <alder:AlderButton.Flyout>
+            <alder:AlderPopover Placement="TopEdgeAlignedLeft" Content="{CompiledBinding}" ContentTemplate="{StaticResource PopoverRenderBody}"
+                           ShowArrow="True" SurfaceCornerRadius="16" MaxContentWidth="270" ContentPadding="20"
+                           SurfaceBackground="{DynamicResource AlderSurfaceSecondary}" />
+          </alder:AlderButton.Flyout>
+        </alder:AlderButton>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        trigger.Flyout = new AlderPopover
+        {
+            Content = viewModel, ContentTemplate = workStatusTemplate, ShowArrow = true,
+            SurfaceCornerRadius = new CornerRadius(16), ContentPadding = new Thickness(20),
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SamplePopoverShortcuts" Title="{DynamicResource GalleryText.OverlayCustomization}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton Variant="Secondary" Content="{DynamicResource GalleryText.OverlayShortcutTrigger}" HorizontalAlignment="Center">
+          <alder:AlderButton.Flyout>
+            <alder:AlderPopover Heading="{DynamicResource GalleryText.OverlayShortcuts}" SurfaceCornerRadius="12" MaxContentWidth="224"
+                           SurfaceBackground="{DynamicResource AlderSurface}" SurfaceBorderThickness="1"
+                           SurfaceBorderBrush="{DynamicResource AlderBorder}" SurfaceShadow="{DynamicResource AlderToolbarShadow}">
+              <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="8" ColumnSpacing="16" Margin="0,6,0,0">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.DialogSave}" Foreground="{DynamicResource AlderMuted}" />
+                <Border Grid.Column="1" CornerRadius="4" Padding="4,2" Background="{DynamicResource AlderNeutral}">
+                  <alder:AlderTextBlock FontSize="11" Text="Ctrl+S" Foreground="{DynamicResource AlderInk}" FlowDirection="LeftToRight" />
+                </Border>
+                <alder:AlderTextBlock Grid.Row="1" Text="{DynamicResource GalleryText.Search}" Foreground="{DynamicResource AlderMuted}" />
+                <Border Grid.Row="1" Grid.Column="1" CornerRadius="4" Padding="4,2" Background="{DynamicResource AlderNeutral}">
+                  <alder:AlderTextBlock FontSize="11" Text="Ctrl+K" Foreground="{DynamicResource AlderInk}" FlowDirection="LeftToRight" />
+                </Border>
+              </Grid>
+            </alder:AlderPopover>
+          </alder:AlderButton.Flyout>
+        </alder:AlderButton>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        trigger.Flyout = new AlderPopover
+        {
+            Heading = "Keyboard shortcuts", Content = shortcutRows, MaxContentWidth = 224,
+            SurfaceCornerRadius = new CornerRadius(12),
+            SurfaceBorderBrush = borderBrush, SurfaceBorderThickness = new Thickness(1),
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

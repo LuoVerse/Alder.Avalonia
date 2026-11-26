@@ -1,0 +1,160 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.ChartTooltipExample" x:DataType="vm:ChartsViewModel">
+  <StackPanel Spacing="24">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="10" LineSpacing="7" HorizontalAlignment="Center">
+          <alder:AlderChartTooltip Data="{CompiledBinding FinancialTooltip}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var tooltip = new AlderChartTooltip
+        {
+            Data = viewModel.FinancialTooltip,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleAuto" Title="{DynamicResource GalleryText.ChartTooltipAuto}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="18" LineSpacing="7" HorizontalAlignment="Center">
+          <alder:AlderChartTooltip ItemsSource="{CompiledBinding FinancialRows}" Label="{CompiledBinding TooltipFebruary}" />
+          <alder:AlderChartTooltip ItemsSource="{CompiledBinding MarketingRows}"
+                                  Label="{DynamicResource GalleryText.ChartTooltipQuarter}" Indicator="Line" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var tooltip = new AlderChartTooltip
+        {
+            ItemsSource = viewModel.FinancialRows,
+            Label = viewModel.TooltipFebruary,
+        };
+
+        var marketingTooltip = new AlderChartTooltip
+        {
+            ItemsSource = viewModel.MarketingRows,
+            Label = "First quarter",
+            Indicator = AlderChartTooltipIndicator.Line,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleColors" Title="{DynamicResource GalleryText.ChartTooltipColors}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="18" LineSpacing="7" HorizontalAlignment="Center">
+          <alder:AlderChartTooltip ItemsSource="{CompiledBinding PaletteRows}"
+                                  Label="{DynamicResource GalleryText.ChartTooltipColors}"
+                                  ValueFormatter="{CompiledBinding ShadeFormatter}" />
+          <alder:AlderChartTooltip ItemsSource="{CompiledBinding PaletteRows}"
+                                  Label="{DynamicResource GalleryText.ChartTooltipLineColors}" Indicator="Line"
+                                  ValueFormatter="{CompiledBinding ShadeFormatter}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var tooltip = new AlderChartTooltip
+        {
+            ItemsSource = viewModel.PaletteRows,
+            Label = "Chart colors",
+            ValueFormatter = viewModel.ShadeFormatter,
+        };
+
+        var lineTooltip = new AlderChartTooltip
+        {
+            ItemsSource = viewModel.PaletteRows,
+            Label = "Line indicators",
+            Indicator = AlderChartTooltipIndicator.Line,
+            ValueFormatter = viewModel.ShadeFormatter,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleFormatters" Title="{DynamicResource GalleryText.ChartTooltipFormatters}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="18" LineSpacing="7" HorizontalAlignment="Center">
+          <alder:AlderChartTooltip ItemsSource="{CompiledBinding PortfolioRows}" Label="2025-01-15"
+                                  LabelFormatter="{CompiledBinding LocalDateFormatter}"
+                                  ValueFormatter="{CompiledBinding PortfolioFormatter}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var tooltip = new AlderChartTooltip
+        {
+            ItemsSource = viewModel.PortfolioRows,
+            Label = "2025-01-15",
+            LabelFormatter = viewModel.LocalDateFormatter,
+            ValueFormatter = viewModel.PortfolioFormatter,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleInactive" Title="{DynamicResource GalleryText.ChartTooltipInactive}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="450">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartTooltipEmpty}" FontSize="13" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+          <Border Background="{DynamicResource AlderSurfaceSecondary}" CornerRadius="8" Padding="12">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartTooltipHidden}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" HorizontalAlignment="Center" />
+            <!-- IsActive hides the tooltip surface and keeps the placeholder visible. -->
+          </Border>
+          <alder:AlderChartTooltip ItemsSource="{CompiledBinding SalesRows}"
+                                  Label="{DynamicResource GalleryText.ChartTooltipHeader}" IsActive="False" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var tooltip = new AlderChartTooltip
+        {
+            ItemsSource = viewModel.SalesRows,
+            Label = "Performance summary",
+            IsActive = false,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleLine" Title="{DynamicResource GalleryText.ChartTooltipLine}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="12" LineSpacing="7" HorizontalAlignment="Center">
+          <alder:AlderChartTooltip ItemsSource="{CompiledBinding MarketingRows}"
+                                  Label="{DynamicResource GalleryText.ChartTooltipMarch}" Indicator="Line"
+                                  ValueFormatter="{CompiledBinding GroupedNumberFormatter}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var tooltip = new AlderChartTooltip
+        {
+            ItemsSource = viewModel.MarketingRows,
+            Label = "March overview",
+            Indicator = AlderChartTooltipIndicator.Line,
+            ValueFormatter = viewModel.GroupedNumberFormatter,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleNoHeader" Title="{DynamicResource GalleryText.ChartTooltipNoHeader}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="12" LineSpacing="7" HorizontalAlignment="Center">
+          <alder:AlderChartTooltip ItemsSource="{CompiledBinding SalesRows}"
+                                  Label="{DynamicResource GalleryText.ChartTooltipHeader}" ShowHeader="False" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var tooltip = new AlderChartTooltip
+        {
+            ItemsSource = viewModel.SalesRows,
+            Label = "Performance summary",
+            ShowHeader = false,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

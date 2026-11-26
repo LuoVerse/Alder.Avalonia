@@ -1,0 +1,214 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:c="using:Avalonia.Data.Converters">
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderAppLayoutBackground" Color="#F5F5F5" />
+      <SolidColorBrush x:Key="AlderAppLayoutSidebarEdge" Color="#14000000" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderAppLayoutBackground" Color="#060607" />
+      <SolidColorBrush x:Key="AlderAppLayoutSidebarEdge" Color="#1AFFFFFF" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+
+  <x:String x:Key="AlderText.AppLayoutToggleSidebar">Toggle navigation</x:String>
+  <x:String x:Key="AlderText.AppLayoutToggleAside">Toggle details</x:String>
+  <x:String x:Key="AlderText.AppLayoutCloseSidebar">Close navigation</x:String>
+  <x:String x:Key="AlderText.AppLayoutCloseAside">Close details</x:String>
+  <x:String x:Key="AlderText.AppLayoutResizeSidebar">Resize navigation</x:String>
+  <x:String x:Key="AlderText.AppLayoutResizeAside">Resize details</x:String>
+  <BoxShadows x:Key="AlderAppLayoutFloatingShadow">0 10 15 -3 #1A000000, 0 4 6 -4 #1A000000</BoxShadows>
+  <StreamGeometry x:Key="AlderAppLayoutMenuIcon">M2,3 H14 V4.5 H2 Z M2,7.25 H14 V8.75 H2 Z M2,11.5 H14 V13 H2 Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderAppLayoutSidebarIcon">F0 M2.5,2.5 H13.5 A1,1 0 0 1 14.5,3.5 V12.5 A1,1 0 0 1 13.5,13.5 H2.5 A1,1 0 0 1 1.5,12.5 V3.5 A1,1 0 0 1 2.5,2.5 Z M3,4 V12 H6 V4 Z M7.5,4 V12 H13 V4 Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderAppLayoutAsideIcon">F0 M2.5,2.5 H13.5 A1,1 0 0 1 14.5,3.5 V12.5 A1,1 0 0 1 13.5,13.5 H2.5 A1,1 0 0 1 1.5,12.5 V3.5 A1,1 0 0 1 2.5,2.5 Z M3,4 V12 H8.5 V4 Z M10,4 V12 H13 V4 Z</StreamGeometry>
+
+  <ControlTheme x:Key="AlderAppLayoutToggleTheme" TargetType="alder:AlderToggleButton"
+                BasedOn="{StaticResource {x:Type alder:AlderToggleButton}}">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Style Selector="^:checked">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    </Style>
+    <Style Selector="^:not(:disabled):pointerover, ^:not(:disabled):pressed">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ Border#FocusRing">
+      <Setter Property="Margin" Value="1" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderAppLayoutHandleTheme" TargetType="GridSplitter">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="ResizeDirection" Value="Columns" />
+    <Setter Property="ResizeBehavior" Value="PreviousAndNext" />
+    <Setter Property="KeyboardIncrement" Value="12" />
+    <Setter Property="Focusable" Value="True" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}">
+          <Border Name="HandleLine" Width="1" Background="{DynamicResource AlderSeparator}" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[(Grid.Column)=1] /template/ Border#HandleLine">
+      <Setter Property="HorizontalAlignment" Value="Left" />
+    </Style>
+    <Style Selector="^[(Grid.Column)=3] /template/ Border#HandleLine">
+      <Setter Property="HorizontalAlignment" Value="Right" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ Border#HandleLine">
+      <Setter Property="Width" Value="2" />
+      <Setter Property="Background" Value="{DynamicResource AlderAccent}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderAppLayout}" TargetType="alder:AlderAppLayout">
+    <Setter Property="Background" Value="{DynamicResource AlderAppLayoutBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="Padding" Value="24" />
+    <Setter Property="Focusable" Value="True" />
+    <Setter Property="KeyboardNavigation.IsTabStop" Value="False" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Top" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}"
+                ClipToBounds="True">
+          <Grid Name="PART_Shell" ColumnDefinitions="0,0,*,0,0">
+            <Border Name="PART_Sidebar" Grid.Column="0" Background="Transparent"
+                    BorderBrush="{DynamicResource AlderAppLayoutSidebarEdge}" BorderThickness="0,0,1,0" IsVisible="False"
+                    Focusable="True" KeyboardNavigation.IsTabStop="False" FocusAdorner="{x:Null}">
+              <Grid ClipToBounds="True">
+                <alder:AlderButton Name="PART_CloseSidebar" IsVisible="False" ZIndex="1" VerticalAlignment="Top"
+                    Variant="Ghost" Size="Small" IsIconOnly="True" Icon="{DynamicResource AlderIconXmark}"
+                    HorizontalAlignment="Right" Margin="12,10" AutomationProperties.Name="{DynamicResource AlderText.AppLayoutCloseSidebar}"
+                    alder:AlderToolTip.Tip="{DynamicResource AlderText.AppLayoutCloseSidebar}" />
+                <alder:AlderScrollViewer Name="PART_SidebarScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                  <Grid>
+                    <ContentPresenter Name="PART_SidebarContent" Content="{TemplateBinding Sidebar}" ContentTemplate="{TemplateBinding SidebarTemplate}" />
+                    <ContentPresenter Name="PART_MobileSidebarContent" IsVisible="False" Content="{TemplateBinding MobileSidebar}"
+                                      ContentTemplate="{TemplateBinding MobileSidebarTemplate}" />
+                  </Grid>
+                </alder:AlderScrollViewer>
+              </Grid>
+            </Border>
+            <alder:AlderGridSplitter Name="PART_SidebarHandle" Grid.Column="1" Theme="{StaticResource AlderAppLayoutHandleTheme}"
+                          IsVisible="False" AutomationProperties.Name="{DynamicResource AlderText.AppLayoutResizeSidebar}" />
+            <Grid Name="PART_Body" Grid.Column="2" RowDefinitions="Auto,Auto,*,Auto">
+              <Border Name="PART_Navbar">
+                <Grid ColumnDefinitions="Auto,*,Auto" Margin="16,0" ColumnSpacing="10" MinHeight="64">
+                  <alder:AlderToggleButton Name="PART_SidebarToggle" IsVisible="False" Variant="Ghost" Size="Small"
+                      Theme="{StaticResource AlderAppLayoutToggleTheme}" IsIconOnly="True" VerticalAlignment="Center"
+                      AutomationProperties.Name="{DynamicResource AlderText.AppLayoutToggleSidebar}"
+                      alder:AlderToolTip.Tip="{DynamicResource AlderText.AppLayoutToggleSidebar}" />
+                  <ContentPresenter Grid.Column="1" Content="{TemplateBinding Navbar}" ContentTemplate="{TemplateBinding NavbarTemplate}"
+                                    VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                  <alder:AlderToggleButton Name="PART_AsideToggle" Grid.Column="2" IsVisible="False" Variant="Ghost"
+                      Theme="{StaticResource AlderAppLayoutToggleTheme}" Size="Small" IsIconOnly="True" VerticalAlignment="Center"
+                      AutomationProperties.Name="{DynamicResource AlderText.AppLayoutToggleAside}"
+                      alder:AlderToolTip.Tip="{DynamicResource AlderText.AppLayoutToggleAside}" />
+                </Grid>
+              </Border>
+              <Border Grid.Row="1" BorderBrush="{DynamicResource AlderBorder}" BorderThickness="0,0,0,1"
+                      IsVisible="{TemplateBinding Toolbar, Converter={x:Static c:ObjectConverters.IsNotNull}}">
+                <ContentPresenter Content="{TemplateBinding Toolbar}" ContentTemplate="{TemplateBinding ToolbarTemplate}" />
+              </Border>
+              <alder:AlderScrollViewer Name="PART_ContentScroll" Grid.Row="2" VerticalScrollBarVisibility="Auto"
+                            HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  Padding="{TemplateBinding Padding}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+              </alder:AlderScrollViewer>
+              <Border Grid.Row="3" BorderBrush="{DynamicResource AlderBorder}" BorderThickness="0,1,0,0"
+                      IsVisible="{TemplateBinding Footer, Converter={x:Static c:ObjectConverters.IsNotNull}}">
+                <ContentPresenter Content="{TemplateBinding Footer}" ContentTemplate="{TemplateBinding FooterTemplate}" />
+              </Border>
+            </Grid>
+            <alder:AlderGridSplitter Name="PART_AsideHandle" Grid.Column="3" Theme="{StaticResource AlderAppLayoutHandleTheme}"
+                          IsVisible="False" AutomationProperties.Name="{DynamicResource AlderText.AppLayoutResizeAside}" />
+            <Border Name="PART_Aside" Grid.Column="4" Background="Transparent"
+                    BorderBrush="{DynamicResource AlderBorder}" BorderThickness="1,0,0,0" IsVisible="False"
+                    Focusable="True" KeyboardNavigation.IsTabStop="False" FocusAdorner="{x:Null}">
+              <Grid ClipToBounds="True">
+                <alder:AlderButton Name="PART_CloseAside" IsVisible="False" ZIndex="1" VerticalAlignment="Top"
+                    Variant="Ghost" Size="Small" IsIconOnly="True" Icon="{DynamicResource AlderIconXmark}"
+                    HorizontalAlignment="Right" Margin="12,10" AutomationProperties.Name="{DynamicResource AlderText.AppLayoutCloseAside}"
+                    alder:AlderToolTip.Tip="{DynamicResource AlderText.AppLayoutCloseAside}" />
+                <alder:AlderScrollViewer Name="PART_AsideScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                  <Grid>
+                    <ContentPresenter Name="PART_AsideContent" Content="{TemplateBinding Aside}" ContentTemplate="{TemplateBinding AsideTemplate}" />
+                    <ContentPresenter Name="PART_MobileAsideContent" IsVisible="False" Content="{TemplateBinding MobileAside}"
+                                      ContentTemplate="{TemplateBinding MobileAsideTemplate}" />
+                  </Grid>
+                </alder:AlderScrollViewer>
+              </Grid>
+            </Border>
+            <Border Name="PART_Scrim" Grid.ColumnSpan="5" ZIndex="1" IsVisible="False"
+                    Background="{DynamicResource AlderAppLayoutBackground}" />
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[ScrollMode=Host] /template/ :is(ScrollViewer)#PART_ContentScroll">
+      <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
+    </Style>
+    <Style Selector="^ /template/ alder|AlderToggleButton#PART_SidebarToggle">
+      <Setter Property="Icon" Value="{StaticResource AlderAppLayoutSidebarIcon}" />
+    </Style>
+    <Style Selector="^:compact /template/ alder|AlderToggleButton#PART_SidebarToggle">
+      <Setter Property="Icon" Value="{StaticResource AlderAppLayoutMenuIcon}" />
+    </Style>
+    <Style Selector="^ /template/ alder|AlderToggleButton#PART_AsideToggle">
+      <Setter Property="Icon" Value="{StaticResource AlderAppLayoutAsideIcon}" />
+    </Style>
+    <Style Selector="^[SidebarPlacement=End]:not(:compact) /template/ alder|AlderToggleButton#PART_SidebarToggle,
+                     ^[SidebarPlacement=End] /template/ alder|AlderToggleButton#PART_AsideToggle">
+      <Setter Property="RenderTransform" Value="scale(-1,1)" />
+    </Style>
+    <Style Selector="^[SidebarPlacement=End] /template/ Border#PART_Sidebar"><Setter Property="BorderThickness" Value="1,0,0,0" /></Style>
+    <Style Selector="^[SidebarPlacement=End] /template/ Border#PART_Aside"><Setter Property="BorderThickness" Value="0,0,1,0" /></Style>
+    <Style Selector="^[SidebarVariant=Standard] /template/ Border#PART_Sidebar.resizable,
+                     ^ /template/ Border#PART_Aside.resizable">
+      <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style Selector="^[SidebarVariant=Inset] /template/ Border#PART_Sidebar:not(.overlay)">
+      <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style Selector="^[SidebarVariant=Floating] /template/ Border#PART_Sidebar:not(.overlay)">
+      <Setter Property="Margin" Value="8" />
+      <Setter Property="CornerRadius" Value="16" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+      <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+      <Setter Property="BoxShadow" Value="{StaticResource AlderAppLayoutFloatingShadow}" />
+    </Style>
+    <Style Selector="^ /template/ Border.overlay">
+      <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderToolbarShadow}" />
+    </Style>
+    <Style Selector="^ /template/ Border#PART_Scrim">
+      <Setter Property="Opacity" Value="0" />
+      <Setter Property="Transitions">
+        <Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.2" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^:drawer-open /template/ Border#PART_Scrim">
+      <Setter Property="Opacity" Value="0.01" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#PART_Scrim">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+    <Style Selector="^:drawer-visible /template/ Grid#PART_Body,
+                     ^:drawer-visible /template/ Border#PART_Sidebar:not(.overlay),
+                     ^:drawer-visible /template/ Border#PART_Aside:not(.overlay)">
+      <Setter Property="Effect"><BlurEffect Radius="7" /></Setter>
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

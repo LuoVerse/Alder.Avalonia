@@ -1,0 +1,367 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.AutocompleteExample" x:DataType="vm:AutocompleteViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="300" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+            <alder:AlderAutocomplete Label="{DynamicResource GalleryText.AutocompleteStatesToVisit}" PlaceholderText="{DynamicResource GalleryText.AutocompleteSelectStates}"
+                                SearchPlaceholderText="{DynamicResource GalleryText.PickerSearch}" ItemsSource="{CompiledBinding States}"
+                                SelectionMode="Multiple" ShowSelectionTags="True" SelectedItems="{CompiledBinding TripStates}" ShowClearButton="False" />
+            <alder:AlderButton Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetTripStates}" Variant="Secondary" Size="Small" HorizontalAlignment="Right" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderAutocomplete { Label = "States to Visit", PlaceholderText = "Select states", SelectionMode = SelectionMode.Multiple, ShowSelectionTags = true, ShowClearButton = false };
+        picker.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.States));
+        picker.Bind(AlderPicker.SelectedItemsProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.TripStates));
+
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary, HorizontalAlignment = HorizontalAlignment.Right };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.ResetTripStates));
+        var preview = new StackPanel { Spacing = 8, Children = { picker, reset } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.Variants}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="416" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="32" Width="256">
+            <StackPanel Spacing="16">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.AutocompleteSingleVariants}" FontSize="18" LineHeight="28"
+                         FontWeight="SemiBold" Foreground="{DynamicResource AlderTertiaryInk}" />
+              <alder:AlderAutocomplete Label="{DynamicResource GalleryText.PickerPrimary}" PlaceholderText="{DynamicResource GalleryText.PickerPlaceholder}"
+                                  SearchPlaceholderText="{DynamicResource GalleryText.PickerSearch}" ItemsSource="{CompiledBinding Options}" SelectedIndex="{CompiledBinding PrimarySelection, Mode=TwoWay}" />
+              <alder:AlderAutocomplete Label="{DynamicResource GalleryText.PickerSecondary}" PlaceholderText="{DynamicResource GalleryText.PickerPlaceholder}"
+                                  SearchPlaceholderText="{DynamicResource GalleryText.PickerSearch}" ItemsSource="{CompiledBinding Options}"
+                                  Variant="Secondary" SelectedIndex="{CompiledBinding SecondarySelection, Mode=TwoWay}" />
+            </StackPanel>
+            <StackPanel Spacing="16">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.AutocompleteMultiVariants}" FontSize="18" LineHeight="28"
+                         FontWeight="SemiBold" Foreground="{DynamicResource AlderTertiaryInk}" />
+              <alder:AlderAutocomplete Label="{DynamicResource GalleryText.PickerPrimary}" PlaceholderText="{DynamicResource GalleryText.AutocompleteSelectMultiple}"
+                                  SearchPlaceholderText="{DynamicResource GalleryText.PickerSearch}" ItemsSource="{CompiledBinding Options}"
+                                  SelectionMode="Multiple" ShowSelectionTags="True" SelectedItems="{CompiledBinding PrimaryTags}" />
+              <alder:AlderAutocomplete Label="{DynamicResource GalleryText.PickerSecondary}" PlaceholderText="{DynamicResource GalleryText.AutocompleteSelectMultiple}"
+                                  SearchPlaceholderText="{DynamicResource GalleryText.PickerSearch}" ItemsSource="{CompiledBinding Options}"
+                                  SelectionMode="Multiple" ShowSelectionTags="True"
+                                  Variant="Secondary" SelectedItems="{CompiledBinding SecondaryTags}" />
+            </StackPanel>
+            <alder:AlderButton Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetVariants}" Variant="Secondary" Size="Small" HorizontalAlignment="Right" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderAutocomplete { Variant = InputVariant.Secondary, SelectionMode = SelectionMode.Multiple, ShowSelectionTags = true };
+        picker.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.Options));
+        picker.Bind(AlderPicker.SelectedItemsProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.SecondaryTags));
+
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary, HorizontalAlignment = HorizontalAlignment.Right };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.ResetVariants));
+        var preview = new StackPanel { Spacing = 8, Children = { picker, reset } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleFullWidth" Title="{DynamicResource GalleryText.FullWidth}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <alder:AlderSurface MaxWidth="380" Padding="24" CornerRadius="24" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+            <alder:AlderAutocomplete Label="{DynamicResource GalleryText.PickerState}" PlaceholderText="{DynamicResource GalleryText.PickerPlaceholder}"
+                                SearchPlaceholderText="{DynamicResource GalleryText.AutocompleteSearchStates}" ItemsSource="{CompiledBinding States}"
+                                Variant="Secondary" FullWidth="True" />
+          </alder:AlderSurface>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderAutocomplete { Variant = InputVariant.Secondary, FullWidth = true };
+        picker.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.States));
+        var surface = new AlderSurface { Width = 380, Padding = new Thickness(24), Content = picker };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDescription" Title="{DynamicResource GalleryText.AutocompleteDescription}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderAutocomplete Label="{DynamicResource GalleryText.PickerState}" PlaceholderText="{DynamicResource GalleryText.PickerPlaceholder}"
+                                SearchPlaceholderText="{DynamicResource GalleryText.AutocompleteSearchStates}" ItemsSource="{CompiledBinding States}"
+                                Description="{DynamicResource GalleryText.AutocompleteResidence}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderAutocomplete { Label = "State", Description = "Select your state of residence" };
+        picker.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.States));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleRequired" Title="{DynamicResource GalleryText.AutocompleteRequired}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16" Width="256">
+            <alder:AlderAutocomplete Label="{DynamicResource GalleryText.PickerState}" PlaceholderText="{DynamicResource GalleryText.PickerPlaceholder}"
+                                SearchPlaceholderText="{DynamicResource GalleryText.AutocompleteSearchStates}" ItemsSource="{CompiledBinding States}"
+                                FullWidth="True" IsRequired="True"
+                                SelectedItem="{CompiledBinding RequiredState, Mode=TwoWay}" IsInvalid="{CompiledBinding IsStateInvalid}" />
+            <alder:AlderAutocomplete Label="{DynamicResource GalleryText.AutocompleteCountry}" PlaceholderText="{DynamicResource GalleryText.AutocompleteChooseCountry}"
+                                SearchPlaceholderText="{DynamicResource GalleryText.AutocompleteSearchCountries}" ItemsSource="{CompiledBinding Countries}"
+                                FullWidth="True" IsRequired="True"
+                                SelectedItem="{CompiledBinding RequiredCountry, Mode=TwoWay}" IsInvalid="{CompiledBinding IsCountryInvalid}" />
+            <alder:AlderButton Content="{DynamicResource GalleryText.Submit}" Command="{CompiledBinding Submit}" HorizontalAlignment="Stretch" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderAutocomplete { Label = "State", IsRequired = true };
+        picker.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.States));
+        picker.Bind(SelectingItemsControl.SelectedItemProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.RequiredState, mode: BindingMode.TwoWay));
+        picker.Bind(AlderPicker.IsInvalidProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.IsStateInvalid));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
+            <alder:AlderAutocomplete Label="{DynamicResource GalleryText.PickerState}" PlaceholderText="{DynamicResource GalleryText.PickerPlaceholder}"
+                                SearchPlaceholderText="{DynamicResource GalleryText.AutocompleteSearchStates}" ItemsSource="{CompiledBinding States}"
+                                IsEnabled="False" SelectedIndex="2" />
+            <alder:AlderAutocomplete Label="{DynamicResource GalleryText.PickerCountries}" PlaceholderText="{DynamicResource GalleryText.PickerChooseCountries}"
+                                SearchPlaceholderText="{DynamicResource GalleryText.AutocompleteSearchCountries}" ItemsSource="{CompiledBinding Countries}"
+                                IsEnabled="False" SelectionMode="Multiple" SelectedItems="{CompiledBinding DisabledCountries}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderAutocomplete { IsEnabled = false, SelectedIndex = 2 };
+        picker.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.States));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDisabledOptions" Title="{DynamicResource GalleryText.AutocompleteDisabledOptions}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderAutocomplete Label="{DynamicResource GalleryText.AutocompleteAnimal}" PlaceholderText="{DynamicResource GalleryText.AutocompleteChooseAnimal}"
+                                SearchPlaceholderText="{DynamicResource GalleryText.AutocompleteSearchAnimals}" ItemsSource="{CompiledBinding DisabledAnimals}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderAutocomplete { Label = "Animal" };
+        picker.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.DisabledAnimals));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleEmpty" Title="{DynamicResource GalleryText.AutocompleteEmptyCollection}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderAutocomplete Label="{DynamicResource GalleryText.PickerState}" PlaceholderText="{DynamicResource GalleryText.PickerPlaceholder}"
+                                SearchPlaceholderText="{DynamicResource GalleryText.AutocompleteSearchStates}"
+                                AllowsEmptyCollection="True" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderAutocomplete { Label = "State", AllowsEmptyCollection = true, EmptyText = "No results found" };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleOptions" Title="{DynamicResource GalleryText.AutocompleteSections}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderAutocomplete Label="{DynamicResource GalleryText.AutocompleteCountry}" PlaceholderText="{DynamicResource GalleryText.AutocompleteChooseCountry}"
+                                SearchPlaceholderText="{DynamicResource GalleryText.AutocompleteSearchCountries}" ItemsSource="{CompiledBinding CountrySections}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderAutocomplete { Label = "Country" };
+        picker.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.CountrySections));
+        var groupedOption = new AlderPickerOption { Text = "Canada", Group = "North America" };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleMultiple" Title="{DynamicResource GalleryText.AutocompleteMultiple}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+            <alder:AlderAutocomplete Label="{DynamicResource GalleryText.AutocompleteStates}" PlaceholderText="{DynamicResource GalleryText.AutocompleteSelectStates}"
+                                SearchPlaceholderText="{DynamicResource GalleryText.PickerSearch}" ItemsSource="{CompiledBinding AlternateStates}"
+                                SelectionMode="Multiple" ShowSelectionTags="True" SelectedItems="{CompiledBinding MultipleStates}" />
+            <alder:AlderButton Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetMultipleStates}" Variant="Secondary" Size="Small" HorizontalAlignment="Right" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderAutocomplete { Label = "States", SelectionMode = SelectionMode.Multiple, ShowSelectionTags = true };
+        picker.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.AlternateStates));
+        picker.Bind(AlderPicker.SelectedItemsProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.MultipleStates));
+
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary, HorizontalAlignment = HorizontalAlignment.Right };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.ResetMultipleStates));
+        var preview = new StackPanel { Spacing = 8, Children = { picker, reset } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+            <alder:AlderAutocomplete Label="{DynamicResource GalleryText.AutocompleteControlledState}" PlaceholderText="{DynamicResource GalleryText.AutocompleteChooseState}"
+                                SearchPlaceholderText="{DynamicResource GalleryText.AutocompleteSearchStates}" ItemsSource="{CompiledBinding ControlledStates}"
+                                TextSelector="{CompiledBinding StateText}"
+                                SelectedItem="{CompiledBinding SelectedState, Mode=TwoWay}" />
+            <alder:AlderTextBlock Text="{CompiledBinding SelectedStateStatus}" FontSize="14" LineHeight="20" Foreground="{DynamicResource AlderMuted}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderAutocomplete { Label = "State (controlled)" };
+        picker.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.ControlledStates));
+        picker.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.StateText));
+        picker.Bind(SelectingItemsControl.SelectedItemProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.SelectedState, mode: BindingMode.TwoWay));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleControlledMultiple" Title="{DynamicResource GalleryText.AutocompleteControlledMultiple}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+            <alder:AlderAutocomplete Label="{DynamicResource GalleryText.AutocompleteStates}" PlaceholderText="{DynamicResource GalleryText.AutocompleteSelectStates}"
+                                SearchPlaceholderText="{DynamicResource GalleryText.AutocompleteSearchStates}" ItemsSource="{CompiledBinding ControlledStates}"
+                                TextSelector="{CompiledBinding StateText}"
+                                SelectionMode="Multiple" SelectedItems="{CompiledBinding SelectedStates}" />
+            <alder:AlderTextBlock Text="{CompiledBinding SelectedStatesStatus}" FontSize="14" LineHeight="20" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderButton Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetSelectedStates}" Variant="Secondary" Size="Small" HorizontalAlignment="Right" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderAutocomplete { SelectionMode = SelectionMode.Multiple };
+        picker.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.ControlledStates));
+        picker.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.StateText));
+        picker.Bind(AlderPicker.SelectedItemsProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.SelectedStates));
+
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary, HorizontalAlignment = HorizontalAlignment.Right };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.ResetSelectedStates));
+        var preview = new StackPanel { Spacing = 8, Children = { picker, reset } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleControlledOpen" Title="{DynamicResource GalleryText.AutocompleteControlledOpen}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16" Width="256">
+            <alder:AlderAutocomplete Label="{DynamicResource GalleryText.PickerState}" PlaceholderText="{DynamicResource GalleryText.PickerPlaceholder}"
+                                SearchPlaceholderText="{DynamicResource GalleryText.AutocompleteSearchStates}" ItemsSource="{CompiledBinding States}"
+                                IsDropDownOpen="{CompiledBinding IsOpen, Mode=TwoWay}" />
+            <alder:AlderButton Content="{CompiledBinding OpenButtonText}" Command="{CompiledBinding ToggleOpen}" HorizontalAlignment="Left" />
+            <alder:AlderTextBlock Text="{CompiledBinding OpenStatus}" FontSize="14" LineHeight="20" Foreground="{DynamicResource AlderMuted}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderAutocomplete();
+        picker.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.States));
+        picker.Bind(AlderPicker.IsDropDownOpenProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.IsOpen, mode: BindingMode.TwoWay));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleAsync" Title="{DynamicResource GalleryText.AutocompleteAsync}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderAutocomplete Label="{DynamicResource GalleryText.AutocompleteCharacters}" PlaceholderText="{DynamicResource GalleryText.PickerSearch}"
+                                SearchPlaceholderText="{DynamicResource GalleryText.AutocompleteSearchCharacters}" ItemsSource="{CompiledBinding CharacterNames}"
+                                AllowsEmptyCollection="True" MaxDropDownHeight="412"
+                                Text="{CompiledBinding Query, Mode=TwoWay}" IsLoading="{CompiledBinding IsSearching}" Filter="{CompiledBinding CharacterFilter}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderAutocomplete { AllowsEmptyCollection = true };
+        picker.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.CharacterNames));
+        picker.Bind(AlderPicker.TextProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.Query, mode: BindingMode.TwoWay));
+        picker.Bind(AlderPicker.IsLoadingProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.IsSearching));
+        picker.Bind(AlderPicker.FilterProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.CharacterFilter));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleIndicator" Title="{DynamicResource GalleryText.AutocompleteCustomIndicator}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderAutocomplete Label="{DynamicResource GalleryText.PickerState}" PlaceholderText="{DynamicResource GalleryText.PickerPlaceholder}"
+                                SearchPlaceholderText="{DynamicResource GalleryText.AutocompleteSearchStates}" ItemsSource="{CompiledBinding States}"
+                                Classes="custom-indicator" Indicator="{DynamicResource AlderIconChevronsExpandVertical}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderAutocomplete();
+        picker.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.States));
+        picker.Classes.Add("custom-indicator");
+        picker[!AlderPicker.IndicatorProperty] = new DynamicResourceExtension("AlderIconChevronsExpandVertical");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleValue" Title="{DynamicResource GalleryText.AutocompleteCustomValue}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderAutocomplete Label="{DynamicResource GalleryText.AutocompleteCurrency}" PlaceholderText="{DynamicResource GalleryText.AutocompleteChooseCurrency}"
+                                SearchPlaceholderText="{DynamicResource GalleryText.AutocompleteSearchCurrencies}" ItemsSource="{CompiledBinding Currencies}"
+                                SelectedIndex="0" ShowClearButton="False"
+                                TextSelector="{x:Static vm:AutocompleteViewModel.CurrencyText}" Filter="{x:Static vm:AutocompleteViewModel.CurrencyFilter}">
+              <alder:AlderAutocomplete.SelectionTemplate>
+                <DataTemplate x:DataType="vm:AutocompleteCurrency">
+                  <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="6">
+                    <alder:AlderTextBlock Text="{CompiledBinding Symbol}" FontWeight="Medium" />
+                    <alder:AlderTextBlock Grid.Column="1" Text="{CompiledBinding Code}" />
+                    <alder:AlderTextBlock Grid.Column="2" Text="{CompiledBinding Name}" Foreground="{DynamicResource AlderMuted}" TextTrimming="CharacterEllipsis" />
+                  </Grid>
+                </DataTemplate>
+              </alder:AlderAutocomplete.SelectionTemplate>
+              <alder:AlderAutocomplete.ItemTemplate>
+                <DataTemplate x:DataType="vm:AutocompleteCurrency">
+                  <StackPanel>
+                    <alder:AlderTextBlock Text="{CompiledBinding Code}" LineHeight="20" />
+                    <alder:AlderTextBlock Text="{CompiledBinding Name}" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" />
+                  </StackPanel>
+                </DataTemplate>
+              </alder:AlderAutocomplete.ItemTemplate>
+            </alder:AlderAutocomplete>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderAutocomplete { SelectedIndex = 0, TextSelector = AutocompleteViewModel.CurrencyText, Filter = AutocompleteViewModel.CurrencyFilter };
+        picker.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.Currencies));
+        picker.SelectionTemplate = new FuncDataTemplate<AutocompleteCurrency>((currency, _) => new AlderTextBlock
+        {
+            Text = $"{currency!.Symbol} {currency.Code} {currency.Name}"
+        });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSurface" Title="{DynamicResource GalleryText.AutocompleteInSurface}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <alder:AlderSurface MaxWidth="320" Padding="24" CornerRadius="24" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+            <alder:AlderAutocomplete Label="{DynamicResource GalleryText.PickerState}" PlaceholderText="{DynamicResource GalleryText.PickerPlaceholder}"
+                                SearchPlaceholderText="{DynamicResource GalleryText.AutocompleteSearchStates}" ItemsSource="{CompiledBinding States}"
+                                Variant="Secondary" FullWidth="True" />
+          </alder:AlderSurface>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderAutocomplete { Variant = InputVariant.Secondary, FullWidth = true };
+        picker.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.States));
+        var surface = new AlderSurface { Width = 320, Padding = new Thickness(24), Content = picker };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleVirtualization" Title="{DynamicResource GalleryText.AutocompleteVirtualization}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderAutocomplete Label="{DynamicResource GalleryText.AutocompleteUser}" PlaceholderText="{DynamicResource GalleryText.AutocompleteChooseUser}"
+                                SearchPlaceholderText="{DynamicResource GalleryText.AutocompleteSearchUsers}" ItemsSource="{CompiledBinding Users}"
+                                Width="300" Filter="{x:Static vm:AutocompleteViewModel.UserFilter}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderAutocomplete { Width = 300, Filter = AutocompleteViewModel.UserFilter };
+        picker.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AutocompleteViewModel model) => model.Users));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

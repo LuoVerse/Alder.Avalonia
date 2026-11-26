@@ -1,0 +1,229 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.SkeletonExample" x:DataType="vm:FeedbackViewModel">
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleBasic" Title="{DynamicResource GalleryText.FeedbackBasic}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="14" MaxWidth="250">
+          <Border Padding="16" CornerRadius="8">
+            <StackPanel Spacing="20">
+              <alder:AlderSkeleton Height="128" CornerRadius="8" Animation="{CompiledBinding PreviewSkeletonAnimation}" />
+              <Grid ColumnDefinitions="*,*,*,*,*" RowDefinitions="12,12,12" RowSpacing="12">
+                <alder:AlderSkeleton Grid.ColumnSpan="3" CornerRadius="8" Animation="{CompiledBinding PreviewSkeletonAnimation}" />
+                <alder:AlderSkeleton Grid.Row="1" Grid.ColumnSpan="4" CornerRadius="8" Animation="{CompiledBinding PreviewSkeletonAnimation}" />
+                <alder:AlderSkeleton Grid.Row="2" Grid.ColumnSpan="2" CornerRadius="8" Animation="{CompiledBinding PreviewSkeletonAnimation}" />
+              </Grid>
+            </StackPanel>
+          </Border>
+          <alder:AlderSelect Width="116" HorizontalAlignment="Center" Variant="Secondary"
+                             DropDownMinWidth="132" DropDownHorizontalAlignment="Center" DropDownCornerRadius="12"
+                             AutomationProperties.Name="{DynamicResource GalleryText.FeedbackAnimation}"
+                             ItemsSource="{CompiledBinding SkeletonAnimationOptions}"
+                             TextSelector="{CompiledBinding SkeletonAnimationCaption}"
+                             SelectedItem="{CompiledBinding PreviewSkeletonAnimation, Mode=TwoWay}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        AlderSkeleton CreatePlaceholder()
+        {
+            var placeholder = new AlderSkeleton { CornerRadius = new CornerRadius(8) };
+            placeholder.Bind(AlderSkeleton.AnimationProperty,
+                CompiledBinding.Create((FeedbackViewModel model) => model.PreviewSkeletonAnimation));
+            return placeholder;
+        }
+
+        var image = CreatePlaceholder();
+        image.Height = 128;
+        var lines = new Grid
+        {
+            ColumnDefinitions = new ColumnDefinitions("*,*,*,*,*"),
+            RowDefinitions = new RowDefinitions("12,12,12"),
+            RowSpacing = 12
+        };
+        int[] spans = [3, 4, 2];
+        for (int row = 0; row < spans.Length; row++)
+        {
+            var line = CreatePlaceholder();
+            Grid.SetRow(line, row);
+            Grid.SetColumnSpan(line, spans[row]);
+            lines.Children.Add(line);
+        }
+
+        var animationSelect = new AlderSelect
+        {
+            Width = 116,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Variant = InputVariant.Secondary,
+            DropDownMinWidth = 132,
+            DropDownHorizontalAlignment = HorizontalAlignment.Center,
+            DropDownCornerRadius = new CornerRadius(12)
+        };
+        AutomationProperties.SetName(animationSelect, "Animation modes");
+        animationSelect.Bind(ItemsControl.ItemsSourceProperty,
+            CompiledBinding.Create((FeedbackViewModel model) => model.SkeletonAnimationOptions));
+        animationSelect.Bind(AlderPicker.TextSelectorProperty,
+            CompiledBinding.Create((FeedbackViewModel model) => model.SkeletonAnimationCaption));
+        animationSelect.Bind(SelectingItemsControl.SelectedItemProperty,
+            CompiledBinding.Create((FeedbackViewModel model) => model.PreviewSkeletonAnimation, BindingMode.TwoWay));
+
+        var preview = new StackPanel
+        {
+            MaxWidth = 250,
+            Spacing = 14,
+            Children =
+            {
+                new Border
+                {
+                    Padding = new Thickness(16),
+                    CornerRadius = new CornerRadius(8),
+                    Child = new StackPanel { Spacing = 20, Children = { image, lines } }
+                },
+                animationSelect
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleText" Title="{DynamicResource GalleryText.FeedbackTextContent}">
+      <gallery:ExampleCard.Preview>
+        <Grid MaxWidth="448" ColumnDefinitions="*,*,*,*,*,*" RowDefinitions="16,16,16,16,16" RowSpacing="8">
+          <alder:AlderSkeleton Grid.ColumnSpan="6" />
+          <alder:AlderSkeleton Grid.Row="1" Grid.ColumnSpan="5" />
+          <alder:AlderSkeleton Grid.Row="2" Grid.ColumnSpan="4" />
+          <alder:AlderSkeleton Grid.Row="3" Grid.ColumnSpan="6" />
+          <alder:AlderSkeleton Grid.Row="4" Grid.ColumnSpan="3" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var paragraph = new Grid
+        {
+            ColumnDefinitions = new ColumnDefinitions("*,*,*,*,*,*"),
+            RowDefinitions = new RowDefinitions("16,16,16,16,16"),
+            RowSpacing = 8
+        };
+        int[] lengths = [6, 5, 4, 6, 3];
+        for (var row = 0; row < lengths.Length; row++)
+        {
+            var line = new AlderSkeleton();
+            Grid.SetRow(line, row);
+            Grid.SetColumnSpan(line, lengths[row]);
+            paragraph.Children.Add(line);
+        }
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleProfile" Title="{DynamicResource GalleryText.FeedbackProfile}">
+      <gallery:ExampleCard.Preview>
+        <Grid ColumnDefinitions="40,*" ColumnSpacing="12" MaxWidth="232">
+          <alder:AlderSkeleton Height="40" CornerRadius="20" />
+          <StackPanel Grid.Column="1" Spacing="6" VerticalAlignment="Center">
+            <alder:AlderSkeleton Width="144" Height="12" CornerRadius="6" HorizontalAlignment="Left" />
+            <alder:AlderSkeleton Width="96" Height="12" CornerRadius="6" HorizontalAlignment="Left" />
+          </StackPanel>
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var avatar = new AlderSkeleton { Width = 40, Height = 40, CornerRadius = new CornerRadius(20) };
+        var name = new AlderSkeleton { Width = 144, Height = 12, CornerRadius = new CornerRadius(6) };
+        var details = new AlderSkeleton { Width = 96, Height = 12, CornerRadius = new CornerRadius(6) };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleList" Title="{DynamicResource GalleryText.FeedbackListItems}">
+      <gallery:ExampleCard.Preview>
+        <Grid MaxWidth="384" ColumnDefinitions="40,4*,*" RowDefinitions="40,40,40" ColumnSpacing="12" RowSpacing="12">
+          <alder:AlderSkeleton CornerRadius="8" />
+          <alder:AlderSkeleton Grid.Row="1" CornerRadius="8" />
+          <alder:AlderSkeleton Grid.Row="2" CornerRadius="8" />
+          <alder:AlderSkeleton Grid.Column="1" Grid.ColumnSpan="2" Height="12" VerticalAlignment="Top" Margin="0,5,0,0" />
+          <alder:AlderSkeleton Grid.Column="1" Height="12" VerticalAlignment="Bottom" Margin="0,0,0,5" />
+          <alder:AlderSkeleton Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Height="12" VerticalAlignment="Top" Margin="0,5,0,0" />
+          <alder:AlderSkeleton Grid.Row="1" Grid.Column="1" Height="12" VerticalAlignment="Bottom" Margin="0,0,0,5" />
+          <alder:AlderSkeleton Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Height="12" VerticalAlignment="Top" Margin="0,5,0,0" />
+          <alder:AlderSkeleton Grid.Row="2" Grid.Column="1" Height="12" VerticalAlignment="Bottom" Margin="0,0,0,5" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var thumbnail = new AlderSkeleton { Width = 40, Height = 40, CornerRadius = new CornerRadius(8) };
+        var title = new AlderSkeleton { Height = 12, VerticalAlignment = VerticalAlignment.Top };
+        var details = new AlderSkeleton { Height = 12, VerticalAlignment = VerticalAlignment.Bottom };
+        Grid.SetColumn(title, 1);
+        Grid.SetColumnSpan(title, 2);
+        Grid.SetColumn(details, 1);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleGrid" Title="{DynamicResource GalleryText.FeedbackGrid}">
+      <gallery:ExampleCard.Preview>
+        <Grid MaxWidth="576" ColumnDefinitions="*,*,*" ColumnSpacing="16">
+          <alder:AlderSkeleton Height="96" CornerRadius="12" />
+          <alder:AlderSkeleton Grid.Column="1" Height="96" CornerRadius="12" />
+          <alder:AlderSkeleton Grid.Column="2" Height="96" CornerRadius="12" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var grid = new Grid { ColumnDefinitions = new ColumnDefinitions("*,*,*"), ColumnSpacing = 16 };
+        for (var column = 0; column < 3; column++)
+        {
+            var placeholder = new AlderSkeleton { Height = 96, CornerRadius = new CornerRadius(12) };
+            Grid.SetColumn(placeholder, column);
+            grid.Children.Add(placeholder);
+        }
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleShared" Title="{DynamicResource GalleryText.FeedbackSharedShimmer}">
+      <gallery:ExampleCard.Preview>
+        <Grid x:Name="SharedSurface" MaxWidth="576" ColumnDefinitions="*,*,*" ColumnSpacing="16">
+          <alder:AlderSkeleton Height="96" CornerRadius="12" ShimmerScope="{CompiledBinding #SharedSurface}" />
+          <alder:AlderSkeleton Grid.Column="1" Height="96" CornerRadius="12" ShimmerScope="{CompiledBinding #SharedSurface}" />
+          <alder:AlderSkeleton Grid.Column="2" Height="96" CornerRadius="12" ShimmerScope="{CompiledBinding #SharedSurface}" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var grid = new Grid { ColumnDefinitions = new ColumnDefinitions("*,*,*"), ColumnSpacing = 16 };
+        for (var column = 0; column < 3; column++)
+        {
+            var placeholder = new AlderSkeleton { Height = 96, CornerRadius = new CornerRadius(12), ShimmerScope = grid };
+            Grid.SetColumn(placeholder, column);
+            grid.Children.Add(placeholder);
+        }
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleAnimations" Title="{DynamicResource GalleryText.FeedbackAnimation}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="16" LineSpacing="16" HorizontalAlignment="Center">
+          <StackPanel Width="144" Spacing="8">
+            <alder:AlderSkeleton Height="80" CornerRadius="8" Animation="Shimmer" />
+            <alder:AlderSkeleton Height="12" Width="86" HorizontalAlignment="Left" Animation="Shimmer" />
+            <alder:AlderSkeleton Height="12" Width="115" HorizontalAlignment="Left" Animation="Shimmer" />
+            <alder:AlderTextBlock HorizontalAlignment="Center" Text="{DynamicResource GalleryText.FeedbackShimmer}" />
+          </StackPanel>
+          <StackPanel Width="144" Spacing="8">
+            <alder:AlderSkeleton Height="80" CornerRadius="8" Animation="Pulse" />
+            <alder:AlderSkeleton Height="12" Width="86" HorizontalAlignment="Left" Animation="Pulse" />
+            <alder:AlderSkeleton Height="12" Width="115" HorizontalAlignment="Left" Animation="Pulse" />
+            <alder:AlderTextBlock HorizontalAlignment="Center" Text="{DynamicResource GalleryText.FeedbackPulse}" />
+          </StackPanel>
+          <StackPanel Width="144" Spacing="8">
+            <alder:AlderSkeleton Height="80" CornerRadius="8" Animation="None" />
+            <alder:AlderSkeleton Height="12" Width="86" HorizontalAlignment="Left" Animation="None" />
+            <alder:AlderSkeleton Height="12" Width="115" HorizontalAlignment="Left" Animation="None" />
+            <alder:AlderTextBlock HorizontalAlignment="Center" Text="{DynamicResource GalleryText.FeedbackNone}" />
+          </StackPanel>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var shimmer = new AlderSkeleton { Width = 144, Height = 80, Animation = SkeletonAnimation.Shimmer };
+        var pulse = new AlderSkeleton { Width = 144, Height = 80, Animation = SkeletonAnimation.Pulse };
+        var none = new AlderSkeleton { Width = 144, Height = 80, Animation = SkeletonAnimation.None };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustom" Title="{DynamicResource GalleryText.CustomStyles}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderSkeleton Width="192" Height="56" CornerRadius="28" ShimmerDuration="0:0:1.25"
+                Background="{DynamicResource AlderSoft}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var placeholder = new AlderSkeleton { Width = 192, Height = 56, CornerRadius = new CornerRadius(28), ShimmerDuration = TimeSpan.FromSeconds(1.25) };
+        placeholder[!TemplatedControl.BackgroundProperty] = new DynamicResourceExtension("AlderSoft");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,190 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:c="using:Avalonia.Data.Converters">
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderBadgeOutline" Color="#F5F5F5" />
+      <SolidColorBrush x:Key="AlderStatusWarning" Color="#F5A524" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderBadgeOutline" Color="#060607" />
+      <SolidColorBrush x:Key="AlderStatusWarning" Color="#F7B750" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+  <SolidColorBrush x:Key="AlderStatusSuccess" Color="#17C964" />
+  <SolidColorBrush x:Key="AlderOnStatusColor" Color="#18181B" />
+  <ControlTheme x:Key="{x:Type alder:AlderBadge}" TargetType="alder:AlderBadge">
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="CornerRadius" Value="24" />
+    <Setter Property="MinWidth" Value="28" />
+    <Setter Property="MinHeight" Value="28" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBadgeOutline}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="IsHitTestVisible" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}"
+                BackgroundSizing="InnerBorderEdge" Padding="{TemplateBinding Padding}">
+          <StackPanel Orientation="Horizontal" Spacing="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderPathIcon Data="{TemplateBinding Icon}" Width="{TemplateBinding IconSize}" Height="{TemplateBinding IconSize}"
+                      Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" AutomationProperties.AccessibilityView="Raw"
+                      IsVisible="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                              VerticalAlignment="Center" Padding="2,0"
+                              TextBlock.LineHeight="NaN" />
+          </StackPanel>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ ContentPresenter:empty">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^[Size=Small]">
+      <Setter Property="MinWidth" Value="16" />
+      <Setter Property="MinHeight" Value="16" />
+      <Setter Property="CornerRadius" Value="12" />
+      <Setter Property="FontSize" Value="10" />
+    </Style>
+    <Style Selector="^[Size=Large]">
+      <Setter Property="MinWidth" Value="32" />
+      <Setter Property="MinHeight" Value="32" />
+      <Setter Property="CornerRadius" Value="16" />
+      <Setter Property="FontSize" Value="14" />
+    </Style>
+    <Style Selector="^[Variant=Soft][Color=Default]">
+      <Setter Property="Background" Value="{DynamicResource AlderAvatarNeutralSoft}" />
+    </Style>
+    <Style Selector="^[Color=Accent]">
+      <Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" />
+    </Style>
+    <Style Selector="^[Variant=Primary][Color=Accent]">
+      <Setter Property="Background" Value="{DynamicResource AlderAccent}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderOnAccent}" />
+    </Style>
+    <Style Selector="^[Variant=Soft][Color=Accent]">
+      <Setter Property="Background" Value="{DynamicResource AlderAvatarAccentSoft}" />
+    </Style>
+    <Style Selector="^[Color=Success]">
+      <Setter Property="Foreground" Value="{DynamicResource AlderAvatarSuccessInk}" />
+    </Style>
+    <Style Selector="^[Variant=Primary][Color=Success]">
+      <Setter Property="Background" Value="{DynamicResource AlderStatusSuccess}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderOnStatusColor}" />
+    </Style>
+    <Style Selector="^[Variant=Soft][Color=Success]">
+      <Setter Property="Background" Value="{DynamicResource AlderAvatarSuccessSoft}" />
+    </Style>
+    <Style Selector="^[Color=Warning]">
+      <Setter Property="Foreground" Value="{DynamicResource AlderAvatarWarningInk}" />
+    </Style>
+    <Style Selector="^[Variant=Primary][Color=Warning]">
+      <Setter Property="Background" Value="{DynamicResource AlderStatusWarning}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderOnStatusColor}" />
+    </Style>
+    <Style Selector="^[Variant=Soft][Color=Warning]">
+      <Setter Property="Background" Value="{DynamicResource AlderAvatarWarningSoft}" />
+    </Style>
+    <Style Selector="^[Color=Danger]">
+      <Setter Property="Foreground" Value="{DynamicResource AlderDangerInk}" />
+    </Style>
+    <Style Selector="^[Variant=Primary][Color=Danger]">
+      <Setter Property="Background" Value="{DynamicResource AlderDanger}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderOnAccent}" />
+    </Style>
+    <Style Selector="^[Variant=Soft][Color=Danger]">
+      <Setter Property="Background" Value="{DynamicResource AlderAvatarDangerSoft}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderChip}" TargetType="alder:AlderChip">
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="Padding" Value="8,2" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}"
+                BackgroundSizing="InnerBorderEdge" Padding="{TemplateBinding Padding}">
+          <StackPanel Orientation="Horizontal" Spacing="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderPathIcon Data="{TemplateBinding Icon}" Width="{TemplateBinding IconSize}" Height="{TemplateBinding IconSize}"
+                      Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" AutomationProperties.AccessibilityView="Raw"
+                      IsVisible="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                              VerticalAlignment="Center" Padding="2,0"
+                              TextBlock.LineHeight="20" />
+            <alder:AlderPathIcon Data="{TemplateBinding TrailingIcon}" Width="{TemplateBinding IconSize}" Height="{TemplateBinding IconSize}"
+                      Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" AutomationProperties.AccessibilityView="Raw"
+                      IsVisible="{CompiledBinding TrailingIcon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+          </StackPanel>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ ContentPresenter:empty">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^[Size=Small]">
+      <Setter Property="Padding" Value="4,0" />
+    </Style>
+    <Style Selector="^[Size=Large]">
+      <Setter Property="Padding" Value="12,4" />
+      <Setter Property="FontSize" Value="14" />
+    </Style>
+    <Style Selector="^[Variant=Tertiary]">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="^[Variant=Soft][Color=Default]">
+      <Setter Property="Background" Value="{DynamicResource AlderAvatarNeutralSoft}" />
+    </Style>
+    <Style Selector="^[Color=Accent]">
+      <Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" />
+    </Style>
+    <Style Selector="^[Variant=Primary][Color=Accent]">
+      <Setter Property="Background" Value="{DynamicResource AlderAccent}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderOnAccent}" />
+    </Style>
+    <Style Selector="^[Variant=Soft][Color=Accent]">
+      <Setter Property="Background" Value="{DynamicResource AlderAvatarAccentSoft}" />
+    </Style>
+    <Style Selector="^[Color=Success]">
+      <Setter Property="Foreground" Value="{DynamicResource AlderAvatarSuccessInk}" />
+    </Style>
+    <Style Selector="^[Variant=Primary][Color=Success]">
+      <Setter Property="Background" Value="{DynamicResource AlderStatusSuccess}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderOnStatusColor}" />
+    </Style>
+    <Style Selector="^[Variant=Soft][Color=Success]">
+      <Setter Property="Background" Value="{DynamicResource AlderAvatarSuccessSoft}" />
+    </Style>
+    <Style Selector="^[Color=Warning]">
+      <Setter Property="Foreground" Value="{DynamicResource AlderAvatarWarningInk}" />
+    </Style>
+    <Style Selector="^[Variant=Primary][Color=Warning]">
+      <Setter Property="Background" Value="{DynamicResource AlderStatusWarning}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderOnStatusColor}" />
+    </Style>
+    <Style Selector="^[Variant=Soft][Color=Warning]">
+      <Setter Property="Background" Value="{DynamicResource AlderAvatarWarningSoft}" />
+    </Style>
+    <Style Selector="^[Color=Danger]">
+      <Setter Property="Foreground" Value="{DynamicResource AlderDangerInk}" />
+    </Style>
+    <Style Selector="^[Variant=Primary][Color=Danger]">
+      <Setter Property="Background" Value="{DynamicResource AlderDanger}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderOnAccent}" />
+    </Style>
+    <Style Selector="^[Variant=Soft][Color=Danger]">
+      <Setter Property="Background" Value="{DynamicResource AlderAvatarDangerSoft}" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

@@ -1,0 +1,161 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.FileTreeExample" x:DataType="vm:FileTreeViewModel">
+  <UserControl.Resources>
+    <StreamGeometry x:Key="ReviewFilterIcon">M1,2 H15 V3.5 H1 Z M3.5,7.25 H12.5 V8.75 H3.5 Z M6,12.5 H10 V14 H6 Z</StreamGeometry>
+    <ControlTheme x:Key="ReviewFilterItemTheme" TargetType="MenuItem" BasedOn="{StaticResource AlderContextMenuItemTheme}">
+      <Setter Property="MinHeight" Value="34" />
+      <Setter Property="CornerRadius" Value="12" />
+      <Style Selector="^:toggle /template/ PathIcon#Check">
+        <Setter Property="Grid.Column" Value="0" />
+        <Setter Property="Width" Value="10" />
+        <Setter Property="Height" Value="10" />
+        <Setter Property="Margin" Value="0,0,8,0" />
+        <Setter Property="IsVisible" Value="True" />
+        <Setter Property="Opacity" Value="0" />
+      </Style>
+      <Style Selector="^:checked:toggle /template/ PathIcon#Check">
+        <Setter Property="Opacity" Value="1" />
+      </Style>
+    </ControlTheme>
+  </UserControl.Resources>
+  <StackPanel x:Name="Examples" Spacing="20">
+    <gallery:ExampleCard x:Name="Usage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderFileTree MaxWidth="320" ItemsSource="{CompiledBinding MainFiles}" MaxHeight="420" />
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="Review" Title="{DynamicResource GalleryText.FileTreeReview}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="310" Spacing="12">
+          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12" Margin="8,0">
+            <alder:AlderSearchField Width="NaN" PlaceholderText="{DynamicResource GalleryText.FileTreeFilterFiles}"
+                                    AutomationProperties.Name="{DynamicResource GalleryText.FileTreeFilterFiles}"
+                                    Text="{CompiledBinding ReviewQuery, Mode=TwoWay}" />
+            <alder:AlderButton Grid.Column="1" Variant="Secondary" IsIconOnly="True"
+                               AutomationProperties.Name="{DynamicResource GalleryText.FileTreeFilters}"
+                               alder:AlderToolTip.Tip="{DynamicResource GalleryText.FileTreeFilters}">
+              <alder:AlderPathIcon Width="16" Height="16" Data="{StaticResource ReviewFilterIcon}" />
+              <alder:AlderButton.Flyout>
+                <alder:AlderDropdownFlyout MinMenuWidth="210" ItemContainerTheme="{StaticResource ReviewFilterItemTheme}">
+                  <alder:AlderContextMenuHeading Text="{DynamicResource GalleryText.FileTreeExtensions}" />
+                  <alder:AlderMenuItem Header=".jsonc" ToggleType="CheckBox" StaysOpenOnClick="True"
+                            IsChecked="{CompiledBinding IncludeJsonc, Mode=TwoWay}" />
+                  <alder:AlderMenuItem Header=".cs" ToggleType="CheckBox" StaysOpenOnClick="True"
+                            IsChecked="{CompiledBinding IncludeCsharp, Mode=TwoWay}" />
+                  <alder:AlderMenuItem Header=".axaml" ToggleType="CheckBox" StaysOpenOnClick="True"
+                            IsChecked="{CompiledBinding IncludeAxaml, Mode=TwoWay}" />
+                  <alder:AlderSeparator Theme="{StaticResource AlderContextMenuSeparatorTheme}" />
+                  <alder:AlderMenuItem Header="{DynamicResource GalleryText.FileTreeDeleted}" ToggleType="CheckBox" StaysOpenOnClick="True"
+                            IsChecked="{CompiledBinding IncludeDeleted, Mode=TwoWay}" />
+                  <alder:AlderMenuItem Header="{DynamicResource GalleryText.FileTreeViewed}" ToggleType="CheckBox" StaysOpenOnClick="True"
+                            IsChecked="{CompiledBinding IncludeViewed, Mode=TwoWay}" />
+                </alder:AlderDropdownFlyout>
+              </alder:AlderButton.Flyout>
+            </alder:AlderButton>
+          </Grid>
+          <alder:AlderFileTree ItemsSource="{CompiledBinding ReviewFiles}" ShowIcons="True"
+                               SelectedItem="{CompiledBinding ReviewSelection, Mode=TwoWay}" />
+          <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.Reset}"
+                             HorizontalAlignment="Right" Command="{CompiledBinding ResetReview}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="Icons" Title="{DynamicResource GalleryText.FileTreeWithIcons}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderFileTree MaxWidth="300" ItemsSource="{CompiledBinding IconFiles}" ShowIcons="True" />
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="Sizes" Title="{DynamicResource GalleryText.Sizes}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="16" LineSpacing="16" HorizontalAlignment="Center">
+          <StackPanel Spacing="4">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.FileTreeSizeSmall}" Foreground="{DynamicResource AlderMuted}" HorizontalAlignment="Center" />
+            <alder:AlderFileTree Width="249" MaxHeight="440" ItemsSource="{CompiledBinding SmallFiles}" ShowIcons="True" Size="Small" />
+          </StackPanel>
+          <StackPanel Spacing="4">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.FileTreeSizeMedium}" Foreground="{DynamicResource AlderMuted}" HorizontalAlignment="Center" />
+            <alder:AlderFileTree Width="249" MaxHeight="440" ItemsSource="{CompiledBinding MediumFiles}" ShowIcons="True" Size="Medium" />
+          </StackPanel>
+          <StackPanel Spacing="4">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.FileTreeSizeLarge}" Foreground="{DynamicResource AlderMuted}" HorizontalAlignment="Center" />
+            <alder:AlderFileTree Width="249" MaxHeight="440" ItemsSource="{CompiledBinding LargeFiles}" ShowIcons="True" Size="Large" />
+          </StackPanel>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="GuideLines" Title="{DynamicResource GalleryText.FileTreeGuides}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="16" LineSpacing="16" HorizontalAlignment="Center">
+          <StackPanel Spacing="4">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.FileTreeGuideAlways}" Foreground="{DynamicResource AlderMuted}" HorizontalAlignment="Center" />
+            <alder:AlderFileTree Width="249" MaxHeight="440" ItemsSource="{CompiledBinding AlwaysFiles}" ShowIcons="True" GuideLines="Always" />
+          </StackPanel>
+          <StackPanel Spacing="4">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.FileTreeGuideHover}" Foreground="{DynamicResource AlderMuted}" HorizontalAlignment="Center" />
+            <alder:AlderFileTree Width="249" MaxHeight="440" ItemsSource="{CompiledBinding HoverFiles}" ShowIcons="True" GuideLines="Hover" />
+          </StackPanel>
+          <StackPanel Spacing="4">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.FileTreeGuideHidden}" Foreground="{DynamicResource AlderMuted}" HorizontalAlignment="Center" />
+            <alder:AlderFileTree Width="249" MaxHeight="440" ItemsSource="{CompiledBinding HiddenFiles}" ShowIcons="True" GuideLines="Hidden" />
+          </StackPanel>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="MultipleSelection" Title="{DynamicResource GalleryText.FileTreeMultiple}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="280" Spacing="8">
+          <alder:AlderFileTree ItemsSource="{CompiledBinding MultiFiles}" ShowIcons="True" SelectionMode="Multiple,Toggle"
+                               ShowSelectionCheckboxes="True" SelectedItems="{CompiledBinding SelectedFiles}" MaxHeight="390" />
+          <alder:AlderTextBlock Text="{CompiledBinding SelectedSummary}" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" />
+          <WrapPanel ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetSelection}" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="DragAndDrop" Title="{DynamicResource GalleryText.FileTreeDragAndDrop}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="300" Spacing="8">
+          <alder:AlderFileTree ItemsSource="{CompiledBinding DragFiles}" ShowIcons="True"
+                               SelectionMode="Multiple,Toggle" ShowSelectionCheckboxes="True" SelectedItems="{CompiledBinding DragSelection}"
+                               MoveCommand="{CompiledBinding Move}" MoveSelectionTogether="True" MaxHeight="390" />
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.FileTreeDragHint}" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" />
+          <WrapPanel ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetMoves}" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="DynamicCollection" Title="{DynamicResource GalleryText.FileTreeDynamic}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderFileTree MaxWidth="300" ItemsSource="{CompiledBinding DynamicFiles}" MaxHeight="380" />
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="Indicator" Title="{DynamicResource GalleryText.FileTreeIndicator}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderFileTree MaxWidth="300" ItemsSource="{CompiledBinding IndicatorFiles}" ShowIcons="True"
+                             IndicatorIcon="{StaticResource AlderFileTreeCaretIcon}" />
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="ReducedMotion" Title="{DynamicResource GalleryText.FileTreeReduced}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderFileTree MaxWidth="320" ItemsSource="{CompiledBinding ReducedFiles}" MaxHeight="420" alder:AlderMotion.Reduced="True" />
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="Inline" Title="{DynamicResource GalleryText.FileTreeInline}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderFileTree Width="290" ShowIcons="True">
+          <alder:AlderFileTreeItem Header="{DynamicResource GalleryText.FileTreeWorkspace}" IsSection="True">
+            <alder:AlderFileTreeItem Header="src" IsExpanded="True">
+              <alder:AlderFileTreeItem Header="App.axaml" />
+              <alder:AlderFileTreeItem Header="Program.cs" />
+            </alder:AlderFileTreeItem>
+            <alder:AlderFileTreeItem Header="README.md" />
+          </alder:AlderFileTreeItem>
+        </alder:AlderFileTree>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

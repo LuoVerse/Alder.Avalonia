@@ -1,0 +1,186 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:chrome="using:Avalonia.Controls.Chrome">
+  <StreamGeometry x:Key="AlderWindowMinimizeIcon">M0,5 H10 V6 H0 Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderWindowMaximizeIcon">F0 M0,0 H10 V10 H0 Z M1,1 H9 V9 H1 Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderWindowRestoreIcon">F0 M2,0 H10 V8 H8 V10 H0 V2 H2 Z M1,3 V9 H7 V3 Z M3,1 V2 H8 V7 H9 V1 Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderWindowCloseIcon">M0,0 L5,4.3 10,0 10.7,0.7 5.7,5 10.7,9.3 10,10 5,5.7 0,10 -0.7,9.3 4.3,5 -0.7,0.7 Z</StreamGeometry>
+
+  <ControlTheme x:Key="AlderWindowCaptionButton" TargetType="Button">
+    <Setter Property="Width" Value="42" />
+    <Setter Property="Height" Value="32" />
+    <Setter Property="CornerRadius" Value="7" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}">
+          <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
+                            Foreground="{TemplateBinding Foreground}" IsHitTestVisible="False"
+                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+    <Style Selector="^:pressed">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
+    <Style Selector="^.close:pointerover">
+      <Setter Property="Background" Value="#C42B34" />
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="^.close:pressed">
+      <Setter Property="Background" Value="#A4262C" />
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="^:focus-visible">
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" />
+    </Style>
+    <Style Selector="^:disabled">
+      <Setter Property="Opacity" Value="0.35" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderWindowMacCaptionButton" TargetType="Button">
+    <Setter Property="Width" Value="19" />
+    <Setter Property="Height" Value="28" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="Transparent">
+          <Border Width="12" Height="12" CornerRadius="6" Background="{TemplateBinding Background}"
+                  HorizontalAlignment="Center" VerticalAlignment="Center">
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" FontSize="9"
+                              Foreground="#A6000000" Opacity="0" IsHitTestVisible="False"
+                              HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+          </Border>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter,
+                     ^:focus-visible /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="^:disabled">
+      <Setter Property="Opacity" Value="0.35" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderWindow}" TargetType="alder:AlderWindow">
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="TransparencyBackgroundFallback" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+    <Setter Property="CaptionMargin" Value="0,4,8,0" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel ClipToBounds="True">
+          <Border Name="PART_TransparencyFallback" IsHitTestVisible="False" />
+          <Panel Background="Transparent" Margin="{TemplateBinding WindowDecorationMargin}" />
+          <VisualLayerManager Name="PART_VisualLayerManager">
+            <Border Name="PART_WindowFrame" Background="{TemplateBinding Background}" ClipToBounds="True">
+              <Panel>
+                <alder:DialogHost Name="PART_DialogHost">
+                  <Grid RowDefinitions="Auto,*">
+                    <Border Name="PART_TitleBar" Height="40" IsVisible="False" Background="Transparent"
+                            chrome:WindowDecorationProperties.ElementRole="TitleBar">
+                      <alder:AlderTextBlock Name="PART_Title" Text="{TemplateBinding Title}" TextTrimming="CharacterEllipsis"
+                                 FontSize="13" Margin="12,0,144,0" VerticalAlignment="Center" IsHitTestVisible="False" />
+                    </Border>
+                    <ContentPresenter Name="PART_ContentPresenter" Grid.Row="1"
+                                      Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      Margin="{TemplateBinding Padding}"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                  </Grid>
+                </alder:DialogHost>
+
+                <StackPanel Name="PART_DesktopCaption" Orientation="Horizontal" Spacing="3" IsVisible="False"
+                            Margin="{TemplateBinding CaptionMargin}" FlowDirection="LeftToRight"
+                            HorizontalAlignment="Right" VerticalAlignment="Top">
+                  <alder:AlderButton Name="PART_MinimizeButton" Theme="{StaticResource AlderWindowCaptionButton}"
+                          IsEnabled="{TemplateBinding CanMinimize}" chrome:WindowDecorationProperties.ElementRole="User"
+                          AutomationProperties.Name="{DynamicResource AlderText.WindowMinimize}" alder:AlderToolTip.Tip="{DynamicResource AlderText.WindowMinimize}">
+                    <alder:AlderPathIcon Width="10" Height="10" Data="{StaticResource AlderWindowMinimizeIcon}" />
+                  </alder:AlderButton>
+                  <alder:AlderButton Name="PART_MaximizeButton" Theme="{StaticResource AlderWindowCaptionButton}" Classes="restore"
+                          chrome:WindowDecorationProperties.ElementRole="User">
+                    <alder:AlderPathIcon Name="PART_MaximizeIcon" Width="10" Height="10" />
+                  </alder:AlderButton>
+                  <alder:AlderButton Name="PART_CloseButton" Theme="{StaticResource AlderWindowCaptionButton}" Classes="close"
+                          chrome:WindowDecorationProperties.ElementRole="User"
+                          AutomationProperties.Name="{DynamicResource AlderText.Close}" alder:AlderToolTip.Tip="{DynamicResource AlderText.Close}">
+                    <alder:AlderPathIcon Width="11" Height="11" Data="{StaticResource AlderWindowCloseIcon}" />
+                  </alder:AlderButton>
+                </StackPanel>
+                <StackPanel Name="PART_MacCaption" Orientation="Horizontal" IsVisible="False"
+                            Margin="{TemplateBinding CaptionMargin}" FlowDirection="LeftToRight"
+                            HorizontalAlignment="Left" VerticalAlignment="Top">
+                  <alder:AlderButton Name="PART_MacCloseButton" Theme="{StaticResource AlderWindowMacCaptionButton}"
+                          Content="×" Background="#FF5F57" chrome:WindowDecorationProperties.ElementRole="User"
+                          AutomationProperties.Name="{DynamicResource AlderText.Close}" alder:AlderToolTip.Tip="{DynamicResource AlderText.Close}" />
+                  <alder:AlderButton Name="PART_MacMinimizeButton" Theme="{StaticResource AlderWindowMacCaptionButton}"
+                          Content="−" Background="#FEBC2E" IsEnabled="{TemplateBinding CanMinimize}"
+                          chrome:WindowDecorationProperties.ElementRole="User"
+                          AutomationProperties.Name="{DynamicResource AlderText.WindowMinimize}" alder:AlderToolTip.Tip="{DynamicResource AlderText.WindowMinimize}" />
+                  <alder:AlderButton Name="PART_MacMaximizeButton" Theme="{StaticResource AlderWindowMacCaptionButton}"
+                          Classes="restore" Background="#28C840" chrome:WindowDecorationProperties.ElementRole="User" />
+                </StackPanel>
+
+                <Panel Name="PART_ResizeGrips" IsVisible="False">
+                  <Border Height="5" Margin="10,0" VerticalAlignment="Top" Background="Transparent" chrome:WindowDecorationProperties.ElementRole="ResizeN" />
+                  <Border Height="5" Margin="10,0" VerticalAlignment="Bottom" Background="Transparent" chrome:WindowDecorationProperties.ElementRole="ResizeS" />
+                  <Border Width="5" Margin="0,10" HorizontalAlignment="Left" Background="Transparent" chrome:WindowDecorationProperties.ElementRole="ResizeW" />
+                  <Border Width="5" Margin="0,10" HorizontalAlignment="Right" Background="Transparent" chrome:WindowDecorationProperties.ElementRole="ResizeE" />
+                  <Border Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Transparent" chrome:WindowDecorationProperties.ElementRole="ResizeNW" />
+                  <Border Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" chrome:WindowDecorationProperties.ElementRole="ResizeNE" />
+                  <Border Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Background="Transparent" chrome:WindowDecorationProperties.ElementRole="ResizeSW" />
+                  <Border Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Transparent" chrome:WindowDecorationProperties.ElementRole="ResizeSE" />
+                </Panel>
+              </Panel>
+            </Border>
+          </VisualLayerManager>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+
+    <Style Selector="^.mac">
+      <Setter Property="CaptionMargin" Value="14,6,0,0" />
+    </Style>
+    <Style Selector="^.mac /template/ TextBlock#PART_Title">
+      <Setter Property="Margin" Value="82,0,82,0" />
+      <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="^:not(:restore) /template/ Border#PART_WindowFrame">
+      <Setter Property="CornerRadius" Value="{TemplateBinding CornerRadius}" />
+    </Style>
+    <Style Selector="^:custom-chrome[ShowTitleBar=True] /template/ Border#PART_TitleBar,
+                     ^:custom-chrome:not(.mac) /template/ StackPanel#PART_DesktopCaption,
+                     ^:custom-chrome.mac /template/ StackPanel#PART_MacCaption,
+                     ^:custom-chrome[CanResize=True]:not(:restore) /template/ Panel#PART_ResizeGrips">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^ /template/ :is(Button).restore">
+      <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.WindowMaximize}" />
+      <Setter Property="alder:AlderToolTip.Tip" Value="{DynamicResource AlderText.WindowMaximize}" />
+    </Style>
+    <Style Selector="^[CanMaximize=False]:not(:restore) /template/ :is(Button).restore">
+      <Setter Property="IsEnabled" Value="False" />
+    </Style>
+    <Style Selector="^:restore /template/ :is(Button).restore">
+      <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.WindowRestore}" />
+      <Setter Property="alder:AlderToolTip.Tip" Value="{DynamicResource AlderText.WindowRestore}" />
+    </Style>
+    <Style Selector="^ /template/ :is(Button)#PART_MacMaximizeButton"><Setter Property="Content" Value="+" /></Style>
+    <Style Selector="^:restore /template/ :is(Button)#PART_MacMaximizeButton"><Setter Property="Content" Value="−" /></Style>
+    <Style Selector="^ /template/ PathIcon#PART_MaximizeIcon"><Setter Property="Data" Value="{StaticResource AlderWindowMaximizeIcon}" /></Style>
+    <Style Selector="^:restore /template/ PathIcon#PART_MaximizeIcon"><Setter Property="Data" Value="{StaticResource AlderWindowRestoreIcon}" /></Style>
+  </ControlTheme>
+</ResourceDictionary>

@@ -1,0 +1,19 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls">
+  <ControlTheme x:Key="{x:Type alder:AlderTextArea}" TargetType="alder:AlderTextArea"
+                BasedOn="{StaticResource {x:Type alder:AlderInput}}">
+    <Setter Property="Width" Value="280" />
+    <Setter Property="Height" Value="NaN" />
+    <Setter Property="MinHeight" Value="38" />
+    <Setter Property="AcceptsReturn" Value="True" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+    <Setter Property="VerticalAlignment" Value="Top" />
+    <Setter Property="VerticalContentAlignment" Value="Top" />
+    <Setter Property="MinLines" Value="{Binding Rows, RelativeSource={RelativeSource Self}}" />
+    <Setter Property="MaxLines" Value="{Binding Rows, RelativeSource={RelativeSource Self}}" />
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+    <Setter Property="AutomationProperties.ControlTypeOverride" Value="Edit" />
+  </ControlTheme>
+</ResourceDictionary>

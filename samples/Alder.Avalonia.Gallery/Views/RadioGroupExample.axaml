@@ -1,0 +1,599 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.RadioGroupExample" x:DataType="vm:RadioGroupViewModel" FontFamily="fonts:Inter#Inter">
+  <Design.DataContext><vm:RadioGroupViewModel /></Design.DataContext>
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <SolidColorBrush x:Key="BillingIndicator" Color="#17C964" />
+      <SolidColorBrush x:Key="BillingIndicatorPressed" Color="#33D576" />
+      <SolidColorBrush x:Key="BillingIndicatorDot" Color="#18181B" />
+      <SolidColorBrush x:Key="BillingRest" Color="#0C17C964" />
+      <SolidColorBrush x:Key="BillingSelection" Color="#2617C964" />
+      <SolidColorBrush x:Key="BillingHover" Color="#3317C964" />
+      <SolidColorBrush x:Key="BillingBorder" Color="#1A17C964" />
+      <SolidColorBrush x:Key="BillingSelectedBorder" Color="#4D17C964" />
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light"><SolidColorBrush x:Key="BillingInk" Color="#206F44" /></ResourceDictionary>
+        <ResourceDictionary x:Key="Dark"><SolidColorBrush x:Key="BillingInk" Color="#84D9A9" /></ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+      <ControlTheme x:Key="BillingRadioTheme" TargetType="alder:AlderRadioButton" BasedOn="{StaticResource AlderRadioButtonTheme}">
+        <Style Selector="^.billing:checked"><Setter Property="Foreground" Value="{DynamicResource BillingInk}" /></Style>
+        <Style Selector="^.billing /template/ Border#Row">
+          <Setter Property="Background" Value="{StaticResource BillingRest}" />
+          <Setter Property="BorderBrush" Value="{StaticResource BillingBorder}" />
+        </Style>
+        <Style Selector="^.billing:checked /template/ Border#Row">
+          <Setter Property="Background" Value="{StaticResource BillingSelection}" />
+          <Setter Property="BorderBrush" Value="{StaticResource BillingSelectedBorder}" />
+        </Style>
+        <Style Selector="^.billing:pointerover /template/ Border#Row">
+          <Setter Property="Background" Value="{StaticResource BillingHover}" />
+        </Style>
+        <Style Selector="^.billing:focus-visible /template/ Border#Row">
+          <Setter Property="BorderBrush" Value="{StaticResource BillingIndicator}" />
+        </Style>
+        <Style Selector="^.billing:focus-visible:not(:checked):not(:pointerover) /template/ Border#Row">
+          <Setter Property="Background" Value="{StaticResource BillingRest}" />
+        </Style>
+        <Style Selector="^.billing /template/ Border#Indicator, ^.billing /template/ Border#DefaultDot">
+          <Setter Property="CornerRadius" Value="10" />
+        </Style>
+        <Style Selector="^.billing /template/ Border#Indicator">
+          <Setter Property="BorderThickness" Value="1" />
+          <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+        </Style>
+        <Style Selector="^.billing /template/ TextBlock#Description"><Setter Property="Margin" Value="0" /></Style>
+        <Style Selector="^.billing:checked /template/ TextBlock#Description"><Setter Property="Foreground" Value="{DynamicResource BillingInk}" /></Style>
+        <Style Selector="^.billing:checked /template/ Border#Indicator">
+          <Setter Property="Background" Value="{StaticResource BillingIndicator}" />
+          <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
+        <Style Selector="^.billing:checked:pressed /template/ Border#Indicator"><Setter Property="Background" Value="{StaticResource BillingIndicatorPressed}" /></Style>
+        <Style Selector="^.billing:checked /template/ Border#DefaultDot">
+          <Setter Property="Background" Value="{StaticResource BillingIndicatorDot}" />
+          <Setter Property="RenderTransform" Value="scale(0.5)" />
+        </Style>
+        <Style Selector="^.billing:checked:pressed /template/ Border#DefaultDot"><Setter Property="RenderTransform" Value="scale(0.57)" /></Style>
+      </ControlTheme>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <UserControl.Styles>
+    <Style Selector=":is(Label)"><Setter Property="Theme" Value="{StaticResource AlderLabelTheme}" /></Style>
+    <Style Selector="TextBlock.radioHint">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="LineHeight" Value="16" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style Selector="TextBlock.radioHint.error"><Setter Property="Foreground" Value="{DynamicResource AlderDangerInk}" /></Style>
+    <Style Selector="WrapPanel.radioDemos">
+      <Setter Property="ItemSpacing" Value="32" />
+      <Setter Property="LineSpacing" Value="20" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="4">
+          <alder:AlderLabel x:Name="PlansLabel" Target="{Binding #Plans}" Content="{DynamicResource GalleryText.SubscriptionPlan}" />
+          <alder:AlderTextBlock Classes="radioHint" Text="{DynamicResource GalleryText.RadioPlanHint}" />
+          <alder:AlderRadioGroup x:Name="Plans" SelectedKeys="pro" Margin="0,12,0,0"
+                            AutomationProperties.LabeledBy="{Binding #PlansLabel}">
+            <alder:AlderRadioButton alder:AlderChoiceGroup.Key="starter" Content="{DynamicResource GalleryText.Starter}" Description="{DynamicResource GalleryText.RadioStarterHint}" />
+            <alder:AlderRadioButton alder:AlderChoiceGroup.Key="pro" Content="Pro" Description="{DynamicResource GalleryText.RadioProHint}" />
+            <alder:AlderRadioButton alder:AlderChoiceGroup.Key="teams" Content="{DynamicResource GalleryText.Teams}" Description="{DynamicResource GalleryText.RadioTeamsHint}" />
+          </alder:AlderRadioGroup>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var radioGroup = new AlderRadioGroup { SelectedKeys = ["pro"] };
+
+        var radioButton1 = new AlderRadioButton { Content = "Starter" };
+        AlderChoiceGroup.SetKey(radioButton1, "starter");
+        radioButton1.Description = "For side projects and small teams";
+        radioGroup.Children.Add(radioButton1);
+
+        var radioButton2 = new AlderRadioButton { Content = "Pro" };
+        AlderChoiceGroup.SetKey(radioButton2, "pro");
+        radioButton2.Description = "Advanced reporting and analytics";
+        radioGroup.Children.Add(radioButton2);
+
+        var radioButton3 = new AlderRadioButton { Content = "Teams" };
+        AlderChoiceGroup.SetKey(radioButton3, "teams");
+        radioButton3.Description = "Share access with up to 10 teammates";
+        radioGroup.Children.Add(radioButton3);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleHorizontal" Title="{DynamicResource GalleryText.Horizontal}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="4">
+          <alder:AlderLabel x:Name="HorizontalPlansLabel" Target="{Binding #HorizontalPlans}" Content="{DynamicResource GalleryText.SubscriptionPlan}" />
+          <alder:AlderRadioGroup x:Name="HorizontalPlans" Orientation="Horizontal" SelectedKeys="pro" Margin="0,12,0,0"
+                            AutomationProperties.LabeledBy="{Binding #HorizontalPlansLabel}">
+            <alder:AlderRadioButton alder:AlderChoiceGroup.Key="starter" Content="{DynamicResource GalleryText.Starter}" Description="{DynamicResource GalleryText.ForSideProjects}" />
+            <alder:AlderRadioButton alder:AlderChoiceGroup.Key="pro" Content="Pro" Description="{DynamicResource GalleryText.AdvancedReporting}" />
+            <alder:AlderRadioButton alder:AlderChoiceGroup.Key="teams" Content="{DynamicResource GalleryText.Teams}" Description="{DynamicResource GalleryText.UpTo10Teammates}" />
+          </alder:AlderRadioGroup>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var radioGroup = new AlderRadioGroup
+        {
+            Orientation = Orientation.Horizontal,
+            SelectedKeys = ["pro"],
+        };
+
+        var radioButton1 = new AlderRadioButton { Content = "Starter" };
+        AlderChoiceGroup.SetKey(radioButton1, "starter");
+        radioButton1.Description = "For side projects.";
+        radioGroup.Children.Add(radioButton1);
+
+        var radioButton2 = new AlderRadioButton { Content = "Pro" };
+        AlderChoiceGroup.SetKey(radioButton2, "pro");
+        radioButton2.Description = "Advanced reporting.";
+        radioGroup.Children.Add(radioButton2);
+
+        var radioButton3 = new AlderRadioButton { Content = "Teams" };
+        AlderChoiceGroup.SetKey(radioButton3, "teams");
+        radioButton3.Description = "Up to 10 teammates.";
+        radioGroup.Children.Add(radioButton3);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SamplePrimaryVariant" Title="{DynamicResource GalleryText.PrimaryVariant}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderRadioGroup SelectedKeys="one" MaxWidth="245" AutomationProperties.Name="{DynamicResource GalleryText.PrimaryVariant}">
+            <alder:AlderRadioButton alder:AlderChoiceGroup.Key="one" Content="{DynamicResource GalleryText.RadioOptionOne}" Description="{DynamicResource GalleryText.StandardStylingWithDefaultBackground}" />
+            <alder:AlderRadioButton alder:AlderChoiceGroup.Key="two" Content="{DynamicResource GalleryText.RadioOptionTwo}" Description="{DynamicResource GalleryText.RadioPrimaryAlternate}" />
+          </alder:AlderRadioGroup>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var radioGroup1 = new AlderRadioGroup { SelectedKeys = ["one"] };
+        AutomationProperties.SetName(radioGroup1, "Primary variant");
+
+        var radioButton1 = new AlderRadioButton { Content = "Option 1" };
+        AlderChoiceGroup.SetKey(radioButton1, "one");
+        radioButton1.Description = "Standard styling with default background.";
+        radioGroup1.Children.Add(radioButton1);
+
+        var radioButton2 = new AlderRadioButton { Content = "Option 2" };
+        AlderChoiceGroup.SetKey(radioButton2, "two");
+        radioButton2.Description = "Another option with primary styling";
+        radioGroup1.Children.Add(radioButton2);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSecondaryVariant" Title="{DynamicResource GalleryText.SecondaryVariant}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderRadioGroup Variant="Secondary" SelectedKeys="one" MaxWidth="245" AutomationProperties.Name="{DynamicResource GalleryText.SecondaryVariant}">
+            <alder:AlderRadioButton alder:AlderChoiceGroup.Key="one" Content="{DynamicResource GalleryText.RadioOptionOne}" Description="{DynamicResource GalleryText.LowerEmphasisForUseOnASurface}" />
+            <alder:AlderRadioButton alder:AlderChoiceGroup.Key="two" Content="{DynamicResource GalleryText.RadioOptionTwo}" Description="{DynamicResource GalleryText.RadioSecondaryAlternate}" />
+          </alder:AlderRadioGroup>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var radioGroup = new AlderRadioGroup { Variant = ButtonVariant.Secondary, SelectedKeys = ["one"] };
+        AutomationProperties.SetName(radioGroup, "Secondary variant");
+
+        var radioButton3 = new AlderRadioButton { Content = "Option 1" };
+        AlderChoiceGroup.SetKey(radioButton3, "one");
+        radioButton3.Description = "Lower emphasis for use on a surface.";
+        radioGroup.Children.Add(radioButton3);
+
+        var radioButton4 = new AlderRadioButton { Content = "Option 2" };
+        AlderChoiceGroup.SetKey(radioButton4, "two");
+        radioButton4.Description = "Another option with secondary styling";
+        radioGroup.Children.Add(radioButton4);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleInASurface" Title="{DynamicResource GalleryText.InASurface}">
+      <gallery:ExampleCard.Preview>
+        <Border Background="{DynamicResource AlderSurface}" CornerRadius="24" Padding="20" Width="384"
+                MaxWidth="384" HorizontalAlignment="Left">
+          <StackPanel Spacing="4">
+            <alder:AlderLabel x:Name="SurfacePlansLabel" Target="{Binding #SurfacePlans}" Content="{DynamicResource GalleryText.SubscriptionPlan}" />
+            <alder:AlderTextBlock Classes="radioHint" Text="{DynamicResource GalleryText.RadioPlanHint}" />
+            <alder:AlderRadioGroup x:Name="SurfacePlans" SelectedKeys="pro" Margin="0,12,0,0"
+                              AutomationProperties.LabeledBy="{Binding #SurfacePlansLabel}" Variant="Secondary">
+              <alder:AlderRadioButton alder:AlderChoiceGroup.Key="starter" Content="{DynamicResource GalleryText.Starter}" Description="{DynamicResource GalleryText.RadioStarterHint}" />
+              <alder:AlderRadioButton alder:AlderChoiceGroup.Key="pro" Content="Pro" Description="{DynamicResource GalleryText.RadioProHint}" />
+              <alder:AlderRadioButton alder:AlderChoiceGroup.Key="teams" Content="{DynamicResource GalleryText.Teams}" Description="{DynamicResource GalleryText.RadioTeamsHint}" />
+            </alder:AlderRadioGroup>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var radioGroup = new AlderRadioGroup { SelectedKeys = ["pro"], Variant = ButtonVariant.Secondary };
+
+        var radioButton1 = new AlderRadioButton { Content = "Starter" };
+        AlderChoiceGroup.SetKey(radioButton1, "starter");
+        radioButton1.Description = "For side projects and small teams";
+        radioGroup.Children.Add(radioButton1);
+
+        var radioButton2 = new AlderRadioButton { Content = "Pro" };
+        AlderChoiceGroup.SetKey(radioButton2, "pro");
+        radioButton2.Description = "Advanced reporting and analytics";
+        radioGroup.Children.Add(radioButton2);
+
+        var radioButton3 = new AlderRadioButton { Content = "Teams" };
+        AlderChoiceGroup.SetKey(radioButton3, "teams");
+        radioButton3.Description = "Share access with up to 10 teammates";
+        radioGroup.Children.Add(radioButton3);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="4">
+          <alder:AlderLabel x:Name="DisabledPlansLabel" Target="{Binding #DisabledPlans}" Content="{DynamicResource GalleryText.SubscriptionPlan}" />
+          <alder:AlderTextBlock Classes="radioHint" Text="{DynamicResource GalleryText.RadioChangesPaused}" />
+          <alder:AlderRadioGroup x:Name="DisabledPlans" SelectedKeys="pro" Margin="0,12,0,0"
+                            AutomationProperties.LabeledBy="{Binding #DisabledPlansLabel}" IsEnabled="False">
+            <alder:AlderRadioButton alder:AlderChoiceGroup.Key="starter" Content="{DynamicResource GalleryText.Starter}" Description="{DynamicResource GalleryText.RadioStarterHint}" />
+            <alder:AlderRadioButton alder:AlderChoiceGroup.Key="pro" Content="Pro" Description="{DynamicResource GalleryText.RadioProHint}" />
+            <alder:AlderRadioButton alder:AlderChoiceGroup.Key="teams" Content="{DynamicResource GalleryText.Teams}" Description="{DynamicResource GalleryText.RadioTeamsHint}" />
+          </alder:AlderRadioGroup>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var radioGroup = new AlderRadioGroup { SelectedKeys = ["pro"], IsEnabled = false };
+
+        var radioButton1 = new AlderRadioButton { Content = "Starter" };
+        AlderChoiceGroup.SetKey(radioButton1, "starter");
+        radioButton1.Description = "For side projects and small teams";
+        radioGroup.Children.Add(radioButton1);
+
+        var radioButton2 = new AlderRadioButton { Content = "Pro" };
+        AlderChoiceGroup.SetKey(radioButton2, "pro");
+        radioButton2.Description = "Advanced reporting and analytics";
+        radioGroup.Children.Add(radioButton2);
+
+        var radioButton3 = new AlderRadioButton { Content = "Teams" };
+        AlderChoiceGroup.SetKey(radioButton3, "teams");
+        radioButton3.Description = "Share access with up to 10 teammates";
+        radioGroup.Children.Add(radioButton3);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleReadOnly" Title="{DynamicResource GalleryText.ReadOnly}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderLabel x:Name="PaymentReadOnlyLabel" Target="{Binding #PaymentReadOnly}" Content="{DynamicResource GalleryText.PaymentMethod}" />
+          <alder:AlderTextBlock Classes="radioHint" Text="{DynamicResource GalleryText.RadioPaymentReadOnly}" />
+          <alder:AlderRadioGroup x:Name="PaymentReadOnly" IsReadOnly="True" SelectedKeys="card" AutomationProperties.LabeledBy="{Binding #PaymentReadOnlyLabel}">
+            <alder:AlderRadioButton alder:AlderChoiceGroup.Key="card" Content="{DynamicResource GalleryText.Card}" />
+            <alder:AlderRadioButton alder:AlderChoiceGroup.Key="invoice" Content="{DynamicResource GalleryText.Invoice}" />
+          </alder:AlderRadioGroup>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var radioGroup = new AlderRadioGroup { IsReadOnly = true, SelectedKeys = ["card"] };
+
+        var radioButton1 = new AlderRadioButton { Content = "Card" };
+        AlderChoiceGroup.SetKey(radioButton1, "card");
+        radioGroup.Children.Add(radioButton1);
+
+        var radioButton2 = new AlderRadioButton { Content = "Invoice" };
+        AlderChoiceGroup.SetKey(radioButton2, "invoice");
+        radioGroup.Children.Add(radioButton2);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <StackPanel Spacing="4">
+            <alder:AlderLabel x:Name="ControlledPlansLabel" Target="{Binding #ControlledPlans}" Content="{DynamicResource GalleryText.SubscriptionPlan}" />
+            <alder:AlderRadioGroup x:Name="ControlledPlans" SelectedKeys="{Binding Plan, Mode=TwoWay}" Margin="0,12,0,0"
+                              AutomationProperties.LabeledBy="{Binding #ControlledPlansLabel}">
+              <alder:AlderRadioButton alder:AlderChoiceGroup.Key="starter" Content="{DynamicResource GalleryText.Starter}" Description="{DynamicResource GalleryText.RadioStarterHint}" />
+              <alder:AlderRadioButton alder:AlderChoiceGroup.Key="pro" Content="Pro" Description="{DynamicResource GalleryText.RadioProHint}" />
+              <alder:AlderRadioButton alder:AlderChoiceGroup.Key="teams" Content="{DynamicResource GalleryText.Teams}" Description="{DynamicResource GalleryText.RadioTeamsHint}" />
+            </alder:AlderRadioGroup>
+          </StackPanel>
+          <alder:AlderTextBlock Classes="radioHint" Text="{Binding PlanSummary}" AutomationProperties.LiveSetting="Polite" />
+          <WrapPanel ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding SelectPro}" />
+            <alder:AlderButton Size="Small" Variant="Ghost" Content="{DynamicResource GalleryText.ClearSelection}" Command="{Binding ClearPlan}" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var radioGroup = new AlderRadioGroup();
+        radioGroup.Bind(AlderRadioGroup.SelectedKeysProperty, CompiledBinding.Create((RadioGroupViewModel model) => model.Plan, mode: BindingMode.TwoWay));
+
+        var radioButton1 = new AlderRadioButton { Content = "Starter" };
+        AlderChoiceGroup.SetKey(radioButton1, "starter");
+        radioButton1.Description = "For side projects and small teams";
+        radioGroup.Children.Add(radioButton1);
+
+        var radioButton2 = new AlderRadioButton { Content = "Pro" };
+        AlderChoiceGroup.SetKey(radioButton2, "pro");
+        radioButton2.Description = "Advanced reporting and analytics";
+        radioGroup.Children.Add(radioButton2);
+
+        var radioButton3 = new AlderRadioButton { Content = "Teams" };
+        AlderChoiceGroup.SetKey(radioButton3, "teams");
+        radioButton3.Description = "Share access with up to 10 teammates";
+        radioGroup.Children.Add(radioButton3);
+
+        var model = (RadioGroupViewModel)DataContext!;
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary };
+        reset.Click += (_, _) => model.SelectPro();
+        var clear = new AlderButton { Content = "Clear selection", Size = AlderSize.Small, Variant = ButtonVariant.Ghost };
+        clear.Click += (_, _) => model.ClearPlan();
+        var actions = new WrapPanel { ItemSpacing = 8, LineSpacing = 8, Children = { reset, clear } };
+        var preview = new StackPanel { Spacing = 8, Children = { radioGroup, actions } };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleRadioUncontrolled" Title="{DynamicResource GalleryText.RadioUncontrolled}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <StackPanel Spacing="4">
+            <alder:AlderLabel x:Name="UncontrolledPlansLabel" Target="{Binding #UncontrolledPlans}" Content="{DynamicResource GalleryText.SubscriptionPlan}" />
+            <alder:AlderRadioGroup x:Name="UncontrolledPlans" SelectedKeys="pro" Margin="0,12,0,0"
+                              AutomationProperties.LabeledBy="{Binding #UncontrolledPlansLabel}">
+              <alder:AlderRadioButton alder:AlderChoiceGroup.Key="starter" Content="{DynamicResource GalleryText.Starter}" Description="{DynamicResource GalleryText.RadioStarterHint}" />
+              <alder:AlderRadioButton alder:AlderChoiceGroup.Key="pro" Content="Pro" Description="{DynamicResource GalleryText.RadioProHint}" />
+              <alder:AlderRadioButton alder:AlderChoiceGroup.Key="teams" Content="{DynamicResource GalleryText.Teams}" Description="{DynamicResource GalleryText.RadioTeamsHint}" />
+            </alder:AlderRadioGroup>
+          </StackPanel>
+          <alder:AlderTextBlock Classes="radioHint" Text="{Binding LastPlanSummary}" AutomationProperties.LiveSetting="Polite" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var radioGroup = new AlderRadioGroup { SelectedKeys = ["pro"] };
+
+        var radioButton1 = new AlderRadioButton { Content = "Starter" };
+        AlderChoiceGroup.SetKey(radioButton1, "starter");
+        radioButton1.Description = "For side projects and small teams";
+        radioGroup.Children.Add(radioButton1);
+
+        var radioButton2 = new AlderRadioButton { Content = "Pro" };
+        AlderChoiceGroup.SetKey(radioButton2, "pro");
+        radioButton2.Description = "Advanced reporting and analytics";
+        radioGroup.Children.Add(radioButton2);
+
+        var radioButton3 = new AlderRadioButton { Content = "Teams" };
+        AlderChoiceGroup.SetKey(radioButton3, "teams");
+        radioButton3.Description = "Share access with up to 10 teammates";
+        radioGroup.Children.Add(radioButton3);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleValidation" Title="{DynamicResource GalleryText.Validation}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8" HorizontalAlignment="Left">
+          <StackPanel Spacing="4">
+            <alder:AlderLabel x:Name="ValidationPlansLabel" Target="{Binding #ValidationPlans}" Content="{DynamicResource GalleryText.SubscriptionPlan}" IsRequired="True" />
+            <alder:AlderRadioGroup x:Name="ValidationPlans" SelectedKeys="{Binding ValidationPlan, Mode=TwoWay}" Margin="0,12,0,0"
+                              HasValidationError="{Binding ShowValidationError}" AutomationProperties.IsRequiredForForm="True"
+                              AutomationProperties.LabeledBy="{Binding #ValidationPlansLabel}" AutomationProperties.HelpText="{Binding ValidationMessage}">
+              <alder:AlderRadioButton alder:AlderChoiceGroup.Key="starter" Content="{DynamicResource GalleryText.Starter}" Description="{DynamicResource GalleryText.RadioStarterHint}" />
+              <alder:AlderRadioButton alder:AlderChoiceGroup.Key="pro" Content="Pro" Description="{DynamicResource GalleryText.RadioProHint}" />
+              <alder:AlderRadioButton alder:AlderChoiceGroup.Key="teams" Content="{DynamicResource GalleryText.Teams}" Description="{DynamicResource GalleryText.RadioTeamsHint}" />
+            </alder:AlderRadioGroup>
+          </StackPanel>
+          <alder:AlderTextBlock Classes="radioHint" Classes.error="{Binding ShowValidationError}" Text="{Binding ValidationMessage}"
+                     IsVisible="{Binding ValidationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" AutomationProperties.LiveSetting="Polite" />
+          <alder:AlderButton x:Name="SubmitPlan" Size="Small" HorizontalAlignment="Left" Content="{DynamicResource GalleryText.Submit}" Command="{Binding Submit}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var radioGroup = new AlderRadioGroup();
+        radioGroup.Bind(AlderRadioGroup.SelectedKeysProperty, CompiledBinding.Create((RadioGroupViewModel model) => model.ValidationPlan, mode: BindingMode.TwoWay));
+        radioGroup.Bind(AlderRadioGroup.HasValidationErrorProperty, CompiledBinding.Create((RadioGroupViewModel model) => model.ShowValidationError));
+
+        var radioButton1 = new AlderRadioButton { Content = "Starter" };
+        AlderChoiceGroup.SetKey(radioButton1, "starter");
+        radioButton1.Description = "For side projects and small teams";
+        radioGroup.Children.Add(radioButton1);
+
+        var radioButton2 = new AlderRadioButton { Content = "Pro" };
+        AlderChoiceGroup.SetKey(radioButton2, "pro");
+        radioButton2.Description = "Advanced reporting and analytics";
+        radioGroup.Children.Add(radioButton2);
+
+        var radioButton3 = new AlderRadioButton { Content = "Teams" };
+        AlderChoiceGroup.SetKey(radioButton3, "teams");
+        radioButton3.Description = "Share access with up to 10 teammates";
+        radioGroup.Children.Add(radioButton3);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleRadioDeliveryAndPayment" Title="{DynamicResource GalleryText.RadioDeliveryAndPayment}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderLabel x:Name="DeliveryLabel" Target="{Binding #DeliveryGroup}" Content="{DynamicResource GalleryText.RadioDeliveryMethod}" />
+          <alder:AlderRadioGroup x:Name="DeliveryGroup" Orientation="Horizontal" Variant="Secondary" SelectedKeys="express"
+                            AutomationProperties.LabeledBy="{Binding #DeliveryLabel}">
+            <alder:AlderRadioButton Classes="tile trailing" Width="160" alder:AlderChoiceGroup.Key="standard" Content="{DynamicResource GalleryText.Standard}"
+                         Description="{DynamicResource GalleryText.RadioDeliveryStandardTime}" Footer="{Binding StandardPrice}" />
+            <alder:AlderRadioButton Classes="tile trailing" Width="160" alder:AlderChoiceGroup.Key="express" Content="{DynamicResource GalleryText.Express}"
+                         Description="{DynamicResource GalleryText.RadioDeliveryExpressTime}" Footer="{Binding ExpressPrice}" />
+            <alder:AlderRadioButton Classes="tile trailing" Width="160" alder:AlderChoiceGroup.Key="fast" Content="{DynamicResource GalleryText.RadioDeliveryFast}"
+                         Description="{DynamicResource GalleryText.RadioDeliveryFastTime}" Footer="{Binding FastPrice}" />
+          </alder:AlderRadioGroup>
+          <alder:AlderLabel x:Name="PaymentLabel" Target="{Binding #PaymentGroup}" Content="{DynamicResource GalleryText.PaymentMethod}" Margin="0,8,0,0" />
+          <alder:AlderRadioGroup x:Name="PaymentGroup" Orientation="Horizontal" Variant="Secondary" SelectedKeys="visa" MaxWidth="512" HorizontalAlignment="Left"
+                            AutomationProperties.LabeledBy="{Binding #PaymentLabel}">
+            <alder:AlderRadioButton Classes="tile trailing" Width="248" alder:AlderChoiceGroup.Key="mastercard"
+                         AutomationProperties.Name="{Binding MastercardName}" AutomationProperties.HelpText="{Binding CardExpiration}">
+              <Grid ColumnDefinitions="24,*" ColumnSpacing="16">
+                <alder:AlderPathIcon Width="20" Height="20" VerticalAlignment="Top" FlowDirection="LeftToRight" Data="{StaticResource GalleryIconMastercard}" />
+                <StackPanel Grid.Column="1" Spacing="4">
+                  <alder:AlderTextBlock Text="**** 8304" LineHeight="20" FlowDirection="LeftToRight" HorizontalAlignment="Left" />
+                  <alder:AlderTextBlock Classes="radioHint" Text="{Binding CardExpiration}" />
+                </StackPanel>
+              </Grid>
+            </alder:AlderRadioButton>
+            <alder:AlderRadioButton Classes="tile trailing" Width="248" alder:AlderChoiceGroup.Key="visa"
+                         AutomationProperties.Name="{Binding VisaName}" AutomationProperties.HelpText="{Binding CardExpiration}">
+              <Grid ColumnDefinitions="24,*" ColumnSpacing="16">
+                <alder:AlderPathIcon Width="20" Height="20" VerticalAlignment="Top" FlowDirection="LeftToRight" Data="{StaticResource GalleryIconVisa}" />
+                <StackPanel Grid.Column="1" Spacing="4">
+                  <alder:AlderTextBlock Text="**** 0123" LineHeight="20" FlowDirection="LeftToRight" HorizontalAlignment="Left" />
+                  <alder:AlderTextBlock Classes="radioHint" Text="{Binding CardExpiration}" />
+                </StackPanel>
+              </Grid>
+            </alder:AlderRadioButton>
+            <alder:AlderRadioButton Classes="tile trailing" Width="248" alder:AlderChoiceGroup.Key="paypal"
+                         AutomationProperties.Name="PayPal" AutomationProperties.HelpText="{DynamicResource GalleryText.RadioPayPalHint}">
+              <Grid ColumnDefinitions="24,*" ColumnSpacing="16">
+                <alder:AlderPathIcon Width="20" Height="20" VerticalAlignment="Top" FlowDirection="LeftToRight" Data="{StaticResource GalleryIconPayPal}" />
+                <StackPanel Grid.Column="1" Spacing="4">
+                  <alder:AlderTextBlock Text="PayPal" LineHeight="20" FlowDirection="LeftToRight" HorizontalAlignment="Left" />
+                  <alder:AlderTextBlock Classes="radioHint" Text="{DynamicResource GalleryText.RadioPayPalHint}" />
+                </StackPanel>
+              </Grid>
+            </alder:AlderRadioButton>
+          </alder:AlderRadioGroup>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var radioGroup1 = new AlderRadioGroup
+        {
+            Orientation = Orientation.Horizontal,
+            Variant = ButtonVariant.Secondary,
+            SelectedKeys = ["express"],
+        };
+
+        var radioButton1 = new AlderRadioButton { Content = "Standard" };
+        radioButton1.Classes.Add("tile");
+        radioButton1.Classes.Add("trailing");
+        AlderChoiceGroup.SetKey(radioButton1, "standard");
+        radioButton1.Description = "4–10 business days";
+        radioGroup1.Children.Add(radioButton1);
+
+        var radioButton2 = new AlderRadioButton { Content = "Express" };
+        radioButton2.Classes.Add("tile");
+        radioButton2.Classes.Add("trailing");
+        AlderChoiceGroup.SetKey(radioButton2, "express");
+        radioButton2.Description = "2–5 business days";
+        radioGroup1.Children.Add(radioButton2);
+
+        var radioButton3 = new AlderRadioButton { Content = "Super fast" };
+        radioButton3.Classes.Add("tile");
+        radioButton3.Classes.Add("trailing");
+        AlderChoiceGroup.SetKey(radioButton3, "fast");
+        radioButton3.Description = "1 business day";
+        radioGroup1.Children.Add(radioButton3);
+
+        var radioGroup2 = new AlderRadioGroup
+        {
+            Orientation = Orientation.Horizontal,
+            Variant = ButtonVariant.Secondary,
+            SelectedKeys = ["visa"],
+        };
+
+        var radioButton4 = new AlderRadioButton();
+        radioButton4.Classes.Add("tile");
+        radioButton4.Classes.Add("trailing");
+        AlderChoiceGroup.SetKey(radioButton4, "mastercard");
+        radioGroup2.Children.Add(radioButton4);
+
+        var radioButton5 = new AlderRadioButton();
+        radioButton5.Classes.Add("tile");
+        radioButton5.Classes.Add("trailing");
+        AlderChoiceGroup.SetKey(radioButton5, "visa");
+        radioGroup2.Children.Add(radioButton5);
+
+        var radioButton6 = new AlderRadioButton();
+        radioButton6.Classes.Add("tile");
+        radioButton6.Classes.Add("trailing");
+        AlderChoiceGroup.SetKey(radioButton6, "paypal");
+        AutomationProperties.SetName(radioButton6, "PayPal");
+        radioGroup2.Children.Add(radioButton6);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustomIndicators" Title="{DynamicResource GalleryText.CustomIndicators}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="4">
+          <alder:AlderLabel x:Name="IndicatorPlansLabel" Target="{Binding #IndicatorPlans}" Content="{DynamicResource GalleryText.SubscriptionPlan}" />
+          <alder:AlderTextBlock Classes="radioHint" Text="{DynamicResource GalleryText.RadioPlanHint}" />
+          <alder:AlderRadioGroup x:Name="IndicatorPlans" SelectedKeys="pro" Margin="0,12,0,0"
+                            AutomationProperties.LabeledBy="{Binding #IndicatorPlansLabel}">
+            <alder:AlderRadioButton alder:AlderChoiceGroup.Key="starter" Content="{DynamicResource GalleryText.Starter}" Description="{DynamicResource GalleryText.RadioStarterHint}">
+              <alder:AlderRadioButton.Indicator>
+                <alder:AlderPathIcon Width="8" Height="8" FlowDirection="LeftToRight" Data="{StaticResource AlderIconCheck}" />
+              </alder:AlderRadioButton.Indicator>
+            </alder:AlderRadioButton>
+            <alder:AlderRadioButton alder:AlderChoiceGroup.Key="pro" Content="Pro" Description="{DynamicResource GalleryText.RadioProHint}">
+              <alder:AlderRadioButton.Indicator>
+                <alder:AlderPathIcon Width="8" Height="8" FlowDirection="LeftToRight" Data="{StaticResource AlderIconCheck}" />
+              </alder:AlderRadioButton.Indicator>
+            </alder:AlderRadioButton>
+            <alder:AlderRadioButton alder:AlderChoiceGroup.Key="teams" Content="{DynamicResource GalleryText.Teams}" Description="{DynamicResource GalleryText.RadioTeamsHint}">
+              <alder:AlderRadioButton.Indicator>
+                <alder:AlderPathIcon Width="8" Height="8" FlowDirection="LeftToRight" Data="{StaticResource AlderIconCheck}" />
+              </alder:AlderRadioButton.Indicator>
+            </alder:AlderRadioButton>
+          </alder:AlderRadioGroup>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var radioGroup = new AlderRadioGroup { SelectedKeys = ["pro"] };
+
+        var radioButton1 = new AlderRadioButton { Content = "Starter" };
+        AlderChoiceGroup.SetKey(radioButton1, "starter");
+        radioButton1.Description = "For side projects and small teams";
+        radioGroup.Children.Add(radioButton1);
+
+        var radioButton2 = new AlderRadioButton { Content = "Pro" };
+        AlderChoiceGroup.SetKey(radioButton2, "pro");
+        radioButton2.Description = "Advanced reporting and analytics";
+        radioGroup.Children.Add(radioButton2);
+
+        var radioButton3 = new AlderRadioButton { Content = "Teams" };
+        AlderChoiceGroup.SetKey(radioButton3, "teams");
+        radioButton3.Description = "Share access with up to 10 teammates";
+        radioGroup.Children.Add(radioButton3);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleRadioCustomStyle" Title="{DynamicResource GalleryText.RadioCustomStyle}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel>
+          <StackPanel.Styles>
+            <Style Selector=":is(RadioButton).billing"><Setter Property="Padding" Value="16,12" /></Style>
+          </StackPanel.Styles>
+          <StackPanel Spacing="8" MaxWidth="384" HorizontalAlignment="Left">
+            <alder:AlderLabel x:Name="BillingLabel" Target="{Binding #BillingGroup}" Content="{DynamicResource GalleryText.BillingInterval}" />
+            <alder:AlderTextBlock Classes="radioHint" Text="{DynamicResource GalleryText.RadioBillingHint}" />
+            <alder:AlderRadioGroup x:Name="BillingGroup" Variant="Secondary" SelectedKeys="yearly" Spacing="12"
+                              AutomationProperties.LabeledBy="{Binding #BillingLabel}">
+              <alder:AlderRadioButton Classes="tile billing" Theme="{StaticResource BillingRadioTheme}" alder:AlderChoiceGroup.Key="monthly"
+                           Content="{DynamicResource GalleryText.Monthly}" Description="{Binding MonthlyPrice}" />
+              <alder:AlderRadioButton Classes="tile billing" Theme="{StaticResource BillingRadioTheme}" alder:AlderChoiceGroup.Key="yearly"
+                           Content="{DynamicResource GalleryText.Yearly}" Description="{Binding YearlyPrice}" />
+            </alder:AlderRadioGroup>
+          </StackPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var radioGroup = new AlderRadioGroup
+        {
+            Variant = ButtonVariant.Secondary,
+            SelectedKeys = ["yearly"],
+            Spacing = 12,
+        };
+
+        var radioButton1 = new AlderRadioButton
+        {
+            Theme = (ControlTheme)this.FindResource("BillingRadioTheme")!,
+            Content = "Monthly",
+        };
+        radioButton1.Classes.Add("tile");
+        radioButton1.Classes.Add("billing");
+        AlderChoiceGroup.SetKey(radioButton1, "monthly");
+        radioGroup.Children.Add(radioButton1);
+
+        var radioButton2 = new AlderRadioButton
+        {
+            Theme = (ControlTheme)this.FindResource("BillingRadioTheme")!,
+            Content = "Yearly",
+        };
+        radioButton2.Classes.Add("tile");
+        radioButton2.Classes.Add("billing");
+        AlderChoiceGroup.SetKey(radioButton2, "yearly");
+        radioGroup.Children.Add(radioButton2);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

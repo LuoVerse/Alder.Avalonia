@@ -1,0 +1,117 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.ActionBarExample" x:DataType="vm:ActionBarViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="BulkActions" x:DataType="vm:ActionBarSelectionDemo">
+      <alder:AlderActionBar IsOpen="{Binding HasSelection, Mode=OneWay}" DismissCommand="{Binding Clear}"
+                           AutomationProperties.Name="{DynamicResource AlderText.ActionBarActions}">
+        <alder:AlderActionBar.Prefix>
+          <alder:AlderChip Size="Small" Variant="Soft" Color="Default" Content="{Binding Count}" />
+        </alder:AlderActionBar.Prefix>
+        <StackPanel Orientation="Horizontal" Spacing="3">
+          <alder:AlderButton Classes="action-bar-label" Size="Small" Variant="Ghost" Icon="{StaticResource AlderIconPencil}"
+                             Content="{DynamicResource GalleryText.ActionBarEdit}" Command="{Binding Edit}"
+                             AutomationProperties.Name="{DynamicResource GalleryText.ActionBarEdit}" alder:AlderToolTip.Tip="{DynamicResource GalleryText.ActionBarEdit}" />
+          <alder:AlderButton Classes="action-bar-label" Size="Small" Variant="Ghost" Icon="{StaticResource AlderIconDownload}"
+                             Content="{DynamicResource GalleryText.ActionBarExport}" Command="{Binding Export}"
+                             AutomationProperties.Name="{DynamicResource GalleryText.ActionBarExport}" alder:AlderToolTip.Tip="{DynamicResource GalleryText.ActionBarExport}" />
+          <alder:AlderButton Classes="action-bar-label" Size="Small" Variant="Ghost" Icon="{StaticResource AlderIconArchive}"
+                             Content="{DynamicResource GalleryText.ActionBarArchive}" Command="{Binding Archive}"
+                             AutomationProperties.Name="{DynamicResource GalleryText.ActionBarArchive}" alder:AlderToolTip.Tip="{DynamicResource GalleryText.ActionBarArchive}" />
+          <alder:AlderButton Classes="action-bar-label" Size="Small" Variant="DangerSoft" Icon="{StaticResource AlderIconTrash}"
+                             Content="{DynamicResource GalleryText.ActionBarDelete}" Command="{Binding Delete}"
+                             AutomationProperties.Name="{DynamicResource GalleryText.ActionBarDelete}" alder:AlderToolTip.Tip="{DynamicResource GalleryText.ActionBarDelete}" />
+        </StackPanel>
+        <alder:AlderActionBar.Suffix>
+          <alder:AlderButton Size="Small" Variant="Ghost" IsIconOnly="True" Icon="{StaticResource AlderIconXmark}"
+                             Command="{Binding Clear}" AutomationProperties.Name="{DynamicResource GalleryText.ActionBarClear}"
+                             alder:AlderToolTip.Tip="{DynamicResource GalleryText.ActionBarClear}" />
+        </alder:AlderActionBar.Suffix>
+      </alder:AlderActionBar>
+    </DataTemplate>
+
+    <DataTemplate x:Key="EmployeeName" x:DataType="vm:ActionBarRow">
+      <Grid ColumnDefinitions="28,*" ColumnSpacing="8" VerticalAlignment="Center">
+        <alder:AlderAvatar Width="28" Height="28" Fallback="{Binding Initials}" />
+        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+          <alder:AlderTextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" />
+          <alder:AlderTextBlock Text="{Binding Email}" FontSize="11" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource AlderMuted}" />
+        </StackPanel>
+      </Grid>
+    </DataTemplate>
+    <DataTemplate x:Key="EmployeeStatus" x:DataType="vm:ActionBarRow">
+      <alder:AlderChip Size="Small" Variant="Soft" Color="{Binding StatusColor}" Content="{Binding Status}" HorizontalAlignment="Left" />
+    </DataTemplate>
+  </UserControl.Resources>
+
+  <UserControl.Styles>
+    <Style Selector="Border.action-file">
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderSeparator}" />
+      <Setter Property="BorderThickness" Value="0,0,0,1" />
+    </Style>
+    <Style Selector="Border.action-file:pointerover"><Setter Property="Background" Value="{DynamicResource AlderTableRowHover}" /></Style>
+    <Style Selector="Border.action-file.selected"><Setter Property="Background" Value="{DynamicResource AlderTableRowSelected}" /></Style>
+    <Style Selector="alder|AlderCheckBox.action-file-toggle /template/ Border#Row">
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="MinHeight" Value="40" />
+    </Style>
+  </UserControl.Styles>
+
+  <StackPanel x:Name="Examples" Spacing="20">
+    <gallery:ExampleCard x:Name="FilesExample" Title="{DynamicResource GalleryText.ActionBarUsage}">
+      <gallery:ExampleCard.Preview>
+        <Grid MinHeight="386">
+          <StackPanel Margin="16,16,16,72" Spacing="8">
+            <alder:AlderButton Size="Small" Variant="Secondary" HorizontalAlignment="Right"
+                               Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding Files.Reset}" />
+            <Border Background="{DynamicResource AlderSurface}" BorderBrush="{DynamicResource AlderBorder}"
+                    BorderThickness="1" CornerRadius="13" ClipToBounds="True" MaxWidth="430">
+              <alder:AlderItemsControl ItemsSource="{Binding Files.Rows}" AutomationProperties.Name="{DynamicResource GalleryText.ActionBarUsage}">
+                <alder:AlderItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:ActionBarRow">
+                    <Border Classes="action-file" Classes.selected="{Binding IsSelected}">
+                      <alder:AlderCheckBox Classes="action-file-toggle" Variant="Secondary" Content="{Binding Name}"
+                                           IsChecked="{Binding IsSelected, Mode=TwoWay}" Padding="12,0" HorizontalAlignment="Stretch" />
+                    </Border>
+                  </DataTemplate>
+                </alder:AlderItemsControl.ItemTemplate>
+              </alder:AlderItemsControl>
+            </Border>
+            <alder:AlderTextBlock Text="{Binding Files.Feedback}" IsVisible="{Binding Files.HasFeedback}" TextWrapping="Wrap"
+                       Foreground="{DynamicResource AlderMuted}" AutomationProperties.LiveSetting="Polite" />
+          </StackPanel>
+          <alder:AlderContentControl Content="{Binding Files}" ContentTemplate="{StaticResource BulkActions}" ClipToBounds="False"
+                          HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="DataGridExample" Title="{DynamicResource GalleryText.ActionBarWithDataGrid}">
+      <gallery:ExampleCard.Preview>
+        <Grid MinHeight="498">
+          <StackPanel Margin="16,16,16,72" Spacing="8">
+            <alder:AlderButton Size="Small" Variant="Secondary" HorizontalAlignment="Right"
+                               Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding Employees.Reset}" />
+            <alder:AlderDataGrid ItemsSource="{Binding Employees.Rows}" SelectedKeys="{Binding Employees.SelectedKeys, Mode=TwoWay}"
+                                 SelectionMode="Multiple" ShowSelectionCheckboxes="True" Variant="Primary" Height="395" MinRowHeight="42"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.ActionBarEmployee}">
+              <alder:AlderTableColumn Key="employee" Width="2*" MinWidth="148" Header="{DynamicResource GalleryText.ActionBarEmployee}"
+                                      CellTemplate="{StaticResource EmployeeName}" />
+              <alder:AlderTableColumn Key="department" Width="1.15*" MinWidth="88" Header="{DynamicResource GalleryText.ActionBarDepartment}"
+                                      x:DataType="vm:ActionBarRow" Binding="{CompiledBinding Department}" />
+              <alder:AlderTableColumn Key="status" Width="*" MinWidth="78" Header="{DynamicResource GalleryText.ActionBarStatus}"
+                                      CellTemplate="{StaticResource EmployeeStatus}" />
+              <alder:AlderTableColumn Key="joined" Width="*" MinWidth="98" Header="{DynamicResource GalleryText.ActionBarJoined}"
+                                      x:DataType="vm:ActionBarRow" Binding="{CompiledBinding Joined}" />
+            </alder:AlderDataGrid>
+            <alder:AlderTextBlock Text="{Binding Employees.Feedback}" IsVisible="{Binding Employees.HasFeedback}" TextWrapping="Wrap"
+                       Foreground="{DynamicResource AlderMuted}" AutomationProperties.LiveSetting="Polite" />
+          </StackPanel>
+          <alder:AlderContentControl Content="{Binding Employees}" ContentTemplate="{StaticResource BulkActions}" ClipToBounds="False"
+                          HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

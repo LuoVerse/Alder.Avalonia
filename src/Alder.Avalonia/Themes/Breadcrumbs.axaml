@@ -1,0 +1,59 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:conv="using:Avalonia.Data.Converters">
+  <ControlTheme x:Key="{x:Type alder:AlderBreadcrumbs}" TargetType="alder:AlderBreadcrumbs">
+    <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.BreadcrumbNavigation}" />
+    <Setter Property="AutomationProperties.LandmarkType" Value="Navigation" />
+    <Setter Property="SeparatorIcon" Value="{StaticResource AlderIconChevronRight}" />
+    <Setter Property="ItemsPanel">
+      <ItemsPanelTemplate><WrapPanel ItemSpacing="6" LineSpacing="4" /></ItemsPanelTemplate>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" VerticalAlignment="Center" />
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderBreadcrumbItem}" TargetType="alder:AlderBreadcrumbItem">
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid ColumnDefinitions="*,Auto">
+          <Border Name="Link" Background="Transparent" CornerRadius="4" Padding="{TemplateBinding Padding}" MinHeight="20">
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                              VerticalContentAlignment="Center" TextBlock.LineHeight="20" TextBlock.TextWrapping="Wrap" RecognizesAccessKey="True" />
+          </Border>
+          <Grid Name="Separator" Grid.Column="1" Margin="4,0,0,0" IsVisible="False" IsHitTestVisible="False" VerticalAlignment="Center"
+                AutomationProperties.AccessibilityView="Raw">
+            <Panel Width="12" Height="12" IsVisible="{Binding Separator, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNull}}">
+              <alder:AlderPathIcon Data="{TemplateBinding SeparatorIcon}" Width="8" Height="8" Foreground="{DynamicResource AlderMuted}"
+                        HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Panel>
+            <alder:AlderTextBlock Text="{TemplateBinding Separator}" Foreground="{DynamicResource AlderMuted}" />
+          </Grid>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^.with-separator /template/ Grid#Separator"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:current">
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+      <Setter Property="Focusable" Value="False" />
+      <Setter Property="Cursor" Value="Arrow" />
+      <Setter Property="AutomationProperties.HelpText" Value="{DynamicResource AlderText.CurrentPage}" />
+    </Style>
+    <Style Selector="^:disabled:not(:current) /template/ Border#Link"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^:pointerover:not(:disabled) /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="TextBlock.TextDecorations" Value="Underline" />
+    </Style>
+    <Style Selector="^:pressed:not(:disabled) /template/ Border#Link"><Setter Property="Opacity" Value="0.75" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#Link"><Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" /></Style>
+  </ControlTheme>
+</ResourceDictionary>

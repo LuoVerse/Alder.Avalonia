@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             x:Class="Alder.Avalonia.Gallery.Views.TextShimmerExample">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleDefault" Title="{DynamicResource GalleryText.AiDefault}">
+      <g:ExampleCard.Preview>
+        <Border Padding="24" MinHeight="360">
+          <StackPanel Spacing="16" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <a:AlderTextShimmer Text="{DynamicResource GalleryText.AiThinkingDots}" Foreground="{DynamicResource AlderInk}"
+                                HorizontalAlignment="Left" FontSize="14" LineHeight="20" />
+            <a:AlderTextShimmer Text="{DynamicResource GalleryText.AiShimmerGenerating}" Foreground="{DynamicResource AlderInk}"
+                                HorizontalAlignment="Left" FontSize="14" LineHeight="20" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var labels = new StackPanel
+        {
+            Spacing = 16, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center
+        };
+        foreach (var key in new[] { "AiThinkingDots", "AiShimmerGenerating" })
+        {
+            var label = new AlderTextShimmer { HorizontalAlignment = HorizontalAlignment.Left, FontSize = 14, LineHeight = 20 };
+            label[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText." + key);
+            label[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderInk");
+            labels.Children.Add(label);
+        }
+        var preview = new Border { Child = labels, Padding = new Thickness(24), MinHeight = 360 };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

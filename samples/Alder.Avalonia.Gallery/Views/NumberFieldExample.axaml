@@ -1,0 +1,222 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.NumberFieldExample" x:DataType="vm:NumberFieldViewModel" FontFamily="fonts:Inter#Inter">
+  <UserControl.Styles>
+    <Style Selector=":is(Label)"><Setter Property="Theme" Value="{StaticResource AlderLabelTheme}" /></Style>
+    <Style Selector="WrapPanel"><Setter Property="ItemSpacing" Value="16" /><Setter Property="LineSpacing" Value="12" /></Style>
+    <Style Selector="TextBlock.detail"><Setter Property="Foreground" Value="{DynamicResource AlderMuted}" /></Style>
+    <Style Selector="TextBlock.error"><Setter Property="Foreground" Value="{DynamicResource AlderDangerInk}" /></Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Width="256" MaxWidth="256" HorizontalAlignment="Center" Spacing="4">
+          <alder:AlderLabel x:Name="UsageNumberLabel" Content="{DynamicResource GalleryText.Width}" Target="{CompiledBinding #UsageNumber}" />
+          <alder:AlderNumberField x:Name="UsageNumber" Value="1024" Minimum="0" FullWidth="True"
+                                 AutomationProperties.LabeledBy="{CompiledBinding #UsageNumberLabel}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var field = new AlderNumberField { Value = 1024, Minimum = 0, FullWidth = true };
+        var label = new AlderLabel { Content = "Width", Target = field };
+        AutomationProperties.SetLabeledBy(field, label);
+        var preview = new StackPanel
+        {
+            Width = 256, HorizontalAlignment = HorizontalAlignment.Center, Spacing = 4,
+            Children = { label, field }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVariantsAndLayout" Title="{DynamicResource GalleryText.VariantsAndLayout}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel>
+          <StackPanel Spacing="4">
+            <alder:AlderLabel x:Name="PrimaryLabel" Target="{Binding #PrimaryNumber}" Content="{DynamicResource GalleryText.Quantity}" />
+            <alder:AlderNumberField x:Name="PrimaryNumber" Value="3" Minimum="0" Maximum="10" ClipValueToMinMax="True"
+                               AutomationProperties.LabeledBy="{Binding #PrimaryLabel}" />
+          </StackPanel>
+          <Border Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="12" MaxWidth="280">
+            <StackPanel Spacing="4">
+              <alder:AlderLabel x:Name="SecondaryLabel" Target="{Binding #SecondaryNumber}" Content="{DynamicResource GalleryText.SecondaryInASurface}" />
+              <alder:AlderNumberField x:Name="SecondaryNumber" Variant="Secondary" FullWidth="True" Value="75" Minimum="0" Maximum="100"
+                                 AutomationProperties.LabeledBy="{Binding #SecondaryLabel}" />
+            </StackPanel>
+          </Border>
+          <StackPanel Spacing="4">
+            <alder:AlderLabel x:Name="VerticalLabel" Target="{Binding #VerticalNumber}" Content="{DynamicResource GalleryText.VerticalChevrons}" />
+            <alder:AlderNumberField x:Name="VerticalNumber" VerticalStepper="True" Value="99" Minimum="0" FormatString="C2"
+                               NumberFormat="{Binding EuroFormat}" AutomationProperties.LabeledBy="{Binding #VerticalLabel}" />
+          </StackPanel>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var numberField1 = new AlderNumberField
+        {
+            Value = 3m,
+            Minimum = 0m,
+            Maximum = 10m,
+            ClipValueToMinMax = true,
+        };
+
+        var numberField2 = new AlderNumberField
+        {
+            Variant = InputVariant.Secondary,
+            FullWidth = true,
+            Value = 75m,
+            Minimum = 0m,
+            Maximum = 100m,
+        };
+
+        var numberField3 = new AlderNumberField
+        {
+            VerticalStepper = true,
+            Value = 99m,
+            Minimum = 0m,
+            FormatString = "C2",
+        };
+        numberField3.Bind(AlderNumberField.NumberFormatProperty, CompiledBinding.Create((NumberFieldViewModel model) => model.EuroFormat));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleFormatsAndStepValues" Title="{DynamicResource GalleryText.FormatsAndStepValues}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel>
+          <StackPanel Spacing="4">
+            <alder:AlderLabel x:Name="CurrencyLabel" Target="{Binding #CurrencyNumber}" Content="{DynamicResource GalleryText.Currency}" />
+            <alder:AlderNumberField x:Name="CurrencyNumber" Value="19.99" Increment="0.01" FormatString="C2" NumberFormat="{Binding UsFormat}"
+                               Minimum="0" AutomationProperties.LabeledBy="{Binding #CurrencyLabel}" />
+          </StackPanel>
+          <StackPanel Spacing="4">
+            <alder:AlderLabel x:Name="PercentLabel" Target="{Binding #PercentNumber}" Content="{DynamicResource GalleryText.Percentage}" />
+            <alder:AlderNumberField x:Name="PercentNumber" Value="0.5" Minimum="0" Maximum="1" Increment="0.01"
+                               FormatString="P0" NumberFormat="{DynamicResource GalleryNumberFormat}" ClipValueToMinMax="True"
+                               AutomationProperties.LabeledBy="{Binding #PercentLabel}" />
+            <alder:AlderTextBlock Classes="detail" Text="{DynamicResource GalleryText.StepsOf1}" />
+          </StackPanel>
+          <StackPanel Spacing="4">
+            <alder:AlderLabel x:Name="UnitLabel" Target="{Binding #UnitNumber}" Content="{DynamicResource GalleryText.WeightInKilograms}" />
+            <alder:AlderNumberField x:Name="UnitNumber" Value="12.5" Increment="0.25" FormatString="C2" Minimum="0"
+                               NumberFormat="{Binding KilogramFormat}" AutomationProperties.LabeledBy="{Binding #UnitLabel}" />
+          </StackPanel>
+          <StackPanel Spacing="4">
+            <alder:AlderLabel x:Name="IconsLabel" Target="{Binding #IconNumber}" Content="{DynamicResource GalleryText.CustomStepIcons}" />
+            <alder:AlderNumberField x:Name="IconNumber" Value="10" Minimum="0" Increment="5"
+                               DecreaseIcon="{StaticResource AlderIconChevronLeft}" IncreaseIcon="{StaticResource AlderIconChevronRight}"
+                               AutomationProperties.LabeledBy="{Binding #IconsLabel}" />
+          </StackPanel>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var numberField1 = new AlderNumberField
+        {
+            Value = 19.99m,
+            Increment = 0.01m,
+            FormatString = "C2",
+            Minimum = 0m,
+        };
+        numberField1.Bind(AlderNumberField.NumberFormatProperty, CompiledBinding.Create((NumberFieldViewModel model) => model.UsFormat));
+
+        var numberField2 = new AlderNumberField
+        {
+            Value = 0.5m,
+            Minimum = 0m,
+            Maximum = 1m,
+            Increment = 0.01m,
+            FormatString = "P0",
+            ClipValueToMinMax = true,
+        };
+
+        var numberField3 = new AlderNumberField
+        {
+            Value = 12.5m,
+            Increment = 0.25m,
+            FormatString = "C2",
+            Minimum = 0m,
+        };
+        numberField3.Bind(AlderNumberField.NumberFormatProperty, CompiledBinding.Create((NumberFieldViewModel model) => model.KilogramFormat));
+
+        var numberField4 = new AlderNumberField
+        {
+            Value = 10m,
+            Minimum = 0m,
+            Increment = 5m,
+            DecreaseIcon = (Geometry)this.FindResource("AlderIconChevronLeft")!,
+            IncreaseIcon = (Geometry)this.FindResource("AlderIconChevronRight")!,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlledValue" Title="{DynamicResource GalleryText.ControlledValue}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="400" HorizontalAlignment="Left">
+          <alder:AlderLabel x:Name="WidthLabel" Target="{Binding #WidthNumber}" Content="{DynamicResource GalleryText.Width}" />
+          <alder:AlderNumberField x:Name="WidthNumber" FullWidth="True" Value="{Binding Width, Mode=TwoWay}" Minimum="0"
+                             Maximum="4096" Increment="16" ClipValueToMinMax="True" FormatString="N0" InnerRightContent="px"
+                             AutomationProperties.LabeledBy="{Binding #WidthLabel}" />
+          <alder:AlderTextBlock Classes="detail" Text="{Binding WidthSummary}" />
+          <WrapPanel ItemSpacing="8">
+            <alder:AlderButton Variant="Ghost" Size="Small" Content="{DynamicResource GalleryText.ResetTo0}" Command="{Binding ResetWidth}" />
+            <alder:AlderButton Variant="Ghost" Size="Small" Content="{DynamicResource GalleryText.SetTo2048}" Command="{Binding SetWideWidth}" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var numberField = new AlderNumberField
+        {
+            FullWidth = true,
+            Minimum = 0m,
+            Maximum = 4096m,
+            Increment = 16m,
+            ClipValueToMinMax = true,
+            FormatString = "N0",
+            InnerRightContent = "px",
+        };
+        numberField.Bind(AlderNumberField.ValueProperty, CompiledBinding.Create((NumberFieldViewModel model) => model.Width, mode: BindingMode.TwoWay));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleValidation" Title="{DynamicResource GalleryText.Validation}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="4" MaxWidth="200">
+          <alder:AlderLabel x:Name="RequiredLabel" Target="{Binding #RequiredNumber}" Content="{DynamicResource GalleryText.OrderQuantity}" />
+          <alder:AlderNumberField x:Name="RequiredNumber" Value="{Binding Quantity, Mode=TwoWay}" IsRequired="True"
+                             IsInvalid="{Binding IsQuantityInvalid}" Minimum="0" Maximum="99"
+                             AutomationProperties.LabeledBy="{Binding #RequiredLabel}"
+                             AutomationProperties.HelpText="{DynamicResource GalleryText.QuantityMustBeGreaterThanZero}" />
+          <alder:AlderTextBlock Classes="detail error" Text="{DynamicResource GalleryText.QuantityMustBeGreaterThanZero}" IsVisible="{Binding IsQuantityInvalid}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var numberField = new AlderNumberField { IsRequired = true, Minimum = 0m, Maximum = 99m };
+        numberField.Bind(AlderNumberField.ValueProperty, CompiledBinding.Create((NumberFieldViewModel model) => model.Quantity, mode: BindingMode.TwoWay));
+        numberField.Bind(AlderNumberField.IsInvalidProperty, CompiledBinding.Create((NumberFieldViewModel model) => model.IsQuantityInvalid));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="4">
+          <alder:AlderLabel x:Name="DisabledLabel" Target="{Binding #DisabledNumber}" Content="{DynamicResource GalleryText.Disabled}" />
+          <alder:AlderNumberField x:Name="DisabledNumber" Value="24" IsEnabled="False" AutomationProperties.LabeledBy="{Binding #DisabledLabel}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var numberField = new AlderNumberField { Value = 24m, IsEnabled = false };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleReadOnly" Title="{DynamicResource GalleryText.ReadOnly}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="4">
+          <alder:AlderLabel x:Name="ReadOnlyLabel" Target="{Binding #ReadOnlyNumber}" Content="{DynamicResource GalleryText.ReadOnly}" />
+          <alder:AlderNumberField x:Name="ReadOnlyNumber" Value="60" IsReadOnly="True" ShowButtonSpinner="False"
+                             AutomationProperties.LabeledBy="{Binding #ReadOnlyLabel}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var numberField = new AlderNumberField
+        {
+            Value = 60m,
+            IsReadOnly = true,
+            ShowButtonSpinner = false,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

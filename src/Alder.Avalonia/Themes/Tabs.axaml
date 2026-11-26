@@ -1,0 +1,241 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:conv="using:Avalonia.Data.Converters">
+  <ControlTheme x:Key="AlderMorphingTabCloseTheme" TargetType="Button">
+    <Setter Property="Width" Value="24" />
+    <Setter Property="Height" Value="24" />
+    <Setter Property="MinWidth" Value="0" />
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="TabCloseFace" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
+                Padding="{TemplateBinding Padding}">
+          <Grid>
+            <Grid Name="TabCloseIcon" Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center"
+                  IsHitTestVisible="False">
+              <alder:AlderPathIcon Data="{StaticResource AlderIconXmark}" Width="8" Height="8"
+                        HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}" />
+            </Grid>
+            <Border Name="TabCloseFocus" BorderBrush="{DynamicResource AlderAccent}" CornerRadius="{TemplateBinding CornerRadius}"
+                    BorderThickness="2" IsVisible="False" IsHitTestVisible="False" />
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover:not(:disabled), ^:pressed:not(:disabled)">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ Border#TabCloseFocus"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=False] /template/ Border#TabCloseFace">
+      <Setter Property="Transitions"><Transitions><BrushTransition Property="Background" Duration="0:0:0.15" /></Transitions></Setter>
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderTabItemTheme" TargetType="TabItem">
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="CornerRadius" Value="24" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="MinHeight" Value="32" />
+    <Setter Property="Padding" Value="16,0" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+          <Grid>
+            <Border Name="MorphingHeaderFace" Margin="0,0,0,8" CornerRadius="20"
+                    Background="{DynamicResource AlderNeutralHover}" Opacity="0"
+                    IsHitTestVisible="False" IsVisible="False" />
+            <Border Name="MorphingDragFace" CornerRadius="24,24,0,0" IsHitTestVisible="False" IsVisible="False" />
+            <Border Name="Separator" Width="1" Height="16" HorizontalAlignment="Left" VerticalAlignment="Center"
+                    Background="{DynamicResource AlderMuted}" Opacity="0" IsHitTestVisible="False" />
+            <DockPanel LastChildFill="True">
+              <alder:AlderButton Name="PART_TabClose" DockPanel.Dock="Right" Theme="{StaticResource AlderMorphingTabCloseTheme}"
+                      Margin="0,0,8,0" VerticalAlignment="Center" IsVisible="False"
+                      AutomationProperties.Name="{DynamicResource AlderText.CloseTab}"
+                      alder:AlderToolTip.Tip="{DynamicResource AlderText.CloseTab}" />
+              <DockPanel LastChildFill="True" Margin="{TemplateBinding Padding}"
+                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                         VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                <ContentPresenter Content="{TemplateBinding Icon}" DockPanel.Dock="Left" Margin="0,0,6,0" VerticalAlignment="Center"
+                                  IsVisible="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+                <ContentPresenter Name="PART_HeaderPresenter" Content="{TemplateBinding Header}"
+                                  ContentTemplate="{TemplateBinding HeaderTemplate}" RecognizesAccessKey="True" />
+              </DockPanel>
+            </DockPanel>
+            <Border Name="FocusRing" Margin="1" CornerRadius="{TemplateBinding CornerRadius}" BorderBrush="{DynamicResource AlderAccent}"
+                    BorderThickness="2" IsHitTestVisible="False" IsVisible="False" />
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:selected"><Setter Property="Foreground" Value="{DynamicResource AlderInk}" /></Style>
+    <Style Selector="^:not(:selected):not(:disabled):pointerover"><Setter Property="Opacity" Value="0.7" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=False]">
+      <Setter Property="Transitions"><Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="CubicEaseOut" /></Transitions></Setter>
+      <Style Selector="^ /template/ Border#Separator">
+        <Setter Property="Transitions"><Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="CubicEaseOut" /></Transitions></Setter>
+      </Style>
+    </Style>
+    <Style Selector="^.alder-tab-separator /template/ Border#Separator"><Setter Property="Opacity" Value="0.25" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#FocusRing"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /><Setter Property="Cursor" Value="Arrow" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderTabs}" TargetType="alder:AlderTabs">
+    <Setter Property="Padding" Value="8,24,8,8" />
+    <Setter Property="CornerRadius" Value="20" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="IndicatorBrush" Value="{DynamicResource AlderTabIndicator}" />
+    <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+    <Setter Property="ItemContainerTheme" Value="{StaticResource AlderTabItemTheme}" />
+    <Setter Property="ItemsPanel"><ItemsPanelTemplate><alder:AlderTabHeadersPanel Orientation="Horizontal" /></ItemsPanelTemplate></Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid>
+          <alder:AlderMorphingTabSurface Name="PART_MorphingSurface" IsVisible="False" IsHitTestVisible="False"
+                                   RailBrush="{TemplateBinding Background}" PanelBrush="{TemplateBinding IndicatorBrush}" />
+          <DockPanel>
+            <Border Name="StripFrame" DockPanel.Dock="{TemplateBinding TabStripPlacement}" Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}" ClipToBounds="True">
+              <Grid>
+                <alder:AlderScrollViewer Name="PART_TabScroller" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled"
+                              HorizontalContentAlignment="Stretch">
+                  <alder:AlderTabStrip Name="PART_TabStrip" Margin="4">
+                    <Border Name="Indicator" Background="{TemplateBinding IndicatorBrush}" CornerRadius="24"
+                            BoxShadow="0 1 4 0 #16000000" IsHitTestVisible="False" />
+                    <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+                  </alder:AlderTabStrip>
+                </alder:AlderScrollViewer>
+                <alder:AlderButton Name="PART_ScrollPrevious" Variant="Ghost" IsIconOnly="True" Width="16" Height="16" MinHeight="0"
+                              Padding="0" Margin="4,0,0,0" IsVisible="False" HorizontalAlignment="Left" VerticalAlignment="Center"
+                              Icon="{StaticResource AlderIconChevronLeft}" AutomationProperties.Name="{DynamicResource AlderText.PreviousTabs}" />
+                <alder:AlderButton Name="PART_ScrollNext" Variant="Ghost" IsIconOnly="True" Width="16" Height="16" MinHeight="0"
+                              Padding="0" Margin="0,0,4,0" IsVisible="False" HorizontalAlignment="Right" VerticalAlignment="Center"
+                              Icon="{StaticResource AlderIconChevronRight}" AutomationProperties.Name="{DynamicResource AlderText.NextTabs}" />
+              </Grid>
+            </Border>
+            <Border Name="TabContentViewport">
+              <Grid Name="TabContentLayers">
+                <ContentPresenter Name="PART_SelectedContentHost" Margin="{TemplateBinding Padding}"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                <ContentPresenter Name="PART_SelectedContentHost2" Margin="{TemplateBinding Padding}"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+              </Grid>
+            </Border>
+          </DockPanel>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+
+    <Style Selector="^:can-scroll-previous /template/ alder|AlderButton#PART_ScrollPrevious,
+                     ^:can-scroll-next /template/ alder|AlderButton#PART_ScrollNext">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^[FillTabStrip=False]:not(:vertical) /template/ Border#StripFrame">
+      <Setter Property="HorizontalAlignment" Value="Left" />
+    </Style>
+    <Style Selector="^:vertical">
+      <Setter Property="Padding" Value="16,8,8,8" />
+      <Setter Property="ItemsPanel"><ItemsPanelTemplate><StackPanel Spacing="4" /></ItemsPanelTemplate></Setter>
+      <Style Selector="^ /template/ Border#StripFrame">
+        <Setter Property="VerticalAlignment" Value="Top" /><Setter Property="HorizontalAlignment" Value="Stretch" />
+      </Style>
+      <Style Selector="^ /template/ :is(ScrollViewer)#PART_TabScroller">
+        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="VerticalScrollBarVisibility" Value="Hidden" />
+      </Style>
+      <Style Selector="^ /template/ alder|AlderButton#PART_ScrollPrevious, ^ /template/ alder|AlderButton#PART_ScrollNext">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+      </Style>
+      <Style Selector="^ /template/ alder|AlderButton#PART_ScrollPrevious">
+        <Setter Property="VerticalAlignment" Value="Top" /><Setter Property="Margin" Value="0,4,0,0" />
+        <Setter Property="Icon" Value="{StaticResource AlderIconChevronUp}" />
+      </Style>
+      <Style Selector="^ /template/ alder|AlderButton#PART_ScrollNext">
+        <Setter Property="VerticalAlignment" Value="Bottom" /><Setter Property="Margin" Value="0,0,0,4" />
+        <Setter Property="Icon" Value="{StaticResource AlderIconChevronDown}" />
+      </Style>
+    </Style>
+
+    <Style Selector="^:morphing">
+      <Setter Property="MinHeight" Value="336" />
+      <Setter Property="Padding" Value="20,16,20,20" />
+      <Setter Property="HeaderAlignment" Value="Start" />
+      <Setter Property="IndicatorBrush" Value="{DynamicResource AlderSurface}" />
+      <Setter Property="PageTransition"><alder:AlderMorphingTabContentTransition /></Setter>
+      <Setter Property="ItemsPanel"><ItemsPanelTemplate><alder:AlderMorphingTabHeadersPanel /></ItemsPanelTemplate></Setter>
+      <Style Selector="^ /template/ alder|AlderMorphingTabSurface#PART_MorphingSurface">
+        <Setter Property="IsVisible" Value="True" />
+      </Style>
+      <Style Selector="^ /template/ Border#StripFrame">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Height" Value="80" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+      </Style>
+      <Style Selector="^ /template/ alder|AlderTabStrip#PART_TabStrip">
+        <Setter Property="Margin" Value="0,24,0,0" />
+      </Style>
+      <Style Selector="^ /template/ :is(ScrollViewer)#PART_TabScroller">
+        <Setter Property="Margin" Value="16,0" />
+      </Style>
+      <Style Selector="^ /template/ alder|AlderButton#PART_ScrollPrevious, ^ /template/ alder|AlderButton#PART_ScrollNext">
+        <Setter Property="Margin" Value="0,16,0,0" />
+      </Style>
+      <Style Selector="^ /template/ Border#Indicator">
+        <Setter Property="IsVisible" Value="False" />
+      </Style>
+      <Style Selector="^ /template/ Border#TabContentViewport">
+        <Setter Property="Margin" Value="16,0" />
+        <Setter Property="CornerRadius" Value="28" />
+        <Setter Property="ClipToBounds" Value="True" />
+      </Style>
+      <Style Selector="^[(alder|AlderMotion.Reduced)=False] /template/ Grid#TabContentLayers">
+        <Setter Property="RenderTransform" Value="none" />
+        <Setter Property="Transitions">
+          <Transitions>
+            <DoubleTransition Property="Opacity" Duration="0:0:0.12" Easing="CubicEaseOut" />
+            <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.12" Easing="CubicEaseOut" />
+          </Transitions>
+        </Setter>
+      </Style>
+      <Style Selector="^:closing-active-tab /template/ Grid#TabContentLayers">
+        <Setter Property="Opacity" Value="0" />
+        <Setter Property="RenderTransform" Value="translateY(-5px)" />
+        <Setter Property="IsHitTestVisible" Value="False" />
+      </Style>
+    </Style>
+
+    <Style Selector="^[Variant=Secondary]">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="CornerRadius" Value="0" />
+      <Setter Property="IndicatorBrush" Value="{DynamicResource AlderAccent}" />
+      <Setter Property="BorderThickness" Value="0,0,0,1" />
+      <Style Selector="^[TabStripPlacement=Left]"><Setter Property="BorderThickness" Value="1,0,0,0" /></Style>
+      <Style Selector="^[TabStripPlacement=Right]"><Setter Property="BorderThickness" Value="0,0,1,0" /></Style>
+      <Style Selector="^[TabStripPlacement=Bottom]"><Setter Property="BorderThickness" Value="0,1,0,0" /></Style>
+      <Style Selector="^ /template/ alder|AlderTabStrip#PART_TabStrip"><Setter Property="Margin" Value="0" /></Style>
+      <Style Selector="^ /template/ Border#Indicator">
+        <Setter Property="CornerRadius" Value="0" /><Setter Property="BoxShadow" Value="none" />
+      </Style>
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

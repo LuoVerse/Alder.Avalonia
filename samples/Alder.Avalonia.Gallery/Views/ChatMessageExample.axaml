@@ -1,0 +1,164 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" x:Class="Alder.Avalonia.Gallery.Views.ChatMessageExample"
+             x:DataType="vm:AiExampleViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard Classes="chat-message-preview" x:Name="SampleDefault" Title="{DynamicResource GalleryText.AiDefault}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,24" ClipToBounds="False" Container.Name="ChatConversationViewport" Container.Sizing="Width">
+          <StackPanel MaxWidth="700" Spacing="32">
+            <a:AlderChatMessage IsUser="True" Content="{DynamicResource GalleryText.AiCompound}" />
+            <a:AlderChatMessage Avatar="AI" Content="{DynamicResource GalleryText.AiAssistantReply}">
+              <a:AlderChatMessage.Actions>
+                <a:AlderChatMessageActions CopyCommand="{CompiledBinding Copy}" CommandParameter="{DynamicResource GalleryText.AiAssistantReply}"
+                                           LikeCommand="{CompiledBinding Like}" DislikeCommand="{CompiledBinding Dislike}" RetryCommand="{CompiledBinding Retry}" />
+              </a:AlderChatMessage.Actions>
+            </a:AlderChatMessage>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var user = new AlderChatMessage { IsUser = true };
+        user[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.AiCompound");
+        var actions = new AlderChatMessageActions
+        {
+            CopyCommand = model.Copy,
+            LikeCommand = model.Like,
+            DislikeCommand = model.Dislike,
+            RetryCommand = model.Retry
+        };
+        actions[!AlderChatMessageActions.CommandParameterProperty] = new DynamicResourceExtension("GalleryText.AiAssistantReply");
+        var assistant = new AlderChatMessage { Avatar = "AI", Actions = actions };
+        assistant[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.AiAssistantReply");
+        var messages = new StackPanel { MaxWidth = 700, Spacing = 32, Children = { user, assistant } };
+        var conversation = new Border { Padding = new Thickness(8, 24), Child = messages };
+        Container.SetName(conversation, "ChatConversationViewport");
+        Container.SetSizing(conversation, ContainerSizing.Width);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard Classes="chat-message-preview" x:Name="SampleWithMarkdown" Title="{DynamicResource GalleryText.AiVariantWithMarkdown}">
+      <g:ExampleCard.Preview>
+        <StackPanel Margin="8,24" Spacing="32" MaxWidth="700">
+          <a:AlderChatMessage IsUser="True" Content="{DynamicResource GalleryText.AiMarkdownQuestion}" />
+          <a:AlderChatMessage Avatar="AI">
+            <a:AlderMarkdown Markdown="{CompiledBinding MessageMarkdown}">
+              <a:AlderMarkdown.Resources>
+                <x:Double x:Key="Md.BlockSpacing">8</x:Double>
+                <x:Double x:Key="Md.LineHeight">22.75</x:Double>
+              </a:AlderMarkdown.Resources>
+            </a:AlderMarkdown>
+          </a:AlderChatMessage>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var user = new AlderChatMessage { IsUser = true };
+        user[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.AiMarkdownQuestion");
+        var markdown = new AlderMarkdown { DataContext = model };
+        markdown.Bind(AlderMarkdown.MarkdownProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.MessageMarkdown));
+        markdown.Resources["Md.BlockSpacing"] = 8d;
+        markdown.Resources["Md.LineHeight"] = 22.75d;
+        var assistant = new AlderChatMessage { Avatar = "AI", Content = markdown };
+        var conversation = new StackPanel { MaxWidth = 700, Spacing = 32, Margin = new Thickness(8, 24), Children = { user, assistant } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard Classes="chat-message-preview" x:Name="SampleCard" Title="{DynamicResource GalleryText.AiVariantCard}">
+      <g:ExampleCard.Preview>
+        <StackPanel Margin="8,24" Spacing="32" MaxWidth="700" ClipToBounds="False">
+          <a:AlderChatMessage IsUser="True" Content="{DynamicResource GalleryText.AiAvalonia12Question}" />
+          <a:AlderChatMessage IsCard="True">
+            <StackPanel Spacing="12">
+              <a:AlderReasoning Theme="{StaticResource AlderMessageReasoningTheme}" Header="{DynamicResource GalleryText.AiThoughtSix}" Status="Completed">
+                <a:AlderChainOfThoughtSteps>
+                  <a:AlderChainOfThoughtStep Header="{DynamicResource GalleryText.AiAvaloniaReadRelease}" Status="Completed" />
+                  <a:AlderChainOfThoughtStep Header="{DynamicResource GalleryText.AiAvaloniaCheckUpgrade}" Status="Completed" />
+                </a:AlderChainOfThoughtSteps>
+              </a:AlderReasoning>
+              <a:AlderTextBlock Text="{DynamicResource GalleryText.AiAvalonia12Answer}" LineHeight="22" TextWrapping="Wrap" />
+              <a:AlderSeparator Margin="0,4,0,0" IsDecorative="True" />
+              <WrapPanel ItemSpacing="8" LineSpacing="8">
+                <a:AlderChatSource Theme="{StaticResource AlderMessageSourceTheme}"
+                                   Command="{CompiledBinding AvaloniaReleaseCitation.Open}" CommandParameter="{CompiledBinding AvaloniaReleaseCitation.Target}"
+                                   Logo="{CompiledBinding AvaloniaReleaseCitation.Logo}" Content="{DynamicResource GalleryText.AiAvalonia12ReleaseNotes}" />
+                <a:AlderChatSource Theme="{StaticResource AlderMessageSourceTheme}"
+                                   Command="{CompiledBinding AvaloniaUpgradeCitation.Open}" CommandParameter="{CompiledBinding AvaloniaUpgradeCitation.Target}"
+                                   Logo="{CompiledBinding AvaloniaUpgradeCitation.Logo}" Content="{DynamicResource GalleryText.AiAvalonia12UpgradeGuide}" />
+              </WrapPanel>
+            </StackPanel>
+          </a:AlderChatMessage>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var user = new AlderChatMessage { IsUser = true };
+        user[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.AiAvalonia12Question");
+        var steps = new AlderChainOfThoughtSteps();
+        foreach (string key in new[] { "AiAvaloniaReadRelease", "AiAvaloniaCheckUpgrade" })
+        {
+            var step = new AlderChainOfThoughtStep { Status = AiRunStatus.Completed };
+            step[!AlderChainOfThoughtStep.HeaderProperty] = new DynamicResourceExtension("GalleryText." + key);
+            steps.Children.Add(step);
+        }
+        var reasoning = new AlderReasoning
+        {
+            Theme = (ControlTheme)Application.Current!.FindResource("AlderMessageReasoningTheme")!,
+            Status = AiRunStatus.Completed, Content = steps
+        };
+        reasoning[!HeaderedContentControl.HeaderProperty] = new DynamicResourceExtension("GalleryText.AiThoughtSix");
+        var answer = new AlderTextBlock { LineHeight = 22, TextWrapping = TextWrapping.Wrap };
+        answer[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.AiAvalonia12Answer");
+        var sources = new WrapPanel { ItemSpacing = 8, LineSpacing = 8 };
+        var model = new AiExampleViewModel();
+        foreach (var (key, citation) in new[]
+        {
+            ("AiAvalonia12ReleaseNotes", model.AvaloniaReleaseCitation),
+            ("AiAvalonia12UpgradeGuide", model.AvaloniaUpgradeCitation)
+        })
+        {
+            var source = new AlderChatSource
+            {
+                Theme = (ControlTheme)Application.Current!.FindResource("AlderMessageSourceTheme")!,
+                Logo = citation.Logo, Command = citation.Open, CommandParameter = citation.Target
+            };
+            source[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText." + key);
+            sources.Children.Add(source);
+        }
+        var card = new AlderChatMessage
+        {
+            IsCard = true,
+            Content = new StackPanel
+            {
+                Spacing = 12,
+                Children = { reasoning, answer, new AlderSeparator { IsDecorative = true, Margin = new Thickness(0, 4, 0, 0) }, sources }
+            }
+        };
+        var conversation = new StackPanel { MaxWidth = 700, Spacing = 32, Margin = new Thickness(8, 24), ClipToBounds = false, Children = { user, card } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard Classes="chat-message-preview" x:Name="SampleLoading" Title="{DynamicResource GalleryText.AiVariantLoading}">
+      <g:ExampleCard.Preview>
+        <StackPanel Margin="8,24" Spacing="32" MaxWidth="700">
+          <a:AlderChatMessage IsUser="True" Content="{DynamicResource GalleryText.AiSfWeather}" />
+          <a:AlderChatMessage Avatar="AI">
+            <StackPanel Spacing="8">
+              <a:AlderTextShimmer Text="{DynamicResource GalleryText.AiWeather}" FontSize="16" LineHeight="24" HorizontalAlignment="Left" />
+              <a:AlderChatLoader Width="20" Height="20" HorizontalAlignment="Left" />
+            </StackPanel>
+          </a:AlderChatMessage>
+          <a:AlderChatSkeleton />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var user = new AlderChatMessage { IsUser = true };
+        user[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.AiSfWeather");
+        var shimmer = new AlderTextShimmer { FontSize = 16, LineHeight = 24, HorizontalAlignment = HorizontalAlignment.Left };
+        shimmer[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.AiWeather");
+        var dots = new AlderChatLoader { Width = 20, Height = 20, HorizontalAlignment = HorizontalAlignment.Left };
+        var assistant = new AlderChatMessage
+        {
+            Avatar = "AI",
+            Content = new StackPanel { Spacing = 8, Children = { shimmer, dots } }
+        };
+        var conversation = new StackPanel { MaxWidth = 700, Spacing = 32, Margin = new Thickness(8, 24), Children = { user, assistant, new AlderChatSkeleton() } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

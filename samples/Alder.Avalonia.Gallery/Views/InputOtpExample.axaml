@@ -1,0 +1,176 @@
+<UserControl xmlns:conv="using:Avalonia.Data.Converters" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:ti="using:Avalonia.Input.TextInput"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.InputOtpExample" x:DataType="vm:InputOtpViewModel"
+             FontFamily="fonts:Inter#Inter">
+  <UserControl.Styles>
+    <Style Selector="alder|AlderInputOtp"><Setter Property="MaxWidth" Value="280" /></Style>
+    <Style Selector="TextBlock.hint">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style Selector="TextBlock.hint.error"><Setter Property="Foreground" Value="{DynamicResource AlderDangerInk}" /></Style>
+    <Style Selector="WrapPanel"><Setter Property="ItemSpacing" Value="24" /><Setter Property="LineSpacing" Value="12" /></Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.Variants}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel>
+          <StackPanel Spacing="6">
+            <alder:AlderLabel Theme="{StaticResource AlderLabelTheme}" x:Name="PrimaryLabel" Target="{Binding #PrimaryOtp}" Content="{DynamicResource GalleryText.PrimaryVariant}" />
+            <alder:AlderInputOtp x:Name="PrimaryOtp" AutomationProperties.LabeledBy="{Binding #PrimaryLabel}"
+                            Pattern="{x:Static alder:AlderInputOtp.DigitsPattern}" />
+          </StackPanel>
+          <StackPanel Spacing="6">
+            <alder:AlderLabel Theme="{StaticResource AlderLabelTheme}" x:Name="SecondaryLabel" Target="{Binding #SecondaryOtp}" Content="{DynamicResource GalleryText.SecondaryVariant}" />
+            <alder:AlderInputOtp x:Name="SecondaryOtp" Variant="Secondary"
+                            AutomationProperties.LabeledBy="{Binding #SecondaryLabel}" />
+          </StackPanel>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var inputOtp1 = new AlderInputOtp { Pattern = AlderInputOtp.DigitsPattern };
+
+        var inputOtp2 = new AlderInputOtp { Variant = InputVariant.Secondary };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleInASurface" Title="{DynamicResource GalleryText.InASurface}">
+      <gallery:ExampleCard.Preview>
+        <Border Background="{DynamicResource AlderSurface}" CornerRadius="20" Padding="14" MaxWidth="282">
+          <StackPanel Spacing="6">
+            <alder:AlderLabel Theme="{StaticResource AlderLabelTheme}" x:Name="AccountLabel" Content="{DynamicResource GalleryText.VerifyAccount}" Target="{Binding #AccountOtp}" />
+            <alder:AlderTextBlock Classes="hint" Text="{DynamicResource GalleryText.EnterTheCodeFromYourEmail}" />
+            <alder:AlderInputOtp x:Name="AccountOtp" Variant="Secondary" AutomationProperties.LabeledBy="{Binding #AccountLabel}"
+                            Pattern="{x:Static alder:AlderInputOtp.DigitsPattern}" />
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var inputOtp = new AlderInputOtp
+        {
+            Variant = InputVariant.Secondary,
+            Pattern = AlderInputOtp.DigitsPattern,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderInputOtp IsEnabled="False" Text="123456" AutomationProperties.Name="{DynamicResource GalleryText.DisabledVerificationCode}" />
+          <alder:AlderTextBlock Classes="hint" Text="{DynamicResource GalleryText.CodeVerificationIsCurrentlyDisabled}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var inputOtp = new AlderInputOtp { IsEnabled = false, Text = "123456" };
+        AutomationProperties.SetName(inputOtp, "Disabled verification code");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleEnterPIN" Title="{DynamicResource GalleryText.EnterPIN}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderLabel Theme="{StaticResource AlderLabelTheme}" x:Name="PinLabel" Content="{DynamicResource GalleryText.EnterPIN}" Target="{Binding #PinOtp}" />
+          <alder:AlderInputOtp x:Name="PinOtp" MaxLength="4" GroupSize="0" AutomationProperties.LabeledBy="{Binding #PinLabel}"
+                          Pattern="{x:Static alder:AlderInputOtp.DigitsPattern}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var inputOtp = new AlderInputOtp
+        {
+            MaxLength = 4,
+            GroupSize = 0,
+            Pattern = AlderInputOtp.DigitsPattern,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleLettersOnly" Title="{DynamicResource GalleryText.LettersOnly}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderLabel Theme="{StaticResource AlderLabelTheme}" x:Name="LettersLabel" Content="{DynamicResource GalleryText.LettersOnly}" Target="{Binding #LettersOtp}" />
+          <alder:AlderInputOtp x:Name="LettersOtp" Pattern="{x:Static alder:AlderInputOtp.LettersPattern}"
+                          ti:TextInputOptions.ContentType="Alpha" AutomationProperties.LabeledBy="{Binding #LettersLabel}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var inputOtp = new AlderInputOtp { Pattern = AlderInputOtp.LettersPattern };
+        TextInputOptions.SetContentType(inputOtp, TextInputContentType.Alpha);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustomStyles" Title="{DynamicResource GalleryText.CustomStyles}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel>
+          <StackPanel.Styles>
+            <Style Selector="alder|AlderInputOtp.custom :is(TemplatedControl).otp-slot /template/ Border#SlotFace">
+              <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+              <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+              <Setter Property="BorderThickness" Value="1" />
+            </Style>
+            <Style Selector="alder|AlderInputOtp.custom :is(TemplatedControl).otp-slot:active /template/ Border#SlotFace">
+              <Setter Property="Background" Value="{DynamicResource AlderSoft}" />
+              <Setter Property="BorderBrush" Value="#660485F7" />
+            </Style>
+          </StackPanel.Styles>
+          <StackPanel Spacing="8">
+            <alder:AlderLabel Theme="{StaticResource AlderLabelTheme}" x:Name="CustomLabel" Content="{DynamicResource GalleryText.CustomStyles}" Target="{Binding #CustomOtp}" />
+            <alder:AlderInputOtp x:Name="CustomOtp" Classes="custom" CornerRadius="8" PlaceholderText="123456"
+                            AutomationProperties.LabeledBy="{Binding #CustomLabel}" />
+          </StackPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var inputOtp = new AlderInputOtp
+        {
+            CornerRadius = new CornerRadius(8),
+            PlaceholderText = "123456",
+        };
+        inputOtp.Classes.Add("custom");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlledCode" Title="{DynamicResource GalleryText.ControlledCode}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="280" HorizontalAlignment="Left">
+          <alder:AlderLabel Theme="{StaticResource AlderLabelTheme}" x:Name="ControlledLabel" Content="{DynamicResource GalleryText.ControlledCode}" Target="{Binding #ControlledOtp}" />
+          <alder:AlderInputOtp x:Name="ControlledOtp" Text="{Binding ControlledCode, Mode=TwoWay}"
+                          Pattern="{x:Static alder:AlderInputOtp.DigitsPattern}" PasteTransformer="{Binding FormatPastedCode}"
+                          AutomationProperties.LabeledBy="{Binding #ControlledLabel}"
+                          AutomationProperties.HelpText="{DynamicResource GalleryText.YouCanPasteACodeWithHyphensOrSpaces}" />
+          <Grid ColumnDefinitions="*,Auto">
+            <alder:AlderTextBlock Classes="hint" Text="{Binding Progress}" VerticalAlignment="Center" />
+            <alder:AlderButton Grid.Column="1" Variant="Ghost" Size="Small" Content="{DynamicResource GalleryText.Clear}" Command="{Binding Reset}" />
+          </Grid>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var inputOtp = new AlderInputOtp { Pattern = AlderInputOtp.DigitsPattern };
+        inputOtp.Bind(AlderInputOtp.TextProperty, CompiledBinding.Create((InputOtpViewModel model) => model.ControlledCode, mode: BindingMode.TwoWay));
+        inputOtp.Bind(AlderInputOtp.PasteTransformerProperty, CompiledBinding.Create((InputOtpViewModel model) => model.FormatPastedCode));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleTwoFactorAuthentication" Title="{DynamicResource GalleryText.TwoFactorAuthentication}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="280" HorizontalAlignment="Left">
+          <alder:AlderLabel Theme="{StaticResource AlderLabelTheme}" x:Name="VerifyLabel" Content="{DynamicResource GalleryText.TwoFactorAuthentication}" Target="{Binding #VerifyOtp}" />
+          <alder:AlderTextBlock Classes="hint" Text="{DynamicResource GalleryText.EnterTheDemoCode123456}" />
+          <alder:AlderInputOtp x:Name="VerifyOtp" IsInvalid="{Binding IsInvalid}" IsReadOnly="{Binding IsVerifying}"
+                          Text="{Binding VerificationCode, Mode=TwoWay}" Pattern="{x:Static alder:AlderInputOtp.DigitsPattern}"
+                          CompletedCommand="{Binding NotifyComplete}" PasteTransformer="{Binding FormatPastedCode}"
+                          AutomationProperties.LabeledBy="{Binding #VerifyLabel}" AutomationProperties.IsRequiredForForm="True" />
+          <alder:AlderTextBlock Classes="hint" Classes.error="{Binding IsInvalid}" Text="{Binding VerificationStatus}"
+                     IsVisible="{Binding VerificationStatus, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" AutomationProperties.LiveSetting="Polite" />
+          <alder:AlderButton x:Name="VerifyButton" FullWidth="True" IsEnabled="{Binding CanVerify}" IsPending="{Binding IsVerifying}"
+                        Content="{Binding VerifyLabel}" Command="{Binding Verify}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var inputOtp = new AlderInputOtp { Pattern = AlderInputOtp.DigitsPattern };
+        inputOtp.Bind(AlderInputOtp.IsInvalidProperty, CompiledBinding.Create((InputOtpViewModel model) => model.IsInvalid));
+        inputOtp.Bind(AlderInputOtp.IsReadOnlyProperty, CompiledBinding.Create((InputOtpViewModel model) => model.IsVerifying));
+        inputOtp.Bind(AlderInputOtp.TextProperty, CompiledBinding.Create((InputOtpViewModel model) => model.VerificationCode, mode: BindingMode.TwoWay));
+        inputOtp.Bind(AlderInputOtp.CompletedCommandProperty, CompiledBinding.Create((InputOtpViewModel model) => model.NotifyComplete));
+        inputOtp.Bind(AlderInputOtp.PasteTransformerProperty, CompiledBinding.Create((InputOtpViewModel model) => model.FormatPastedCode));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

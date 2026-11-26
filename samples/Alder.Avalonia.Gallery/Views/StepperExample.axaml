@@ -1,0 +1,619 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.StepperExample" x:DataType="vm:StepperViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="StepperStatusIcon" x:DataType="alder:AlderStepperStep">
+      <Panel>
+        <Panel.Styles>
+          <Style Selector="PathIcon.state-glyph"><Setter Property="Foreground" Value="{DynamicResource AlderMuted}" /></Style>
+          <Style Selector="alder|AlderStepperStep[Status=Active] PathIcon.state-glyph"><Setter Property="Foreground" Value="{DynamicResource AlderAccent}" /></Style>
+          <Style Selector="alder|AlderStepperStep[Status=Complete] PathIcon.state-glyph"><Setter Property="Foreground" Value="{DynamicResource AlderOnAccent}" /></Style>
+        </Panel.Styles>
+        <alder:AlderPathIcon Classes="state-glyph" Data="{CompiledBinding Icon}" Width="14" Height="14" />
+      </Panel>
+    </DataTemplate>
+    <DataTemplate x:Key="TrackingActiveIndicator">
+      <Border Width="8" Height="8" CornerRadius="4" Background="{DynamicResource AlderAccent}" />
+    </DataTemplate>
+    <DataTemplate x:Key="TrackingPendingIndicator"><Border /></DataTemplate>
+    <StreamGeometry x:Key="TrackingParcelIcon">F0 M8 1 L14.5 4.5 V11.5 L8 15 L1.5 11.5 V4.5 Z M8 2.7 L4 4.85 L8 7 L12 4.85 Z M3 6 V10.6 L7.25 12.9 V8.25 Z M8.75 8.25 V12.9 L13 10.6 V6 Z</StreamGeometry>
+    <StreamGeometry x:Key="TrackingMapPinIcon">F0 M8 1 A5.5 5.5 0 0 1 13.5 6.5 C13.5 10 9.5 14.3 8 15.5 C6.5 14.3 2.5 10 2.5 6.5 A5.5 5.5 0 0 1 8 1 Z M8 2.5 A4 4 0 0 0 4 6.5 C4 9 6.5 12.2 8 13.6 C9.5 12.2 12 9 12 6.5 A4 4 0 0 0 8 2.5 Z M8 4.4 A2 2 0 1 1 7.99 4.4 Z</StreamGeometry>
+    <StreamGeometry x:Key="TrackingSupportIcon">F0 M8 1.5 A6 6 0 0 1 14 7.5 V11 A2.5 2.5 0 0 1 11.5 13.5 H10.5 V8 H12.5 V7.5 A4.5 4.5 0 0 0 3.5 7.5 V8 H5.5 V13.5 H4.5 A2.5 2.5 0 0 1 2 11 V7.5 A6 6 0 0 1 8 1.5 Z</StreamGeometry>
+    <StreamGeometry x:Key="StepperFolder">F0 M1 4 A2 2 0 0 1 3 2 H6 L8 4 H13 A2 2 0 0 1 15 6 V12 A2 2 0 0 1 13 14 H3 A2 2 0 0 1 1 12 Z M2.5 4 V12 A.5.5 0 0 0 3 12.5 H13 A.5.5 0 0 0 13.5 12 V6 A.5.5 0 0 0 13 5.5 H7.4 L5.4 3.5 H3 A.5.5 0 0 0 2.5 4 Z</StreamGeometry>
+    <StreamGeometry x:Key="StepperFolderComplete">M1 4 A2 2 0 0 1 3 2 H6 L8 4 H13 A2 2 0 0 1 15 6 V12 A2 2 0 0 1 13 14 H3 A2 2 0 0 1 1 12 Z</StreamGeometry>
+    <SolidColorBrush x:Key="GalleryStepperSuccess" Color="#17C964" />
+    <SolidColorBrush x:Key="GalleryStepperWarning" Color="#F5A524" />
+    <SolidColorBrush x:Key="GalleryStepperDanger" Color="#FF383C" />
+    <SolidColorBrush x:Key="GalleryStepperDarkInk" Color="#18181B" />
+  </UserControl.Resources>
+  <UserControl.Styles>
+    <Style Selector="alder|AlderStepperStep.tracking-current /template/ TextBlock#Title">
+      <Setter Property="Foreground" Value="{DynamicResource AlderAccent}" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="24">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderStepper MaxWidth="520" ActiveStep="1">
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperCart}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperShipping}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperPayment}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperConfirmation}" />
+        </alder:AlderStepper>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderStepper
+        {
+            ActiveStep = 1,
+            Items =
+            {
+                new AlderStepperStep { Title = cart },
+                new AlderStepperStep { Title = shipping }
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SamplePackage" Title="{DynamicResource GalleryText.StepperPackageTracking}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="420" Background="{DynamicResource AlderSurface}" BorderBrush="{DynamicResource AlderSeparator}"
+                BorderThickness="1" CornerRadius="18" Padding="23">
+          <StackPanel Spacing="22">
+            <StackPanel Spacing="14">
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                <alder:AlderTextBlock Text="{CompiledBinding OrderLabel}" FontSize="12" Foreground="{DynamicResource AlderMuted}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                <Border Grid.Column="1" Background="{DynamicResource AlderSoft}" Padding="8,3" CornerRadius="10">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.StepperInTransit}" FontSize="11" Foreground="{DynamicResource AlderSoftInk}" />
+                </Border>
+              </Grid>
+              <StackPanel Spacing="2">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.StepperDeliveryHeadline}" FontSize="22" FontWeight="Bold" TextWrapping="Wrap"
+                           AutomationProperties.HeadingLevel="2" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.StepperDeliveryEstimate}" FontSize="14" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+            </StackPanel>
+            <Border Background="{DynamicResource AlderSurfaceSecondary}" CornerRadius="12" Padding="12">
+              <Grid ColumnDefinitions="40,*,Auto" ColumnSpacing="12">
+                <Border Width="40" Height="40" Background="{DynamicResource AlderSurface}" CornerRadius="8">
+                  <alder:AlderPathIcon Width="16" Height="16" Data="{StaticResource TrackingParcelIcon}" Foreground="{DynamicResource AlderMuted}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.StepperDeliveryCarrier}" FontSize="14" FontWeight="SemiBold" TextWrapping="Wrap" />
+                  <alder:AlderTextBlock Text="{CompiledBinding TrackingLabel}" Foreground="{DynamicResource AlderMuted}" FontSize="12" TextWrapping="Wrap" />
+                </StackPanel>
+                <alder:AlderButton Grid.Column="2" Variant="Ghost" Size="Small" IsIconOnly="True"
+                                   Icon="{DynamicResource AlderIconCopy}" Command="{CompiledBinding CopyTrackingNumberCommand}"
+                                   CommandParameter="{CompiledBinding $parent[TopLevel].Clipboard}"
+                                   AutomationProperties.Name="{DynamicResource GalleryText.StepperCopyTracking}" />
+              </Grid>
+            </Border>
+            <alder:AlderStepper Orientation="Vertical" ActiveStep="2" IsInteractive="False" Margin="4,2,4,0">
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperOrdered}" Description="{DynamicResource GalleryText.StepperOrderVerified}">
+                <alder:AlderStepperStep.TrailingContent>
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.StepperOrderTime}" Foreground="{DynamicResource AlderMuted}" FontSize="11"
+                             LineHeight="16" TextWrapping="Wrap" MaxWidth="110" />
+                </alder:AlderStepperStep.TrailingContent>
+              </alder:AlderStepperStep>
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperCollected}" Description="{DynamicResource GalleryText.StepperPickupDetail}">
+                <alder:AlderStepperStep.TrailingContent>
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.StepperPickupTime}" Foreground="{DynamicResource AlderMuted}" FontSize="11"
+                             LineHeight="16" TextWrapping="Wrap" MaxWidth="110" />
+                </alder:AlderStepperStep.TrailingContent>
+              </alder:AlderStepperStep>
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperInTransit}" Description="{DynamicResource GalleryText.StepperTransitDetail}" IndicatorTemplate="{StaticResource TrackingActiveIndicator}" Classes="tracking-current">
+                <alder:AlderStepperStep.TrailingContent>
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.StepperTransitTime}" Foreground="{DynamicResource AlderAccent}" FontSize="11"
+                             LineHeight="16" TextWrapping="Wrap" MaxWidth="110" />
+                </alder:AlderStepperStep.TrailingContent>
+              </alder:AlderStepperStep>
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperOutForDelivery}" Description="{DynamicResource GalleryText.StepperPending}" IndicatorTemplate="{StaticResource TrackingPendingIndicator}">
+                <alder:AlderStepperStep.TrailingContent>
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.StepperTrackingPendingTime}" Foreground="{DynamicResource AlderMuted}" FontSize="11"
+                             LineHeight="16" TextWrapping="Wrap" MaxWidth="110" />
+                </alder:AlderStepperStep.TrailingContent>
+              </alder:AlderStepperStep>
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperDelivered}" Description="{DynamicResource GalleryText.StepperPending}" IndicatorTemplate="{StaticResource TrackingPendingIndicator}">
+                <alder:AlderStepperStep.TrailingContent>
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.StepperTrackingPendingTime}" Foreground="{DynamicResource AlderMuted}" FontSize="11"
+                             LineHeight="16" TextWrapping="Wrap" MaxWidth="110" />
+                </alder:AlderStepperStep.TrailingContent>
+              </alder:AlderStepperStep>
+            </alder:AlderStepper>
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+              <alder:AlderButton Size="Small" HorizontalAlignment="Stretch" Padding="6,4" Icon="{StaticResource TrackingMapPinIcon}"
+                                 Content="{DynamicResource GalleryText.StepperTracking}" Command="{CompiledBinding ShowTrackingDetailsCommand}" CommandParameter="StepperTrackingStatus" />
+              <alder:AlderButton Grid.Column="1" Size="Small" HorizontalAlignment="Stretch" Padding="6,4" Icon="{StaticResource TrackingSupportIcon}" BorderBrush="{DynamicResource AlderBorder}"
+                                 Content="{DynamicResource GalleryText.StepperSupport}" Command="{CompiledBinding ShowTrackingDetailsCommand}" CommandParameter="StepperSupportStatus" Variant="Outline" />
+            </Grid>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderStepper
+        {
+            ActiveStep = 2, Orientation = Orientation.Vertical, IsInteractive = false,
+            Items =
+            {
+                new AlderStepperStep { Title = ordered, Description = confirmed, TrailingContent = orderTime },
+                new AlderStepperStep { Title = pickedUp, TrailingContent = pickupTime },
+                new AlderStepperStep { Title = inTransit, IndicatorTemplate = locationIndicator, TrailingContent = transitTime }
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleOnboarding" Title="{DynamicResource GalleryText.StepperOnboarding}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderStepper Orientation="Vertical" MaxWidth="360" ActiveStep="1" Size="Large" IsInteractive="False">
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperAccountCreated}" Description="{DynamicResource GalleryText.StepperWorkspaceReady}" Icon="{DynamicResource AlderIconCheckCircle}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperIntegrations}" Description="{DynamicResource GalleryText.StepperToolsDetail}" Icon="{DynamicResource AlderIconGlobe}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperProject}" Description="{DynamicResource GalleryText.StepperProjectDetail}" Icon="{DynamicResource AlderIconPlus}" />
+        </alder:AlderStepper>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderStepper
+        {
+            ActiveStep = 1, Size = AlderSize.Large, Orientation = Orientation.Vertical, IsInteractive = false,
+            Items =
+            {
+                new AlderStepperStep { Title = accountCreated },
+                new AlderStepperStep { Title = integrations }
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDescriptions" Title="{DynamicResource GalleryText.StepperDescriptions}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderStepper MaxWidth="520" ActiveStep="1">
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.TabAccount}" Description="{DynamicResource GalleryText.StepperAccountDetail}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.LayoutProfile}" Description="{DynamicResource GalleryText.StepperProfileDetail}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.Settings}" Description="{DynamicResource GalleryText.StepperSettingsDetail}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperReview}" Description="{DynamicResource GalleryText.StepperReviewDetail}" />
+        </alder:AlderStepper>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderStepper { ActiveStep = 1 };
+        stepper.Items.Add(new AlderStepperStep { Title = account, Description = accountDescription });
+        stepper.Items.Add(new AlderStepperStep { Title = profile, Description = profileDescription });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleIcons" Title="{DynamicResource GalleryText.StepperIcons}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderStepper MaxWidth="520" ActiveStep="1">
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.TabAccount}" Description="{DynamicResource GalleryText.StepperAccountDetail}" Icon="{DynamicResource AlderIconAvatarPerson}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.Settings}" Description="{DynamicResource GalleryText.StepperSettingsDetail}" Icon="{DynamicResource AlderIconGear}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.AccordionSecurity}" Description="{DynamicResource GalleryText.StepperSecurityDetail}" Icon="{DynamicResource AlderIconCheckCircle}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperReview}" Description="{DynamicResource GalleryText.StepperReviewDetail}" Icon="{DynamicResource AlderIconBookmark}" />
+        </alder:AlderStepper>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderStepper { ActiveStep = 1 };
+        stepper.Items.Add(new AlderStepperStep { Title = account, Icon = accountIcon });
+        stepper.Items.Add(new AlderStepperStep { Title = settings, Icon = settingsIcon });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleBullet" Title="{DynamicResource GalleryText.StepperBullet}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="18">
+          <alder:AlderStepper MaxWidth="520" ActiveStep="1" Indicator="Bullet">
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperCart}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperShipping}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperPayment}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperConfirmation}" />
+          </alder:AlderStepper>
+          <alder:AlderStepper Orientation="Vertical" MaxWidth="360" ActiveStep="1" Indicator="Bullet">
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.TabAccount}" Description="{DynamicResource GalleryText.StepperAccountDetail}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.LayoutProfile}" Description="{DynamicResource GalleryText.StepperProfileDetail}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.Settings}" Description="{DynamicResource GalleryText.StepperSettingsDetail}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperReview}" Description="{DynamicResource GalleryText.StepperReviewDetail}" />
+          </alder:AlderStepper>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderStepper
+        {
+            ActiveStep = 1, Indicator = AlderStepperIndicator.Bullet,
+            Items =
+            {
+                new AlderStepperStep { Title = cart },
+                new AlderStepperStep { Title = shipping }
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVertical" Title="{DynamicResource GalleryText.StepperVertical}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderStepper Orientation="Vertical" MaxWidth="360" ActiveStep="1">
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.TabAccount}" Description="{DynamicResource GalleryText.StepperAccountDetail}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.LayoutProfile}" Description="{DynamicResource GalleryText.StepperProfileDetail}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.Settings}" Description="{DynamicResource GalleryText.StepperSettingsDetail}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperReview}" Description="{DynamicResource GalleryText.StepperReviewDetail}" />
+        </alder:AlderStepper>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderStepper
+        {
+            ActiveStep = 1, Orientation = Orientation.Vertical,
+            Items =
+            {
+                new AlderStepperStep { Title = account },
+                new AlderStepperStep { Title = profile }
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVerticalIcons" Title="{DynamicResource GalleryText.StepperVerticalIcons}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderStepper Orientation="Vertical" MaxWidth="360" ActiveStep="1">
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.TabAccount}" Description="{DynamicResource GalleryText.StepperAccountDetail}" Icon="{DynamicResource AlderIconAvatarPerson}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.Settings}" Description="{DynamicResource GalleryText.StepperSettingsDetail}" Icon="{DynamicResource AlderIconGear}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.AccordionSecurity}" Description="{DynamicResource GalleryText.StepperSecurityDetail}" Icon="{DynamicResource AlderIconCheckCircle}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperReview}" Description="{DynamicResource GalleryText.StepperReviewDetail}" Icon="{DynamicResource AlderIconBookmark}" />
+        </alder:AlderStepper>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderStepper { Orientation = Orientation.Vertical, ActiveStep = 1 };
+        stepper.Items.Add(new AlderStepperStep { Title = account, Icon = accountIcon });
+        stepper.Items.Add(new AlderStepperStep { Title = settings, Icon = settingsIcon });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSizes" Title="{DynamicResource GalleryText.StepperSizes}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="18">
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.Small}" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderStepper MaxWidth="520" ActiveStep="1" Size="Small">
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperCart}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperShipping}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperPayment}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperConfirmation}" />
+            </alder:AlderStepper>
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.Medium}" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderStepper MaxWidth="520" ActiveStep="1" Size="Medium">
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperCart}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperShipping}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperPayment}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperConfirmation}" />
+            </alder:AlderStepper>
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.Large}" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderStepper MaxWidth="520" ActiveStep="1" Size="Large">
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperCart}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperShipping}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperPayment}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperConfirmation}" />
+            </alder:AlderStepper>
+          </StackPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderStepper
+        {
+            ActiveStep = 1, Size = AlderSize.Large,
+            Items =
+            {
+                new AlderStepperStep { Title = cart },
+                new AlderStepperStep { Title = shipping }
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVerticalSizes" Title="{DynamicResource GalleryText.StepperVerticalSizes}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="18">
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.Small}" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderStepper Orientation="Vertical" MaxWidth="360" ActiveStep="1" Size="Small">
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.TabAccount}" Description="{DynamicResource GalleryText.StepperAccountDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.LayoutProfile}" Description="{DynamicResource GalleryText.StepperProfileDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.Settings}" Description="{DynamicResource GalleryText.StepperSettingsDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperReview}" Description="{DynamicResource GalleryText.StepperReviewDetail}" />
+            </alder:AlderStepper>
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.Medium}" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderStepper Orientation="Vertical" MaxWidth="360" ActiveStep="1" Size="Medium">
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.TabAccount}" Description="{DynamicResource GalleryText.StepperAccountDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.LayoutProfile}" Description="{DynamicResource GalleryText.StepperProfileDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.Settings}" Description="{DynamicResource GalleryText.StepperSettingsDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperReview}" Description="{DynamicResource GalleryText.StepperReviewDetail}" />
+            </alder:AlderStepper>
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.Large}" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderStepper Orientation="Vertical" MaxWidth="360" ActiveStep="1" Size="Large">
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.TabAccount}" Description="{DynamicResource GalleryText.StepperAccountDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.LayoutProfile}" Description="{DynamicResource GalleryText.StepperProfileDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.Settings}" Description="{DynamicResource GalleryText.StepperSettingsDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperReview}" Description="{DynamicResource GalleryText.StepperReviewDetail}" />
+            </alder:AlderStepper>
+          </StackPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderStepper
+        {
+            ActiveStep = 1, Size = AlderSize.Small, Orientation = Orientation.Vertical,
+            Items =
+            {
+                new AlderStepperStep { Title = account },
+                new AlderStepperStep { Title = profile }
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleColors" Title="{DynamicResource GalleryText.StepperColors}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="18">
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.StepperColorAccent}" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderStepper MaxWidth="520" ActiveStep="2">
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperCart}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperShipping}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperPayment}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperConfirmation}" />
+            </alder:AlderStepper>
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.StepperColorSuccess}" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderStepper MaxWidth="520" ActiveStep="2" AccentBrush="{StaticResource GalleryStepperSuccess}" OnAccentBrush="{StaticResource GalleryStepperDarkInk}">
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperCart}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperShipping}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperPayment}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperConfirmation}" />
+            </alder:AlderStepper>
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.StepperColorDanger}" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderStepper MaxWidth="520" ActiveStep="2" AccentBrush="{StaticResource GalleryStepperDanger}">
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperCart}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperShipping}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperPayment}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperConfirmation}" />
+            </alder:AlderStepper>
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.StepperColorWarning}" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderStepper MaxWidth="520" ActiveStep="2" AccentBrush="{StaticResource GalleryStepperWarning}" OnAccentBrush="{StaticResource GalleryStepperDarkInk}">
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperCart}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperShipping}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperPayment}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperConfirmation}" />
+            </alder:AlderStepper>
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.StepperColorInverted}" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderStepper MaxWidth="520" ActiveStep="2" AccentBrush="{DynamicResource AlderInk}" OnAccentBrush="{DynamicResource GalleryPreviewSurface}">
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperCart}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperShipping}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperPayment}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperConfirmation}" />
+            </alder:AlderStepper>
+          </StackPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderStepper
+        {
+            ActiveStep = 2, AccentBrush = Brushes.SeaGreen,
+            Items =
+            {
+                new AlderStepperStep { Title = cart },
+                new AlderStepperStep { Title = shipping }
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVerticalColors" Title="{DynamicResource GalleryText.StepperVerticalColors}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="18">
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.StepperColorAccent}" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderStepper Orientation="Vertical" MaxWidth="360" ActiveStep="2">
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.TabAccount}" Description="{DynamicResource GalleryText.StepperAccountDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.LayoutProfile}" Description="{DynamicResource GalleryText.StepperProfileDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.Settings}" Description="{DynamicResource GalleryText.StepperSettingsDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperReview}" Description="{DynamicResource GalleryText.StepperReviewDetail}" />
+            </alder:AlderStepper>
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.StepperColorSuccess}" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderStepper Orientation="Vertical" MaxWidth="360" ActiveStep="2" AccentBrush="{StaticResource GalleryStepperSuccess}" OnAccentBrush="{StaticResource GalleryStepperDarkInk}">
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.TabAccount}" Description="{DynamicResource GalleryText.StepperAccountDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.LayoutProfile}" Description="{DynamicResource GalleryText.StepperProfileDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.Settings}" Description="{DynamicResource GalleryText.StepperSettingsDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperReview}" Description="{DynamicResource GalleryText.StepperReviewDetail}" />
+            </alder:AlderStepper>
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.StepperColorDanger}" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderStepper Orientation="Vertical" MaxWidth="360" ActiveStep="2" AccentBrush="{StaticResource GalleryStepperDanger}">
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.TabAccount}" Description="{DynamicResource GalleryText.StepperAccountDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.LayoutProfile}" Description="{DynamicResource GalleryText.StepperProfileDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.Settings}" Description="{DynamicResource GalleryText.StepperSettingsDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperReview}" Description="{DynamicResource GalleryText.StepperReviewDetail}" />
+            </alder:AlderStepper>
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.StepperColorInverted}" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderStepper Orientation="Vertical" MaxWidth="360" ActiveStep="2" AccentBrush="{DynamicResource AlderInk}" OnAccentBrush="{DynamicResource GalleryPreviewSurface}">
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.TabAccount}" Description="{DynamicResource GalleryText.StepperAccountDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.LayoutProfile}" Description="{DynamicResource GalleryText.StepperProfileDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.Settings}" Description="{DynamicResource GalleryText.StepperSettingsDetail}" />
+              <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperReview}" Description="{DynamicResource GalleryText.StepperReviewDetail}" />
+            </alder:AlderStepper>
+          </StackPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderStepper
+        {
+            ActiveStep = 2, Orientation = Orientation.Vertical, AccentBrush = Brushes.SeaGreen,
+            Items =
+            {
+                new AlderStepperStep { Title = account },
+                new AlderStepperStep { Title = profile }
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleFreeTrial" Title="{DynamicResource GalleryText.StepperTrial}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderStepper Orientation="Vertical" MaxWidth="360" ActiveStep="0" Size="Large" IsInteractive="False">
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperTrialToday}" Description="{DynamicResource GalleryText.StepperTrialStart}" Icon="{DynamicResource AlderIconStarOutline}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperTrialReminder}" Description="{DynamicResource GalleryText.StepperTrialReminderDetail}" Icon="{DynamicResource AlderIconBell}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperTrialEnd}" Description="{DynamicResource GalleryText.StepperTrialEndDetail}" Icon="{DynamicResource AlderIconCalendar}" />
+        </alder:AlderStepper>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderStepper
+        {
+            Size = AlderSize.Large, Orientation = Orientation.Vertical, IsInteractive = false,
+            Items =
+            {
+                new AlderStepperStep { Title = today },
+                new AlderStepperStep { Title = reminder }
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisplayOnly" Title="{DynamicResource GalleryText.StepperDisplayOnly}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="18">
+          <alder:AlderStepper MaxWidth="520" ActiveStep="2" IsInteractive="False">
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperCart}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperShipping}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperPayment}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperConfirmation}" />
+          </alder:AlderStepper>
+          <alder:AlderStepper Orientation="Vertical" MaxWidth="360" ActiveStep="2" IsInteractive="False">
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.TabAccount}" Description="{DynamicResource GalleryText.StepperAccountDetail}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.LayoutProfile}" Description="{DynamicResource GalleryText.StepperProfileDetail}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.Settings}" Description="{DynamicResource GalleryText.StepperSettingsDetail}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperReview}" Description="{DynamicResource GalleryText.StepperReviewDetail}" />
+          </alder:AlderStepper>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderStepper
+        {
+            ActiveStep = 2, IsInteractive = false,
+            Items =
+            {
+                new AlderStepperStep { Title = cart },
+                new AlderStepperStep { Title = shipping }
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlledHorizontal" Title="{DynamicResource GalleryText.Controlled}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="18">
+          <alder:AlderStepper MaxWidth="520" ActiveStep="{CompiledBinding Horizontal.ActiveStep, Mode=TwoWay}">
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.TabAccount}" Description="{DynamicResource GalleryText.StepperAccountDetail}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.LayoutProfile}" Description="{DynamicResource GalleryText.StepperProfileDetail}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.Settings}" Description="{DynamicResource GalleryText.StepperSettingsDetail}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperReview}" Description="{DynamicResource GalleryText.StepperReviewDetail}" />
+          </alder:AlderStepper>
+          <WrapPanel ItemSpacing="8" LineSpacing="6" HorizontalAlignment="Center">
+            <alder:AlderButton Size="Small" Content="{DynamicResource GalleryText.Previous}" Command="{CompiledBinding Horizontal.Previous}" IsEnabled="{CompiledBinding Horizontal.CanPrevious}" />
+            <alder:AlderButton Size="Small" Content="{DynamicResource GalleryText.Next}" Command="{CompiledBinding Horizontal.Next}" IsEnabled="{CompiledBinding Horizontal.CanNext}" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderStepper { ItemsSource = steps };
+        previous.Click += (_, _) => stepper.ActiveStep = Math.Max(0, stepper.ActiveStep - 1);
+        next.Click += (_, _) => stepper.ActiveStep = Math.Min(stepper.ItemCount - 1, stepper.ActiveStep + 1);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlledVertical" Title="{DynamicResource GalleryText.StepperControlledVertical}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="18">
+          <alder:AlderStepper Orientation="Vertical" MaxWidth="360" ActiveStep="{CompiledBinding Vertical.ActiveStep, Mode=TwoWay}">
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.TabAccount}" Description="{DynamicResource GalleryText.StepperAccountDetail}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.LayoutProfile}" Description="{DynamicResource GalleryText.StepperProfileDetail}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.Settings}" Description="{DynamicResource GalleryText.StepperSettingsDetail}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperReview}" Description="{DynamicResource GalleryText.StepperReviewDetail}" />
+          </alder:AlderStepper>
+          <WrapPanel ItemSpacing="8" LineSpacing="6" HorizontalAlignment="Center">
+            <alder:AlderButton Size="Small" Content="{DynamicResource GalleryText.Previous}" Command="{CompiledBinding Vertical.Previous}" IsEnabled="{CompiledBinding Vertical.CanPrevious}" />
+            <alder:AlderButton Size="Small" Content="{DynamicResource GalleryText.Next}" Command="{CompiledBinding Vertical.Next}" IsEnabled="{CompiledBinding Vertical.CanNext}" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderStepper { ItemsSource = steps, Orientation = Orientation.Vertical };
+        previous.Click += (_, _) => stepper.ActiveStep = Math.Max(0, stepper.ActiveStep - 1);
+        next.Click += (_, _) => stepper.ActiveStep = Math.Min(stepper.ItemCount - 1, stepper.ActiveStep + 1);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCompletedIcon" Title="{DynamicResource GalleryText.StepperCompletedIcon}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="18">
+          <alder:AlderStepper MaxWidth="520" ActiveStep="2" CompletedIcon="{DynamicResource AlderIconHeartFill}">
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperCart}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperShipping}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperPayment}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperConfirmation}" />
+          </alder:AlderStepper>
+          <alder:AlderStepper Orientation="Vertical" MaxWidth="360" ActiveStep="2" CompletedIcon="{DynamicResource AlderIconCheckCircle}">
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.TabAccount}" Description="{DynamicResource GalleryText.StepperAccountDetail}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.LayoutProfile}" Description="{DynamicResource GalleryText.StepperProfileDetail}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.Settings}" Description="{DynamicResource GalleryText.StepperSettingsDetail}" />
+            <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperReview}" Description="{DynamicResource GalleryText.StepperReviewDetail}" />
+          </alder:AlderStepper>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderStepper
+        {
+            ActiveStep = 2, CompletedIcon = completedIcon,
+            Items =
+            {
+                new AlderStepperStep { Title = cart },
+                new AlderStepperStep { Title = shipping }
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleRender" Title="{DynamicResource GalleryText.StepperRenderFunction}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderStepper Orientation="Vertical" MaxWidth="360" ActiveStep="1">
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.TabAccount}" Description="{DynamicResource GalleryText.StepperAccountDetail}" Icon="{DynamicResource AlderIconAvatarPerson}" IndicatorTemplate="{StaticResource StepperStatusIcon}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.LayoutProfile}" Description="{DynamicResource GalleryText.StepperProfileDetail}" Icon="{DynamicResource AlderIconPencil}" IndicatorTemplate="{StaticResource StepperStatusIcon}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.Settings}" Description="{DynamicResource GalleryText.StepperSettingsDetail}" Icon="{DynamicResource AlderIconGear}" IndicatorTemplate="{StaticResource StepperStatusIcon}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperReview}" Description="{DynamicResource GalleryText.StepperReviewDetail}" Icon="{DynamicResource AlderIconBookmark}" IndicatorTemplate="{StaticResource StepperStatusIcon}" />
+        </alder:AlderStepper>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderStepper { Orientation = Orientation.Vertical };
+        stepper.Items.Add(new AlderStepperStep
+        {
+            Title = account,
+            IndicatorTemplate = indicatorTemplate // The template data is the step, including Status.
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDynamicIcon" Title="{DynamicResource GalleryText.StepperDynamicIcon}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderStepper MaxWidth="520" ActiveStep="1" CompletedIcon="{StaticResource StepperFolderComplete}">
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperUpload}" Icon="{StaticResource StepperFolder}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperProcess}" Icon="{StaticResource StepperFolder}" />
+          <alder:AlderStepperStep Title="{DynamicResource GalleryText.StepperDynamicComplete}" Icon="{StaticResource StepperFolder}" />
+        </alder:AlderStepper>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderStepper { ActiveStep = 1, CompletedIcon = filledFolder };
+        stepper.Items.Add(new AlderStepperStep { Title = upload, Icon = outlineFolder });
+        stepper.Items.Add(new AlderStepperStep { Title = process, Icon = outlineFolder });
+        stepper.Items.Add(new AlderStepperStep { Title = complete, Icon = outlineFolder });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

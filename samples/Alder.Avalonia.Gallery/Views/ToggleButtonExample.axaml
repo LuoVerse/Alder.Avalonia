@@ -1,0 +1,302 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.ToggleButtonExample" x:DataType="vm:ToggleButtonViewModel">
+  <UserControl.Styles>
+    <Style Selector="alder|AlderToggleButton">
+      <Setter Property="FontFamily" Value="fonts:Inter#Inter" />
+    </Style>
+    <Style Selector="alder|AlderToggleButton.like">
+      <Setter Property="Icon" Value="{StaticResource AlderIconHeart}" />
+    </Style>
+    <Style Selector="alder|AlderToggleButton.like:checked">
+      <Setter Property="Icon" Value="{StaticResource AlderIconHeartFill}" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderToggleButton Classes="like" Content="{DynamicResource GalleryText.Like}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var toggleButton = new AlderToggleButton { Content = "Like" };
+        toggleButton.Classes.Add("like");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.Variants}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="12" LineSpacing="8">
+          <alder:AlderToggleButton x:Name="DefaultToggle" Content="{DynamicResource GalleryText.Default}" Icon="{StaticResource AlderIconHeart}" />
+          <alder:AlderToggleButton x:Name="GhostToggle" Variant="Ghost" Content="{DynamicResource GalleryText.Ghost}" Icon="{StaticResource AlderIconHeart}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var toggleButton1 = new AlderToggleButton
+        {
+            Content = "Default",
+            Icon = (Geometry)this.FindResource("AlderIconHeart")!,
+        };
+
+        var toggleButton2 = new AlderToggleButton
+        {
+            Variant = ToggleButtonVariant.Ghost,
+            Content = "Ghost",
+            Icon = (Geometry)this.FindResource("AlderIconHeart")!,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleIconOnly" Title="{DynamicResource GalleryText.IconOnly}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="12">
+          <alder:AlderToggleButton Classes="like" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.Like}" alder:AlderToolTip.Tip="{DynamicResource GalleryText.Like}" />
+          <alder:AlderToggleButton IsIconOnly="True" Variant="Ghost" Icon="{StaticResource AlderIconBookmark}"
+                              AutomationProperties.Name="{DynamicResource GalleryText.Bookmark}" alder:AlderToolTip.Tip="{DynamicResource GalleryText.Bookmark}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var toggleButton1 = new AlderToggleButton { IsIconOnly = true };
+        toggleButton1.Classes.Add("like");
+        AutomationProperties.SetName(toggleButton1, "Like");
+
+        var toggleButton2 = new AlderToggleButton
+        {
+            IsIconOnly = true,
+            Variant = ToggleButtonVariant.Ghost,
+            Icon = (Geometry)this.FindResource("AlderIconBookmark")!,
+        };
+        AutomationProperties.SetName(toggleButton2, "Bookmark");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSizes" Title="{DynamicResource GalleryText.Sizes}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <WrapPanel ItemSpacing="12" LineSpacing="8">
+            <alder:AlderToggleButton Size="Small" Content="{DynamicResource GalleryText.Small}" Icon="{StaticResource AlderIconHeart}" />
+            <alder:AlderToggleButton Size="Medium" Content="{DynamicResource GalleryText.Medium}" Icon="{StaticResource AlderIconHeart}" />
+            <alder:AlderToggleButton Size="Large" Content="{DynamicResource GalleryText.Large}" Icon="{StaticResource AlderIconHeart}" />
+          </WrapPanel>
+          <WrapPanel ItemSpacing="12">
+            <alder:AlderToggleButton Classes="like" Size="Small" IsIconOnly="True"
+                                AutomationProperties.Name="{DynamicResource GalleryText.LikeSmall}" alder:AlderToolTip.Tip="{DynamicResource GalleryText.Like}" />
+            <alder:AlderToggleButton Classes="like" Size="Medium" IsIconOnly="True"
+                                AutomationProperties.Name="{DynamicResource GalleryText.LikeMedium}" alder:AlderToolTip.Tip="{DynamicResource GalleryText.Like}" />
+            <alder:AlderToggleButton Classes="like" Size="Large" IsIconOnly="True"
+                                AutomationProperties.Name="{DynamicResource GalleryText.LikeLarge}" alder:AlderToolTip.Tip="{DynamicResource GalleryText.Like}" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var toggleButton1 = new AlderToggleButton
+        {
+            Size = AlderSize.Small,
+            Content = "Small",
+            Icon = (Geometry)this.FindResource("AlderIconHeart")!,
+        };
+
+        var toggleButton2 = new AlderToggleButton
+        {
+            Size = AlderSize.Medium,
+            Content = "Medium",
+            Icon = (Geometry)this.FindResource("AlderIconHeart")!,
+        };
+
+        var toggleButton3 = new AlderToggleButton
+        {
+            Size = AlderSize.Large,
+            Content = "Large",
+            Icon = (Geometry)this.FindResource("AlderIconHeart")!,
+        };
+
+        var toggleButton4 = new AlderToggleButton { Size = AlderSize.Small, IsIconOnly = true };
+        toggleButton4.Classes.Add("like");
+        AutomationProperties.SetName(toggleButton4, "Like (small)");
+
+        var toggleButton5 = new AlderToggleButton { Size = AlderSize.Medium, IsIconOnly = true };
+        toggleButton5.Classes.Add("like");
+        AutomationProperties.SetName(toggleButton5, "Like (medium)");
+
+        var toggleButton6 = new AlderToggleButton { Size = AlderSize.Large, IsIconOnly = true };
+        toggleButton6.Classes.Add("like");
+        AutomationProperties.SetName(toggleButton6, "Like (large)");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="12">
+          <alder:AlderToggleButton Classes="like" Content="{DynamicResource GalleryText.Like}" IsEnabled="False" />
+          <alder:AlderToggleButton Classes="like" Content="{DynamicResource GalleryText.Like}" IsEnabled="False" IsChecked="True" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var toggleButton1 = new AlderToggleButton { Content = "Like", IsEnabled = false };
+        toggleButton1.Classes.Add("like");
+
+        var toggleButton2 = new AlderToggleButton
+        {
+            Content = "Like",
+            IsEnabled = false,
+            IsChecked = true,
+        };
+        toggleButton2.Classes.Add("like");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel>
+          <StackPanel.Styles>
+            <Style Selector="alder|AlderToggleButton.controlled">
+              <Setter Property="Content" Value="Like" />
+            </Style>
+            <Style Selector="alder|AlderToggleButton.controlled:checked">
+              <Setter Property="Content" Value="Liked" />
+            </Style>
+          </StackPanel.Styles>
+          <StackPanel Spacing="8">
+            <WrapPanel ItemSpacing="12">
+              <alder:AlderToggleButton x:Name="ControlledToggle" Classes="like controlled" AutomationProperties.Name="{DynamicResource GalleryText.Like}"
+                                  IsChecked="{Binding IsLiked, Mode=TwoWay}" />
+              <alder:AlderButton x:Name="ResetSelection" Command="{Binding Reset}" Variant="Ghost" Content="{DynamicResource GalleryText.Reset}" />
+            </WrapPanel>
+            <alder:AlderTextBlock Foreground="{DynamicResource AlderMuted}" FontSize="13"
+                       Text="{Binding SelectionStatus}" AutomationProperties.LiveSetting="Polite" />
+          </StackPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var toggleButton = new AlderToggleButton();
+        toggleButton.Classes.Add("like");
+        toggleButton.Classes.Add("controlled");
+        AutomationProperties.SetName(toggleButton, "Like");
+        toggleButton.Bind(AlderToggleButton.IsCheckedProperty, CompiledBinding.Create((ToggleButtonViewModel model) => model.IsLiked, mode: BindingMode.TwoWay));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleFullWidth" Title="{DynamicResource GalleryText.FullWidth}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderToggleButton x:Name="FullWidthToggle" MaxWidth="400" FullWidth="True"
+                            Icon="{StaticResource AlderIconBookmark}" Content="{DynamicResource GalleryText.FollowUpdates}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var toggleButton = new AlderToggleButton
+        {
+            FullWidth = true,
+            Icon = (Geometry)this.FindResource("AlderIconBookmark")!,
+            Content = "Follow updates",
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustomStyles" Title="{DynamicResource GalleryText.CustomStyles}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel>
+          <StackPanel.Styles>
+            <Style Selector="alder|AlderToggleButton.article">
+              <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+              <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+              <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+              <Setter Property="BorderThickness" Value="1" />
+            </Style>
+            <Style Selector="alder|AlderToggleButton.article /template/ PathIcon#LeadingIcon">
+              <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+            </Style>
+            <Style Selector="alder|AlderToggleButton.article:checked">
+              <Setter Property="Background" Value="{DynamicResource AlderSoft}" />
+              <Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" />
+              <Setter Property="BorderBrush" Value="#4D0485F7" />
+            </Style>
+            <Style Selector="alder|AlderToggleButton.article:checked /template/ PathIcon#LeadingIcon">
+              <Setter Property="Foreground" Value="{DynamicResource AlderAccent}" />
+            </Style>
+          </StackPanel.Styles>
+          <alder:AlderToggleButton Classes="article" Icon="{StaticResource AlderIconHeart}" Content="{DynamicResource GalleryText.SaveArticle}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var toggleButton = new AlderToggleButton
+        {
+            Icon = (Geometry)this.FindResource("AlderIconHeart")!,
+            Content = "Save article",
+        };
+        toggleButton.Classes.Add("article");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleToggleButtonGroup" Title="{DynamicResource GalleryText.ToggleButtonGroupTitle}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderToggleButtonGroup HorizontalAlignment="Center" Mode="Multiple"
+                                       AutomationProperties.Name="{DynamicResource GalleryText.TextStyle}">
+          <alder:AlderToggleButton IsIconOnly="True" alder:AlderChoiceGroup.Key="bold" Icon="{StaticResource AlderIconBold}"
+                                   AutomationProperties.Name="{DynamicResource GalleryText.Bold}" />
+          <alder:AlderToggleButton IsIconOnly="True" alder:AlderChoiceGroup.Key="italic" Icon="{StaticResource AlderIconItalic}"
+                                   AutomationProperties.Name="{DynamicResource GalleryText.Italic}" />
+          <alder:AlderToggleButton IsIconOnly="True" alder:AlderChoiceGroup.Key="underline" Icon="{StaticResource AlderIconUnderline}"
+                                   AutomationProperties.Name="{DynamicResource GalleryText.Underline}" />
+          <alder:AlderToggleButton IsIconOnly="True" alder:AlderChoiceGroup.Key="strike" Content="S"
+                                   AutomationProperties.Name="{DynamicResource GalleryText.RichStrike}">
+            <alder:AlderToggleButton.ContentTemplate>
+              <DataTemplate x:DataType="x:String">
+                <alder:AlderTextBlock Text="{CompiledBinding}" TextDecorations="Strikethrough" />
+              </DataTemplate>
+            </alder:AlderToggleButton.ContentTemplate>
+          </alder:AlderToggleButton>
+        </alder:AlderToggleButtonGroup>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderToggleButtonGroup { Mode = ChoiceMode.Multiple };
+        AutomationProperties.SetName(group, "Text style");
+        foreach (var (key, label, icon) in new[]
+        {
+            ("bold", "Bold", "AlderIconBold"),
+            ("italic", "Italic", "AlderIconItalic"),
+            ("underline", "Underline", "AlderIconUnderline"),
+            ("strike", "Strikethrough", "")
+        })
+        {
+            var option = new AlderToggleButton { IsIconOnly = true };
+            if (icon.Length > 0)
+                option.Icon = (Geometry?)this.FindResource(icon);
+            else
+                option.Content = new AlderTextBlock { Text = "S", TextDecorations = TextDecorations.Strikethrough };
+            AutomationProperties.SetName(option, label);
+            AlderChoiceGroup.SetKey(option, key);
+            group.Children.Add(option);
+        }
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleLayout" Title="{DynamicResource GalleryText.Layout}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderToggleButtonGroup SelectedKeys="{CompiledBinding Layout}">
+          <alder:AlderToggleButton alder:AlderChoiceGroup.Key="list" Content="{DynamicResource GalleryText.List}" Theme="{StaticResource AlderToggleButtonTheme}" />
+          <alder:AlderToggleButton alder:AlderChoiceGroup.Key="grid" Content="{DynamicResource GalleryText.Grid}" Theme="{StaticResource AlderToggleButtonTheme}" />
+          <alder:AlderToggleButton alder:AlderChoiceGroup.Key="compact" Content="{DynamicResource GalleryText.Compact}" Theme="{StaticResource AlderToggleButtonTheme}" />
+        </alder:AlderToggleButtonGroup>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var toggleButtonGroup = new AlderToggleButtonGroup();
+        toggleButtonGroup.Bind(AlderToggleButtonGroup.SelectedKeysProperty, CompiledBinding.Create((ToggleButtonViewModel model) => model.Layout));
+
+        var toggleButton1 = new AlderToggleButton
+        {
+            Content = "List",
+            Theme = (ControlTheme)this.FindResource("AlderToggleButtonTheme")!,
+        };
+        AlderChoiceGroup.SetKey(toggleButton1, "list");
+        toggleButtonGroup.Children.Add(toggleButton1);
+
+        var toggleButton2 = new AlderToggleButton
+        {
+            Content = "Grid",
+            Theme = (ControlTheme)this.FindResource("AlderToggleButtonTheme")!,
+        };
+        AlderChoiceGroup.SetKey(toggleButton2, "grid");
+        toggleButtonGroup.Children.Add(toggleButton2);
+
+        var toggleButton3 = new AlderToggleButton
+        {
+            Content = "Compact",
+            Theme = (ControlTheme)this.FindResource("AlderToggleButtonTheme")!,
+        };
+        AlderChoiceGroup.SetKey(toggleButton3, "compact");
+        toggleButtonGroup.Children.Add(toggleButton3);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

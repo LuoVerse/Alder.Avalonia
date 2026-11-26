@@ -1,0 +1,336 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.AccordionExample" x:DataType="vm:AccordionViewModel" FontFamily="fonts:Inter#Inter">
+  <Design.DataContext><vm:AccordionViewModel /></Design.DataContext>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderAccordion x:Name="BasicAccordion">
+          <alder:AlderAccordionItem Icon="{StaticResource AlderIconGear}" Header="{DynamicResource GalleryText.AccordionAccount}" Content="{DynamicResource GalleryText.AccordionAccountBody}" />
+          <alder:AlderAccordionItem Icon="{StaticResource AlderIconEnvelope}" Header="{DynamicResource GalleryText.AccordionAlerts}" Content="{DynamicResource GalleryText.AccordionAlertsBody}" />
+          <alder:AlderAccordionItem Icon="{StaticResource AlderIconEye}" Header="{DynamicResource GalleryText.AccordionSecurity}" Content="{DynamicResource GalleryText.AccordionSecurityBody}" />
+        </alder:AlderAccordion>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var accordion = new AlderAccordion();
+
+        var accordionItem1 = new AlderAccordionItem
+        {
+            Icon = (Geometry)this.FindResource("AlderIconGear")!,
+            Header = "Account settings",
+            Content = "Update your profile details and manage the email address associated with your account.",
+        };
+        accordion.Items.Add(accordionItem1);
+
+        var accordionItem2 = new AlderAccordionItem
+        {
+            Icon = (Geometry)this.FindResource("AlderIconEnvelope")!,
+            Header = "Notifications",
+            Content = "Choose the account updates you want to receive. Changes take effect immediately.",
+        };
+        accordion.Items.Add(accordionItem2);
+
+        var accordionItem3 = new AlderAccordionItem
+        {
+            Icon = (Geometry)this.FindResource("AlderIconEye")!,
+            Header = "Security",
+            Content = "Review active sessions and update the options you use to protect your account.",
+        };
+        accordion.Items.Add(accordionItem3);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleInASurface" Title="{DynamicResource GalleryText.InASurface}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderAccordion Variant="Surface">
+          <alder:AlderAccordionItem IsExpanded="True" Header="{DynamicResource GalleryText.AccordionAccount}" Content="{DynamicResource GalleryText.AccordionAccountBody}" />
+          <alder:AlderAccordionItem Header="{DynamicResource GalleryText.AccordionAppearance}" Content="{DynamicResource GalleryText.AccordionAppearanceBody}" />
+          <alder:AlderAccordionItem Header="{DynamicResource GalleryText.AccordionAlerts}" Content="{DynamicResource GalleryText.AccordionAlertsBody}" />
+        </alder:AlderAccordion>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var accordion = new AlderAccordion { Variant = AccordionVariant.Surface };
+
+        var accordionItem1 = new AlderAccordionItem
+        {
+            IsExpanded = true,
+            Header = "Account settings",
+            Content = "Update your profile details and manage the email address associated with your account.",
+        };
+        accordion.Items.Add(accordionItem1);
+
+        var accordionItem2 = new AlderAccordionItem
+        {
+            Header = "Appearance",
+            Content = "Choose a theme for the app and adjust your display preferences.",
+        };
+        accordion.Items.Add(accordionItem2);
+
+        var accordionItem3 = new AlderAccordionItem
+        {
+            Header = "Notifications",
+            Content = "Choose the account updates you want to receive. Changes take effect immediately.",
+        };
+        accordion.Items.Add(accordionItem3);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleAccordionNoSeparator" Title="{DynamicResource GalleryText.AccordionNoSeparator}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderAccordion HideSeparator="True">
+          <alder:AlderAccordionItem Header="{DynamicResource GalleryText.AccordionAppearance}" Content="{DynamicResource GalleryText.AccordionAppearanceBody}" />
+          <alder:AlderAccordionItem Header="{DynamicResource GalleryText.AccordionAlerts}" Content="{DynamicResource GalleryText.AccordionAlertsBody}" />
+        </alder:AlderAccordion>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var accordion = new AlderAccordion { HideSeparator = true };
+
+        var accordionItem1 = new AlderAccordionItem
+        {
+            Header = "Appearance",
+            Content = "Choose a theme for the app and adjust your display preferences.",
+        };
+        accordion.Items.Add(accordionItem1);
+
+        var accordionItem2 = new AlderAccordionItem
+        {
+            Header = "Notifications",
+            Content = "Choose the account updates you want to receive. Changes take effect immediately.",
+        };
+        accordion.Items.Add(accordionItem2);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleAccordionMultiple" Title="{DynamicResource GalleryText.AccordionMultiple}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderAccordion AllowsMultipleExpanded="True">
+          <alder:AlderAccordionItem IsExpanded="True" Header="{DynamicResource GalleryText.AccordionAccount}" Content="{DynamicResource GalleryText.AccordionAccountBody}" />
+          <alder:AlderAccordionItem IsExpanded="True" Header="{DynamicResource GalleryText.AccordionAppearance}" Content="{DynamicResource GalleryText.AccordionAppearanceBody}" />
+          <alder:AlderAccordionItem Header="{DynamicResource GalleryText.AccordionAlerts}" Content="{DynamicResource GalleryText.AccordionAlertsBody}" />
+        </alder:AlderAccordion>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var accordion = new AlderAccordion { AllowsMultipleExpanded = true };
+
+        var accordionItem1 = new AlderAccordionItem
+        {
+            IsExpanded = true,
+            Header = "Account settings",
+            Content = "Update your profile details and manage the email address associated with your account.",
+        };
+        accordion.Items.Add(accordionItem1);
+
+        var accordionItem2 = new AlderAccordionItem
+        {
+            IsExpanded = true,
+            Header = "Appearance",
+            Content = "Choose a theme for the app and adjust your display preferences.",
+        };
+        accordion.Items.Add(accordionItem2);
+
+        var accordionItem3 = new AlderAccordionItem
+        {
+            Header = "Notifications",
+            Content = "Choose the account updates you want to receive. Changes take effect immediately.",
+        };
+        accordion.Items.Add(accordionItem3);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabledState" Title="{DynamicResource GalleryText.DisabledState}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderAccordion x:Name="PartlyDisabled">
+            <alder:AlderAccordionItem Header="{DynamicResource GalleryText.AccordionAccount}" Content="{DynamicResource GalleryText.AccordionAccountBody}" />
+            <alder:AlderAccordionItem IsEnabled="False" Header="{DynamicResource GalleryText.AccordionAppearance}" Content="{DynamicResource GalleryText.AccordionAppearanceBody}" />
+            <alder:AlderAccordionItem Header="{DynamicResource GalleryText.AccordionAlerts}" Content="{DynamicResource GalleryText.AccordionAlertsBody}" />
+          </alder:AlderAccordion>
+          <alder:AlderTextBlock Classes="detail" Text="{DynamicResource GalleryText.AllDisabled}" />
+          <alder:AlderAccordion IsEnabled="False">
+            <alder:AlderAccordionItem Header="{DynamicResource GalleryText.AccordionAccount}" Content="{DynamicResource GalleryText.AccordionAccountBody}" />
+            <alder:AlderAccordionItem Header="{DynamicResource GalleryText.AccordionSecurity}" Content="{DynamicResource GalleryText.AccordionSecurityBody}" />
+          </alder:AlderAccordion>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var accordion1 = new AlderAccordion();
+
+        var accordionItem1 = new AlderAccordionItem
+        {
+            Header = "Account settings",
+            Content = "Update your profile details and manage the email address associated with your account.",
+        };
+        accordion1.Items.Add(accordionItem1);
+
+        var accordionItem2 = new AlderAccordionItem
+        {
+            IsEnabled = false,
+            Header = "Appearance",
+            Content = "Choose a theme for the app and adjust your display preferences.",
+        };
+        accordion1.Items.Add(accordionItem2);
+
+        var accordionItem3 = new AlderAccordionItem
+        {
+            Header = "Notifications",
+            Content = "Choose the account updates you want to receive. Changes take effect immediately.",
+        };
+        accordion1.Items.Add(accordionItem3);
+
+        var accordion2 = new AlderAccordion { IsEnabled = false };
+
+        var accordionItem4 = new AlderAccordionItem
+        {
+            Header = "Account settings",
+            Content = "Update your profile details and manage the email address associated with your account.",
+        };
+        accordion2.Items.Add(accordionItem4);
+
+        var accordionItem5 = new AlderAccordionItem
+        {
+            Header = "Security",
+            Content = "Review active sessions and update the options you use to protect your account.",
+        };
+        accordion2.Items.Add(accordionItem5);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderButtonGroup Joined="False" Size="Small" Variant="Secondary" Spacing="8">
+            <alder:AlderButton Content="{DynamicResource GalleryText.Previous}" Command="{Binding Previous}" />
+            <alder:AlderButton Content="{DynamicResource GalleryText.Next}" Command="{Binding Next}" />
+          </alder:AlderButtonGroup>
+          <alder:AlderTextBlock Classes="detail" Text="{Binding ExpandedSummary}" AutomationProperties.LiveSetting="Polite" />
+          <alder:AlderAccordion x:Name="ControlledAccordion" ExpandedKeys="{Binding ExpandedKeys}">
+            <alder:AlderAccordionItem Key="account" Header="{DynamicResource GalleryText.AccordionAccount}" Content="{DynamicResource GalleryText.AccordionAccountBody}" />
+            <alder:AlderAccordionItem Key="appearance" Header="{DynamicResource GalleryText.AccordionAppearance}" Content="{DynamicResource GalleryText.AccordionAppearanceBody}" />
+            <alder:AlderAccordionItem Key="alerts" Header="{DynamicResource GalleryText.AccordionAlerts}" Content="{DynamicResource GalleryText.AccordionAlertsBody}" />
+          </alder:AlderAccordion>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var accordion = new AlderAccordion();
+        accordion.Bind(AlderAccordion.ExpandedKeysProperty, CompiledBinding.Create((AccordionViewModel model) => model.ExpandedKeys));
+
+        var accordionItem1 = new AlderAccordionItem
+        {
+            Key = "account",
+            Header = "Account settings",
+            Content = "Update your profile details and manage the email address associated with your account.",
+        };
+        accordion.Items.Add(accordionItem1);
+
+        var accordionItem2 = new AlderAccordionItem
+        {
+            Key = "appearance",
+            Header = "Appearance",
+            Content = "Choose a theme for the app and adjust your display preferences.",
+        };
+        accordion.Items.Add(accordionItem2);
+
+        var accordionItem3 = new AlderAccordionItem
+        {
+            Key = "alerts",
+            Header = "Notifications",
+            Content = "Choose the account updates you want to receive. Changes take effect immediately.",
+        };
+        accordion.Items.Add(accordionItem3);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustomIndicators" Title="{DynamicResource GalleryText.CustomIndicators}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderAccordion Variant="Surface">
+          <alder:AlderAccordionItem IndicatorIcon="{StaticResource AlderIconPlus}" ExpandedIndicatorIcon="{StaticResource AlderIconMinus}" IndicatorRotation="0" Header="{DynamicResource GalleryText.AccordionPlusIndicator}" Content="{DynamicResource GalleryText.AccordionAppearanceBody}" />
+          <alder:AlderAccordionItem IndicatorIcon="{StaticResource AlderIconArrowUp}" Header="{DynamicResource GalleryText.AccordionCaretIndicator}" Content="{DynamicResource GalleryText.AccordionSecurityBody}" />
+        </alder:AlderAccordion>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var accordion = new AlderAccordion { Variant = AccordionVariant.Surface };
+
+        var accordionItem1 = new AlderAccordionItem
+        {
+            IndicatorIcon = (Geometry)this.FindResource("AlderIconPlus")!,
+            ExpandedIndicatorIcon = (Geometry)this.FindResource("AlderIconMinus")!,
+            IndicatorRotation = 0,
+            Header = "Plus and minus",
+            Content = "Choose a theme for the app and adjust your display preferences.",
+        };
+        accordion.Items.Add(accordionItem1);
+
+        var accordionItem2 = new AlderAccordionItem
+        {
+            IndicatorIcon = (Geometry)this.FindResource("AlderIconArrowUp")!,
+            Header = "Rotating arrow",
+            Content = "Review active sessions and update the options you use to protect your account.",
+        };
+        accordion.Items.Add(accordionItem2);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleAccordionCustomHeader" Title="{DynamicResource GalleryText.AccordionCustomHeader}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderAccordion Variant="Surface">
+          <alder:AlderAccordionItem x:Name="AdvancedItem" Icon="{StaticResource AlderIconGear}" Content="{DynamicResource GalleryText.AccordionAdvancedBody}"
+                               AutomationProperties.Name="{DynamicResource GalleryText.AccordionAdvanced}">
+            <alder:AlderAccordionItem.Header>
+              <StackPanel Spacing="3">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.AccordionAdvanced}" TextWrapping="Wrap" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.AccordionAdvancedHint}" Foreground="{DynamicResource AlderMuted}"
+                           FontSize="12" FontWeight="Normal" LineHeight="16" TextWrapping="Wrap" />
+              </StackPanel>
+            </alder:AlderAccordionItem.Header>
+          </alder:AlderAccordionItem>
+        </alder:AlderAccordion>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var accordion = new AlderAccordion { Variant = AccordionVariant.Surface };
+
+        var accordionItem1 = new AlderAccordionItem
+        {
+            Icon = (Geometry)this.FindResource("AlderIconGear")!,
+            Content = "Use the app settings to customize keyboard shortcuts and reduce interface motion.",
+        };
+        AutomationProperties.SetName(accordionItem1, "Advanced settings");
+        accordion.Items.Add(accordionItem1);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleAccordionFaq" Title="{DynamicResource GalleryText.AccordionFaq}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderLabel Theme="{StaticResource AlderLabelTheme}" Content="{DynamicResource GalleryText.AccordionOrders}" />
+          <alder:AlderAccordion Variant="Surface">
+            <alder:AlderAccordionItem Header="{DynamicResource GalleryText.AccordionOrder}" Content="{DynamicResource GalleryText.AccordionOrderBody}" />
+            <alder:AlderAccordionItem Header="{DynamicResource GalleryText.AccordionChange}" Content="{DynamicResource GalleryText.AccordionChangeBody}" />
+          </alder:AlderAccordion>
+          <alder:AlderLabel Theme="{StaticResource AlderLabelTheme}" Margin="0,6,0,0" Content="{DynamicResource GalleryText.AccordionSupport}" />
+          <alder:AlderAccordion Variant="Surface">
+            <alder:AlderAccordionItem Header="{DynamicResource GalleryText.AccordionHelp}" Content="{DynamicResource GalleryText.AccordionHelpBody}" />
+          </alder:AlderAccordion>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var accordion1 = new AlderAccordion { Variant = AccordionVariant.Surface };
+
+        var accordionItem1 = new AlderAccordionItem
+        {
+            Header = "How do I track my order?",
+            Content = "Open your order history and select an order to find its latest tracking information.",
+        };
+        accordion1.Items.Add(accordionItem1);
+
+        var accordionItem2 = new AlderAccordionItem
+        {
+            Header = "Can I change my delivery address?",
+            Content = "You can edit the delivery address from the order details before the package is dispatched.",
+        };
+        accordion1.Items.Add(accordionItem2);
+
+        var accordion2 = new AlderAccordion { Variant = AccordionVariant.Surface };
+
+        var accordionItem3 = new AlderAccordionItem
+        {
+            Header = "How do I get help?",
+            Content = "Contact the support team with your order number so they can find the correct details.",
+        };
+        accordion2.Items.Add(accordionItem3);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

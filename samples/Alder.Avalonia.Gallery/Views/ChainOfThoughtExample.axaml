@@ -1,0 +1,187 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="using:Alder.Avalonia.Controls"
+             xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.ChainOfThoughtExample"
+             x:DataType="vm:AiExampleViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleDefault" Classes="flush-preview" Title="{DynamicResource GalleryText.AiDefault}">
+      <g:ExampleCard.Preview>
+        <Border Container.Name="ChainPreview" Container.Sizing="Width" x:DataType="vm:AiExampleViewModel">
+          <Border.Styles>
+            <Style Selector=":is(Border).chain-preview"><Setter Property="Padding" Value="32,24,40,24" /></Style>
+            <ContainerQuery Name="ChainPreview" Query="max-width:639">
+              <Style Selector=":is(Border).chain-preview"><Setter Property="Padding" Value="16,24,24,24" /></Style>
+            </ContainerQuery>
+          </Border.Styles>
+          <g:AiLivePreview Classes="chain-preview" Height="360">
+            <g:AiLivePreview.DataContext><vm:AiExampleViewModel Scenario="Chain" /></g:AiLivePreview.DataContext>
+            <a:AlderScrollViewer x:Name="TracePlayback" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+              <Grid MinHeight="{CompiledBinding #TracePlayback.Bounds.Height}">
+                <StackPanel Spacing="8" Margin="8,4,4,4" VerticalAlignment="Center">
+                  <a:AlderReasoning Text="{CompiledBinding TraceText}" Duration="{DynamicResource GalleryText.AiReasoningTwoSeconds}" Status="{CompiledBinding ThinkingPhase.Status}"
+                                     IsExpanded="{CompiledBinding ThinkingPhase.Expanded, Mode=TwoWay}" CollapseDelay="-00:00:00.001" />
+                  <a:AlderReasoning CollapseDelay="-00:00:00.001" Header="{CompiledBinding ExplorePhase.Title}" Status="{CompiledBinding ExplorePhase.Status}"
+                                        IsExpanded="{CompiledBinding ExplorePhase.Expanded, Mode=TwoWay}" IsVisible="{CompiledBinding ExplorePhase.Visible}">
+                    <a:AlderChainOfThoughtSteps>
+                      <a:AlderChainOfThoughtStep Header="{CompiledBinding ExplorePhase.Steps[0].Title}" Status="{CompiledBinding ExplorePhase.Steps[0].Status}"
+                                                 Description="{CompiledBinding ExplorePhase.Steps[0].Description}" IsVisible="{CompiledBinding ExplorePhase.Steps[0].Visible}" CompletedIcon="{DynamicResource AlderAiFile}" />
+                      <a:AlderChainOfThoughtStep Header="{CompiledBinding ExplorePhase.Steps[1].Title}" Status="{CompiledBinding ExplorePhase.Steps[1].Status}"
+                                                 Description="{CompiledBinding ExplorePhase.Steps[1].Description}" IsVisible="{CompiledBinding ExplorePhase.Steps[1].Visible}" CompletedIcon="{DynamicResource AlderAiFile}" />
+                      <a:AlderChainOfThoughtStep Header="{CompiledBinding ExplorePhase.Steps[2].Title}" Status="{CompiledBinding ExplorePhase.Steps[2].Status}"
+                                                 Description="{CompiledBinding ExplorePhase.Steps[2].Description}" IsVisible="{CompiledBinding ExplorePhase.Steps[2].Visible}" CompletedIcon="{DynamicResource AlderAiFile}" />
+                    </a:AlderChainOfThoughtSteps>
+                  </a:AlderReasoning>
+                  <a:AlderReasoning CollapseDelay="-00:00:00.001" Header="{CompiledBinding EditPhase.Title}" Status="{CompiledBinding EditPhase.Status}"
+                                        IsExpanded="{CompiledBinding EditPhase.Expanded, Mode=TwoWay}" IsVisible="{CompiledBinding EditPhase.Visible}">
+                    <a:AlderChainOfThoughtSteps>
+                      <a:AlderChainOfThoughtStep Header="{CompiledBinding EditPhase.Steps[0].Title}" Status="{CompiledBinding EditPhase.Steps[0].Status}"
+                                                 Description="{CompiledBinding EditPhase.Steps[0].Description}" IsVisible="{CompiledBinding EditPhase.Steps[0].Visible}" CompletedIcon="{DynamicResource AlderAiFile}" />
+                      <a:AlderChainOfThoughtStep Header="{CompiledBinding EditPhase.Steps[1].Title}" Status="{CompiledBinding EditPhase.Steps[1].Status}"
+                                                 Description="{CompiledBinding EditPhase.Steps[1].Description}" IsVisible="{CompiledBinding EditPhase.Steps[1].Visible}" CompletedIcon="{DynamicResource AlderAiFile}" />
+                    </a:AlderChainOfThoughtSteps>
+                  </a:AlderReasoning>
+                  <a:AlderReasoning CollapseDelay="-00:00:00.001" Header="{CompiledBinding CheckPhase.Title}" Status="{CompiledBinding CheckPhase.Status}"
+                                        IsExpanded="{CompiledBinding CheckPhase.Expanded, Mode=TwoWay}" IsVisible="{CompiledBinding CheckPhase.Visible}">
+                    <a:AlderChainOfThoughtSteps>
+                      <a:AlderChainOfThoughtStep Header="{CompiledBinding CheckPhase.Steps[0].Title}" Status="{CompiledBinding CheckPhase.Steps[0].Status}"
+                                                 Description="{CompiledBinding CheckPhase.Steps[0].Description}" IsVisible="{CompiledBinding CheckPhase.Steps[0].Visible}" />
+                      <a:AlderChainOfThoughtStep Header="{CompiledBinding CheckPhase.Steps[1].Title}" Status="{CompiledBinding CheckPhase.Steps[1].Status}"
+                                                 Description="{CompiledBinding CheckPhase.Steps[1].Description}" IsVisible="{CompiledBinding CheckPhase.Steps[1].Visible}" />
+                    </a:AlderChainOfThoughtSteps>
+                  </a:AlderReasoning>
+                </StackPanel>
+              </Grid>
+            </a:AlderScrollViewer>
+          </g:AiLivePreview>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel { Scenario = AiGalleryScenario.Chain };
+        var thinking = new AlderReasoning { CollapseDelay = Timeout.InfiniteTimeSpan };
+        thinking[!AlderReasoning.DurationProperty] = new DynamicResourceExtension("GalleryText.AiReasoningTwoSeconds");
+        thinking.Bind(AlderReasoning.TextProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.TraceText, source: model));
+        BindPhase(thinking, model.ThinkingPhase);
+
+        var phases = new StackPanel
+        {
+            Spacing = 8, Margin = new Thickness(8, 4, 4, 4), VerticalAlignment = VerticalAlignment.Center,
+            Children = { thinking, MakePhase(model.ExplorePhase, true), MakePhase(model.EditPhase, true), MakePhase(model.CheckPhase, false) }
+        };
+        var body = new Grid { Children = { phases } };
+        var scroll = new AlderScrollViewer
+        {
+            Content = body, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled, VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+        };
+        body.Bind(Layoutable.MinHeightProperty, CompiledBinding.Create((AlderScrollViewer viewer) => viewer.Bounds.Height, source: scroll));
+        var preview = new AiLivePreview { DataContext = model, Height = 360, Padding = new Thickness(32, 24, 40, 24), Child = scroll };
+        preview.SizeChanged += (_, e) => preview.Padding = e.NewSize.Width < 640
+            ? new Thickness(16, 24, 24, 24) : new Thickness(32, 24, 40, 24);
+
+        static void BindPhase(AlderReasoning reasoning, AiTracePhase phase)
+        {
+            reasoning.Bind(AlderReasoning.StatusProperty, CompiledBinding.Create((AiTracePhase vm) => vm.Status, source: phase));
+            reasoning.Bind(AlderReasoning.IsExpandedProperty,
+                CompiledBinding.Create((AiTracePhase vm) => vm.Expanded, source: phase, mode: BindingMode.TwoWay));
+        }
+
+        static AlderReasoning MakePhase(AiTracePhase phase, bool showFileIcon)
+        {
+            var steps = new AlderChainOfThoughtSteps();
+            foreach (var item in phase.Steps)
+            {
+                var step = new AlderChainOfThoughtStep();
+                step.Bind(AlderChainOfThoughtStep.HeaderProperty, CompiledBinding.Create((AiTraceStep vm) => vm.Title, source: item));
+                step.Bind(AlderChainOfThoughtStep.DescriptionProperty, CompiledBinding.Create((AiTraceStep vm) => vm.Description, source: item));
+                step.Bind(AlderChainOfThoughtStep.StatusProperty, CompiledBinding.Create((AiTraceStep vm) => vm.Status, source: item));
+                step.Bind(Visual.IsVisibleProperty, CompiledBinding.Create((AiTraceStep vm) => vm.Visible, source: item));
+                if (showFileIcon)
+                    step[!AlderChainOfThoughtStep.CompletedIconProperty] = new DynamicResourceExtension("AlderAiFile");
+                steps.Children.Add(step);
+            }
+            var reasoning = new AlderReasoning { CollapseDelay = Timeout.InfiniteTimeSpan, Content = steps };
+            BindPhase(reasoning, phase);
+            reasoning.Bind(AlderReasoning.HeaderProperty, CompiledBinding.Create((AiTracePhase vm) => vm.Title, source: phase));
+            reasoning.Bind(Visual.IsVisibleProperty, CompiledBinding.Create((AiTracePhase vm) => vm.Visible, source: phase));
+            return reasoning;
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleStatus" Classes="flush-preview" Title="{DynamicResource GalleryText.AiVariantStatus}">
+      <g:ExampleCard.Preview>
+        <Border Container.Name="ChainPreview" Container.Sizing="Width" x:DataType="vm:AiExampleViewModel">
+          <Border.Styles>
+            <Style Selector=":is(Border).chain-preview"><Setter Property="Padding" Value="32,24,40,24" /></Style>
+            <ContainerQuery Name="ChainPreview" Query="max-width:639">
+              <Style Selector=":is(Border).chain-preview"><Setter Property="Padding" Value="16,24,24,24" /></Style>
+            </ContainerQuery>
+          </Border.Styles>
+          <Border Classes="chain-preview" MinHeight="460">
+            <StackPanel Spacing="24" VerticalAlignment="Center" Margin="8,0,0,0">
+              <a:AlderReasoning CollapseDelay="-00:00:00.001" Status="Running" IsExpanded="True">
+                <a:AlderChainOfThoughtSteps>
+                  <a:AlderChainOfThoughtStep Header="{DynamicResource GalleryText.AiReadActions}" Status="Completed" />
+                  <a:AlderChainOfThoughtStep Header="{DynamicResource GalleryText.AiTypecheck}" Description="{DynamicResource GalleryText.AiOneError}" Status="Failed" />
+                  <a:AlderChainOfThoughtStep Header="{DynamicResource GalleryText.AiFixType}" Status="Running" />
+                  <a:AlderChainOfThoughtStep Header="{DynamicResource GalleryText.AiSignupTests}" Status="Pending" />
+                </a:AlderChainOfThoughtSteps>
+              </a:AlderReasoning>
+              <a:AlderReasoning CollapseDelay="-00:00:00.001" Duration="{DynamicResource GalleryText.AiReasoningFiveSeconds}" Status="Stopped" IsExpanded="True">
+                <a:AlderChainOfThoughtSteps>
+                  <a:AlderChainOfThoughtStep Header="{DynamicResource GalleryText.AiReadActions}" Status="Completed" />
+                  <a:AlderChainOfThoughtStep Header="{DynamicResource GalleryText.AiTypecheck}" Description="{DynamicResource GalleryText.AiOneError}" Status="Failed" />
+                  <a:AlderChainOfThoughtStep Header="{DynamicResource GalleryText.AiFixType}" Status="Running" />
+                  <a:AlderChainOfThoughtStep Header="{DynamicResource GalleryText.AiSignupTests}" Status="Pending" />
+                </a:AlderChainOfThoughtSteps>
+              </a:AlderReasoning>
+            </StackPanel>
+          </Border>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var running = new AlderReasoning
+        {
+            Status = AiRunStatus.Running, IsExpanded = true, CollapseDelay = Timeout.InfiniteTimeSpan, Content = MakeSteps()
+        };
+        var stopped = new AlderReasoning
+        {
+            Status = AiRunStatus.Stopped, IsExpanded = true, CollapseDelay = Timeout.InfiniteTimeSpan, Content = MakeSteps()
+        };
+        stopped[!AlderReasoning.DurationProperty] = new DynamicResourceExtension("GalleryText.AiReasoningFiveSeconds");
+        var preview = new Border
+        {
+            MinHeight = 460, Padding = new Thickness(32, 24, 40, 24),
+            Child = new StackPanel
+            {
+                Spacing = 24, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0),
+                Children = { running, stopped }
+            }
+        };
+        preview.SizeChanged += (_, e) => preview.Padding = e.NewSize.Width < 640
+            ? new Thickness(16, 24, 24, 24) : new Thickness(32, 24, 40, 24);
+
+        static AlderChainOfThoughtSteps MakeSteps() => new()
+        {
+            Children =
+            {
+                Step("AiReadActions", AiRunStatus.Completed),
+                Step("AiTypecheck", AiRunStatus.Failed, "AiOneError"),
+                Step("AiFixType", AiRunStatus.Running),
+                Step("AiSignupTests", AiRunStatus.Pending)
+            }
+        };
+
+        static AlderChainOfThoughtStep Step(string title, AiRunStatus status, string? description = null)
+        {
+            var step = new AlderChainOfThoughtStep { Status = status };
+            step[!AlderChainOfThoughtStep.HeaderProperty] = new DynamicResourceExtension("GalleryText." + title);
+            if (description is not null)
+                step[!AlderChainOfThoughtStep.DescriptionProperty] = new DynamicResourceExtension("GalleryText." + description);
+            return step;
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

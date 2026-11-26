@@ -1,0 +1,134 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls">
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderChartSeries1" Color="#0485F7" />
+      <SolidColorBrush x:Key="AlderChartSeries2" Color="#00399D" />
+      <SolidColorBrush x:Key="AlderChartSeries3" Color="#065FC5" />
+      <SolidColorBrush x:Key="AlderChartSeries4" Color="#43A5FA" />
+      <SolidColorBrush x:Key="AlderChartSeries5" Color="#CE5476" />
+      <SolidColorBrush x:Key="AlderChartGrid" Color="#2671717A" />
+      <SolidColorBrush x:Key="AlderChartBand" Color="#1271717A" />
+      <BoxShadows x:Key="AlderChartTooltipShadow">0 3 8 0 #19000000, 0 9 18 0 #11000000</BoxShadows>
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderChartSeries1" Color="#168CF8" />
+      <SolidColorBrush x:Key="AlderChartSeries2" Color="#084EB6" />
+      <SolidColorBrush x:Key="AlderChartSeries3" Color="#0866C9" />
+      <SolidColorBrush x:Key="AlderChartSeries4" Color="#4CAAFC" />
+      <SolidColorBrush x:Key="AlderChartSeries5" Color="#F98FA9" />
+      <SolidColorBrush x:Key="AlderChartGrid" Color="#269F9FA9" />
+      <SolidColorBrush x:Key="AlderChartBand" Color="#249F9FA9" />
+      <BoxShadows x:Key="AlderChartTooltipShadow">0 3 8 0 #38000000, 0 9 18 0 #30000000</BoxShadows>
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+
+  <ControlTheme x:Key="{x:Type alder:AlderChartTooltip}" TargetType="alder:AlderChartTooltip">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border MinWidth="138" MaxWidth="260" Padding="11,8" IsVisible="{TemplateBinding HasContent}"
+                CornerRadius="8" BorderThickness="1" BorderBrush="{DynamicResource AlderSeparator}"
+                Background="{DynamicResource AlderSurface}" BoxShadow="{DynamicResource AlderChartTooltipShadow}">
+          <StackPanel Spacing="6" TextElement.FontSize="12" TextElement.Foreground="{DynamicResource AlderInk}">
+            <alder:AlderTextBlock Text="{TemplateBinding Header}" FontWeight="Medium" Foreground="{DynamicResource AlderMuted}"
+                       IsVisible="{Binding Header, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                       x:DataType="alder:AlderChartTooltip" TextWrapping="Wrap" />
+            <alder:AlderItemsControl ItemsSource="{TemplateBinding Rows}">
+              <alder:AlderItemsControl.ItemsPanel>
+                <ItemsPanelTemplate><StackPanel Spacing="4" /></ItemsPanelTemplate>
+              </alder:AlderItemsControl.ItemsPanel>
+              <alder:AlderItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="alder:AlderChartTooltipRow">
+                  <Grid ColumnDefinitions="8,*,Auto" ColumnSpacing="7">
+                    <Border Width="{CompiledBinding MarkerWidth}" Height="{CompiledBinding MarkerHeight}" CornerRadius="4"
+                            VerticalAlignment="Center" HorizontalAlignment="Center" Background="{CompiledBinding Entry.Brush}" />
+                    <alder:AlderTextBlock Grid.Column="1" Text="{CompiledBinding Entry.Name}" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                    <alder:AlderTextBlock Grid.Column="2" Text="{CompiledBinding Entry.Value}" FontWeight="SemiBold" />
+                  </Grid>
+                </DataTemplate>
+              </alder:AlderItemsControl.ItemTemplate>
+            </alder:AlderItemsControl>
+          </StackPanel>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <DataTemplate x:Key="AlderChartTooltipTemplate" x:DataType="alder:AlderChartTooltipData">
+    <alder:AlderChartTooltip Data="{CompiledBinding}" />
+  </DataTemplate>
+
+  <ControlTheme x:Key="AlderPlotChartTheme" TargetType="alder:AlderPlotChart">
+    <Setter Property="FontSize" Value="10" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="Padding" Value="4,8,4,0" />
+    <Setter Property="GridBrush" Value="{DynamicResource AlderChartGrid}" />
+    <Setter Property="TooltipTemplate" Value="{StaticResource AlderChartTooltipTemplate}" />
+    <Setter Property="Focusable" Value="True" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border x:Name="FocusRing" BorderBrush="{DynamicResource AlderAccent}" BorderThickness="1"
+                  CornerRadius="6" IsVisible="False" IsHitTestVisible="False" />
+          <Canvas IsHitTestVisible="False">
+            <ContentPresenter x:Name="PART_Tooltip" Content="{TemplateBinding ActiveData}"
+                              ContentTemplate="{TemplateBinding TooltipTemplate}" IsVisible="False" Opacity="0" IsHitTestVisible="False"
+                              RenderTransformOrigin="0,0" />
+          </Canvas>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:focus-visible /template/ Border#FocusRing">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^[ShowTooltip=False]">
+      <Setter Property="Focusable" Value="False" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderAreaChart}" TargetType="alder:AlderAreaChart"
+                BasedOn="{StaticResource AlderPlotChartTheme}">
+    <Setter Property="CursorBrush" Value="{DynamicResource AlderMuted}" />
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderBarChart}" TargetType="alder:AlderBarChart"
+                BasedOn="{StaticResource AlderPlotChartTheme}">
+    <Setter Property="CursorBrush" Value="{DynamicResource AlderChartBand}" />
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderLineChart}" TargetType="alder:AlderLineChart"
+                BasedOn="{StaticResource AlderPlotChartTheme}">
+    <Setter Property="CursorBrush" Value="{DynamicResource AlderMuted}" />
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderComposedChart}" TargetType="alder:AlderComposedChart"
+                BasedOn="{StaticResource AlderPlotChartTheme}">
+    <Setter Property="CursorBrush" Value="{DynamicResource AlderMuted}" />
+  </ControlTheme>
+  <ControlTheme x:Key="AlderCircularChartTheme" TargetType="alder:AlderCircularChart"
+                BasedOn="{StaticResource AlderPlotChartTheme}">
+    <Setter Property="Padding" Value="20" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border x:Name="FocusRing" BorderBrush="{DynamicResource AlderAccent}" BorderThickness="1"
+                  CornerRadius="6" IsVisible="False" IsHitTestVisible="False" />
+          <ContentPresenter Content="{TemplateBinding CenterContent}" ContentTemplate="{TemplateBinding CenterContentTemplate}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False"
+                            TextElement.Foreground="{DynamicResource AlderInk}" />
+          <Canvas IsHitTestVisible="False">
+            <ContentPresenter x:Name="PART_Tooltip" Content="{TemplateBinding ActiveData}"
+                              ContentTemplate="{TemplateBinding TooltipTemplate}" IsVisible="False" Opacity="0" IsHitTestVisible="False"
+                              RenderTransformOrigin="0,0" />
+          </Canvas>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderPieChart}" TargetType="alder:AlderPieChart"
+                BasedOn="{StaticResource AlderCircularChartTheme}" />
+  <ControlTheme x:Key="{x:Type alder:AlderRadialChart}" TargetType="alder:AlderRadialChart"
+                BasedOn="{StaticResource AlderCircularChartTheme}">
+    <Setter Property="TrackBrush" Value="{DynamicResource AlderBorder}" />
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderRadarChart}" TargetType="alder:AlderRadarChart"
+                BasedOn="{StaticResource AlderPlotChartTheme}" />
+</ResourceDictionary>

@@ -1,0 +1,398 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.PieChartExample" x:DataType="vm:ChartsViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="MarketTooltip" x:DataType="alder:AlderChartTooltipData">
+      <Border Padding="13,9" CornerRadius="9" Background="{DynamicResource AlderSurface}"
+              BoxShadow="{DynamicResource AlderChartTooltipShadow}">
+        <Grid ColumnDefinitions="8,*,Auto" ColumnSpacing="8">
+          <Ellipse Width="8" Height="8" Fill="{CompiledBinding Entries[0].Brush}" />
+          <alder:AlderTextBlock Grid.Column="1" Text="{CompiledBinding Entries[0].Name}" Foreground="{DynamicResource AlderMuted}" />
+          <alder:AlderTextBlock Grid.Column="2" Text="{CompiledBinding Entries[0].Value}" FontWeight="SemiBold" />
+        </Grid>
+      </Border>
+    </DataTemplate>
+  </UserControl.Resources>
+  <StackPanel Spacing="24">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="360" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+          <StackPanel Spacing="12">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartBrowserUsage}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+            <alder:AlderPieChart Slices="{CompiledBinding Browsers}" Height="220"
+                                AutomationProperties.Name="{DynamicResource GalleryText.ChartBrowserUsage}" />
+            <WrapPanel ItemSpacing="12" LineSpacing="7" HorizontalAlignment="Center">
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries4}" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartChrome}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries1}" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartSafari}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries3}" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartFirefox}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries2}" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartEdge}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+            </WrapPanel>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var chart = new AlderPieChart
+        {
+            Slices = viewModel.Browsers,
+            Height = 220,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustom" Title="{DynamicResource GalleryText.ChartCustomTooltip}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="360" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+          <StackPanel Spacing="12">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartMarketShare}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+            <alder:AlderPieChart Slices="{CompiledBinding Browsers}" Height="220"
+                                AutomationProperties.Name="{DynamicResource GalleryText.ChartMarketShare}" ValueFormat="0.0'%'"
+                                TooltipTemplate="{StaticResource MarketTooltip}" />
+            <WrapPanel ItemSpacing="12" LineSpacing="7" HorizontalAlignment="Center">
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries4}" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartChrome}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries1}" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartSafari}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries3}" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartFirefox}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries2}" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartEdge}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+            </WrapPanel>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var chart = new AlderPieChart
+        {
+            Slices = viewModel.Browsers,
+            Height = 220,
+            ValueFormat = "0.0'%'",
+            TooltipTemplate = this.FindResource("MarketTooltip") as IDataTemplate,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDonut" Title="{DynamicResource GalleryText.ChartDonut}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="360" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+          <StackPanel Spacing="12">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartTrafficSource}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+            <alder:AlderPieChart Slices="{CompiledBinding PieTraffic}" Height="220"
+                                AutomationProperties.Name="{DynamicResource GalleryText.ChartTrafficSource}" InnerRadius=".85"
+                                RoundCaps="True" />
+            <WrapPanel ItemSpacing="12" LineSpacing="7" HorizontalAlignment="Center">
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries4}" />
+                <alder:AlderTextBlock Text="{CompiledBinding TrafficLegend[0]}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries1}" />
+                <alder:AlderTextBlock Text="{CompiledBinding TrafficLegend[1]}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries3}" />
+                <alder:AlderTextBlock Text="{CompiledBinding TrafficLegend[2]}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries2}" />
+                <alder:AlderTextBlock Text="{CompiledBinding TrafficLegend[3]}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+            </WrapPanel>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var chart = new AlderPieChart
+        {
+            Slices = viewModel.PieTraffic,
+            Height = 220,
+            InnerRadius = .85,
+            RoundCaps = true,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDonutContent" Title="{DynamicResource GalleryText.ChartDonutContent}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="360" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+          <StackPanel Spacing="12">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartConnectedDevices}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+            <alder:AlderPieChart Slices="{CompiledBinding PieDevices}" Height="240"
+                                AutomationProperties.Name="{DynamicResource GalleryText.ChartConnectedDevices}"
+                                InnerRadius=".78" RoundCaps="True" Padding="30">
+              <alder:AlderPieChart.CenterContent>
+                <StackPanel Spacing="3">
+                  <alder:AlderTextBlock Text="{CompiledBinding DeviceTotal}" FontSize="24" FontWeight="SemiBold" TextWrapping="Wrap" TextAlignment="Center" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartDevices}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" TextAlignment="Center" />
+                </StackPanel>
+              </alder:AlderPieChart.CenterContent>
+            </alder:AlderPieChart>
+            <StackPanel Spacing="10" VerticalAlignment="Center" HorizontalAlignment="Center">
+              <Grid ColumnDefinitions="10,*,Auto,Auto" ColumnSpacing="12">
+                <Ellipse Width="10" Height="10" Fill="{DynamicResource AlderChartSeries4}" VerticalAlignment="Center" />
+                <alder:AlderTextBlock Grid.Column="1" Text="{DynamicResource GalleryText.ChartMobile}" FontSize="13" TextWrapping="Wrap" />
+                <alder:AlderTextBlock Grid.Column="2" Text="{CompiledBinding PieDevices[0].Value}" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" />
+                <alder:AlderTextBlock Grid.Column="3" Text="59%" FontSize="11" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </Grid>
+              <Grid ColumnDefinitions="10,*,Auto,Auto" ColumnSpacing="12">
+                <Ellipse Width="10" Height="10" Fill="{DynamicResource AlderChartSeries1}" VerticalAlignment="Center" />
+                <alder:AlderTextBlock Grid.Column="1" Text="{DynamicResource GalleryText.ChartDesktop}" FontSize="13" TextWrapping="Wrap" />
+                <alder:AlderTextBlock Grid.Column="2" Text="{CompiledBinding PieDevices[1].Value}" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" />
+                <alder:AlderTextBlock Grid.Column="3" Text="29%" FontSize="11" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </Grid>
+              <Grid ColumnDefinitions="10,*,Auto,Auto" ColumnSpacing="12">
+                <Ellipse Width="10" Height="10" Fill="{DynamicResource AlderChartSeries3}" VerticalAlignment="Center" />
+                <alder:AlderTextBlock Grid.Column="1" Text="{DynamicResource GalleryText.ChartTablet}" FontSize="13" TextWrapping="Wrap" />
+                <alder:AlderTextBlock Grid.Column="2" Text="{CompiledBinding PieDevices[2].Value}" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" />
+                <alder:AlderTextBlock Grid.Column="3" Text="12%" FontSize="11" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </Grid>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var chart = new AlderPieChart
+        {
+            Slices = viewModel.PieDevices,
+            Height = 240,
+            InnerRadius = .78,
+            RoundCaps = true,
+            Padding = new Thickness(30),
+            CenterContent = new StackPanel
+            {
+                Children =
+                {
+                    new AlderTextBlock { Text = viewModel.DeviceTotal, FontSize = 24, FontWeight = FontWeight.SemiBold, TextAlignment = TextAlignment.Center },
+                    new AlderTextBlock { Text = "Devices", FontSize = 12, TextAlignment = TextAlignment.Center },
+                }
+            },
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDonutLabel" Title="{DynamicResource GalleryText.ChartDonutLabel}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="360" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+          <StackPanel Spacing="12">
+            <StackPanel Spacing="3">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartStorageUsage}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+              <alder:AlderTextBlock Text="{CompiledBinding StorageUsed}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+            </StackPanel>
+            <alder:AlderPieChart Slices="{CompiledBinding PieStorage}" Height="220"
+                                AutomationProperties.Name="{DynamicResource GalleryText.ChartStorageUsage}" InnerRadius=".85"
+                                SweepAngle="-292.5" RoundCaps="True" Padding="26">
+              <alder:AlderPieChart.CenterContent>
+                <StackPanel Spacing="3">
+                  <alder:AlderTextBlock Text="104" FontSize="24" FontWeight="SemiBold" TextWrapping="Wrap" TextAlignment="Center" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartGbUsed}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" TextAlignment="Center" />
+                </StackPanel>
+              </alder:AlderPieChart.CenterContent>
+            </alder:AlderPieChart>
+            <WrapPanel ItemSpacing="12" LineSpacing="7" HorizontalAlignment="Center">
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries4}" />
+                <alder:AlderTextBlock Text="{CompiledBinding StorageLegend[0]}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries1}" />
+                <alder:AlderTextBlock Text="{CompiledBinding StorageLegend[1]}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries3}" />
+                <alder:AlderTextBlock Text="{CompiledBinding StorageLegend[2]}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries2}" />
+                <alder:AlderTextBlock Text="{CompiledBinding StorageLegend[3]}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+            </WrapPanel>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var chart = new AlderPieChart
+        {
+            Slices = viewModel.PieStorage,
+            Height = 220,
+            InnerRadius = .85,
+            SweepAngle = -292.5,
+            RoundCaps = true,
+            Padding = new Thickness(26),
+            CenterContent = new StackPanel
+            {
+                Children =
+                {
+                    new AlderTextBlock { Text = "104", FontSize = 24, FontWeight = FontWeight.SemiBold, TextAlignment = TextAlignment.Center },
+                    new AlderTextBlock { Text = "GB used", FontSize = 12, TextAlignment = TextAlignment.Center },
+                }
+            },
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleNested" Title="{DynamicResource GalleryText.ChartNestedDonut}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="400" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+          <StackPanel Spacing="12">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartRevenueByYear}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+            <alder:AlderPieChart Slices="{CompiledBinding PieThisYear}" Height="240"
+                                AutomationProperties.Name="{DynamicResource GalleryText.ChartRevenueByYear}"
+                                InnerSlices="{CompiledBinding PieLastYear}" InnerRadius=".51" RoundCaps="True" Padding="42" />
+            <WrapPanel ItemSpacing="12" LineSpacing="7" HorizontalAlignment="Center">
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries4}" />
+                <alder:AlderTextBlock Text="{CompiledBinding PieThisYear[0].Name}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries1}" />
+                <alder:AlderTextBlock Text="{CompiledBinding PieThisYear[1].Name}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries3}" />
+                <alder:AlderTextBlock Text="{CompiledBinding PieThisYear[2].Name}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries2}" />
+                <alder:AlderTextBlock Text="{CompiledBinding PieThisYear[3].Name}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+            </WrapPanel>
+            <WrapPanel ItemSpacing="12" LineSpacing="7" HorizontalAlignment="Center">
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderBorder}" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartLastYearInner}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderMuted}" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartThisYearOuter}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+            </WrapPanel>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var chart = new AlderPieChart
+        {
+            Slices = viewModel.PieThisYear,
+            Height = 240,
+            InnerSlices = viewModel.PieLastYear,
+            InnerRadius = .51,
+            RoundCaps = true,
+            Padding = new Thickness(42),
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleBreakdown" Title="{DynamicResource GalleryText.ChartBreakdown}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="460" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+          <StackPanel Spacing="12">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartUsersByPlan}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+            <Border Container.Name="PlanBreakdown" Container.Sizing="Width">
+              <Border.Styles>
+                <Style Selector="StackPanel.plan-details">
+                  <Setter Property="Grid.Column" Value="1" />
+                </Style>
+                <ContainerQuery Name="PlanBreakdown" Query="max-width:335">
+                  <Style Selector="alder|AlderPieChart.plan-chart, StackPanel.plan-details">
+                    <Setter Property="Grid.ColumnSpan" Value="2" />
+                  </Style>
+                  <Style Selector="StackPanel.plan-details">
+                    <Setter Property="Grid.Column" Value="0" />
+                    <Setter Property="Grid.Row" Value="1" />
+                  </Style>
+                </ContainerQuery>
+              </Border.Styles>
+              <Grid ColumnDefinitions="*,*" ColumnSpacing="12" RowDefinitions="Auto,Auto" RowSpacing="8">
+                <alder:AlderPieChart Classes="plan-chart" Slices="{CompiledBinding PiePlans}" Height="180"
+                                    AutomationProperties.Name="{DynamicResource GalleryText.ChartUsersByPlan}" InnerRadius=".84"
+                                    RoundCaps="True" Padding="22">
+                  <alder:AlderPieChart.CenterContent>
+                    <StackPanel Spacing="3">
+                      <alder:AlderTextBlock Text="{CompiledBinding PlansTotal}" FontSize="24" FontWeight="SemiBold" TextWrapping="Wrap" TextAlignment="Center" />
+                      <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartTotal}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" TextAlignment="Center" />
+                    </StackPanel>
+                  </alder:AlderPieChart.CenterContent>
+                </alder:AlderPieChart>
+                <StackPanel Classes="plan-details" Spacing="10" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                  <Grid ColumnDefinitions="10,*,Auto,Auto" ColumnSpacing="12" RowDefinitions="Auto,Auto" RowSpacing="8">
+                    <Ellipse Width="10" Height="10" Fill="{DynamicResource AlderChartSeries4}" VerticalAlignment="Center" />
+                    <alder:AlderTextBlock Grid.Column="1" Text="{DynamicResource GalleryText.ChartEnterprise}" FontSize="13" TextWrapping="Wrap" />
+                    <alder:AlderTextBlock Grid.Column="2" Text="{CompiledBinding PiePlans[0].Value}" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" />
+                    <alder:AlderTextBlock Grid.Column="3" Text="31%" FontSize="11" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                  </Grid>
+                  <Grid ColumnDefinitions="10,*,Auto,Auto" ColumnSpacing="12" RowDefinitions="Auto,Auto" RowSpacing="8">
+                    <Ellipse Width="10" Height="10" Fill="{DynamicResource AlderChartSeries1}" VerticalAlignment="Center" />
+                    <alder:AlderTextBlock Grid.Column="1" Text="{DynamicResource GalleryText.ChartPro}" FontSize="13" TextWrapping="Wrap" />
+                    <alder:AlderTextBlock Grid.Column="2" Text="{CompiledBinding PiePlans[1].Value}" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" />
+                    <alder:AlderTextBlock Grid.Column="3" Text="42%" FontSize="11" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                  </Grid>
+                  <Grid ColumnDefinitions="10,*,Auto,Auto" ColumnSpacing="12" RowDefinitions="Auto,Auto" RowSpacing="8">
+                    <Ellipse Width="10" Height="10" Fill="{DynamicResource AlderChartSeries3}" VerticalAlignment="Center" />
+                    <alder:AlderTextBlock Grid.Column="1" Text="{DynamicResource GalleryText.ChartStarter}" FontSize="13" TextWrapping="Wrap" />
+                    <alder:AlderTextBlock Grid.Column="2" Text="{CompiledBinding PiePlans[2].Value}" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" />
+                    <alder:AlderTextBlock Grid.Column="3" Text="27%" FontSize="11" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                  </Grid>
+                </StackPanel>
+              </Grid>
+            </Border>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var chart = new AlderPieChart
+        {
+            Slices = viewModel.PiePlans,
+            Height = 180,
+            InnerRadius = .84,
+            RoundCaps = true,
+            Padding = new Thickness(22),
+            CenterContent = new StackPanel
+            {
+                Children =
+                {
+                    new AlderTextBlock { Text = viewModel.PlansTotal, FontSize = 24, FontWeight = FontWeight.SemiBold, TextAlignment = TextAlignment.Center },
+                    new AlderTextBlock { Text = "Total", FontSize = 12, TextAlignment = TextAlignment.Center },
+                }
+            },
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

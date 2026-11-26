@@ -1,0 +1,92 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="using:Alder.Avalonia.Controls"
+             xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.ChatConversationExample"
+             x:DataType="vm:AiExampleViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleDefault" Title="{DynamicResource GalleryText.AiDefault}">
+      <g:ExampleCard.Preview>
+        <a:AlderChatConversation Height="520" ItemsSource="{CompiledBinding Messages}">
+          <a:AlderChatConversation.DataContext>
+            <vm:AiExampleViewModel />
+          </a:AlderChatConversation.DataContext>
+        </a:AlderChatConversation>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel();
+        var chat = new AlderChatConversation { ItemsSource = model.Messages, Height = 520 };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleFullChat" Title="{DynamicResource GalleryText.AiVariantFullChat}">
+      <g:ExampleCard.Preview>
+        <StackPanel>
+          <StackPanel.DataContext>
+            <vm:AiExampleViewModel Scenario="FullChat" />
+          </StackPanel.DataContext>
+          <a:AlderChatConversation Height="480" ItemsSource="{CompiledBinding Messages}" ScrollOnUserMessage="True" />
+          <StackPanel Spacing="4" MaxWidth="682" Margin="16,12,16,0">
+            <a:AlderPromptInput Theme="{StaticResource AlderConversationComposerTheme}"
+                                Text="{CompiledBinding Draft, Mode=TwoWay}" IsRunning="{CompiledBinding Running}"
+                                SendCommand="{CompiledBinding Send}" StopCommand="{CompiledBinding Stop}"
+                                Placeholder="{DynamicResource GalleryText.AiAsk}" />
+            <a:AlderTextBlock Text="{DynamicResource GalleryText.AiDisclaimer}" FontSize="12" TextAlignment="Center"
+                              Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+          </StackPanel>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel { Scenario = AiGalleryScenario.FullChat };
+        var chat = new AlderChatConversation
+        {
+            ItemsSource = model.Messages, Height = 480, ScrollOnUserMessage = true
+        };
+        var composer = new AlderPromptInput
+        {
+            SendCommand = model.Send, StopCommand = model.Stop,
+            Placeholder = "What do you want to know?",
+            Theme = (ControlTheme)Application.Current!.FindResource("AlderConversationComposerTheme")!
+        };
+        composer.Bind(AlderPromptInput.TextProperty,
+            CompiledBinding.Create((AiExampleViewModel vm) => vm.Draft, source: model, mode: BindingMode.TwoWay));
+        composer.Bind(AlderPromptInput.IsRunningProperty,
+            CompiledBinding.Create((AiExampleViewModel vm) => vm.Running, source: model));
+        var footer = new StackPanel
+        {
+            Spacing = 4, MaxWidth = 682, Margin = new Thickness(16, 12, 16, 0),
+            Children =
+            {
+                composer,
+                new AlderTextBlock
+                {
+                    Text = "AI can make mistakes. Check important info.", FontSize = 12,
+                    TextAlignment = TextAlignment.Center, TextWrapping = TextWrapping.Wrap,
+                    Foreground = (IBrush)Application.Current!.FindResource("AlderMuted")!
+                }
+            }
+        };
+        var preview = new StackPanel { Children = { chat, footer } };
+
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleScrollButton" Title="{DynamicResource GalleryText.AiVariantScrollButton}">
+      <g:ExampleCard.Preview>
+        <a:AlderChatConversation Height="520" ItemsSource="{CompiledBinding Messages}" ShowScrollButton="True">
+          <a:AlderChatConversation.DataContext>
+            <vm:AiExampleViewModel />
+          </a:AlderChatConversation.DataContext>
+        </a:AlderChatConversation>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel();
+        var chat = new AlderChatConversation
+        {
+            ItemsSource = model.Messages, Height = 520, ShowScrollButton = true
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

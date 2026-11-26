@@ -1,0 +1,135 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls" xmlns:c="using:Avalonia.Data.Converters"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.ReasoningExample" x:DataType="vm:AiExampleViewModel">
+  <UserControl.Styles>
+    <Style Selector=":is(Border).reasoning-preview">
+      <Setter Property="Padding" Value="40" />
+      <Setter Property="MinHeight" Value="360" />
+    </Style>
+    <ContainerQuery Name="ReasoningPreview" Query="max-width:639">
+      <Style Selector=":is(Border).reasoning-preview"><Setter Property="Padding" Value="24" /></Style>
+    </ContainerQuery>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleDefault" Title="{DynamicResource GalleryText.AiDefault}" Container.Name="ReasoningPreview" Container.Sizing="Width">
+      <g:ExampleCard.Preview>
+        <g:AiLivePreview Classes="reasoning-preview">
+          <g:AiLivePreview.DataContext><vm:AiExampleViewModel Scenario="Reasoning" /></g:AiLivePreview.DataContext>
+          <a:AlderReasoning Status="{CompiledBinding TraceStatus}" Duration="{CompiledBinding TraceDuration}"
+                            Text="{CompiledBinding TraceText}" IsExpanded="{CompiledBinding TraceExpanded, Mode=TwoWay}"
+                            VerticalAlignment="Center" />
+        </g:AiLivePreview>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel { Scenario = AiGalleryScenario.Reasoning };
+        var trace = new AlderReasoning { VerticalAlignment = VerticalAlignment.Center };
+        trace.Bind(AlderReasoning.StatusProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.TraceStatus, source: model));
+        trace.Bind(AlderReasoning.DurationProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.TraceDuration, source: model));
+        trace.Bind(AlderReasoning.TextProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.TraceText, source: model));
+        trace.Bind(AlderReasoning.IsExpandedProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.TraceExpanded,
+            source: model, mode: BindingMode.TwoWay));
+        var preview = new AiLivePreview { DataContext = model, Child = trace, MinHeight = 360, Padding = new Thickness(40) };
+        preview.SizeChanged += (_, e) => preview.Padding = new Thickness(e.NewSize.Width < 640 ? 24 : 40);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleStatus" Title="{DynamicResource GalleryText.AiVariantStatus}" Container.Name="ReasoningPreview" Container.Sizing="Width">
+      <g:ExampleCard.Preview>
+        <Border Classes="reasoning-preview">
+          <StackPanel Spacing="24" VerticalAlignment="Center">
+            <a:AlderReasoning Status="Stopped" Duration="{DynamicResource GalleryText.AiReasoningFiveSeconds}"
+                              Text="{DynamicResource GalleryText.AiReasoningStoppedTrace}" />
+            <a:AlderReasoning Status="Failed" IsExpanded="True" Text="{DynamicResource GalleryText.AiTraceInterrupted}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var stopped = new AlderReasoning { Status = AiRunStatus.Stopped };
+        stopped[!AlderReasoning.DurationProperty] = new DynamicResourceExtension("GalleryText.AiReasoningFiveSeconds");
+        stopped[!AlderReasoning.TextProperty] = new DynamicResourceExtension("GalleryText.AiReasoningStoppedTrace");
+        var error = new AlderReasoning { Status = AiRunStatus.Failed, IsExpanded = true };
+        error[!AlderReasoning.TextProperty] = new DynamicResourceExtension("GalleryText.AiTraceInterrupted");
+        var preview = new Border
+        {
+            MinHeight = 360, Padding = new Thickness(40),
+            Child = new StackPanel { Spacing = 24, VerticalAlignment = VerticalAlignment.Center, Children = { stopped, error } }
+        };
+        preview.SizeChanged += (_, e) => preview.Padding = new Thickness(e.NewSize.Width < 640 ? 24 : 40);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleWithAiSdk" Title="{DynamicResource GalleryText.AiVariantWithAiSdk}" Container.Name="ReasoningPreview" Container.Sizing="Width">
+      <g:ExampleCard.Preview>
+        <g:AiLivePreview Classes="reasoning-preview">
+          <g:AiLivePreview.DataContext><vm:AiExampleViewModel Scenario="ReasoningSdk" /></g:AiLivePreview.DataContext>
+          <StackPanel Spacing="16" VerticalAlignment="Center">
+            <a:AlderButton Content="{DynamicResource GalleryText.AiReasoningStopButton}" Command="{CompiledBinding Stop}"
+                           IsEnabled="{CompiledBinding IsTraceActive}" Variant="Secondary" Size="Small" />
+            <a:AlderTextBlock Text="{DynamicResource GalleryText.AiAvalonia12Question}" TextWrapping="Wrap" FontSize="14" LineHeight="20" FontWeight="Medium" />
+            <StackPanel Spacing="8">
+              <a:AlderReasoning Status="{CompiledBinding TraceStatus}" Duration="{CompiledBinding TraceDuration}" Text="{CompiledBinding TraceText}" />
+              <a:AlderTextBlock Text="{CompiledBinding TraceAnswer}" TextWrapping="Wrap" FontSize="14" LineHeight="20"
+                                IsVisible="{CompiledBinding TraceAnswer, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+            </StackPanel>
+          </StackPanel>
+        </g:AiLivePreview>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel { Scenario = AiGalleryScenario.ReasoningSdk };
+        var stop = new AlderButton { Variant = ButtonVariant.Secondary, Size = AlderSize.Small, Command = model.Stop };
+        stop[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.AiReasoningStopButton");
+        stop.Bind(InputElement.IsEnabledProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.IsTraceActive, source: model));
+        var question = new AlderTextBlock { FontSize = 14, LineHeight = 20, FontWeight = FontWeight.Medium, TextWrapping = TextWrapping.Wrap };
+        question[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.AiAvalonia12Question");
+        var trace = new AlderReasoning();
+        trace.Bind(AlderReasoning.StatusProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.TraceStatus, source: model));
+        trace.Bind(AlderReasoning.DurationProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.TraceDuration, source: model));
+        trace.Bind(AlderReasoning.TextProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.TraceText, source: model));
+        var answer = new AlderTextBlock { FontSize = 14, LineHeight = 20, TextWrapping = TextWrapping.Wrap };
+        answer.Bind(TextBlock.TextProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.TraceAnswer, source: model));
+        answer.Bind(Visual.IsVisibleProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.TraceAnswer, source: model,
+            converter: ObjectConverters.IsNotNull));
+        var response = new StackPanel { Spacing = 8, Children = { trace, answer } };
+        var preview = new AiLivePreview
+        {
+            DataContext = model, MinHeight = 360, Padding = new Thickness(40),
+            Child = new StackPanel { Spacing = 16, VerticalAlignment = VerticalAlignment.Center, Children = { stop, question, response } }
+        };
+        preview.SizeChanged += (_, e) => preview.Padding = new Thickness(e.NewSize.Width < 640 ? 24 : 40);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleCustomLoader" Title="{DynamicResource GalleryText.AiVariantCustomLoader}" Container.Name="ReasoningPreview" Container.Sizing="Width">
+      <g:ExampleCard.Preview>
+        <g:AiLivePreview Classes="reasoning-preview">
+          <g:AiLivePreview.DataContext><vm:AiExampleViewModel Scenario="Reasoning" /></g:AiLivePreview.DataContext>
+          <StackPanel Spacing="24" VerticalAlignment="Center">
+            <a:AlderReasoning LoaderVariant="Sparkle" Status="{CompiledBinding TraceStatus}"
+                              Duration="{CompiledBinding TraceDuration}" Text="{CompiledBinding TraceText}" />
+            <a:AlderReasoning Status="{CompiledBinding TraceStatus}" Duration="{CompiledBinding TraceDuration}" Text="{CompiledBinding TraceText}">
+              <a:AlderReasoning.LoaderContent><a:AlderSpinner Size="Small" Color="Accent" /></a:AlderReasoning.LoaderContent>
+            </a:AlderReasoning>
+          </StackPanel>
+        </g:AiLivePreview>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel { Scenario = AiGalleryScenario.Reasoning };
+        var sparkle = new AlderReasoning { LoaderVariant = AiLoaderVariant.Sparkle };
+        var spinner = new AlderReasoning { LoaderContent = new AlderSpinner { Size = SpinnerSize.Small, Color = FeedbackColor.Accent } };
+        foreach (var trace in new[] { sparkle, spinner })
+        {
+            trace.Bind(AlderReasoning.StatusProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.TraceStatus, source: model));
+            trace.Bind(AlderReasoning.DurationProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.TraceDuration, source: model));
+            trace.Bind(AlderReasoning.TextProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.TraceText, source: model));
+        }
+        var preview = new AiLivePreview
+        {
+            DataContext = model, MinHeight = 360, Padding = new Thickness(40),
+            Child = new StackPanel { Spacing = 24, VerticalAlignment = VerticalAlignment.Center, Children = { sparkle, spinner } }
+        };
+        preview.SizeChanged += (_, e) => preview.Padding = new Thickness(e.NewSize.Width < 640 ? 24 : 40);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

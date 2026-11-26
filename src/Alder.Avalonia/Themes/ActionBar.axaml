@@ -1,0 +1,59 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls">
+  <x:String x:Key="AlderText.ActionBarActions">Actions</x:String>
+
+  <ControlTheme x:Key="{x:Type alder:AlderActionBar}" TargetType="alder:AlderActionBar">
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Bottom" />
+    <Setter Property="Margin" Value="8,0,8,18" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="ZIndex" Value="1" />
+    <Setter Property="CornerRadius" Value="22" />
+    <Setter Property="Padding" Value="7,5" />
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.ActionBarActions}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="PART_Surface" Padding="{TemplateBinding Padding}" CornerRadius="{TemplateBinding CornerRadius}"
+                Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}" BoxShadow="{DynamicResource AlderToolbarShadow}">
+          <alder:AlderToolbar Spacing="5" Orientation="{TemplateBinding Orientation}"
+                              AutomationProperties.Name="{TemplateBinding (AutomationProperties.Name)}">
+            <ContentPresenter Name="PART_Prefix" Content="{TemplateBinding Prefix}" ContentTemplate="{TemplateBinding PrefixTemplate}"
+                              IsVisible="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                              HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Border Name="LeadingSeparator" IsVisible="False" IsHitTestVisible="False" Width="1" Height="19"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Background="{DynamicResource AlderSeparator}" />
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                              IsVisible="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                              HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Border Name="TrailingSeparator" IsVisible="False" IsHitTestVisible="False" Width="1" Height="19"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Background="{DynamicResource AlderSeparator}" />
+            <ContentPresenter Name="PART_Suffix" Content="{TemplateBinding Suffix}" ContentTemplate="{TemplateBinding SuffixTemplate}"
+                              IsVisible="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                              HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </alder:AlderToolbar>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:prefix /template/ ContentPresenter#PART_Prefix, ^:content /template/ ContentPresenter#PART_ContentPresenter, ^:suffix /template/ ContentPresenter#PART_Suffix">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^:leading-separator /template/ Border#LeadingSeparator, ^:trailing-separator /template/ Border#TrailingSeparator">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^:vertical /template/ Border#LeadingSeparator, ^:vertical /template/ Border#TrailingSeparator">
+      <Setter Property="Width" Value="24" />
+      <Setter Property="Height" Value="1" />
+    </Style>
+    <Style Selector="^:detached /template/ Border#PART_Surface">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="BoxShadow" Value="none" />
+      <Setter Property="Padding" Value="0" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

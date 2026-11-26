@@ -1,0 +1,145 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" x:Class="Alder.Avalonia.Gallery.Views.ChatMessageActionsExample"
+             x:DataType="vm:AiExampleViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard Classes="chat-message-preview" x:Name="SampleDefault" Title="{DynamicResource GalleryText.AiDefault}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,24" ClipToBounds="False" Container.Name="ChatConversationViewport" Container.Sizing="Width">
+          <a:AlderChatMessage Avatar="AI" MaxWidth="700" Content="{DynamicResource GalleryText.AiActionIntro}">
+            <a:AlderChatMessage.Actions>
+              <a:AlderChatMessageActions CopyCommand="{CompiledBinding Copy}" CommandParameter="{DynamicResource GalleryText.AiActionIntro}"
+                                         LikeCommand="{CompiledBinding Like}" DislikeCommand="{CompiledBinding Dislike}" RetryCommand="{CompiledBinding Retry}">
+                <a:AlderButton Theme="{StaticResource AlderChatMessageActionTheme}" Icon="{DynamicResource AlderIconEllipsis}"
+                               AutomationProperties.Name="{DynamicResource GalleryText.AiMoreActions}" a:AlderToolTip.Tip="{DynamicResource GalleryText.AiMessageMore}">
+                  <a:AlderButton.Flyout>
+                    <a:AlderMenuFlyout Placement="BottomEdgeAlignedLeft">
+                      <a:AlderMenuItem Header="{DynamicResource GalleryText.AiCopyAction}" Command="{CompiledBinding Copy}"
+                                        CommandParameter="{DynamicResource GalleryText.AiActionIntro}" />
+                      <a:AlderMenuItem Header="{DynamicResource GalleryText.AiRetryAction}" Command="{CompiledBinding Retry}" />
+                    </a:AlderMenuFlyout>
+                  </a:AlderButton.Flyout>
+                </a:AlderButton>
+              </a:AlderChatMessageActions>
+            </a:AlderChatMessage.Actions>
+          </a:AlderChatMessage>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var actions = new AlderChatMessageActions
+        {
+            CopyCommand = model.Copy,
+            LikeCommand = model.Like,
+            DislikeCommand = model.Dislike,
+            RetryCommand = model.Retry
+        };
+        actions[!AlderChatMessageActions.CommandParameterProperty] = new DynamicResourceExtension("GalleryText.AiActionIntro");
+        var menu = new AlderMenuFlyout { Placement = PlacementMode.BottomEdgeAlignedLeft };
+        var copy = new AlderMenuItem { Command = model.Copy };
+        copy[!HeaderedSelectingItemsControl.HeaderProperty] = new DynamicResourceExtension("GalleryText.AiCopyAction");
+        copy[!MenuItem.CommandParameterProperty] = new DynamicResourceExtension("GalleryText.AiActionIntro");
+        var retry = new AlderMenuItem { Command = model.Retry };
+        retry[!HeaderedSelectingItemsControl.HeaderProperty] = new DynamicResourceExtension("GalleryText.AiRetryAction");
+        menu.Items.Add(copy);
+        menu.Items.Add(retry);
+        var more = new AlderButton
+        {
+            Theme = (ControlTheme)Application.Current!.FindResource("AlderChatMessageActionTheme")!,
+            Flyout = menu
+        };
+        more[!AlderButton.IconProperty] = new DynamicResourceExtension("AlderIconEllipsis");
+        more[!AutomationProperties.NameProperty] = new DynamicResourceExtension("GalleryText.AiMoreActions");
+        more[!AlderToolTip.TipProperty] = new DynamicResourceExtension("GalleryText.AiMessageMore");
+        actions.Content = more;
+        var message = new AlderChatMessage { Avatar = "AI", MaxWidth = 700, Actions = actions };
+        message[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.AiActionIntro");
+        var preview = new Border { Padding = new Thickness(8, 24), Child = message };
+        Container.SetName(preview, "ChatConversationViewport");
+        Container.SetSizing(preview, ContainerSizing.Width);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard Classes="chat-message-preview" x:Name="SampleMinimal" Title="{DynamicResource GalleryText.AiVariantMinimal}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,24" ClipToBounds="False" Container.Name="ChatConversationViewport" Container.Sizing="Width">
+          <a:AlderChatMessage Avatar="AI" MaxWidth="700" Content="{DynamicResource GalleryText.AiMinimalActions}">
+            <a:AlderChatMessage.Actions>
+              <a:AlderChatMessageActions CopyCommand="{CompiledBinding Copy}" CommandParameter="{DynamicResource GalleryText.AiMinimalActions}">
+                <a:AlderButton Theme="{StaticResource AlderChatMessageActionTheme}" Icon="{DynamicResource AlderIconEllipsis}"
+                               AutomationProperties.Name="{DynamicResource GalleryText.AiMoreActions}" a:AlderToolTip.Tip="{DynamicResource GalleryText.AiMessageMore}">
+                  <a:AlderButton.Flyout>
+                    <a:AlderMenuFlyout Placement="BottomEdgeAlignedLeft">
+                      <a:AlderMenuItem Header="{DynamicResource GalleryText.AiCopyAction}" Command="{CompiledBinding Copy}"
+                                        CommandParameter="{DynamicResource GalleryText.AiMinimalActions}" />
+                      <a:AlderMenuItem Header="{DynamicResource GalleryText.AiRetryAction}" Command="{CompiledBinding Retry}" />
+                    </a:AlderMenuFlyout>
+                  </a:AlderButton.Flyout>
+                </a:AlderButton>
+              </a:AlderChatMessageActions>
+            </a:AlderChatMessage.Actions>
+          </a:AlderChatMessage>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var actions = new AlderChatMessageActions { CopyCommand = model.Copy };
+        actions[!AlderChatMessageActions.CommandParameterProperty] = new DynamicResourceExtension("GalleryText.AiMinimalActions");
+        var menu = new AlderMenuFlyout { Placement = PlacementMode.BottomEdgeAlignedLeft };
+        var copy = new AlderMenuItem { Command = model.Copy };
+        copy[!HeaderedSelectingItemsControl.HeaderProperty] = new DynamicResourceExtension("GalleryText.AiCopyAction");
+        copy[!MenuItem.CommandParameterProperty] = new DynamicResourceExtension("GalleryText.AiMinimalActions");
+        var retry = new AlderMenuItem { Command = model.Retry };
+        retry[!HeaderedSelectingItemsControl.HeaderProperty] = new DynamicResourceExtension("GalleryText.AiRetryAction");
+        menu.Items.Add(copy);
+        menu.Items.Add(retry);
+        var more = new AlderButton
+        {
+            Theme = (ControlTheme)Application.Current!.FindResource("AlderChatMessageActionTheme")!,
+            Flyout = menu
+        };
+        more[!AlderButton.IconProperty] = new DynamicResourceExtension("AlderIconEllipsis");
+        more[!AutomationProperties.NameProperty] = new DynamicResourceExtension("GalleryText.AiMoreActions");
+        more[!AlderToolTip.TipProperty] = new DynamicResourceExtension("GalleryText.AiMessageMore");
+        actions.Content = more;
+        var message = new AlderChatMessage { Avatar = "AI", MaxWidth = 700, Actions = actions };
+        message[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.AiMinimalActions");
+        var preview = new Border { Padding = new Thickness(8, 24), Child = message };
+        Container.SetName(preview, "ChatConversationViewport");
+        Container.SetSizing(preview, ContainerSizing.Width);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard Classes="chat-message-preview" x:Name="SampleCustomIcons" Title="{DynamicResource GalleryText.AiVariantCustomIcons}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,24" ClipToBounds="False" Container.Name="ChatConversationViewport" Container.Sizing="Width">
+          <Border.Styles>
+            <Style Selector="a|AlderChatMessageActions.custom-actions /template/ a|AlderButton#Copy"><Setter Property="Foreground" Value="{DynamicResource AlderAccent}" /></Style>
+            <Style Selector="a|AlderChatMessageActions.custom-actions /template/ a|AlderButton#Like"><Setter Property="Foreground" Value="{DynamicResource AlderAvatarSuccessInk}" /></Style>
+          </Border.Styles>
+          <a:AlderChatMessage Avatar="AI" MaxWidth="700" Content="{DynamicResource GalleryText.AiCustomIcons}">
+            <a:AlderChatMessage.Actions>
+              <a:AlderChatMessageActions CopyCommand="{CompiledBinding Copy}" CommandParameter="{DynamicResource GalleryText.AiCustomIcons}"
+                                         Classes="custom-actions" LikeCommand="{CompiledBinding Like}"
+                                         CopyIcon="{DynamicResource AlderIconCopy}" LikeIcon="{DynamicResource AlderAiThumbOutline}" />
+            </a:AlderChatMessage.Actions>
+          </a:AlderChatMessage>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var actions = new AlderChatMessageActions { CopyCommand = model.Copy, LikeCommand = model.Like };
+        actions[!AlderChatMessageActions.CommandParameterProperty] = new DynamicResourceExtension("GalleryText.AiCustomIcons");
+        actions[!AlderChatMessageActions.CopyIconProperty] = new DynamicResourceExtension("AlderIconCopy");
+        actions[!AlderChatMessageActions.LikeIconProperty] = new DynamicResourceExtension("AlderAiThumbOutline");
+        actions.Classes.Add("custom-actions");
+        var message = new AlderChatMessage { Avatar = "AI", MaxWidth = 700, Actions = actions };
+        message[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.AiCustomIcons");
+        var preview = new Border { Padding = new Thickness(8, 24), Child = message };
+        Container.SetName(preview, "ChatConversationViewport");
+        Container.SetSizing(preview, ContainerSizing.Width);
+        foreach (var (name, brush) in new[] { ("Copy", "AlderAccent"), ("Like", "AlderAvatarSuccessInk") })
+        {
+            var style = new Style(selector => selector.OfType<AlderChatMessageActions>().Class("custom-actions").Template().OfType<AlderButton>().Name(name));
+            style.Setters.Add(new Setter(AlderButton.ForegroundProperty, new DynamicResourceExtension(brush)));
+            preview.Styles.Add(style);
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

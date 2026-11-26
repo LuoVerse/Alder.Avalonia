@@ -1,0 +1,199 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.InputExample" x:DataType="vm:InputViewModel">
+  <UserControl.Styles>
+    <Style Selector="alder|AlderInput, :is(Label), TextBlock.domainPreview">
+      <Setter Property="TextElement.FontFamily" Value="fonts:Inter#Inter" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderInput MaxWidth="256" FullWidth="True" HorizontalAlignment="Center"
+                         PlaceholderText="{DynamicResource GalleryText.EnterYourName}" AutomationProperties.Name="{DynamicResource GalleryText.Name}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var input = new AlderInput
+        {
+            MaxWidth = 256,
+            FullWidth = true,
+            HorizontalAlignment = HorizontalAlignment.Center,
+        };
+        input[!AlderInput.PlaceholderTextProperty] = new DynamicResourceExtension("GalleryText.EnterYourName");
+        input[!AutomationProperties.NameProperty] = new DynamicResourceExtension("GalleryText.Name");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.Variants}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="240" HorizontalAlignment="Left" Spacing="8">
+          <alder:AlderInput x:Name="PrimaryInput" FullWidth="True" PlaceholderText="{DynamicResource GalleryText.PrimaryInput}" AutomationProperties.Name="{DynamicResource GalleryText.PrimaryInput}" />
+          <alder:AlderInput x:Name="SecondaryInput" FullWidth="True" Variant="Secondary"
+                       PlaceholderText="{DynamicResource GalleryText.SecondaryInput}" AutomationProperties.Name="{DynamicResource GalleryText.SecondaryInput}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var input1 = new AlderInput { FullWidth = true, PlaceholderText = "Primary input" };
+        AutomationProperties.SetName(input1, "Primary input");
+
+        var input2 = new AlderInput
+        {
+            FullWidth = true,
+            Variant = InputVariant.Secondary,
+            PlaceholderText = "Secondary input",
+        };
+        AutomationProperties.SetName(input2, "Secondary input");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleInASurface" Title="{DynamicResource GalleryText.InASurface}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="280" Height="180" HorizontalAlignment="Left" Padding="16" CornerRadius="24"
+                Background="{DynamicResource AlderSurface}">
+          <alder:AlderInput FullWidth="True" Variant="Secondary" PlaceholderText="{DynamicResource GalleryText.YourName}" AutomationProperties.Name="{DynamicResource GalleryText.NameOnASurface}" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var input = new AlderInput
+        {
+            FullWidth = true,
+            Variant = InputVariant.Secondary,
+            PlaceholderText = "Your name",
+        };
+        AutomationProperties.SetName(input, "Name on a surface");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleFullWidth" Title="{DynamicResource GalleryText.FullWidth}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderInput x:Name="FullWidthInput" FullWidth="True" MaxWidth="400" HorizontalAlignment="Left"
+                     PlaceholderText="{DynamicResource GalleryText.FullWidthInput}"
+                     AutomationProperties.Name="{DynamicResource GalleryText.FullWidthInput}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var input = new AlderInput
+        {
+            FullWidth = true,
+            MaxWidth = 400,
+            PlaceholderText = "Full width input",
+        };
+        AutomationProperties.SetName(input, "Full width input");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleInputTypes" Title="{DynamicResource GalleryText.InputTypes}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="16" LineSpacing="12">
+          <StackPanel Spacing="4">
+            <alder:AlderLabel Theme="{StaticResource AlderLabelTheme}" x:Name="EmailLabel" Target="{Binding #EmailInput}" Content="{DynamicResource GalleryText.Email}" />
+            <alder:AlderInput x:Name="EmailInput" Type="Email" PlaceholderText="jane@example.com" IsRequired="True"
+                         AutomationProperties.LabeledBy="{Binding #EmailLabel}" />
+          </StackPanel>
+          <StackPanel Spacing="4">
+            <alder:AlderLabel Theme="{StaticResource AlderLabelTheme}" x:Name="AgeLabel" Content="{DynamicResource GalleryText.Age}" Target="{Binding #AgeInput}" />
+            <alder:AlderNumberStepper x:Name="AgeInput" Width="120" Value="30"
+                           Minimum="0" Maximum="130" AutomationProperties.LabeledBy="{Binding #AgeLabel}" />
+          </StackPanel>
+          <StackPanel Spacing="4">
+            <alder:AlderLabel Theme="{StaticResource AlderLabelTheme}" x:Name="PasswordLabel" Target="{Binding #PasswordInput}" Content="{DynamicResource GalleryText.Password}" />
+            <alder:AlderInput x:Name="PasswordInput" Type="Password" PlaceholderText="••••••••"
+                         AutomationProperties.LabeledBy="{Binding #PasswordLabel}" />
+          </StackPanel>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var input1 = new AlderInput
+        {
+            Type = InputType.Email,
+            PlaceholderText = "jane@example.com",
+            IsRequired = true,
+        };
+
+        var age = new AlderNumberStepper { Value = 30, Minimum = 0, Maximum = 130, Width = 120 };
+        var input2 = new AlderInput { Type = InputType.Password, PlaceholderText = "••••••••" };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <WrapPanel ItemSpacing="8" LineSpacing="4">
+            <alder:AlderInput x:Name="DomainInput" Text="{Binding Domain, Mode=TwoWay}" PlaceholderText="{DynamicResource GalleryText.DomainPlaceholder}" AutomationProperties.Name="{DynamicResource GalleryText.Domain}" />
+            <alder:AlderButton x:Name="ResetDomain" Content="{DynamicResource GalleryText.Reset}" Variant="Ghost" Command="{Binding Reset}" />
+          </WrapPanel>
+          <alder:AlderTextBlock Classes="domainPreview" Foreground="{DynamicResource AlderMuted}" FontSize="14" TextWrapping="Wrap" Text="{Binding DomainPreview}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var input = new AlderInput { PlaceholderText = "domain" };
+        input.Bind(AlderInput.TextProperty, CompiledBinding.Create((InputViewModel model) => model.Domain, mode: BindingMode.TwoWay));
+        AutomationProperties.SetName(input, "Domain");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="4">
+          <alder:AlderLabel x:Name="DisabledLabel" Theme="{StaticResource AlderLabelTheme}" Target="{Binding #DisabledInput}" Content="{DynamicResource GalleryText.DisabledEmail}" />
+          <alder:AlderInput x:Name="DisabledInput" PlaceholderText="name@email.com" IsEnabled="False"
+                       AutomationProperties.LabeledBy="{Binding #DisabledLabel}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var input = new AlderInput { PlaceholderText = "name@email.com", IsEnabled = false };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleReadOnly" Title="{DynamicResource GalleryText.ReadOnly}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="4">
+          <alder:AlderLabel x:Name="ReadOnlyLabel" Theme="{StaticResource AlderLabelTheme}" Target="{Binding #ReadOnlyInput}" Content="{DynamicResource GalleryText.ProjectID}" />
+          <alder:AlderInput x:Name="ReadOnlyInput" Text="{DynamicResource GalleryText.ReadOnly}" IsReadOnly="True"
+                       AutomationProperties.LabeledBy="{Binding #ReadOnlyLabel}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var input = new AlderInput { Text = "Read-only", IsReadOnly = true };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleValidation" Title="{DynamicResource GalleryText.Validation}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="4">
+          <alder:AlderLabel x:Name="InvalidLabel" Theme="{StaticResource AlderLabelTheme}" Target="{Binding #InvalidInput}" Content="{DynamicResource GalleryText.ContactEmail}" />
+          <alder:AlderInput x:Name="InvalidInput" Type="Email" Text="{Binding ContactEmail, Mode=TwoWay}"
+                       IsInvalid="{Binding IsContactEmailInvalid}" AutomationProperties.LabeledBy="{Binding #InvalidLabel}"
+                       AutomationProperties.HelpText="{DynamicResource GalleryText.EnterACompleteEmailAddress}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var input = new AlderInput { Type = InputType.Email };
+        input.Bind(AlderInput.TextProperty, CompiledBinding.Create((InputViewModel model) => model.ContactEmail, mode: BindingMode.TwoWay));
+        input.Bind(AlderInput.IsInvalidProperty, CompiledBinding.Create((InputViewModel model) => model.IsContactEmailInvalid));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustomStyles" Title="{DynamicResource GalleryText.CustomStyles}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel>
+          <StackPanel.Styles>
+            <Style Selector="alder|AlderInput.custom">
+              <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+              <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+              <Setter Property="BorderThickness" Value="1" />
+              <Setter Property="Padding" Value="11,7" />
+            </Style>
+            <Style Selector="alder|AlderInput.custom:pointerover:not(:focus-within) /template/ Border#FieldSurface">
+              <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+            </Style>
+          </StackPanel.Styles>
+          <alder:AlderInput Classes="custom" MaxWidth="256" FullWidth="True" HorizontalAlignment="Left"
+                       PlaceholderText="{DynamicResource GalleryText.SearchProjectsPlaceholder}" AutomationProperties.Name="{DynamicResource GalleryText.SearchProjects}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var input = new AlderInput
+        {
+            MaxWidth = 256,
+            FullWidth = true,
+            PlaceholderText = "Search projects...",
+        };
+        input.Classes.Add("custom");
+        AutomationProperties.SetName(input, "Search projects");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

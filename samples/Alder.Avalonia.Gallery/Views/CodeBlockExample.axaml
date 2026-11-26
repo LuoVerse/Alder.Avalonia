@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:a="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" x:Class="Alder.Avalonia.Gallery.Views.CodeBlockExample" x:DataType="vm:AiExampleViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleDefault" Title="{DynamicResource GalleryText.AiDefault}">
+      <g:ExampleCard.Preview>
+        <Border Padding="24" MinHeight="360">
+          <Border.DataContext>
+            <vm:AiExampleViewModel/>
+          </Border.DataContext>
+          <a:AlderCodeBlock Code="{CompiledBinding ExampleCode}" Language="csharp" MaxWidth="480"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel();
+        var example = new AlderCodeBlock
+        {
+            Code = model.ExampleCode, Language = "csharp", MaxWidth = 480,
+            HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center
+        };
+        var preview = new Border { MinHeight = 360, Padding = new Thickness(24), Child = example };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

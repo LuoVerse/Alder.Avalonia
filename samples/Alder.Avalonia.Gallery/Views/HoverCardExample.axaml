@@ -1,0 +1,306 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.HoverCardExample" x:DataType="vm:HoverCardViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="UsageProfilePreview" x:DataType="vm:HoverCardViewModel">
+      <StackPanel Width="284" Spacing="12">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <alder:AlderAvatar Width="36" Height="36" Fallback="A"
+                             Source="avares://Alder.Avalonia.Gallery/Assets/Card/ai-avalonia.png" />
+          <StackPanel VerticalAlignment="Center" Spacing="1">
+            <alder:AlderTextBlock Text="{CompiledBinding UsageProfileName}" FontWeight="SemiBold" />
+            <alder:AlderTextBlock Text="{CompiledBinding UsageProfileDomain}" Foreground="{DynamicResource AlderMuted}" FontSize="12" />
+          </StackPanel>
+        </StackPanel>
+        <alder:AlderTextBlock Text="{CompiledBinding UsageProfileDescription}" TextWrapping="Wrap" LineHeight="20" />
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="StudioPreview" x:DataType="vm:HoverCardViewModel">
+      <StackPanel MaxWidth="284" Spacing="12">
+        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+          <alder:AlderAvatar Width="36" Height="36" Source="avares://Alder.Avalonia.Gallery/Assets/Avatar/portrait-3.jpg"
+                            Fallback="AS" />
+          <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoverCardStudio}" FontWeight="SemiBold" />
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoverCardHandle}" Foreground="{DynamicResource AlderMuted}" FontSize="12" />
+          </StackPanel>
+          <alder:AlderButton Grid.Column="2" Size="Small" Variant="Secondary" VerticalAlignment="Center"
+                             Content="{CompiledBinding FollowLabel}" Command="{CompiledBinding ToggleFollow}" />
+        </Grid>
+        <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoverCardStudioDescription}" TextWrapping="Wrap" LineHeight="20" />
+        <WrapPanel ItemSpacing="12" LineSpacing="4">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoverCardProjects}" Foreground="{DynamicResource AlderMuted}" FontSize="12" />
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoverCardReleases}" Foreground="{DynamicResource AlderMuted}" FontSize="12" />
+        </WrapPanel>
+      </StackPanel>
+    </DataTemplate>
+  </UserControl.Resources>
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="Usage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="255">
+          <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center" ItemSpacing="5">
+            <alder:AlderTextBlock VerticalAlignment="Center" Text="{DynamicResource GalleryText.HoverCardUsage}" />
+            <alder:AlderHoverCard Content="{CompiledBinding}" ContentTemplate="{StaticResource UsageProfilePreview}"
+                                 PreviewName="{CompiledBinding UsageProfileName}">
+              <alder:AlderHoverCard.Trigger>
+                <alder:AlderLink NavigateUri="{CompiledBinding UsageProfileUri}" Padding="0" Underline="Always">
+                  <alder:AlderTextBlock Text="{CompiledBinding UsageProfileName}" />
+                </alder:AlderLink>
+              </alder:AlderHoverCard.Trigger>
+            </alder:AlderHoverCard>
+          </WrapPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new HoverCardViewModel();
+        using var logoStream = AssetLoader.Open(new Uri("avares://Alder.Avalonia.Gallery/Assets/Card/ai-avalonia.png"));
+        var logo = new Bitmap(logoStream);
+        var link = new AlderLink
+        {
+            NavigateUri = model.UsageProfileUri, Padding = new Thickness(0), Underline = AlderLinkUnderline.Always,
+            Content = new AlderTextBlock { Text = model.UsageProfileName }
+        };
+        var profile = new AlderHoverCard
+        {
+            Trigger = link, PreviewName = model.UsageProfileName, Placement = PlacementMode.Top,
+            Content = new StackPanel
+            {
+                Width = 284, Spacing = 12,
+                Children =
+                {
+                    new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal, Spacing = 10,
+                        Children =
+                        {
+                            new AlderAvatar { Width = 36, Height = 36, Fallback = "A", Source = logo },
+                            new StackPanel
+                            {
+                                VerticalAlignment = VerticalAlignment.Center, Spacing = 1,
+                                Children =
+                                {
+                                    new AlderTextBlock { Text = model.UsageProfileName, FontWeight = FontWeight.SemiBold },
+                                    new AlderTextBlock
+                                    {
+                                        Text = model.UsageProfileDomain, FontSize = 12,
+                                        [!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted")
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    new AlderTextBlock
+                    {
+                        Text = model.UsageProfileDescription, TextWrapping = TextWrapping.Wrap, LineHeight = 20
+                    }
+                }
+            }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="Arrow" Title="{DynamicResource GalleryText.HoverCardArrow}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="255">
+          <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center" ItemSpacing="5">
+            <alder:AlderTextBlock VerticalAlignment="Center" Text="{DynamicResource GalleryText.HoverCardArrowHint}" />
+            <alder:AlderHoverCard Content="{CompiledBinding}" ContentTemplate="{StaticResource StudioPreview}"
+                                 PreviewName="{DynamicResource GalleryText.HoverCardStudio}" ShowArrow="True">
+              <alder:AlderHoverCard.Trigger>
+                <alder:AlderLink Padding="0" Underline="Always">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoverCardHandle}" />
+                </alder:AlderLink>
+              </alder:AlderHoverCard.Trigger>
+            </alder:AlderHoverCard>
+          </WrapPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var profile = new AlderHoverCard
+        {
+            Trigger = new AlderLink { Content = new AlderTextBlock { Text = "@alder_studio" }, Underline = AlderLinkUnderline.Always },
+            PreviewName = "Alder Studio", Placement = PlacementMode.Top, ShowArrow = true,
+            Content = new StackPanel
+            {
+                Width = 282, Spacing = 8,
+                Children =
+                {
+                    new AlderTextBlock { Text = "Alder Studio", FontWeight = FontWeight.SemiBold },
+                    new AlderTextBlock { Text = "Interfaces, type and tools for curious people.", TextWrapping = TextWrapping.Wrap },
+                    new AlderButton { Content = model.FollowLabel, Command = model.ToggleFollow, Size = AlderSize.Small }
+                }
+            }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="Placements" Title="{DynamicResource GalleryText.HoverCardPlacements}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="355">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+            <alder:AlderHoverCard Placement="Top" PreviewName="{DynamicResource GalleryText.HoverCardTop}"
+                                 Content="{DynamicResource GalleryText.HoverCardTopHint}">
+              <alder:AlderHoverCard.Trigger>
+                <alder:AlderButton MinWidth="88" Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.HoverCardTop}" />
+              </alder:AlderHoverCard.Trigger>
+            </alder:AlderHoverCard>
+            <alder:AlderHoverCard Placement="Left" PreviewName="{DynamicResource GalleryText.HoverCardLeft}"
+                                 Content="{DynamicResource GalleryText.HoverCardLeftHint}">
+              <alder:AlderHoverCard.Trigger>
+                <alder:AlderButton MinWidth="88" Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.HoverCardLeft}" />
+              </alder:AlderHoverCard.Trigger>
+            </alder:AlderHoverCard>
+            <alder:AlderHoverCard Placement="Right" PreviewName="{DynamicResource GalleryText.HoverCardRight}"
+                                 Content="{DynamicResource GalleryText.HoverCardRightHint}">
+              <alder:AlderHoverCard.Trigger>
+                <alder:AlderButton MinWidth="88" Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.HoverCardRight}" />
+              </alder:AlderHoverCard.Trigger>
+            </alder:AlderHoverCard>
+            <alder:AlderHoverCard Placement="Bottom" PreviewName="{DynamicResource GalleryText.HoverCardBottom}"
+                                 Content="{DynamicResource GalleryText.HoverCardBottomHint}">
+              <alder:AlderHoverCard.Trigger>
+                <alder:AlderButton MinWidth="88" Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.HoverCardBottom}" />
+              </alder:AlderHoverCard.Trigger>
+            </alder:AlderHoverCard>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var previews = new StackPanel { Spacing = 8 };
+        foreach (var placement in new[] { PlacementMode.Top, PlacementMode.Left, PlacementMode.Right, PlacementMode.Bottom })
+        {
+            previews.Children.Add(new AlderHoverCard
+            {
+                Trigger = new AlderButton { Content = placement.ToString(), MinWidth = 88 },
+                Placement = placement, PreviewName = placement.ToString(),
+                Content = $"The preview is anchored to the {placement.ToString().ToLowerInvariant()} edge."
+            });
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="Image" Title="{DynamicResource GalleryText.HoverCardImage}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="360">
+          <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center" ItemSpacing="5">
+            <alder:AlderTextBlock VerticalAlignment="Center" Text="{DynamicResource GalleryText.HoverCardImageHint}" />
+            <alder:AlderHoverCard PreviewName="{DynamicResource GalleryText.HoverCardArtwork}" ShowArrow="True" Padding="0">
+              <alder:AlderHoverCard.Trigger>
+                <alder:AlderLink Padding="0" Content="{DynamicResource GalleryText.HoverCardArtwork}" Underline="Always" />
+              </alder:AlderHoverCard.Trigger>
+              <StackPanel Width="284">
+                <Border CornerRadius="16,16,0,0" ClipToBounds="True">
+                  <alder:AlderImage Height="142" Stretch="UniformToFill" Source="avares://Alder.Avalonia.Gallery/Assets/Card/robot1.jpeg"
+                         AutomationProperties.Name="{DynamicResource GalleryText.HoloArtAutomaton}" />
+                </Border>
+                <StackPanel Margin="16" Spacing="5">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoverCardArtwork}" FontWeight="SemiBold" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoverCardArtworkDescription}" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" LineHeight="20" />
+                </StackPanel>
+              </StackPanel>
+            </alder:AlderHoverCard>
+          </WrapPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        using var file = AssetLoader.Open(new Uri("avares://Alder.Avalonia.Gallery/Assets/Card/robot1.jpeg"));
+        var artwork = Bitmap.DecodeToWidth(file, 568);
+        var preview = new AlderHoverCard
+        {
+            Trigger = new AlderLink { Content = "Material Studies", Underline = AlderLinkUnderline.Always },
+            PreviewName = "Material Studies", ShowArrow = true, Padding = new Thickness(0),
+            Content = new StackPanel
+            {
+                Width = 284,
+                Children =
+                {
+                    new Border
+                    {
+                        CornerRadius = new CornerRadius(16, 16, 0, 0), ClipToBounds = true,
+                        Child = new AlderImage { Source = artwork, Height = 142, Stretch = Stretch.UniformToFill }
+                    },
+                    new AlderTextBlock { Text = "A study of warm light on a matte surface.", TextWrapping = TextWrapping.Wrap, Margin = new Thickness(16) }
+                }
+            }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="Delays" Title="{DynamicResource GalleryText.HoverCardDelays}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="235">
+          <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center" ItemSpacing="10" LineSpacing="10">
+            <alder:AlderHoverCard OpenDelay="0" CloseDelay="0" PreviewName="{DynamicResource GalleryText.HoverCardInstant}"
+                                 Content="{DynamicResource GalleryText.HoverCardInstantHint}">
+              <alder:AlderHoverCard.Trigger>
+                <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.HoverCardInstant}" />
+              </alder:AlderHoverCard.Trigger>
+            </alder:AlderHoverCard>
+            <alder:AlderHoverCard PreviewName="{DynamicResource GalleryText.HoverCardStandard}"
+                                 Content="{DynamicResource GalleryText.HoverCardStandardHint}">
+              <alder:AlderHoverCard.Trigger>
+                <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.HoverCardStandard}" />
+              </alder:AlderHoverCard.Trigger>
+            </alder:AlderHoverCard>
+            <alder:AlderHoverCard OpenDelay="1000" CloseDelay="500" PreviewName="{DynamicResource GalleryText.HoverCardSlow}"
+                                 Content="{DynamicResource GalleryText.HoverCardSlowHint}">
+              <alder:AlderHoverCard.Trigger>
+                <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.HoverCardSlow}" />
+              </alder:AlderHoverCard.Trigger>
+            </alder:AlderHoverCard>
+          </WrapPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var examples = new WrapPanel { ItemSpacing = 10, LineSpacing = 10 };
+        foreach (var (label, open, close) in new[]
+        {
+            ("Instant", 0, 0), ("Default", 700, 300), ("Slow", 1000, 500)
+        })
+        {
+            examples.Children.Add(new AlderHoverCard
+            {
+                Trigger = new AlderButton { Content = label },
+                OpenDelay = open, CloseDelay = close,
+                PreviewName = label, Content = $"Open after {open} ms, close after {close} ms."
+            });
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="Controlled" Title="{DynamicResource GalleryText.Controlled}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="345">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,32,0,0" Spacing="14">
+            <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+              <alder:AlderButton Size="Small" Variant="Primary" Content="{DynamicResource GalleryText.HoverCardOpen}"
+                                 Command="{CompiledBinding OpenPreview}" />
+              <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.HoverCardClose}"
+                                 Command="{CompiledBinding ClosePreview}" />
+              <alder:AlderTextBlock Text="{CompiledBinding PreviewStatus}" VerticalAlignment="Center" Foreground="{DynamicResource AlderMuted}" />
+            </WrapPanel>
+            <alder:AlderHoverCard HorizontalAlignment="Center" Placement="Bottom" IsOpen="{CompiledBinding IsPreviewOpen, Mode=TwoWay}"
+                                 Content="{CompiledBinding}" ContentTemplate="{StaticResource StudioPreview}"
+                                 PreviewName="{DynamicResource GalleryText.HoverCardStudio}">
+              <alder:AlderHoverCard.Trigger>
+                <alder:AlderLink Padding="0" Underline="Always">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoverCardHandle}" />
+                </alder:AlderLink>
+              </alder:AlderHoverCard.Trigger>
+            </alder:AlderHoverCard>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new AlderHoverCard
+        {
+            Trigger = new AlderLink { Content = new AlderTextBlock { Text = "@alder_studio" }, Underline = AlderLinkUnderline.Always },
+            Placement = PlacementMode.Bottom, PreviewName = "Alder Studio",
+            Content = "Interfaces, type and tools for curious people."
+        };
+        preview.Bind(AlderHoverCard.IsOpenProperty,
+            CompiledBinding.Create((HoverCardViewModel vm) => vm.IsPreviewOpen, source: model, mode: BindingMode.TwoWay));
+
+        var open = new AlderButton { Content = "Open preview", Command = model.OpenPreview };
+        var close = new AlderButton { Content = "Close", Command = model.ClosePreview };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

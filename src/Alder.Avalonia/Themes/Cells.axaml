@@ -1,0 +1,345 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls" xmlns:c="using:Avalonia.Data.Converters">
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderCellSecondarySurface" Color="#EBEBEC" />
+      <SolidColorBrush x:Key="AlderCellSecondaryFill" Color="#3371717A" />
+      <SolidColorBrush x:Key="AlderCellSecondarySwitchPressed" Color="#4D71717A" />
+      <SolidColorBrush x:Key="AlderCellDisabledKnob" Color="#3318181B" />
+      <BoxShadows x:Key="AlderCellShadow">0 2 4 0 #0A000000, 0 1 2 0 #0F000000, 0 0 1 0 #0F000000</BoxShadows>
+      <BoxShadows x:Key="AlderCellFocusShadow">0 0 0 4 #0485F7, 0 0 0 2 #F5F5F5</BoxShadows>
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderCellSecondarySurface" Color="#27272A" />
+      <SolidColorBrush x:Key="AlderCellSecondaryFill" Color="#339F9FA9" />
+      <SolidColorBrush x:Key="AlderCellSecondarySwitchPressed" Color="#4D9F9FA9" />
+      <SolidColorBrush x:Key="AlderCellDisabledKnob" Color="#33FCFCFC" />
+      <BoxShadows x:Key="AlderCellShadow">none</BoxShadows>
+      <BoxShadows x:Key="AlderCellFocusShadow">0 0 0 4 #0485F7, 0 0 0 2 #060607</BoxShadows>
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+
+  <ControlTheme x:Key="AlderCellFocusTheme" TargetType="alder:InputFocusRing">
+    <Setter Property="BoxShadow" Value="0 0 0 0 #000485F7, 0 0 0 0 #00000000" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="IsHitTestVisible" Value="False" />
+    <Setter Property="Transitions">
+      <Transitions><BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions>
+    </Setter>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True]"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderCellTriggerTheme" TargetType="Button">
+    <Setter Property="MinHeight" Value="36" />
+    <Setter Property="Padding" Value="12,6" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="CellSurface" CornerRadius="{TemplateBinding CornerRadius}" Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                  BoxShadow="{DynamicResource AlderCellShadow}">
+            <Border.Transitions>
+              <Transitions><BrushTransition Property="Background" Duration="0:0:0.15" Easing="0.25,0.1,0.25,1" /></Transitions>
+            </Border.Transitions>
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Margin="{TemplateBinding Padding}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+          </Border>
+          <alder:InputFocusRing Name="CellFocus" CornerRadius="{TemplateBinding CornerRadius}" Theme="{StaticResource AlderCellFocusTheme}" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:focus-visible /template/ alder|InputFocusRing#CellFocus">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderCellFocusShadow}" />
+    </Style>
+    <Style Selector="^[Tag=cell-open] /template/ alder|InputFocusRing#CellFocus">
+      <Setter Property="BoxShadow" Value="0 0 0 0 #000485F7, 0 0 0 0 #00000000" />
+    </Style>
+    <Style Selector="^:pointerover:not(:disabled):not(Button[Tag=cell-open]) /template/ Border#CellSurface,
+                     ^:pressed:not(:disabled):not(Button[Tag=cell-open]) /template/ Border#CellSurface">
+      <Setter Property="Background" Value="{DynamicResource AlderFieldHover}" />
+    </Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#CellSurface"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderCellSecondaryTriggerTheme" TargetType="Button" BasedOn="{StaticResource AlderCellTriggerTheme}">
+    <Setter Property="Background" Value="{DynamicResource AlderCellSecondarySurface}" />
+    <Style Selector="^ /template/ Border#CellSurface"><Setter Property="BoxShadow" Value="none" /></Style>
+    <Style Selector="^:pointerover:not(:disabled):not(Button[Tag=cell-open]) /template/ Border#CellSurface,
+                     ^:pressed:not(:disabled):not(Button[Tag=cell-open]) /template/ Border#CellSurface">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderCellPaletteItemTheme" TargetType="alder:AlderColorSwatchPickerItem"
+                BasedOn="{StaticResource {x:Type alder:AlderColorSwatchPickerItem}}">
+    <Setter Property="BorderThickness" Value="1" />
+    <Style Selector="^ /template/ PathIcon#SelectedMark"><Setter Property="IsVisible" Value="False" /></Style>
+  </ControlTheme>
+
+  <DataTemplate x:Key="AlderCellPaletteTemplate" x:DataType="alder:AlderCellColorPicker">
+    <alder:AlderColorSwatchPicker ItemsSource="{CompiledBinding Presets}" SelectedItem="{CompiledBinding SelectedPreset, Mode=TwoWay}"
+                                Size="ExtraSmall" Shape="Circle" HorizontalAlignment="Center" Margin="4,8,4,0"
+                                ItemContainerTheme="{StaticResource AlderCellPaletteItemTheme}"
+                                AutomationProperties.Name="{DynamicResource AlderText.ColorChoose}" />
+  </DataTemplate>
+
+  <ControlTheme x:Key="{x:Type alder:AlderCellColorPicker}" TargetType="alder:AlderCellColorPicker"
+                BasedOn="{StaticResource {x:Type alder:AlderColorPicker}}">
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Placement" Value="BottomEdgeAlignedRight" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <alder:AlderButton Name="PART_Trigger" Theme="{StaticResource AlderCellTriggerTheme}"
+                AutomationProperties.Name="{TemplateBinding Label}" AutomationProperties.HelpText="{TemplateBinding Value}">
+          <Grid ColumnDefinitions="*,Auto,20" ColumnSpacing="12">
+            <alder:AlderTextBlock Text="{TemplateBinding Label}" FontWeight="Medium" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+            <alder:AlderTextBlock Grid.Column="1" Text="{TemplateBinding Value}" Foreground="{DynamicResource AlderMuted}" VerticalAlignment="Center" />
+            <alder:AlderColorSwatch Grid.Column="2" Width="20" Height="20" Shape="Circle" VerticalAlignment="Center" AutomationProperties.AccessibilityView="Raw"
+                                   Color="{TemplateBinding Value, Converter={x:Static alder:AlderColorRendering.ToColor}}" />
+          </Grid>
+        </alder:AlderButton>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:has-presets"><Setter Property="PopupHeaderTemplate" Value="{StaticResource AlderCellPaletteTemplate}" /></Style>
+    <Style Selector="^[IsOpen=True] /template/ :is(Button)#PART_Trigger"><Setter Property="Tag" Value="cell-open" /></Style>
+    <Style Selector="^[Variant=Secondary] /template/ :is(Button)#PART_Trigger"><Setter Property="Theme" Value="{StaticResource AlderCellSecondaryTriggerTheme}" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderCellSelect}" TargetType="alder:AlderCellSelect"
+                BasedOn="{StaticResource {x:Type alder:AlderSelect}}">
+    <Setter Property="Width" Value="NaN" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="DropDownHorizontalAlignment" Value="Right" />
+    <Setter Property="Indicator" Value="{DynamicResource AlderIconChevronsExpandVertical}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Name="PART_Field" ClipToBounds="False">
+          <alder:AlderButton Name="PART_Trigger" Theme="{StaticResource AlderCellTriggerTheme}" CornerRadius="{TemplateBinding CornerRadius}" ClickMode="Press"
+                  Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                  AutomationProperties.Name="{TemplateBinding Label}" AutomationProperties.HelpText="{TemplateBinding SelectionText}">
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+              <alder:AlderTextBlock Text="{TemplateBinding Label}" FontWeight="Medium" LineHeight="20" TextTrimming="CharacterEllipsis" />
+              <Grid Grid.Column="1" ColumnDefinitions="*,Auto">
+                <alder:AlderTextBlock Name="Placeholder" Text="{TemplateBinding PlaceholderText}" Foreground="{DynamicResource AlderMuted}"
+                           TextAlignment="Right" LineHeight="20" />
+                <alder:AlderTextBlock Name="SelectedText" Text="{TemplateBinding SelectionText}" IsVisible="False"
+                           FontWeight="Normal" Foreground="{DynamicResource AlderMuted}" TextAlignment="Right" LineHeight="20" />
+                <ContentPresenter Name="SelectedItem" Content="{TemplateBinding SelectedItem}" IsVisible="False"
+                                  ContentTemplate="{TemplateBinding SelectionTemplate}" HorizontalContentAlignment="Right" VerticalAlignment="Center" />
+                <alder:AlderPathIcon Name="CellIndicator" Grid.Column="1" Data="{TemplateBinding Indicator}" Width="12" Height="12" Margin="12,0,0,0"
+                          Foreground="{DynamicResource AlderMuted}" VerticalAlignment="Center"
+                          IsVisible="{CompiledBinding Indicator, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+              </Grid>
+            </Grid>
+          </alder:AlderButton>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Variant=Secondary]"><Setter Property="Background" Value="{DynamicResource AlderCellSecondarySurface}" /></Style>
+    <Style Selector="^:select /template/ :is(Button)#PART_Trigger">
+      <Setter Property="Theme" Value="{StaticResource AlderCellTriggerTheme}" />
+    </Style>
+    <Style Selector="^:select[Variant=Secondary] /template/ :is(Button)#PART_Trigger">
+      <Setter Property="Theme" Value="{StaticResource AlderCellSecondaryTriggerTheme}" />
+    </Style>
+    <Style Selector="^:open /template/ :is(Button)#PART_Trigger"><Setter Property="Tag" Value="cell-open" /></Style>
+    <Style Selector="^:select /template/ TextBlock#Placeholder, ^:select /template/ TextBlock#SelectedText">
+      <Setter Property="TextWrapping" Value="NoWrap" />
+      <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+    <Style Selector="^[IsReadOnly=True] /template/ :is(Button)#PART_Trigger"><Setter Property="IsEnabled" Value="False" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderCellSliderThumbTheme" TargetType="Thumb">
+    <Setter Property="Width" Value="20" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Background="Transparent">
+          <Border Name="Handle" Width="2" Height="16" CornerRadius="1" HorizontalAlignment="Center" VerticalAlignment="Center"
+                  Background="{DynamicResource AlderInk}" Opacity="0" RenderTransform="scale(1,1)" IsHitTestVisible="False">
+            <Border.Transitions>
+              <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="0.25,0.1,0.25,1" />
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.12" Easing="0.25,0.1,0.25,1" />
+              </Transitions>
+            </Border.Transitions>
+          </Border>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Tag=cell-hover] /template/ Border#Handle"><Setter Property="Opacity" Value="0.4" /></Style>
+    <Style Selector="^[Tag=cell-focus] /template/ Border#Handle, ^[Tag=cell-focus-hover] /template/ Border#Handle">
+      <Setter Property="Opacity" Value="0.7" />
+      <Setter Property="RenderTransform" Value="scale(1,1.2)" />
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderCellFocusShadow}" />
+    </Style>
+    <Style Selector="^[Tag=cell-focus-hover] /template/ Border#Handle"><Setter Property="Opacity" Value="0.4" /></Style>
+    <Style Selector="^[Tag=cell-drag] /template/ Border#Handle">
+      <Setter Property="Opacity" Value="0.7" />
+      <Setter Property="RenderTransform" Value="scale(1,1.5)" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#Handle"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderCellSlider}" TargetType="alder:AlderCellSlider">
+    <Setter Property="Minimum" Value="0" />
+    <Setter Property="Maximum" Value="1" />
+    <Setter Property="MinHeight" Value="36" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="IsSnapToTickEnabled" Value="True" />
+    <Setter Property="TickFrequency" Value="{CompiledBinding Step, RelativeSource={RelativeSource Self}}" />
+    <Setter Property="SmallChange" Value="{CompiledBinding Step, RelativeSource={RelativeSource Self}}" />
+    <Setter Property="LargeChange" Value="0.1" />
+    <Setter Property="AutomationProperties.Name" Value="{CompiledBinding Label, RelativeSource={RelativeSource Self}}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="CellSurface" CornerRadius="{TemplateBinding CornerRadius}" Background="{TemplateBinding Background}"
+                  BoxShadow="{DynamicResource AlderCellShadow}" IsHitTestVisible="False">
+            <Border.Transitions><Transitions><BrushTransition Property="Background" Duration="0:0:0.15" Easing="0.25,0.1,0.25,1" /></Transitions></Border.Transitions>
+          </Border>
+          <alder:SliderSurface Name="Fill" RowCornerRadius="{TemplateBinding CornerRadius}" TrackBrush="{x:Null}"
+                               FillBrush="{DynamicResource AlderCellSecondarySurface}"
+                               Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}" Value="{TemplateBinding Value}"
+                               IsDirectionReversed="{TemplateBinding IsDirectionReversed}" />
+          <Border Name="TrackViewport" CornerRadius="{TemplateBinding CornerRadius}" ClipToBounds="True">
+            <!-- The half-thumb gutters put the center at the row edges while the viewport clips the excess. -->
+            <Track Name="PART_Track" Orientation="Horizontal" Margin="-10,0" Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}"
+                   Value="{TemplateBinding Value, Mode=TwoWay}" IsDirectionReversed="{TemplateBinding IsDirectionReversed}">
+              <Track.DecreaseButton><alder:AlderRepeatButton Name="PART_DecreaseButton" Theme="{StaticResource AlderSliderTrackButton}" /></Track.DecreaseButton>
+              <Track.IncreaseButton><alder:AlderRepeatButton Name="PART_IncreaseButton" Theme="{StaticResource AlderSliderTrackButton}" /></Track.IncreaseButton>
+              <alder:AlderThumb Name="CellThumb" Theme="{StaticResource AlderCellSliderThumbTheme}" />
+            </Track>
+          </Border>
+          <Border CornerRadius="{TemplateBinding CornerRadius}" BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}" IsHitTestVisible="False" />
+          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" Margin="12,0" VerticalAlignment="Center" IsHitTestVisible="False">
+            <alder:AlderTextBlock Text="{TemplateBinding Label}" FontWeight="Medium" LineHeight="20" TextTrimming="CharacterEllipsis" />
+            <alder:AlderTextBlock Grid.Column="1" Text="{TemplateBinding ValueText}" LineHeight="20" Foreground="{DynamicResource AlderMuted}" />
+          </Grid>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover:not(:disabled) /template/ Thumb"><Setter Property="Tag" Value="cell-hover" /></Style>
+    <Style Selector="^:focus-visible /template/ Thumb"><Setter Property="Tag" Value="cell-focus" /></Style>
+    <Style Selector="^:focus-visible:pointerover /template/ Thumb"><Setter Property="Tag" Value="cell-focus-hover" /></Style>
+    <Style Selector="^:dragging /template/ Thumb"><Setter Property="Tag" Value="cell-drag" /></Style>
+    <Style Selector="^:pointerover:not(:disabled) /template/ Border#CellSurface">
+      <Setter Property="Background" Value="{DynamicResource AlderFieldHover}" />
+    </Style>
+    <Style Selector="^[Variant=Secondary]"><Setter Property="Background" Value="{DynamicResource AlderCellSecondarySurface}" /></Style>
+    <Style Selector="^[Variant=Secondary] /template/ Border#CellSurface"><Setter Property="BoxShadow" Value="none" /></Style>
+    <Style Selector="^[Variant=Secondary] /template/ alder|SliderSurface#Fill"><Setter Property="FillBrush" Value="{DynamicResource AlderCellSecondaryFill}" /></Style>
+    <Style Selector="^[Variant=Secondary]:pointerover:not(:disabled) /template/ Border#CellSurface">
+      <Setter Property="Background" Value="{DynamicResource AlderSurfaceTertiary}" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#CellSurface"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderCellSwitch}" TargetType="alder:AlderCellSwitch">
+    <Setter Property="MinHeight" Value="36" />
+    <Setter Property="Padding" Value="12,8" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="BoxShadow" Value="{DynamicResource AlderCellShadow}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="KnobTransitions">
+      <Transitions><DoubleTransition Property="Canvas.Left" Duration="0:0:0.3" Easing="0.32,0.72,0,1" /></Transitions>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="CellSurface" CornerRadius="{TemplateBinding CornerRadius}" BoxShadow="{TemplateBinding BoxShadow}"
+                  Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                  Padding="{TemplateBinding Padding}">
+            <Border.Transitions><Transitions><BrushTransition Property="Background" Duration="0:0:0.15" Easing="0.25,0.1,0.25,1" /></Transitions></Border.Transitions>
+            <Grid ColumnDefinitions="*,40" ColumnSpacing="12" VerticalAlignment="Center">
+              <StackPanel Spacing="2" VerticalAlignment="Center" IsHitTestVisible="False">
+                <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  TextBlock.LineHeight="20" TextBlock.TextWrapping="Wrap" />
+                <alder:AlderTextBlock Text="{TemplateBinding Description}" FontSize="12" LineHeight="16" FontWeight="Normal" TextWrapping="Wrap"
+                           Foreground="{DynamicResource AlderMuted}"
+                           IsVisible="{CompiledBinding Description, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+              </StackPanel>
+              <alder:SwitchTrack Name="Track" Grid.Column="1" Width="40" Height="20" CornerRadius="10" ClipToBounds="True"
+                                 IsChecked="{TemplateBinding IsChecked, Mode=OneWay}" IdleBackground="{DynamicResource AlderCellSecondarySurface}"
+                                 HoverBackground="{DynamicResource AlderSwitchHover}" CheckedBackground="{DynamicResource AlderAccent}"
+                                 CheckedHoverBackground="{DynamicResource AlderAccentHover}">
+                <alder:SwitchTrack.Transitions>
+                  <Transitions><BrushTransition Property="Background" Duration="0:0:0.25" Easing="0.25,0.1,0.25,1" /></Transitions>
+                </alder:SwitchTrack.Transitions>
+                <Canvas Name="PART_SwitchKnob" Margin="2,0" HorizontalAlignment="Left" Width="14" Height="20" UseLayoutRounding="False">
+                  <Grid Name="PART_MovingKnobs" Width="22" Height="20" Canvas.Left="0">
+                    <Border Name="Knob" Height="16" CornerRadius="8" Background="White" BoxShadow="{DynamicResource AlderFieldShadow}">
+                      <Border.Transitions><Transitions><BrushTransition Property="Background" Duration="0:0:0.2" Easing="0,0,0.2,1" /></Transitions></Border.Transitions>
+                    </Border>
+                  </Grid>
+                </Canvas>
+              </alder:SwitchTrack>
+            </Grid>
+          </Border>
+          <alder:InputFocusRing Name="CellFocus" CornerRadius="{TemplateBinding CornerRadius}" Theme="{StaticResource AlderCellFocusTheme}" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:focus-visible /template/ alder|InputFocusRing#CellFocus">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderCellFocusShadow}" />
+    </Style>
+    <Style Selector="^:pointerover:not(:disabled) /template/ Border#CellSurface"><Setter Property="Background" Value="{DynamicResource AlderFieldHover}" /></Style>
+    <Style Selector="^:pointerover:not(:disabled) /template/ alder|SwitchTrack#Track"><Setter Property="IsHighlighted" Value="True" /></Style>
+    <Style Selector="^[Variant=Secondary]">
+      <Setter Property="Background" Value="{DynamicResource AlderCellSecondarySurface}" />
+      <Setter Property="BoxShadow" Value="none" />
+    </Style>
+    <Style Selector="^[Variant=Secondary]:pointerover:not(:disabled) /template/ Border#CellSurface">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
+    <Style Selector="^[Variant=Secondary] /template/ alder|SwitchTrack#Track">
+      <Setter Property="IdleBackground" Value="{DynamicResource AlderCellSecondaryFill}" />
+      <Setter Property="HoverBackground" Value="{DynamicResource AlderCellSecondaryFill}" />
+    </Style>
+    <Style Selector="^[Variant=Secondary]:pressed /template/ alder|SwitchTrack#Track">
+      <Setter Property="IsHighlighted" Value="True" />
+      <Setter Property="HoverBackground" Value="{DynamicResource AlderCellSecondarySwitchPressed}" />
+    </Style>
+    <Style Selector="^:checked /template/ Border#Knob">
+      <Setter Property="Background" Value="{DynamicResource AlderOnAccent}" />
+      <Setter Property="BoxShadow" Value="0 0 5 0 #05000000, 0 2 10 0 #0F000000, 0 0 1 0 #4D000000" />
+    </Style>
+    <Style Selector="^:disabled /template/ Border#Knob">
+      <Setter Property="Background" Value="{DynamicResource AlderCellDisabledKnob}" />
+    </Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True]"><Setter Property="KnobTransitions" Value="{x:Null}" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#CellSurface,
+                     ^[(alder|AlderMotion.Reduced)=True] /template/ Border#Knob,
+                     ^[(alder|AlderMotion.Reduced)=True] /template/ alder|SwitchTrack#Track"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+  </ControlTheme>
+</ResourceDictionary>

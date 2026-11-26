@@ -1,0 +1,1928 @@
+#pragma warning disable CS1591 // Imported Markdown engine.
+using System.Buffers;
+using System.Collections.Concurrent;
+using System.Text;
+using Avalonia.Media.Fonts.Tables.Cmap;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Interactivity;
+using Avalonia.Input;
+using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
+using Avalonia.Media.TextFormatting.Unicode;
+using Alder.NativeMarkdown.UI.Selection;
+using Alder.NativeMarkdown.UI.Extensions;
+using Alder.NativeMarkdown.Core.Model;
+
+namespace Alder.NativeMarkdown.UI.Rendering;
+
+/// <summary>
+/// 一个文本片段（段落、标题、表格单元格等）：用一个 <see cref="TextLayout"/> 自绘，
+/// 行内样式通过自定义 <see cref="ITextSource"/> 提供，公式 / 图片 / 复选框以 <see cref="DrawableTextRun"/> 嵌入。
+/// 选区高亮只绘制矩形，不触发重新排版。
+/// </summary>
+public sealed class TextSegmentView : Control, ISelectableSegment
+{
+    private InlineContent _content = InlineContent.Empty;
+    private RenderContext? _context;
+    private double _fontSize = 14;
+    private FontWeight _fontWeight = FontWeight.Normal;
+    private IBrush? _foreground;
+    private TextAlignment _alignment = TextAlignment.Left;
+    private TextWrapping _wrapping = TextWrapping.Wrap;
+
+    private SegmentLayout? _layout;
+    // 复用 ITextSource 与段落属性对象，流式每帧排版避免重复分配与重建样式字典
+    private InlineTextSource? _textSource;
+    private GenericTextParagraphProperties? _fixedHeightProps;
+    private GenericTextParagraphProperties? _naturalProps;
+    private GenericTextParagraphProperties? _firstLineProps;
+    private GenericTextParagraphProperties? _firstLineNaturalProps;
+    private TextRunProperties? _cachedDefaultProps;
+    private TextAlignment _cachedAlignment;
+    private TextWrapping _cachedWrapping;
+    private double _cachedLineHeight;
+    private double? _lineHeight;
+    private double _firstLineIndent;
+    // 内容变化后需要重新排版的起点（int.MaxValue 表示排版有效）
+    private int _dirtyFrom = int.MaxValue;
+    private readonly List<SegmentLineVisual> _lines = [];
+    private readonly TailFade _fade;
+    private bool _isDocumentTail;
+    private bool _attached;
+    private StreamingState? _subscribedStreaming;
+#pragma warning disable CS0618 // TextRunCache 是 Avalonia 12 的预览 API（[Unstable]），只在这里使用
+    // 已整形文本段的缓存：流式追加时只为变化处之后的文本重新整形
+    private readonly TextRunCache _runCache = new();
+#pragma warning restore CS0618
+
+    /// <summary>是否使用整形缓存（测试与基准对比用）。</summary>
+    internal static bool UseRunCache { get; set; } = true;
+    private int _hoverLink = -1;
+    private bool _hoverClickable;
+
+    public TextSegmentView()
+    {
+        ClipToBounds = false;
+        _fade = new TailFade(this);
+    }
+
+    /// <summary>片段身份（选区坐标）。</summary>
+    public SegmentKey Key { get; private set; }
+
+    /// <summary>是否是文档最后一个片段（流式时绘制渐显和光标）。</summary>
+    public bool IsDocumentTail
+    {
+        get => _isDocumentTail;
+        set
+        {
+            if (_isDocumentTail == value)
+            {
+                return;
+            }
+            _isDocumentTail = value;
+            SyncStreamingSubscription();
+            InvalidateVisual();
+            // 不再是末尾时，正在渐显的文字继续渐显完（到时由定时器结束）
+            if (value)
+            {
+                RefreshFade();
+            }
+        }
+    }
+
+    public InlineContent Content => _content;
+
+    string ISelectableSegment.Text => _content.Text;
+
+    Control ISelectableSegment.View => this;
+
+    /// <summary>当前排版（逐行）。</summary>
+    public SegmentLayout? Layout => _layout;
+
+    internal double FirstLineIndent
+    {
+        get => _firstLineIndent;
+        set
+        {
+            if (_firstLineIndent == value)
+            {
+                return;
+            }
+            _firstLineIndent = value;
+            _fixedHeightProps = null;
+            InvalidateLayout();
+        }
+    }
+
+    /// <summary>链接点击（冒泡）。</summary>
+    public static readonly RoutedEvent<LinkClickedEventArgs> LinkClickedEvent =
+        RoutedEvent.Register<TextSegmentView, LinkClickedEventArgs>(nameof(LinkClicked), RoutingStrategies.Bubble);
+
+    public event EventHandler<LinkClickedEventArgs>? LinkClicked
+    {
+        add => AddHandler(LinkClickedEvent, value);
+        remove => RemoveHandler(LinkClickedEvent, value);
+    }
+
+    /// <summary>已加载的图片被点击（冒泡）。未处理时打开全屏查看。</summary>
+    public static readonly RoutedEvent<LinkHoveredEventArgs> LinkHoveredEvent =
+        RoutedEvent.Register<TextSegmentView, LinkHoveredEventArgs>(nameof(LinkHovered), RoutingStrategies.Bubble);
+
+    public event EventHandler<LinkHoveredEventArgs>? LinkHovered
+    {
+        add => AddHandler(LinkHoveredEvent, value);
+        remove => RemoveHandler(LinkHoveredEvent, value);
+    }
+
+    public static readonly RoutedEvent<ImageClickedEventArgs> ImageClickedEvent =
+        RoutedEvent.Register<TextSegmentView, ImageClickedEventArgs>(nameof(ImageClicked), RoutingStrategies.Bubble);
+
+    public event EventHandler<ImageClickedEventArgs>? ImageClicked
+    {
+        add => AddHandler(ImageClickedEvent, value);
+        remove => RemoveHandler(ImageClickedEvent, value);
+    }
+
+    /// <summary>可点击的行内组件被点击（冒泡），例如引用标签。</summary>
+    public static readonly RoutedEvent<ComponentClickedEventArgs> ComponentClickedEvent =
+        RoutedEvent.Register<TextSegmentView, ComponentClickedEventArgs>(nameof(ComponentClicked), RoutingStrategies.Bubble);
+
+    public event EventHandler<ComponentClickedEventArgs>? ComponentClicked
+    {
+        add => AddHandler(ComponentClickedEvent, value);
+        remove => RemoveHandler(ComponentClickedEvent, value);
+    }
+
+    protected override global::Avalonia.Automation.Peers.AutomationPeer OnCreateAutomationPeer() =>
+        new Automation.TextSegmentAutomationPeer(this, () => BlockText.PlainText(_content, 0, int.MaxValue, o => _context?.Plugins.FindInlineComponent(o.Value)?.ToPlainText(o)));
+
+    /// <summary>设置内容与外观；内容或外观未变时不重新排版。</summary>
+    public void Set(RenderContext context, SegmentKey key, InlineContent content, double fontSize, FontWeight weight = default,
+        IBrush? foreground = null, TextAlignment alignment = TextAlignment.Left, TextWrapping wrapping = TextWrapping.Wrap) =>
+        SetTracked(context, key, content, fontSize, weight, foreground, alignment, wrapping);
+
+    /// <summary>设置内容与外观，返回内容或排版相关外观是否实际发生变化。</summary>
+    internal bool SetTracked(RenderContext context, SegmentKey key, InlineContent content, double fontSize, FontWeight weight = default,
+        IBrush? foreground = null, TextAlignment alignment = TextAlignment.Left, TextWrapping wrapping = TextWrapping.Wrap,
+        double? lineHeight = null)
+    {
+        if (weight == default)
+        {
+            weight = FontWeight.Normal;
+        }
+        // 外层 HTML 盒子继承的对齐、字号、粗细与颜色
+        if (context.Inherited is { } inherited)
+        {
+            if (alignment == TextAlignment.Left && inherited.Align != TextAlign.Inherit)
+            {
+                alignment = inherited.Align switch
+                {
+                    TextAlign.Center => TextAlignment.Center,
+                    TextAlign.Right => TextAlignment.Right,
+                    TextAlign.Justify => TextAlignment.Justify,
+                    _ => TextAlignment.Left,
+                };
+            }
+            // 绝对字号按与正文字号的比例缩放（标题保持相对大小）
+            if (inherited.FontSize is { } px)
+            {
+                fontSize *= px / context.Style.FontSize;
+            }
+            else if (inherited.FontScale is { } scale)
+            {
+                fontSize *= scale;
+            }
+            if (inherited.Bold == true && weight < FontWeight.Bold)
+            {
+                weight = FontWeight.Bold;
+            }
+            foreground ??= HtmlPaint.Foreground(context, inherited.Foreground);
+        }
+        if (context.MutedText) foreground ??= context.Style.SecondaryForeground;
+        var keyChanged = Key != key;
+        Key = key;
+        var changed = !ReferenceEquals(_context, context) || !ReferenceEquals(_content, content) && _content != content ||
+                      _fontSize != fontSize || _fontWeight != weight || !Equals(_foreground, foreground) || _alignment != alignment ||
+                      _wrapping != wrapping || _lineHeight != lineHeight;
+        if (!changed)
+        {
+            if (keyChanged)
+            {
+                InvalidateVisual();
+            }
+            return false;
+        }
+        if (_context is not null && !ReferenceEquals(_context.Selection, context.Selection))
+        {
+            _context.Selection.Changed -= OnSelectionChanged;
+            if (_attached)
+            {
+                context.Selection.Changed += OnSelectionChanged;
+            }
+        }
+        else if (_context is null && _attached)
+        {
+            context.Selection.Changed += OnSelectionChanged;
+        }
+        // 只追加且样式不变时，保留差异点之前的整形结果
+        var appendOnly = ReferenceEquals(_context, context) && _fontSize == fontSize && _fontWeight == weight &&
+                         Equals(_foreground, foreground) && _lineHeight == lineHeight;
+        _lineHeight = lineHeight;
+        var from = appendOnly ? FirstDifference(_content, content) : 0;
+#pragma warning disable CS0618
+        if (from <= 0)
+        {
+            _runCache.Invalidate();
+            _uncoveredRuns.Clear();
+            _fullRebuild = true;
+        }
+        else
+        {
+            // 缓存以"段落"（换行符分隔）为单位、按段落起点存放整段的整形结果；InvalidateFrom 只丢弃起点不早于给定位置的条目。
+            // 所以必须从差异点所在段落的起点失效，否则旧段落（连同它的段落结束）被复用，追加的文字另起一段，变成硬换行
+            var paragraphStart = from > 0 ? content.Text.AsSpan(0, Math.Min(from, content.Text.Length)).LastIndexOfAny('\n', '\r', '\u2029') + 1 : 0;
+            _runCache.InvalidateFrom(paragraphStart);
+            TrimUncoveredRuns(from);
+        }
+#pragma warning restore CS0618
+        var restyled = _alignment != alignment || _wrapping != wrapping;
+        _context = context;
+        _content = content;
+        _fontSize = fontSize;
+        _fontWeight = weight;
+        _foreground = foreground;
+        _alignment = alignment;
+        _wrapping = wrapping;
+        SyncStreamingSubscription();
+        InvalidateLayout(restyled ? 0 : from);
+        return true;
+    }
+
+    // 缓存主字体缺字区间（例如 CJK 段落）的首字码点，避免逐行增量排版时每次向回扫描到段首（O(N) → O(1)）
+    private readonly record struct UncoveredRun(int Begin, int RunStart, int RunEnd, int HeadCodepoint);
+    private readonly List<UncoveredRun> _uncoveredRuns = [];
+
+    private void TrimUncoveredRuns(int from)
+    {
+        for (var i = _uncoveredRuns.Count - 1; i >= 0; i--)
+        {
+            var run = _uncoveredRuns[i];
+            if (run.RunStart >= from)
+            {
+                _uncoveredRuns.RemoveAt(i);
+            }
+            else if (run.RunEnd > from)
+            {
+                _uncoveredRuns[i] = run with { RunEnd = from };
+                break;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
+    private bool TryGetUncoveredHead(int begin, int start, out int headCodepoint, out int index)
+    {
+        var count = _uncoveredRuns.Count;
+        if (count > 0)
+        {
+            // 流式追加几乎总是命中最后一个区间
+            var last = _uncoveredRuns[count - 1];
+            if (start >= last.RunStart)
+            {
+                if (last.Begin == begin && start <= last.RunEnd)
+                {
+                    headCodepoint = last.HeadCodepoint;
+                    index = count - 1;
+                    return true;
+                }
+                headCodepoint = 0;
+                index = -1;
+                return false;
+            }
+            int lo = 0, hi = count - 1, found = -1;
+            while (lo <= hi)
+            {
+                var mid = (lo + hi) >>> 1;
+                if (_uncoveredRuns[mid].RunStart <= start)
+                {
+                    found = mid;
+                    lo = mid + 1;
+                }
+                else
+                {
+                    hi = mid - 1;
+                }
+            }
+            if (found >= 0)
+            {
+                var entry = _uncoveredRuns[found];
+                if (entry.Begin == begin && start <= entry.RunEnd)
+                {
+                    headCodepoint = entry.HeadCodepoint;
+                    index = found;
+                    return true;
+                }
+            }
+        }
+        headCodepoint = 0;
+        index = -1;
+        return false;
+    }
+
+    private void ExtendUncoveredRun(int index, int runEnd)
+    {
+        var entry = _uncoveredRuns[index];
+        if (runEnd > entry.RunEnd)
+        {
+            _uncoveredRuns[index] = entry with { RunEnd = runEnd };
+        }
+    }
+
+    private void RecordUncoveredRun(int begin, int runStart, int runEnd, int headCodepoint)
+    {
+        var count = _uncoveredRuns.Count;
+        if (count == 0 || _uncoveredRuns[count - 1].RunStart < runStart)
+        {
+            _uncoveredRuns.Add(new UncoveredRun(begin, runStart, runEnd, headCodepoint));
+            return;
+        }
+        if (_uncoveredRuns[count - 1].RunStart == runStart)
+        {
+            var last = _uncoveredRuns[count - 1];
+            if (last.Begin == begin)
+            {
+                _uncoveredRuns[count - 1] = last with { RunEnd = Math.Max(last.RunEnd, runEnd), HeadCodepoint = headCodepoint };
+            }
+            return;
+        }
+        int lo = 0, hi = count - 1;
+        while (lo <= hi)
+        {
+            var mid = (lo + hi) >>> 1;
+            var cmp = _uncoveredRuns[mid].RunStart.CompareTo(runStart);
+            if (cmp == 0)
+            {
+                if (_uncoveredRuns[mid].Begin == begin)
+                {
+                    _uncoveredRuns[mid] = _uncoveredRuns[mid] with { RunEnd = Math.Max(_uncoveredRuns[mid].RunEnd, runEnd), HeadCodepoint = headCodepoint };
+                }
+                return;
+            }
+            if (cmp < 0)
+            {
+                lo = mid + 1;
+            }
+            else
+            {
+                hi = mid - 1;
+            }
+        }
+        _uncoveredRuns.Insert(lo, new UncoveredRun(begin, runStart, runEnd, headCodepoint));
+    }
+
+    // 新旧内容第一个不同的位置：文本公共前缀，且该位置之前的样式区间、对象完全相同（按序双指针 O(S) 零分配）
+    private static int FirstDifference(InlineContent old, InlineContent next)
+    {
+        var limit = old.Text.AsSpan().CommonPrefixLength(next.Text);
+        if (limit == 0)
+        {
+            return 0;
+        }
+
+        // 若已存在的链接 / 组件 / HTML 文字样式表前部发生变化，保守退回从头重排
+        if (!TablePrefixEqual(old.Links, next.Links)
+            || !TablePrefixEqual(old.Components, next.Components)
+            || !TablePrefixEqual(old.TextStyles, next.TextStyles))
+        {
+            return 0;
+        }
+
+        var oldSpans = old.Spans;
+        var nextSpans = next.Spans;
+        int i = 0, j = 0;
+        while (i < oldSpans.Length && j < nextSpans.Length)
+        {
+            var a = oldSpans[i];
+            var b = nextSpans[j];
+            if (a.Start >= limit && b.Start >= limit)
+            {
+                break;
+            }
+            if (a == b)
+            {
+                i++;
+                j++;
+                continue;
+            }
+            limit = Math.Min(limit, Math.Min(a.Start, b.Start));
+            break;
+        }
+        if (i < oldSpans.Length && oldSpans[i].Start < limit)
+        {
+            limit = Math.Min(limit, oldSpans[i].Start);
+        }
+        if (j < nextSpans.Length && nextSpans[j].Start < limit)
+        {
+            limit = Math.Min(limit, nextSpans[j].Start);
+        }
+
+        var oldObjects = old.Objects;
+        var nextObjects = next.Objects;
+        i = 0;
+        j = 0;
+        while (i < oldObjects.Length && j < nextObjects.Length)
+        {
+            var a = oldObjects[i];
+            var b = nextObjects[j];
+            if (a.Offset >= limit && b.Offset >= limit)
+            {
+                break;
+            }
+            if (a == b)
+            {
+                i++;
+                j++;
+                continue;
+            }
+            limit = Math.Min(limit, Math.Min(a.Offset, b.Offset));
+            break;
+        }
+        if (i < oldObjects.Length && oldObjects[i].Offset < limit)
+        {
+            limit = Math.Min(limit, oldObjects[i].Offset);
+        }
+        if (j < nextObjects.Length && nextObjects[j].Offset < limit)
+        {
+            limit = Math.Min(limit, nextObjects[j].Offset);
+        }
+
+        return limit;
+    }
+
+    private static bool TablePrefixEqual<T>(System.Collections.Immutable.ImmutableArray<T> a, System.Collections.Immutable.ImmutableArray<T> b)
+    {
+        if (a == b || a.IsDefaultOrEmpty)
+        {
+            return true;
+        }
+        if (b.IsDefault || b.Length < a.Length)
+        {
+            return false;
+        }
+        var comparer = EqualityComparer<T>.Default;
+        for (var i = 0; i < a.Length; i++)
+        {
+            if (!comparer.Equals(a[i], b[i]))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // 从 from 处起重新排版（0 = 整段）；只有变化的行会重新录制
+    private void InvalidateLayout(int from = 0)
+    {
+        _dirtyFrom = Math.Min(_dirtyFrom, Math.Max(0, from));
+        InvalidateMeasure();
+    }
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        _attached = true;
+        if (_context is not null)
+        {
+            _context.Selection.Changed += OnSelectionChanged;
+            if (_layout is null)
+            {
+                InvalidateMeasure();
+            }
+        }
+        SyncStreamingSubscription();
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromVisualTree(e);
+        _attached = false;
+        if (_context is not null)
+        {
+            _context.Selection.Changed -= OnSelectionChanged;
+        }
+        SyncStreamingSubscription();
+        _cardTimer?.Stop();
+        CloseCard();
+        _fade.Detach();
+        _textSource?.ClearGlyphMaps();
+        // 归还图片句柄；重新挂载时排版会重新取得（通常命中内存缓存）
+        if (_images.Count > 0)
+        {
+            foreach (var slot in _images.Values)
+            {
+                slot.Dispose();
+            }
+            _images.Clear();
+        }
+        ReleaseLayout();
+    }
+
+    private void ReleaseLayout()
+    {
+        if (_layout is not null)
+        {
+            _layout.Dispose();
+            _layout = null;
+        }
+        if (_lines.Count > 0)
+        {
+            for (var i = 0; i < _lines.Count; i++)
+            {
+                VisualChildren.Remove(_lines[i]);
+            }
+            _lines.Clear();
+        }
+#pragma warning disable CS0618
+        _runCache.Invalidate();
+#pragma warning restore CS0618
+        _uncoveredRuns.Clear();
+        _fullRebuild = true;
+        _runCacheWidth = double.NaN;
+        _dirtyFrom = 0;
+        InvalidateMeasure();
+    }
+
+    private void SyncStreamingSubscription()
+    {
+        var target = _attached && _isDocumentTail ? _context?.Streaming : null;
+        if (ReferenceEquals(target, _subscribedStreaming))
+        {
+            return;
+        }
+        if (_subscribedStreaming is not null)
+        {
+            _subscribedStreaming.CaretVisibilityChanged -= OnCaretVisibilityChanged;
+        }
+        _subscribedStreaming = target;
+        target?.CaretVisibilityChanged += OnCaretVisibilityChanged;
+    }
+
+    private void OnCaretVisibilityChanged()
+    {
+        if (global::Avalonia.Threading.Dispatcher.UIThread.CheckAccess())
+        {
+            InvalidateVisual();
+        }
+        else
+        {
+            global::Avalonia.Threading.Dispatcher.UIThread.Post(InvalidateCaretVisual, global::Avalonia.Threading.DispatcherPriority.Render);
+        }
+    }
+
+    private void InvalidateCaretVisual()
+    {
+        if (_attached && _isDocumentTail)
+        {
+            InvalidateVisual();
+        }
+    }
+
+    private void OnSelectionChanged()
+    {
+        InvalidateVisual();
+        // 带底色的行（行内代码等）把选区画在自己的行视觉里，需要跟着重录
+        if (_layout is { } layout)
+        {
+            for (var i = 0; i < _lines.Count && i < layout.LineCount; i++)
+            {
+                if (HasBackgroundSpan(layout.LineStart(i), layout.LineStart(i) + layout.LineLength(i)))
+                {
+                    _lines[i].InvalidateVisual();
+                }
+            }
+        }
+    }
+
+    private static bool HasBackground(InlineStyle style) => (style & (InlineStyle.Code | InlineStyle.Keyboard | InlineStyle.Mark)) != 0;
+
+    private bool HasBackgroundSpan(int lineStart, int lineEnd)
+    {
+        foreach (var span in _content.Spans)
+        {
+            if (HasBackground(span.Style) && span.End > lineStart && span.Start < lineEnd)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected override Size MeasureOverride(Size availableSize)
+    {
+        var layout = EnsureLayout(availableSize.Width);
+        if (layout is null)
+        {
+            return default;
+        }
+        var width = _wrapping == TextWrapping.Wrap && double.IsFinite(availableSize.Width)
+            ? Math.Min(layout.WidthIncludingTrailingWhitespace, availableSize.Width)
+            : layout.WidthIncludingTrailingWhitespace;
+        return new Size(Math.Ceiling(width), Math.Ceiling(layout.Height));
+    }
+
+    protected override Size ArrangeOverride(Size finalSize)
+    {
+        // 对齐方式需要按最终宽度排版
+        if (_alignment != TextAlignment.Left && _wrapping == TextWrapping.Wrap)
+        {
+            EnsureLayout(finalSize.Width);
+        }
+        if (IsDocumentTail)
+        {
+            RefreshFade();
+        }
+        return finalSize;
+    }
+
+    private SegmentLayout? EnsureLayout(double width)
+    {
+        if (_context is null)
+        {
+            return null;
+        }
+        var maxWidth = _wrapping == TextWrapping.Wrap && double.IsFinite(width) ? Math.Max(width, 1) : double.PositiveInfinity;
+        var widthChanged = _layout is null || !_layout.MaxWidth.Equals(maxWidth);
+        if (_layout is not null && _dirtyFrom == int.MaxValue && (!widthChanged || _wrapping == TextWrapping.NoWrap))
+        {
+            return _layout;
+        }
+        // 图片按可用宽度缩放：宽度变化时缓存的图片 run 失效
+        if (widthChanged && !_runCacheWidth.Equals(maxWidth) && HasWidthDependentObjects())
+        {
+#pragma warning disable CS0618
+            _runCache.Invalidate();
+#pragma warning restore CS0618
+            _fullRebuild = true;
+        }
+        var from = widthChanged && _wrapping == TextWrapping.Wrap ? 0 : _dirtyFrom == int.MaxValue ? 0 : _dirtyFrom;
+        if (from == 0)
+        {
+            _usedImages.Clear();
+        }
+        var foreground = _foreground ?? _context.Style.Foreground;
+        var source = _textSource ??= new InlineTextSource(this);
+        source.Reset(_context, _content, _fontSize, _fontWeight, foreground, maxWidth);
+        var lineHeight = _lineHeight ?? _context.Style.LineHeight * (_fontSize / _context.Style.FontSize);
+        if (_fixedHeightProps is null || _naturalProps is null
+            || !ReferenceEquals(_cachedDefaultProps, source.DefaultProperties)
+            || _cachedAlignment != _alignment
+            || _cachedWrapping != _wrapping
+            || !_cachedLineHeight.Equals(lineHeight))
+        {
+            _cachedDefaultProps = source.DefaultProperties;
+            _cachedAlignment = _alignment;
+            _cachedWrapping = _wrapping;
+            _cachedLineHeight = lineHeight;
+            _fixedHeightProps = new GenericTextParagraphProperties(source.DefaultProperties, _alignment, _wrapping, lineHeight: lineHeight);
+            _naturalProps = new GenericTextParagraphProperties(source.DefaultProperties, _alignment, _wrapping);
+            _firstLineProps = _firstLineIndent == 0 ? null : IndentedProperties(lineHeight);
+            _firstLineNaturalProps = _firstLineIndent == 0 ? null : IndentedProperties(double.NaN);
+
+            GenericTextParagraphProperties IndentedProperties(double height) => new(FlowDirection.LeftToRight, _alignment,
+                firstLineInParagraph: true, alwaysCollapsible: false, source.DefaultProperties, _wrapping, height, _firstLineIndent, letterSpacing: 0);
+        }
+        _layout ??= new SegmentLayout();
+#pragma warning disable CS0618
+        var changed = _layout.Format(source, _content.Text.Length, maxWidth, _fixedHeightProps, _naturalProps, from,
+            UseRunCache ? _runCache : null, _firstLineProps, _firstLineNaturalProps);
+#pragma warning restore CS0618
+        _dirtyFrom = int.MaxValue;
+        // 只有所有 run 都重新生成时，"本次用到的图片"才完整；部分复用缓存时不释放
+        if (from == 0 && (_fullRebuild || !UseRunCache))
+        {
+            ReleaseUnusedImages();
+        }
+        _fullRebuild = false;
+        _runCacheWidth = maxWidth;
+        SyncLines(changed);
+        return _layout;
+    }
+
+    // 行视觉与排版的行一一对应；changed 之前的行对象未变，不重新录制
+    private void SyncLines(int changed)
+    {
+        var layout = _layout!;
+        while (_lines.Count > layout.LineCount)
+        {
+            VisualChildren.Remove(_lines[^1]);
+            _lines.RemoveAt(_lines.Count - 1);
+        }
+        while (_lines.Count < layout.LineCount)
+        {
+            var visual = new SegmentLineVisual(this) { Index = _lines.Count };
+            _lines.Add(visual);
+            VisualChildren.Add(visual);
+        }
+        for (var i = Math.Min(changed, _lines.Count); i < _lines.Count; i++)
+        {
+            var line = layout.LineAt(i);
+            _lines[i].Index = i;
+            _lines[i].SetBounds(new Rect(0, layout.LineTop(i), Math.Max(1, line.Start + line.WidthIncludingTrailingWhitespace), line.Height));
+            _lines[i].InvalidateVisual();
+        }
+    }
+
+    /// <summary>行视觉的绘制：文字（渐显中的部分裁掉）与删除线。</summary>
+    internal void RenderLine(DrawingContext context, int index, double? clipRight)
+    {
+        if (_layout is not { } layout || index >= layout.LineCount || layout.IsEmptyLine(index))
+        {
+            return;
+        }
+        var line = layout.LineAt(index);
+        if (clipRight is { } right)
+        {
+            using (context.PushClip(new Rect(-10000, -line.Height, right + 10000, line.Height * 3)))
+            {
+                line.Draw(context, default);
+            }
+        }
+        else
+        {
+            line.Draw(context, default);
+        }
+        DrawStrikethrough(context, layout, index);
+        DrawSelectionOverBackgrounds(context, layout, index);
+    }
+
+    // 选区在片段视图里画在文字下方，会被行内代码等 run 底色盖住；底色范围内的选中部分在这里补画一层，
+    // 让选中的代码和普通文字一样呈现选区色
+    private void DrawSelectionOverBackgrounds(DrawingContext context, SegmentLayout layout, int index)
+    {
+        if (_context is null || _context.Selection.GetSegmentRange(Key, _content.Text.Length) is not { } selected)
+        {
+            return;
+        }
+        var lineStart = layout.LineStart(index);
+        var lineEnd = lineStart + layout.LineLength(index);
+        var top = layout.LineTop(index);
+        foreach (var span in _content.Spans)
+        {
+            if (!HasBackground(span.Style))
+            {
+                continue;
+            }
+            var start = Math.Max(Math.Max(span.Start, selected.Start), lineStart);
+            var end = Math.Min(Math.Min(span.End, selected.End), lineEnd);
+            if (end <= start)
+            {
+                continue;
+            }
+            foreach (var rect in layout.HitTestTextRange(start, end - start))
+            {
+                context.FillRectangle(_context.Style.SelectionBackground, rect.Translate(new Vector(0, -top)));
+            }
+        }
+    }
+
+    /// <summary>重新计算末尾渐显（排版、末尾状态变化或渐显结束时）。</summary>
+    internal void RefreshFade() =>
+        _fade.Update(_layout, _lines, IsDocumentTail ? _context?.Streaming : null, _content.Text.Length, _fontSize, Bounds.Size);
+
+    // 已整形 run 缓存是否整体失效（下一次排版会对每个 run 调用 GetTextRun）
+    private bool _fullRebuild = true;
+
+    // 缓存中的 run 按哪个可用宽度生成
+    private double _runCacheWidth = double.NaN;
+
+    private bool HasWidthDependentObjects()
+    {
+        foreach (var obj in _content.Objects)
+        {
+            if (obj.Kind is InlineObjectKind.Image or InlineObjectKind.Component)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>图片等异步资源就绪后重新排版（缓存的 run 仍是旧状态，整体失效）。</summary>
+    internal void OnResourceLoaded()
+    {
+#pragma warning disable CS0618
+        _runCache.Invalidate();
+#pragma warning restore CS0618
+        _fullRebuild = true;
+        InvalidateLayout();
+    }
+
+    // 本片段中图片的加载状态与缓存句柄（按解析后的地址）
+    private readonly Dictionary<string, ImageSlot> _images = [];
+
+    /// <summary>已加载完成的图片数（测试与诊断用）。</summary>
+    internal int LoadedImageCount => _images.Values.Count(s => s.Image is not null);
+
+    /// <summary>加载失败或被策略拒绝的图片数（测试与诊断用）。</summary>
+    internal int FailedImageCount => _images.Values.Count(s => s.Status is Images.ImageLoadStatus.Failed or Images.ImageLoadStatus.Blocked);
+
+    internal IReadOnlyCollection<ImageSlot> ImageSlots => _images.Values;
+
+    internal IEnumerable<string> DescribeImages() => _images.Select(p => $"{p.Key} {p.Value.Status} {p.Value.Reason}");
+
+    private readonly HashSet<string> _usedImages = [];
+
+    internal ImageSlot SlotFor(RenderContext context, string url, Size? declared, double maxWidth)
+    {
+        var resolved = Extensions.MarkdownServices.ResolveImageUrl(url, context.ImageBaseUri);
+        if (!_images.TryGetValue(resolved, out var slot))
+        {
+            slot = new ImageSlot(OnResourceLoaded);
+            _images[resolved] = slot;
+        }
+        _usedImages.Add(resolved);
+        // 解码宽度：显示宽度 × 渲染缩放（Retina 为 2 倍），避免把大图原尺寸常驻内存；宿主可用解码密度上限进一步压缩
+        var scaling = TopLevel.GetTopLevel(this)?.RenderScaling ?? 1;
+        if (context.Services.Images.DecodeDensity is { } density)
+        {
+            scaling = Math.Min(scaling, density);
+        }
+        var displayWidth = declared?.Width ?? (double.IsFinite(maxWidth) ? maxWidth : 1024);
+        slot.Ensure(context.Services.Images, resolved, (int)Math.Ceiling(Math.Max(1, displayWidth) * scaling));
+        return slot;
+    }
+
+    // 文档内是按显示宽度缩小解码的图：查看器按原始尺寸打开，先画缩小图，原图加载完成后替换；
+    // 关闭时把原图移出内存缓存，不让它常驻
+    internal ImageViewer? ShowViewer(ImageSlot slot, IImage loaded, string? caption)
+    {
+        var preview = slot.AcquireLease();
+        var natural = slot.PixelSize is { Width: > 0, Height: > 0 } pixels ? new Size(pixels.Width, pixels.Height) : loaded.Size;
+        var current = preview?.Image ?? loaded;
+        var viewer = ImageViewer.Show(this, natural, (context, rect) => context.DrawImage(current, new Rect(current.Size), rect), null, caption);
+        if (viewer is null)
+        {
+            preview?.Dispose();
+            return null;
+        }
+        Images.ImageLease? original = null;
+        var closed = false;
+        viewer.Closed += (_, _) =>
+        {
+            closed = true;
+            preview?.Dispose();
+            original?.Evict();
+            original?.Dispose();
+        };
+        if (slot.IsDownscaled && slot.Pipeline is { } pipeline)
+        {
+            LoadOriginal(pipeline, slot.Url);
+        }
+        return viewer;
+
+        async void LoadOriginal(Images.ImagePipeline pipeline, string url)
+        {
+            Images.ImageLoadResult result;
+            try
+            {
+                result = await pipeline.LoadAsync(url, 0);
+            }
+            catch (Exception)
+            {
+                return;
+            }
+            if (result.Lease is not { } lease)
+            {
+                return;
+            }
+            if (closed)
+            {
+                lease.Evict();
+                lease.Dispose();
+                return;
+            }
+            original = lease;
+            current = lease.Image;
+            viewer.InvalidateVisual();
+        }
+    }
+
+    private void ReleaseUnusedImages()
+    {
+        foreach (var url in _images.Keys.Where(u => !_usedImages.Contains(u)).ToList())
+        {
+            _images[url].Dispose();
+            _images.Remove(url);
+        }
+    }
+
+    private ImageSlot? ImageAt(Point point, out InlineObject? image)
+    {
+        image = null;
+        if (_layout is null || _context is null)
+        {
+            return null;
+        }
+        var hit = _layout.HitTestPoint(point);
+        if (!hit.IsInside)
+        {
+            return null;
+        }
+        foreach (var obj in _content.Objects)
+        {
+            if (obj.Kind == InlineObjectKind.Image && (obj.Offset == hit.TextPosition || obj.Offset == hit.TextPosition - 1 && hit.IsTrailing))
+            {
+                image = obj;
+                var resolved = Extensions.MarkdownServices.ResolveImageUrl(obj.Value, _context.ImageBaseUri);
+                return _images.GetValueOrDefault(resolved);
+            }
+        }
+        return null;
+    }
+
+    public override void Render(DrawingContext context)
+    {
+        var layout = _layout;
+        if (layout is null || _context is null)
+        {
+            return;
+        }
+        // 文字由各行视觉绘制；这里只画可命中区域、选区 / 查找高亮（在文字下方）与流式光标
+        context.FillRectangle(Brushes.Transparent, new Rect(Bounds.Size));
+
+        if (_context.Style.Typography == MarkdownTypography.Chat)
+        {
+            var bounds = new Rect(Bounds.Size);
+            foreach (var span in _content.Spans)
+            {
+                if (!span.Style.HasFlag(InlineStyle.Code)) continue;
+                foreach (var rect in layout.HitTestTextRange(span.Start, span.End - span.Start))
+                {
+                    var height = Math.Min(rect.Height, _fontSize * 1.29);
+                    var badge = new Rect(rect.X - 3, rect.Center.Y - height / 2, rect.Width + 6, height).Intersect(bounds);
+                    context.FillRectangle(_context.Style.InlineCodeBackground, badge, 4);
+                }
+            }
+        }
+        if (_context.Selection.HasHighlights)
+        {
+            foreach (var (start, end, current) in _context.Selection.GetHighlights(Key, _content.Text.Length))
+            {
+                var brush = current ? _context.Style.SearchCurrentBackground : _context.Style.SearchHighlightBackground;
+                foreach (var rect in layout.HitTestTextRange(start, end - start))
+                {
+                    context.FillRectangle(brush, rect, 2);
+                }
+            }
+        }
+        if (_context.Selection.GetSegmentRange(Key, _content.Text.Length) is { } selected)
+        {
+            foreach (var rect in layout.HitTestTextRange(selected.Start, selected.End - selected.Start))
+            {
+                context.FillRectangle(_context.Style.SelectionBackground, rect);
+            }
+        }
+
+        if (IsDocumentTail && _context.Streaming is { IsActive: true, ShowCaret: true })
+        {
+            var end = layout.HitTestTextPosition(_content.Text.Length);
+            var height = Math.Min(end.Height, _fontSize * 1.25);
+            var caret = new Rect(end.Right + 2, end.Bottom - height - (end.Height - height) / 2, Math.Max(2, _fontSize * 0.45), height);
+            context.FillRectangle(_foreground ?? _context.Style.Foreground, caret);
+        }
+    }
+
+    private void DrawStrikethrough(DrawingContext context, SegmentLayout layout, int index)
+    {
+        Pen? pen = null;
+        var lineStart = layout.LineStart(index);
+        var lineEnd = lineStart + layout.LineLength(index);
+        var top = layout.LineTop(index);
+        foreach (var span in _content.Spans)
+        {
+            if (!span.Style.HasFlag(InlineStyle.Strikethrough) || span.End <= lineStart || span.Start >= lineEnd)
+            {
+                continue;
+            }
+            pen ??= new Pen(_foreground ?? _context!.Style.Foreground, Math.Max(1, _fontSize / 14));
+            var start = Math.Max(span.Start, lineStart);
+            foreach (var rect in layout.HitTestTextRange(start, Math.Min(span.End, lineEnd) - start))
+            {
+                var y = Math.Round(rect.Top - top + rect.Height * 0.54) + 0.5;
+                context.DrawLine(pen, new Point(rect.Left, y), new Point(rect.Right, y));
+            }
+        }
+    }
+
+    /// <summary>本地坐标 → 字符偏移。</summary>
+    public int HitTest(Point point)
+    {
+        if (_layout is null)
+        {
+            return 0;
+        }
+        var result = _layout.HitTestPoint(point);
+        return Math.Clamp(result.TextPosition, 0, _content.Text.Length);
+    }
+
+    /// <summary>字符偏移 → 本地矩形。</summary>
+    public Rect GetCharacterBounds(int offset) => _layout?.HitTestTextPosition(Math.Clamp(offset, 0, _content.Text.Length)) ?? default;
+
+    /// <summary>指针处可点击的组件（成对组件的文字或自闭合组件对象）。</summary>
+    private (string Name, ComponentAttributes Attributes, int Start, int Length)? ComponentAt(Point point)
+    {
+        if (_layout is null || _context is null || (_content.Components.IsEmpty && _content.Objects.IsEmpty))
+        {
+            return null;
+        }
+        var hit = _layout.HitTestPoint(point);
+        if (!hit.IsInside)
+        {
+            return null;
+        }
+        var index = hit.TextPosition;
+        foreach (var obj in _content.Objects)
+        {
+            if (obj.Kind == InlineObjectKind.Component && (obj.Offset == index || obj.Offset == index - 1 && hit.IsTrailing)
+                && _context.Plugins.FindInlineComponent(obj.Value) is { } renderer && renderer.IsClickable(obj.Attributes))
+            {
+                return (obj.Value, obj.Attributes, obj.Offset, 1);
+            }
+        }
+        foreach (var span in _content.Spans)
+        {
+            if (span.ComponentIndex >= 0 && index >= span.Start && index < span.End)
+            {
+                var component = _content.Components[span.ComponentIndex];
+                if (_context.Plugins.FindInlineComponent(component.Name) is { } renderer && renderer.IsClickable(component.Attributes))
+                {
+                    return (component.Name, component.Attributes, span.Start, span.Length);
+                }
+            }
+        }
+        return null;
+    }
+
+    private int LinkAt(Point point)
+    {
+        if (_layout is null || _content.Links.IsEmpty)
+        {
+            return -1;
+        }
+        var hit = _layout.HitTestPoint(point);
+        if (!hit.IsInside)
+        {
+            return -1;
+        }
+        var index = hit.TextPosition;
+        foreach (var span in _content.Spans)
+        {
+            if (span.LinkIndex >= 0 && index >= span.Start && index < span.End)
+            {
+                return LinkDecisionFor(span.LinkIndex) == LinkDecision.Block ? -1 : span.LinkIndex;
+            }
+        }
+        return -1;
+    }
+
+    private string? ComponentUrl(string name, ComponentAttributes attributes)
+    {
+        if (name == "cite" && attributes["href"] is { Length: > 0 } href)
+        {
+            return href;
+        }
+        if (name == "citation")
+        {
+            return attributes["href"] ?? (attributes["id"] is { } id ? _context?.Services.Sources?.GetSource(id)?.Url : null);
+        }
+        return null;
+    }
+
+    // 按链接策略打开地址（被禁止的地址不触发事件）
+    private void OpenUrl(string url, string? title)
+    {
+        if (_context is null)
+        {
+            return;
+        }
+        var decision = _context.Services.Links.Evaluate(url);
+        if (decision != LinkDecision.Block)
+        {
+            RaiseEvent(new LinkClickedEventArgs(LinkClickedEvent, this, url, title, decision == LinkDecision.Confirm));
+        }
+    }
+
+    // ---- 引用来源卡片 ----
+
+    private SourceCard? _card;
+    private (int Start, int Length)? _cardRange;
+    private global::Avalonia.Threading.DispatcherTimer? _cardTimer;
+
+    /// <summary>悬停显示来源卡片的延迟。</summary>
+    internal static TimeSpan CardDelay { get; set; } = TimeSpan.FromMilliseconds(350);
+
+    private void UpdateCard(Point position)
+    {
+        var component = ComponentAt(position);
+        CitationSource? source = component is { Name: "citation" } c && c.Attributes["id"] is { } id ? _context?.Services.Sources?.GetSource(id) : null;
+        if (source is null || component is null)
+        {
+            ScheduleCard(null, null);
+            return;
+        }
+        var range = (component.Value.Start, component.Value.Length);
+        if (_cardRange == range && (_card is not null || _cardTimer is { IsEnabled: true }))
+        {
+            return;
+        }
+        ScheduleCard(range, source);
+    }
+
+    private void ScheduleCard((int Start, int Length)? range, CitationSource? source)
+    {
+        _cardTimer?.Stop();
+        if (range is null || source is null)
+        {
+            if (_card is null)
+            {
+                _cardRange = null;
+                return;
+            }
+            // 给指针一点时间移进卡片
+            _cardTimer = new global::Avalonia.Threading.DispatcherTimer(TimeSpan.FromMilliseconds(200), global::Avalonia.Threading.DispatcherPriority.Normal, (_, _) =>
+            {
+                _cardTimer?.Stop();
+                if (_card is { IsPointerInside: false })
+                {
+                    CloseCard();
+                }
+            });
+            _cardTimer.Start();
+            return;
+        }
+        CloseCard();
+        _cardRange = range;
+        _cardTimer = new global::Avalonia.Threading.DispatcherTimer(CardDelay, global::Avalonia.Threading.DispatcherPriority.Normal, (_, _) =>
+        {
+            _cardTimer?.Stop();
+            ShowCard(range.Value, source);
+        });
+        _cardTimer.Start();
+    }
+
+    /// <summary>立即显示某个范围的来源卡片（测试与键盘访问用）。</summary>
+    internal SourceCard? ShowCard((int Start, int Length) range, CitationSource source)
+    {
+        if (_layout is null || _context is null)
+        {
+            return null;
+        }
+        CloseCard();
+        var rects = _layout.HitTestTextRange(range.Start, range.Length).ToList();
+        if (rects.Count == 0)
+        {
+            return null;
+        }
+        var anchor = rects.Aggregate((a, b) => a.Union(b));
+        var url = source.Url;
+        _cardRange = range;
+        _card = SourceCard.Show(this, anchor, source, _context.Style, url is null ? null : () => OpenUrl(url, source.Title));
+        return _card;
+    }
+
+    private void CloseCard()
+    {
+        _card?.Close();
+        _card = null;
+        _cardRange = null;
+    }
+
+    // 各链接的策略判断（内容或上下文变化时重算）
+    private LinkDecision[]? _linkDecisions;
+    private InlineContent? _linkDecisionsFor;
+    private RenderContext? _linkDecisionsContext;
+
+    internal LinkDecision LinkDecisionFor(int link)
+    {
+        if (_context is null || link < 0 || link >= _content.Links.Length)
+        {
+            return LinkDecision.Block;
+        }
+        if (_linkDecisions is null || !ReferenceEquals(_linkDecisionsFor, _content) || !ReferenceEquals(_linkDecisionsContext, _context))
+        {
+            var policy = _context.Services.Links;
+            var decisions = new LinkDecision[_content.Links.Length];
+            for (var i = 0; i < decisions.Length; i++)
+            {
+                var target = _content.Links[i];
+                decisions[i] = policy.Evaluate(target.Url, target.IsAutoLink ? null : LinkText(i));
+            }
+            _linkDecisions = decisions;
+            _linkDecisionsFor = _content;
+            _linkDecisionsContext = _context;
+        }
+        return _linkDecisions[link];
+    }
+
+    private string LinkText(int link)
+    {
+        var sb = new StringBuilder();
+        foreach (var span in _content.Spans)
+        {
+            if (span.LinkIndex == link)
+            {
+                sb.Append(_content.Text.AsSpan(span.Start, span.Length));
+            }
+        }
+        return sb.ToString().Replace(InlineObject.Placeholder.ToString(), "", StringComparison.Ordinal);
+    }
+
+    protected override void OnPointerMoved(PointerEventArgs e)
+    {
+        base.OnPointerMoved(e);
+        var position = e.GetPosition(this);
+        var link = LinkAt(position);
+        var clickable = link >= 0 || ComponentAt(position) is not null || ImageAt(position, out _) is { Status: not Images.ImageLoadStatus.Blocked };
+        if (_context?.Services.Sources is not null)
+        {
+            UpdateCard(position);
+        }
+        if (link != _hoverLink)
+        {
+            RaiseEvent(new LinkHoveredEventArgs(LinkHoveredEvent, this, link >= 0 ? _content.Links[link].Url : null));
+        }
+        if (link != _hoverLink || clickable != _hoverClickable)
+        {
+            _hoverLink = link;
+            _hoverClickable = clickable;
+            Cursor = clickable ? new Cursor(StandardCursorType.Hand) : Cursor.Default;
+        }
+    }
+
+    protected override void OnPointerExited(PointerEventArgs e)
+    {
+        base.OnPointerExited(e);
+        if (_card is not null || _cardTimer is not null)
+        {
+            ScheduleCard(null, null);
+        }
+        if (_hoverLink >= 0)
+        {
+            RaiseEvent(new LinkHoveredEventArgs(LinkHoveredEvent, this, null));
+        }
+        _hoverLink = -1;
+        _hoverClickable = false;
+        Cursor = Cursor.Default;
+    }
+
+    protected override void OnPointerReleased(PointerReleasedEventArgs e)
+    {
+        base.OnPointerReleased(e);
+        if (e.InitialPressMouseButton != MouseButton.Left)
+        {
+            return;
+        }
+        // 拖拽选择时不触发链接 / 组件
+        if (_context is not { Selection.IsEmpty: true })
+        {
+            return;
+        }
+        var position = e.GetPosition(this);
+        if (ImageAt(position, out var imageObject) is { } slot)
+        {
+            switch (slot.Status)
+            {
+                case Images.ImageLoadStatus.Failed:
+                    slot.Retry();
+                    break;
+                case Images.ImageLoadStatus.NeedsConsent:
+                    slot.Approve();
+                    break;
+                case Images.ImageLoadStatus.Loaded when LinkAt(position) is >= 0 and var imageLink:
+                    {
+                        // 链接中的图片（徽章、赞助商标志）：打开链接
+                        var target = _content.Links[imageLink];
+                        RaiseEvent(new LinkClickedEventArgs(LinkClickedEvent, this, target.Url, target.Title, LinkDecisionFor(imageLink) == LinkDecision.Confirm));
+                        break;
+                    }
+                case Images.ImageLoadStatus.Loaded when slot.Image is { } loaded:
+                    var args = new ImageClickedEventArgs(ImageClickedEvent, this, slot.Url, imageObject?.Alt, loaded);
+                    RaiseEvent(args);
+                    if (!args.Handled)
+                    {
+                        ShowViewer(slot, loaded, imageObject?.Alt);
+                    }
+                    break;
+            }
+            e.Handled = true;
+            return;
+        }
+        if (ComponentAt(position) is { } component)
+        {
+            var clicked = new ComponentClickedEventArgs(ComponentClickedEvent, this, component.Name, component.Attributes);
+            RaiseEvent(clicked);
+            // 宿主未处理时：引用打开来源地址，<cite href> 打开链接
+            if (!clicked.Handled && ComponentUrl(component.Name, component.Attributes) is { } url)
+            {
+                OpenUrl(url, null);
+            }
+            e.Handled = true;
+            return;
+        }
+        var link = LinkAt(position);
+        if (link >= 0)
+        {
+            var target = _content.Links[link];
+            RaiseEvent(new LinkClickedEventArgs(LinkClickedEvent, this, target.Url, target.Title, LinkDecisionFor(link) == LinkDecision.Confirm));
+            e.Handled = true;
+        }
+    }
+
+    /// <summary>为 <see cref="TextLayout"/> 提供带样式的文本段和嵌入对象。</summary>
+    private sealed class InlineTextSource(TextSegmentView owner) : ITextSource
+    {
+        private readonly TextSegmentView _owner = owner;
+        private RenderContext _context = null!;
+        private InlineContent _content = InlineContent.Empty;
+        private double _fontSize;
+        private FontWeight _weight;
+        private IBrush _foreground = null!;
+        private double _maxWidth;
+        private readonly Dictionary<(InlineStyle, int, int), TextRunProperties> _properties = [];
+        private bool _hasCustomTableEntries;
+        private int _objectCursor;
+        private int _spanCursor;
+
+        public TextRunProperties DefaultProperties { get; private set; } = null!;
+
+        public void Reset(RenderContext context, InlineContent content, double fontSize, FontWeight weight, IBrush foreground, double maxWidth)
+        {
+            var styleChanged = !ReferenceEquals(_context, context)
+                || !_fontSize.Equals(fontSize)
+                || _weight != weight
+                || !Equals(_foreground, foreground);
+            if (styleChanged)
+            {
+                _properties.Clear();
+                _fallbacks.Clear();
+                _maps.Clear();
+                _hasCustomTableEntries = false;
+            }
+            else if (_hasCustomTableEntries
+                && (!TablePrefixEqual(_content.Components, content.Components) || !TablePrefixEqual(_content.TextStyles, content.TextStyles)))
+            {
+                _properties.Clear();
+                _fallbacks.Clear();
+                _maps.Clear();
+                _hasCustomTableEntries = false;
+            }
+            _context = context;
+            _content = content;
+            _fontSize = fontSize;
+            _weight = weight;
+            _foreground = foreground;
+            _maxWidth = maxWidth;
+            _objectCursor = 0;
+            _spanCursor = 0;
+            DefaultProperties = PropertiesFor(InlineStyle.None);
+        }
+
+        public TextRun? GetTextRun(int textSourceIndex)
+        {
+            var text = _content.Text;
+            if (textSourceIndex >= text.Length)
+            {
+                return null;
+            }
+
+            var begin = 0;
+            var end = text.Length;
+            var objects = _content.Objects;
+            if (!objects.IsDefaultOrEmpty)
+            {
+                if (_objectCursor > 0 && (_objectCursor > objects.Length || objects[_objectCursor - 1].Offset >= textSourceIndex))
+                {
+                    _objectCursor = LowerBoundObject(objects, textSourceIndex);
+                }
+                while (_objectCursor < objects.Length && objects[_objectCursor].Offset < textSourceIndex)
+                {
+                    _objectCursor++;
+                }
+                if (_objectCursor > 0)
+                {
+                    begin = objects[_objectCursor - 1].Offset + 1;
+                }
+                if (_objectCursor < objects.Length)
+                {
+                    var obj = objects[_objectCursor];
+                    if (obj.Offset == textSourceIndex)
+                    {
+                        return CreateObjectRun(obj);
+                    }
+                    end = Math.Min(end, obj.Offset);
+                }
+            }
+
+            var style = InlineStyle.None;
+            var component = -1;
+            var textStyle = -1;
+            var spans = _content.Spans;
+            if (!spans.IsDefaultOrEmpty)
+            {
+                if (_spanCursor > 0 && (_spanCursor > spans.Length || spans[_spanCursor - 1].End > textSourceIndex))
+                {
+                    _spanCursor = LowerBoundSpan(spans, textSourceIndex);
+                }
+                while (_spanCursor < spans.Length && spans[_spanCursor].End <= textSourceIndex)
+                {
+                    _spanCursor++;
+                }
+                if (_spanCursor > 0)
+                {
+                    begin = Math.Max(begin, spans[_spanCursor - 1].End);
+                }
+                if (_spanCursor < spans.Length)
+                {
+                    var span = spans[_spanCursor];
+                    if (span.Start > textSourceIndex)
+                    {
+                        end = Math.Min(end, span.Start);
+                    }
+                    else
+                    {
+                        begin = Math.Max(begin, span.Start);
+                        style = span.Style;
+                        // 被链接策略禁止的链接显示为次要颜色的普通文字
+                        if (span.LinkIndex >= 0 && style.HasFlag(InlineStyle.Link) && _owner.LinkDecisionFor(span.LinkIndex) == LinkDecision.Block)
+                        {
+                            style = (style & ~InlineStyle.Link) | InlineStyle.IncompleteLink;
+                        }
+                        component = span.ComponentIndex;
+                        textStyle = span.TextStyleIndex;
+                        end = Math.Min(end, span.End);
+                    }
+                }
+            }
+
+            var properties = PropertiesFor(style, component, textStyle);
+            end = ScriptCut(text, textSourceIndex, end, out var atScriptBoundary);
+            return CreateCharacters(text, begin, textSourceIndex, end, atScriptBoundary ? end : -1, properties, style, component, textStyle);
+        }
+
+        // 文字按书写系统（script）分段，各段单独整形，与从哪里开始取 run 无关。
+        // Avalonia 把相邻、同一字体、内存连续的 run 拼成一个缓冲交给 HarfBuzz 整形，整个缓冲的 script 按其中第一个有书写系统的字推断：
+        // 主字体同时覆盖（或都不覆盖、又没有回退字体，例如只有 DejaVu 的 Linux）中文与英文时，"中文。The renderer" 整段按汉字整形，
+        // 英文没有字距调整；逐行重排从行首 "renderer" 开始取 run，按拉丁文整形，有字距调整，字宽不同，断行与整段排版不一致。
+        // 所以 run 在书写系统变化处截断，并让截断处之前的那个 run 用一份独立的字符串，Avalonia 无法把它与后面的 run 拼在一起。
+        // 分界点紧跟在前一个书写系统的最后一个字（含其后的组合附加符号）之后，中性字符（标点、数字、空格）归后一段：
+        // 每段都以有书写系统的字结尾，从段内任意行首开始整形推断出的 script 都与整段相同。
+        // 是否截断、run 末尾是不是分界点只取决于位置，与取 run 的起点无关（向后最多看 ScriptLookahead 个中性字符）。
+        private const int ScriptLookahead = 64;
+
+        private static int ScriptCut(string text, int start, int end, out bool atBoundary)
+        {
+            atBoundary = false;
+            var current = Script.Unknown;
+            var strongEnd = start;
+            var i = start;
+            while (i < text.Length)
+            {
+                if (i >= end && (current == Script.Unknown || i - end >= ScriptLookahead))
+                {
+                    break;
+                }
+                var script = Codepoint.ReadAt(text.AsSpan(), i, out var count).Script;
+                if (script is not (Script.Unknown or Script.Common or Script.Inherited))
+                {
+                    if (current == Script.Unknown)
+                    {
+                        current = script;
+                    }
+                    else if (script != current)
+                    {
+                        // strongEnd 不超过 end：run 内最后一个与 current 相同书写系统的字之后
+                        atBoundary = true;
+                        return strongEnd;
+                    }
+                    if (i >= end)
+                    {
+                        // run 之后的第一个有书写系统的字与 run 相同：run 末尾不是分界点
+                        break;
+                    }
+                    strongEnd = i + count;
+                }
+                else if (script == Script.Inherited && i == strongEnd && i < end && current != Script.Unknown)
+                {
+                    strongEnd = i + count;
+                }
+                i += count;
+            }
+            return end;
+        }
+
+        // 末尾是书写系统分界点的 run 用独立字符串，见 ScriptCut
+        private static ReadOnlyMemory<char> Slice(string text, int start, int length, int scriptBoundary) =>
+            start + length == scriptBoundary ? text.Substring(start, length).AsMemory() : text.AsMemory(start, length);
+
+        private static int LowerBoundObject(System.Collections.Immutable.ImmutableArray<InlineObject> objects, int offset)
+        {
+            int lo = 0, hi = objects.Length;
+            while (lo < hi)
+            {
+                var mid = (lo + hi) >>> 1;
+                if (objects[mid].Offset < offset)
+                {
+                    lo = mid + 1;
+                }
+                else
+                {
+                    hi = mid;
+                }
+            }
+            return lo;
+        }
+
+        private static int LowerBoundSpan(System.Collections.Immutable.ImmutableArray<InlineSpan> spans, int index)
+        {
+            int lo = 0, hi = spans.Length;
+            while (lo < hi)
+            {
+                var mid = (lo + hi) >>> 1;
+                if (spans[mid].End <= index)
+                {
+                    lo = mid + 1;
+                }
+                else
+                {
+                    hi = mid;
+                }
+            }
+            return lo;
+        }
+
+        // 回退字体：Avalonia 在为缺字的文字找回退字体时，会优先复用"上一段"的回退字体而不检查字重 / 字形，
+        // 导致"中文 **粗体**"中的粗体沿用常规字重的回退字体（反之亦然）。这里自己按本段的字重、字形解析回退字体，
+        // 让每段文字的主字体就能覆盖其字符，从而不进入那条复用路径。
+        // 回退字体按整段缺字文字的第一个字匹配，与从哪个位置开始取 run 无关：逐行排版会从行首重新取 run，
+        // 若按行首的字匹配（如"。"与"首"在 Windows 上可能匹配到不同字体），增量结果就会与整段排版不同。
+        // begin 是同一样式范围（span / 内嵌对象之间）的起点，向前找缺字段的起点不越过它；已扫描过的区间缓存在 _owner 上，避免每帧倒扫。
+        private TextRun CreateCharacters(string text, int begin, int start, int end, int scriptBoundary, TextRunProperties properties, InlineStyle style, int component, int textStyle)
+        {
+            var map = GlyphMap(properties);
+            var first = Rune.GetRuneAt(text, start);
+            if (!Covered(map, first))
+            {
+                var length = 0;
+                while (start + length < end)
+                {
+                    var rune = Rune.GetRuneAt(text, start + length);
+                    if (Covered(map, rune))
+                    {
+                        break;
+                    }
+                    length += rune.Utf16SequenceLength;
+                }
+                int headCodepoint;
+                if (_owner.TryGetUncoveredHead(begin, start, out headCodepoint, out var cachedIndex))
+                {
+                    _owner.ExtendUncoveredRun(cachedIndex, start + length);
+                }
+                else
+                {
+                    var head = first;
+                    var runStart = start;
+                    for (var i = start; i > begin;)
+                    {
+                        if (Rune.DecodeLastFromUtf16(text.AsSpan(begin, i - begin), out var previous, out var consumed) != OperationStatus.Done
+                            || Covered(map, previous))
+                        {
+                            break;
+                        }
+                        head = previous;
+                        i -= consumed;
+                        runStart = i;
+                    }
+                    headCodepoint = head.Value;
+                    _owner.RecordUncoveredRun(begin, runStart, start + length, headCodepoint);
+                }
+                if (MatchFallback(headCodepoint, properties.Typeface) is { } fallback)
+                {
+                    return new TextCharacters(Slice(text, start, length, scriptBoundary), FallbackProperties(properties, style, component, textStyle, fallback));
+                }
+                return new TextCharacters(Slice(text, start, length, scriptBoundary), properties);
+            }
+            // 主字体能覆盖的前缀：截到第一个缺字处，缺字部分由下一次调用按上面的规则处理
+            var covered = first.Utf16SequenceLength;
+            while (start + covered < end)
+            {
+                var rune = Rune.GetRuneAt(text, start + covered);
+                if (!Covered(map, rune))
+                {
+                    break;
+                }
+                covered += rune.Utf16SequenceLength;
+            }
+            return new TextCharacters(Slice(text, start, covered, scriptBoundary), properties);
+        }
+
+        // Avalonia 匹配回退字体时优先复用之前匹配到的字体：同一个"。"在匹配过韩文之后会落到 Apple SD Gothic Neo 而不是苹方。
+        // 结果依赖进程内的匹配历史，会让先排的行与后来整段重排的行用不同字体。这里记住每个字第一次的结果，之后一律沿用。
+        private static readonly ConcurrentDictionary<(int, FontStyle, FontWeight, FontStretch, string), Typeface?> MatchedFallbacks = new();
+
+        private static Typeface? MatchFallback(int codepoint, Typeface typeface) =>
+            MatchedFallbacks.GetOrAdd((codepoint, typeface.Style, typeface.Weight, typeface.Stretch, typeface.FontFamily.Name), key =>
+                FontManager.Current.TryMatchCharacter(key.Item1, key.Item2, key.Item3, key.Item4, typeface.FontFamily, null, out var match) ? match : null);
+
+        private static bool Covered(CharacterToGlyphMap? map, Rune rune) =>
+            map is null || Rune.IsWhiteSpace(rune) || rune.Value < 0x20 || rune.Value == InlineObject.Placeholder || map.Value.ContainsGlyph(rune.Value);
+
+        // CharacterToGlyphMap 底层持有 FontManager 的非托管字体内存，不能跨控件/进程做静态缓存，
+        // 随复用的 InlineTextSource 实例缓存（控件卸载或样式变化时清空）即可在流式每帧 O(1) 命中且生命周期安全
+        private readonly Dictionary<TextRunProperties, CharacterToGlyphMap?> _maps = [];
+        private readonly Dictionary<(InlineStyle, int, int, string), TextRunProperties> _fallbacks = [];
+
+        public void ClearGlyphMaps() => _maps.Clear();
+
+        private CharacterToGlyphMap? GlyphMap(TextRunProperties properties)
+        {
+            if (!_maps.TryGetValue(properties, out var map))
+            {
+                try
+                {
+                    map = properties.Typeface.GlyphTypeface.CharacterToGlyphMap;
+                }
+                catch (Exception)
+                {
+                    map = null;
+                }
+                _maps[properties] = map;
+            }
+            return map;
+        }
+
+        // 回退字体只用字体族里真实存在的字面。系统字体缺少所需字重或字形时（如苹方最粗只有中粗 600、
+        // Apple Color Emoji 只有常规体），Avalonia 12.1 曾把整份字体文件复制进内存来合成粗体 / 斜体
+        // （Apple Color Emoji 约 600MB）；Avalonia 12.2 起由 Skia 零拷贝模拟，同时如实标记 DirectWrite
+        // 内部合成的字面（Windows 上 Segoe UI Emoji 的 FamilyTypefaces 会列出合成的 700 / Oblique）。
+        // 粗体按离请求最近的不低于 600 的字重、其次 ≥500 的最粗字重依次验证，跳过带 FontSimulations 的
+        // 模拟字面，找不到真实粗体就退回常规字重；回退字体一律用正体，不请求 Italic（避免 Windows 按字重
+        // 拆开的族缓存合成斜体）。
+        private static readonly ConcurrentDictionary<(string Key, string Name, FontWeight Weight, FontStretch Stretch), Typeface> RealFaces = new();
+
+        private static Typeface RealFace(FontFamily family, Typeface requested) =>
+            RealFaces.GetOrAdd((family.Key?.ToString() ?? "", family.Name, requested.Weight, requested.Stretch),
+                _ => ResolveRealFace(family, requested));
+
+        private static Typeface ResolveRealFace(FontFamily family, Typeface requested)
+        {
+            IReadOnlyList<Typeface> faces;
+            try
+            {
+                faces = family.FamilyTypefaces;
+            }
+            catch (Exception)
+            {
+                faces = [];
+            }
+            if (faces.Count == 0)
+            {
+                return new Typeface(family, FontStyle.Normal, requested.Weight, requested.Stretch);
+            }
+            var weights = faces.Where(f => f.Style == FontStyle.Normal).Select(f => (int)f.Weight).Distinct().ToList();
+            if (weights.Count == 0)
+            {
+                weights = faces.Select(f => (int)f.Weight).Distinct().ToList();
+            }
+            if ((int)requested.Weight >= 600)
+            {
+                // 优先离请求最近的不低于 600 的真实字重，其次最粗的中等字重（CI 镜像里的苹方可能只到 500），
+                // 跳过平台合成的字面（如 Windows DirectWrite 为单字重彩色表情字体 Segoe UI Emoji 列出的 700）。
+                var candidates = weights
+                    .Where(w => w >= 600)
+                    .OrderBy(w => Math.Abs(w - (int)requested.Weight))
+                    .ThenByDescending(w => w)
+                    .Concat(weights.Where(w => w >= 500 && w < 600).OrderByDescending(w => w));
+                foreach (var w in candidates)
+                {
+                    var candidate = new Typeface(family, FontStyle.Normal, (FontWeight)w, requested.Stretch);
+                    if (!IsSimulated(candidate))
+                    {
+                        return candidate;
+                    }
+                }
+                var regular = weights.OrderBy(w => Math.Abs(w - (int)FontWeight.Normal)).First();
+                return new Typeface(family, FontStyle.Normal, (FontWeight)regular, requested.Stretch);
+            }
+            var weight = weights.OrderBy(w => Math.Abs(w - (int)requested.Weight)).First();
+            return new Typeface(family, FontStyle.Normal, (FontWeight)weight, requested.Stretch);
+        }
+
+        private static bool IsSimulated(Typeface typeface)
+        {
+            try
+            {
+                return typeface.GlyphTypeface.FontSimulations != FontSimulations.None;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private TextRunProperties FallbackProperties(TextRunProperties properties, InlineStyle style, int component, int textStyle, Typeface fallback)
+        {
+            var key = (style, component, textStyle, fallback.FontFamily.Name);
+            if (!_fallbacks.TryGetValue(key, out var result))
+            {
+                result = new GenericTextRunProperties(RealFace(fallback.FontFamily, properties.Typeface),
+                    properties.FontRenderingEmSize, properties.TextDecorations, properties.ForegroundBrush, properties.BackgroundBrush, properties.BaselineAlignment);
+                _fallbacks[key] = result;
+                if (component >= 0 || textStyle >= 0)
+                {
+                    _hasCustomTableEntries = true;
+                }
+            }
+            return result;
+        }
+
+        private TextRun CreateObjectRun(InlineObject obj)
+        {
+            var style = _context.Style;
+            var properties = DefaultProperties;
+            switch (obj.Kind)
+            {
+                case InlineObjectKind.Math:
+                    {
+                        var skipNative = _owner.IsDocumentTail && _context.Streaming is { IsActive: true } && !MathBlockView.IsLikelyRenderable(obj.Value.AsSpan().Trim());
+                        if (!skipNative && _context.Services.Registry.Math?.Layout(obj.Value, obj.Flag, out _) is { } layout)
+                        {
+                            return new MathRun(layout, _fontSize * 1.05, _foreground!, properties);
+                        }
+                        // 无法排版（或流式中公式尚未配对完整）：显示源码
+                        var code = PropertiesFor(InlineStyle.Code);
+                        return new TextObjectRun(obj.Flag ? $"\\[{obj.Value}\\]" : $"\\({obj.Value}\\)", code, style.InlineCodeBackground, 3);
+                    }
+                case InlineObjectKind.Image:
+                    {
+                        var declared = DeclaredSize(obj.Attributes);
+                        if (Core.Remend.Remend.IncompleteImageUrl == obj.Value)
+                        {
+                            // 流式中地址还没写完：骨架占位
+                            return new ImageRun(null, obj.Alt ?? "", declared, _maxWidth, properties, style);
+                        }
+                        var slot = _owner.SlotFor(_context, obj.Value, declared, _maxWidth);
+                        return new ImageRun(slot, obj.Alt ?? "", declared, _maxWidth, properties, style);
+                    }
+                case InlineObjectKind.TaskCheckbox:
+                    return new CheckboxRun(obj.Flag, _fontSize, style.SecondaryForeground, style.LinkForeground, properties);
+                case InlineObjectKind.Component:
+                    {
+                        var renderer = _context.Plugins.FindInlineComponent(obj.Value);
+                        var context = new Plugins.InlineComponentContext(style, _fontSize, _foreground, properties, _maxWidth);
+                        return renderer?.CreateRun(obj, context) ?? new TextObjectRun("", properties, null);
+                    }
+                default:
+                    return new TextCharacters(InlineObject.Placeholder.ToString(), properties);
+            }
+        }
+
+        private static Size? DeclaredSize(ComponentAttributes attributes) =>
+            double.TryParse(attributes["width"]?.TrimEnd('p', 'x'), System.Globalization.CultureInfo.InvariantCulture, out var w) && w > 0
+                ? new Size(w, double.TryParse(attributes["height"]?.TrimEnd('p', 'x'), System.Globalization.CultureInfo.InvariantCulture, out var h) && h > 0 ? h : double.NaN)
+                : null;
+
+        private TextRunProperties PropertiesFor(InlineStyle style, int component = -1, int textStyle = -1)
+        {
+            if (_properties.TryGetValue((style, component, textStyle), out var cached))
+            {
+                return cached;
+            }
+            var s = _context.Style;
+            // HTML 行内样式（span style、font color 等）
+            var html = textStyle >= 0 && textStyle < _content.TextStyles.Length ? _content.TextStyles[textStyle] : null;
+            var isCode = style.HasFlag(InlineStyle.Code) || style.HasFlag(InlineStyle.Keyboard);
+            var family = isCode ? s.MonospaceFontFamily : s.FontFamily;
+            var weight = style.HasFlag(InlineStyle.Bold) || html?.Bold == true ? FontWeight.Bold : html?.Bold == false ? FontWeight.Normal : _weight;
+            var italic = style.HasFlag(InlineStyle.Italic) || (html?.Italic ?? _context.Inherited?.Italic) == true;
+            var fontStyle = italic ? FontStyle.Italic : FontStyle.Normal;
+            var size = _fontSize;
+            if (html?.FontSize is { } px)
+            {
+                size = Math.Clamp(px, Core.Html.CssStyle.MinFontSize, Core.Html.CssStyle.MaxFontSize);
+            }
+            else if (html?.FontScale is { } scale)
+            {
+                size *= scale;
+            }
+            if (isCode)
+            {
+                size *= 0.9;
+            }
+            var baseline = BaselineAlignment.Baseline;
+            if (style.HasFlag(InlineStyle.Superscript))
+            {
+                size *= 0.75;
+                baseline = BaselineAlignment.Superscript;
+            }
+            else if (style.HasFlag(InlineStyle.Subscript))
+            {
+                size *= 0.75;
+                baseline = BaselineAlignment.Subscript;
+            }
+
+            // 行内代码 / 按键使用独立的文字色（未配置时等于正文色）；链接样式优先
+            IBrush foreground = isCode && ReferenceEquals(_foreground, s.Foreground) ? s.InlineCodeForeground : _foreground;
+            TextDecorationCollection? decorations = null;
+            if (style.HasFlag(InlineStyle.Link) || style.HasFlag(InlineStyle.FootnoteReference))
+            {
+                foreground = s.LinkForeground;
+                if (!style.HasFlag(InlineStyle.FootnoteReference))
+                {
+                    decorations = TextDecorations.Underline;
+                }
+            }
+            else if (style.HasFlag(InlineStyle.IncompleteLink))
+            {
+                foreground = s.SecondaryForeground;
+            }
+            // 删除线在 Render 中自行绘制：部分字体（及无头环境的回退字体）缺少删除线度量
+            if (style.HasFlag(InlineStyle.Underline))
+            {
+                decorations = TextDecorations.Underline;
+            }
+            IBrush? background = style.HasFlag(InlineStyle.Code) && s.Typography == MarkdownTypography.Chat
+                ? null
+                : isCode ? s.InlineCodeBackground : style.HasFlag(InlineStyle.Mark) ? s.MarkBackground : null;
+
+            if (html is not null)
+            {
+                var htmlBackground = HtmlPaint.Background(_context, html.Background);
+                foreground = HtmlPaint.Foreground(_context, html.Foreground, html.Background) ?? foreground;
+                background = htmlBackground ?? background;
+            }
+
+            // 成对行内组件（如 <cite>）的样式覆盖
+            if (component >= 0 && component < _content.Components.Length &&
+                _context.Plugins.FindInlineComponent(_content.Components[component].Name)?.GetStyle(_content.Components[component], s) is { } custom)
+            {
+                foreground = custom.Foreground ?? foreground;
+                background = custom.Background ?? background;
+                weight = custom.Weight ?? weight;
+                if (custom.Underline)
+                {
+                    decorations = TextDecorations.Underline;
+                }
+            }
+
+            var properties = new GenericTextRunProperties(
+                new Typeface(family, fontStyle, weight),
+                size,
+                decorations,
+                foreground,
+                background,
+                baseline);
+            _properties[(style, component, textStyle)] = properties;
+            if (component >= 0 || textStyle >= 0)
+            {
+                _hasCustomTableEntries = true;
+            }
+            return properties;
+        }
+    }
+}
+
+public sealed class LinkClickedEventArgs(RoutedEvent routedEvent, object source, string url, string? title, bool requiresConfirmation = false) : RoutedEventArgs(routedEvent, source)
+{
+    public string Url { get; } = url;
+
+    public string? Title { get; } = title;
+
+    /// <summary>链接策略要求宿主先请用户确认（<see cref="LinkPolicy.RequireConfirmation"/> 或链接文字与地址不符）。</summary>
+    public bool RequiresConfirmation { get; } = requiresConfirmation;
+}
+
+/// <summary>指针进入 / 离开链接。离开时 <see cref="Url"/> 为 null。宿主可在状态栏显示真实地址。</summary>
+public sealed class LinkHoveredEventArgs(RoutedEvent routedEvent, object source, string? url) : RoutedEventArgs(routedEvent, source)
+{
+    public string? Url { get; } = url;
+}
+
+public sealed class ComponentClickedEventArgs(RoutedEvent routedEvent, object source, string name, ComponentAttributes attributes) : RoutedEventArgs(routedEvent, source)
+{
+    public string Name { get; } = name;
+
+    public ComponentAttributes Attributes { get; } = attributes;
+}
+
+public sealed class ImageClickedEventArgs(RoutedEvent routedEvent, object source, string url, string? alt, IImage image) : RoutedEventArgs(routedEvent, source)
+{
+    public string Url { get; } = url;
+
+    public string? Alt { get; } = alt;
+
+    public IImage Image { get; } = image;
+}

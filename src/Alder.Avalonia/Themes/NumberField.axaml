@@ -1,0 +1,330 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:ti="using:Avalonia.Input.TextInput">
+  <ControlTheme x:Key="AlderNumberFieldEditorTheme" TargetType="alder:AlderInput" BasedOn="{StaticResource {x:Type alder:AlderInput}}">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="FontFeatures" Value="tnum" />
+    <Setter Property="ti:TextInputOptions.ContentType" Value="Number" />
+    <Style Selector="^ /template/ Border#FieldSurface">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BoxShadow" Value="none" />
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+    <Style Selector="^:pointerover /template/ Border#FieldSurface"><Setter Property="Background" Value="Transparent" /></Style>
+    <Style Selector="^ /template/ alder|InputFocusRing#FieldRing"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="1" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderNumberStepperButtonTheme" TargetType="RepeatButton">
+    <Setter Property="Width" Value="40" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="IsTabStop" Value="False" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderSeparator}" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="StepFace" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
+                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+          <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ Border#StepFace">
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.15" Easing="0.25,0.1,0.25,1" />
+          <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" Easing="0.25,0.1,0.25,1" />
+        </Transitions>
+      </Setter>
+      <Setter Property="RenderTransform" Value="scale(1)" />
+    </Style>
+    <Style Selector="^:pressed /template/ Border#StepFace">
+      <Setter Property="Background" Value="{DynamicResource AlderNumberStepPressed}" />
+      <Setter Property="RenderTransform" Value="scale(0.97)" />
+    </Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#StepFace">
+      <Setter Property="Transitions" Value="{x:Null}" />
+      <Setter Property="RenderTransform" Value="scale(1)" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderCompactNumberStepperButtonTheme" TargetType="RepeatButton"
+                BasedOn="{StaticResource AlderNumberStepperButtonTheme}">
+    <Setter Property="Width" Value="28" />
+    <Setter Property="Height" Value="28" />
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Style Selector="^ /template/ Border#StepFace">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldShadow}" />
+    </Style>
+    <Style Selector="^:pointerover:not(:pressed) /template/ Border#StepFace">
+      <Setter Property="Background" Value="{DynamicResource AlderInputHover}" />
+    </Style>
+    <Style Selector="^:pressed /template/ Border#StepFace">
+      <Setter Property="Background" Value="{DynamicResource AlderFieldHover}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderNumberStepperPillButtonTheme" TargetType="RepeatButton"
+                BasedOn="{StaticResource AlderCompactNumberStepperButtonTheme}">
+    <Setter Property="Transitions">
+      <Transitions><BrushTransition Property="Foreground" Duration="0:0:0.15" Easing="0.25,0.1,0.25,1" /></Transitions>
+    </Setter>
+    <Style Selector="^ /template/ Border#StepFace">
+      <Setter Property="Transitions">
+        <Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25" Easing="0.25,0.1,0.25,1" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^:pointerover:not(:disabled)"><Setter Property="Foreground" Value="{DynamicResource AlderInk}" /></Style>
+    <Style Selector="^:pointerover:not(:pressed) /template/ Border#StepFace, ^:pressed /template/ Border#StepFace">
+      <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    </Style>
+    <Style Selector="^:pressed /template/ Border#StepFace"><Setter Property="RenderTransform" Value="scale(0.98)" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True]"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#StepFace">
+      <Setter Property="Transitions" Value="{x:Null}" /><Setter Property="RenderTransform" Value="scale(1)" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderNumberFieldSpinnerTheme" TargetType="alder:AlderInputSpinner">
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="*,*">
+          <Grid.Styles>
+            <Style Selector="alder|AlderInputSpinner.vertical PathIcon">
+              <Setter Property="MaxWidth" Value="11" /><Setter Property="MaxHeight" Value="11" />
+            </Style>
+          </Grid.Styles>
+          <ContentPresenter Name="PART_ContentPresenter" Grid.Column="1" Grid.RowSpan="2"
+                            Content="{TemplateBinding Content}" HorizontalContentAlignment="Stretch" />
+          <alder:AlderRepeatButton Name="PART_DecreaseButton" Grid.RowSpan="2" Theme="{StaticResource AlderNumberStepperButtonTheme}"
+                        CornerRadius="12,0,0,12" BorderThickness="0,0,1,0" IsVisible="{TemplateBinding ShowButtonSpinner}"
+                        AutomationProperties.Name="{DynamicResource AlderText.DecreaseValue}">
+            <alder:AlderPathIcon Width="16" Height="16" Data="{Binding $parent[alder:AlderNumberField].DecreaseIcon}" />
+          </alder:AlderRepeatButton>
+          <alder:AlderRepeatButton Name="PART_IncreaseButton" Grid.Column="2" Grid.RowSpan="2" Theme="{StaticResource AlderNumberStepperButtonTheme}"
+                        CornerRadius="0,12,12,0" BorderThickness="1,0,0,0" IsVisible="{TemplateBinding ShowButtonSpinner}"
+                        AutomationProperties.Name="{DynamicResource AlderText.IncreaseValue}">
+            <alder:AlderPathIcon Width="16" Height="16" Data="{Binding $parent[alder:AlderNumberField].IncreaseIcon}" />
+          </alder:AlderRepeatButton>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^.vertical /template/ RepeatButton">
+      <Setter Property="Width" Value="24" />
+      <Setter Property="Grid.RowSpan" Value="1" />
+      <Setter Property="Grid.Column" Value="2" />
+      <Setter Property="BorderThickness" Value="1,0,0,0" />
+    </Style>
+    <Style Selector="^.vertical /template/ RepeatButton#PART_IncreaseButton">
+      <Setter Property="CornerRadius" Value="0,12,0,0" />
+    </Style>
+    <Style Selector="^.vertical /template/ RepeatButton#PART_DecreaseButton">
+      <Setter Property="Grid.Row" Value="1" />
+      <Setter Property="CornerRadius" Value="0,0,12,0" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderNumberField}" TargetType="alder:AlderNumberField">
+    <Setter Property="Width" Value="200" />
+    <Setter Property="Height" Value="36" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Padding" Value="12,8" />
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="DecreaseIcon" Value="{StaticResource AlderIconMinus}" />
+    <Setter Property="IncreaseIcon" Value="{StaticResource AlderIconPlus}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="FieldSurface" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+            <alder:AlderInputSpinner Name="PART_Spinner" Focusable="False" Classes.vertical="{TemplateBinding VerticalStepper}"
+                           Theme="{StaticResource AlderNumberFieldSpinnerTheme}"
+                           AllowSpin="{TemplateBinding AllowSpin}" ShowButtonSpinner="{TemplateBinding ShowButtonSpinner}">
+              <alder:AlderInput Name="PART_TextBox" Theme="{StaticResource AlderNumberFieldEditorTheme}" FullWidth="True"
+                           Padding="{TemplateBinding Padding}" PlaceholderText="{TemplateBinding PlaceholderText}"
+                           IsReadOnly="{TemplateBinding IsReadOnly}" TextAlignment="{TemplateBinding TextAlignment}"
+                           InnerLeftContent="{TemplateBinding InnerLeftContent}" InnerRightContent="{TemplateBinding InnerRightContent}"
+                           AutomationProperties.LabeledBy="{TemplateBinding (AutomationProperties.LabeledBy)}"
+                           AutomationProperties.Name="{TemplateBinding (AutomationProperties.Name)}"
+                           AutomationProperties.HelpText="{TemplateBinding (AutomationProperties.HelpText)}"
+                           AutomationProperties.IsRequiredForForm="{TemplateBinding IsRequired}" />
+            </alder:AlderInputSpinner>
+          </Border>
+          <alder:InputFocusRing Name="FieldRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[FullWidth=True]">
+      <Setter Property="Width" Value="NaN" /><Setter Property="HorizontalAlignment" Value="Stretch" />
+    </Style>
+    <Style Selector="^[VerticalStepper=True]">
+      <Setter Property="DecreaseIcon" Value="{StaticResource AlderIconChevronDown}" />
+      <Setter Property="IncreaseIcon" Value="{StaticResource AlderIconChevronUp}" />
+    </Style>
+    <Style Selector="^ /template/ Border#FieldSurface">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldShadow}" />
+      <Setter Property="Transitions"><Transitions><BrushTransition Property="Background" Duration="0:0:0.15" Easing="0.25,0.1,0.25,1" /></Transitions></Setter>
+    </Style>
+    <Style Selector="^[Variant=Secondary]"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
+    <Style Selector="^[Variant=Secondary] /template/ Border#FieldSurface"><Setter Property="BoxShadow" Value="none" /></Style>
+    <Style Selector="^:pointerover:not(:focus-within):not(:disabled) /template/ Border#FieldSurface">
+      <Setter Property="Background" Value="{DynamicResource AlderInputHover}" />
+    </Style>
+    <Style Selector="^[Variant=Secondary]:pointerover:not(:focus-within):not(:disabled) /template/ Border#FieldSurface">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
+    <Style Selector="^ /template/ alder|InputFocusRing#FieldRing">
+      <Setter Property="BoxShadow" Value="0 0 0 0 #000485F7" />
+      <Setter Property="Transitions"><Transitions><BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions></Setter>
+    </Style>
+    <Style Selector="^:focus-within /template/ alder|InputFocusRing#FieldRing">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" />
+    </Style>
+    <Style Selector="^[IsRequired=True]"><Setter Property="AutomationProperties.IsRequiredForForm" Value="True" /></Style>
+    <Style Selector="^[IsInvalid=True]"><Setter Property="alder:AlderLabel.IsInvalid" Value="True" /></Style>
+    <Style Selector="^[IsInvalid=True] /template/ alder|InputFocusRing#FieldRing, ^[(DataValidationErrors.HasErrors)=True] /template/ alder|InputFocusRing#FieldRing">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldInvalidOutline}" />
+    </Style>
+    <Style Selector="^[IsInvalid=True]:focus-within /template/ alder|InputFocusRing#FieldRing, ^[(DataValidationErrors.HasErrors)=True]:focus-within /template/ alder|InputFocusRing#FieldRing">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldInvalidRing}" />
+    </Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#FieldSurface, ^[(alder|AlderMotion.Reduced)=True] /template/ alder|InputFocusRing#FieldRing">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderCompactNumberStepperSpinnerTheme" TargetType="alder:AlderInputSpinner">
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid ColumnDefinitions="Auto,*,Auto" Margin="2">
+          <alder:AlderRepeatButton Name="PART_DecreaseButton" Theme="{StaticResource AlderCompactNumberStepperButtonTheme}"
+                        CornerRadius="14" IsVisible="{TemplateBinding ShowButtonSpinner}"
+                        AutomationProperties.Name="{DynamicResource AlderText.DecreaseValue}">
+            <alder:AlderPathIcon Width="14" Height="14" Data="{CompiledBinding $parent[alder:AlderNumberField].DecreaseIcon}" />
+          </alder:AlderRepeatButton>
+          <ContentPresenter Name="PART_ContentPresenter" Grid.Column="1"
+                            Content="{TemplateBinding Content}" HorizontalContentAlignment="Stretch" />
+          <alder:AlderRepeatButton Name="PART_IncreaseButton" Grid.Column="2" Theme="{StaticResource AlderCompactNumberStepperButtonTheme}"
+                        CornerRadius="14" IsVisible="{TemplateBinding ShowButtonSpinner}"
+                        AutomationProperties.Name="{DynamicResource AlderText.IncreaseValue}">
+            <alder:AlderPathIcon Width="14" Height="14" Data="{CompiledBinding $parent[alder:AlderNumberField].IncreaseIcon}" />
+          </alder:AlderRepeatButton>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^.stepper-medium /template/ RepeatButton">
+      <Setter Property="Width" Value="32" /><Setter Property="Height" Value="32" />
+      <Setter Property="CornerRadius" Value="16" />
+    </Style>
+    <Style Selector="^.stepper-large /template/ RepeatButton">
+      <Setter Property="Width" Value="36" /><Setter Property="Height" Value="36" />
+      <Setter Property="CornerRadius" Value="18" />
+    </Style>
+    <Style Selector="^.stepper-reversed /template/ RepeatButton#PART_DecreaseButton"><Setter Property="Grid.Column" Value="2" /></Style>
+    <Style Selector="^.stepper-reversed /template/ RepeatButton#PART_IncreaseButton"><Setter Property="Grid.Column" Value="0" /></Style>
+    <Style Selector="^.stepper-pill /template/ RepeatButton">
+      <Setter Property="Theme" Value="{StaticResource AlderNumberStepperPillButtonTheme}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderCompactNumberStepperTheme" TargetType="alder:AlderNumberField"
+                BasedOn="{StaticResource {x:Type alder:AlderNumberField}}">
+    <Setter Property="Width" Value="80" />
+    <Setter Property="Height" Value="32" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="Variant" Value="Secondary" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="TextAlignment" Value="Center" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="FieldSurface" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+            <alder:AlderInputSpinner Name="PART_Spinner" Theme="{StaticResource AlderCompactNumberStepperSpinnerTheme}"
+                           AllowSpin="{TemplateBinding AllowSpin}" ShowButtonSpinner="{TemplateBinding ShowButtonSpinner}">
+              <Panel ClipToBounds="True">
+                <alder:AlderInput Name="PART_TextBox" Theme="{StaticResource AlderNumberFieldEditorTheme}" FullWidth="True"
+                                 Height="28" FontSize="12" FontWeight="SemiBold" LineHeight="16"
+                                 Padding="{TemplateBinding Padding}" PlaceholderText="{TemplateBinding PlaceholderText}"
+                                 IsReadOnly="{TemplateBinding IsReadOnly}" TextAlignment="{TemplateBinding TextAlignment}"
+                                 AutomationProperties.LabeledBy="{TemplateBinding (AutomationProperties.LabeledBy)}"
+                                 AutomationProperties.Name="{TemplateBinding (AutomationProperties.Name)}"
+                                 AutomationProperties.HelpText="{TemplateBinding (AutomationProperties.HelpText)}"
+                                 AutomationProperties.IsRequiredForForm="{TemplateBinding IsRequired}" />
+                <alder:AlderNumberStepValue Name="PART_StepValue" IsHitTestVisible="False" />
+              </Panel>
+            </alder:AlderInputSpinner>
+          </Border>
+          <alder:InputFocusRing Name="FieldRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover:not(:focus-within):not(:disabled) /template/ Border#FieldSurface">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderNumberStepper}" TargetType="alder:AlderNumberStepper"
+                BasedOn="{StaticResource AlderCompactNumberStepperTheme}">
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="Width" Value="92" />
+    <Setter Property="MinWidth" Value="92" />
+    <Setter Property="Height" Value="36" />
+    <Setter Property="CornerRadius" Value="18" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="FieldSurface" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+            <alder:AlderInputSpinner Name="PART_Spinner" Classes="stepper-pill" Theme="{StaticResource AlderCompactNumberStepperSpinnerTheme}"
+                           AllowSpin="{TemplateBinding AllowSpin}" ShowButtonSpinner="{TemplateBinding ShowButtonSpinner}">
+              <Panel ClipToBounds="True">
+                <alder:AlderInput Name="PART_TextBox" Theme="{StaticResource AlderNumberFieldEditorTheme}" FullWidth="True"
+                                 MinWidth="24" Height="28" FontSize="13" FontWeight="SemiBold" LineHeight="16"
+                                 Padding="{TemplateBinding Padding}" PlaceholderText="{TemplateBinding PlaceholderText}"
+                                 IsReadOnly="{TemplateBinding IsReadOnly}" TextAlignment="{TemplateBinding TextAlignment}"
+                                 AutomationProperties.LabeledBy="{TemplateBinding (AutomationProperties.LabeledBy)}"
+                                 AutomationProperties.Name="{TemplateBinding (AutomationProperties.Name)}"
+                                 AutomationProperties.HelpText="{TemplateBinding (AutomationProperties.HelpText)}"
+                                 AutomationProperties.IsRequiredForForm="{TemplateBinding IsRequired}" />
+                <alder:AlderNumberStepValue Name="PART_StepValue" IsHitTestVisible="False" />
+                <ContentPresenter Name="CustomValue" Content="{TemplateBinding Value}" ContentTemplate="{TemplateBinding ValueTemplate}"
+                                  IsVisible="False" Margin="6,0" VerticalAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False" />
+              </Panel>
+            </alder:AlderInputSpinner>
+          </Border>
+          <alder:InputFocusRing Name="FieldRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Size=Small]">
+      <Setter Property="Width" Value="80" /><Setter Property="MinWidth" Value="80" />
+      <Setter Property="Height" Value="32" /><Setter Property="CornerRadius" Value="16" />
+    </Style>
+    <Style Selector="^[Size=Small] /template/ alder|AlderInput#PART_TextBox">
+      <Setter Property="MinWidth" Value="20" /><Setter Property="FontSize" Value="12" />
+    </Style>
+    <Style Selector="^[Size=Large]">
+      <Setter Property="Width" Value="104" /><Setter Property="MinWidth" Value="104" />
+      <Setter Property="Height" Value="40" /><Setter Property="CornerRadius" Value="20" />
+    </Style>
+    <Style Selector="^[Size=Large] /template/ alder|AlderInput#PART_TextBox">
+      <Setter Property="Height" Value="32" /><Setter Property="FontSize" Value="14" />
+    </Style>
+    <Style Selector="^[IsTextEditable=False] /template/ alder|AlderInput#PART_TextBox"><Setter Property="IsReadOnly" Value="True" /></Style>
+    <Style Selector="^[Variant=Secondary]:pointerover:not(:focus-within):not(:disabled) /template/ Border#FieldSurface">
+      <Setter Property="Background" Value="{CompiledBinding Background, RelativeSource={RelativeSource TemplatedParent}}" />
+    </Style>
+    <Style Selector="^:custom-value /template/ alder|AlderInput#PART_TextBox"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^:custom-value /template/ ContentPresenter#CustomValue"><Setter Property="IsVisible" Value="True" /></Style>
+  </ControlTheme>
+</ResourceDictionary>

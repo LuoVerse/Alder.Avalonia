@@ -1,0 +1,160 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls" xmlns:conv="using:Avalonia.Data.Converters">
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderDropOutlineBrush" Color="#C6C6C7" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderDropOutlineBrush" Color="#434345" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+  <SolidColorBrush x:Key="AlderDropHighlightBrush" Color="#260485F7" />
+  <SolidColorBrush x:Key="AlderDropFileErrorOutline" Color="#4DFF383C" />
+  <x:String x:Key="AlderText.DropBrowse">Select File</x:String>
+  <x:String x:Key="AlderText.DropTitle">Drag files here or click to browse</x:String>
+  <x:String x:Key="AlderText.DropRemove">Remove file</x:String>
+  <x:String x:Key="AlderText.DropRetry">Try again</x:String>
+  <x:String x:Key="AlderText.DropUploading">Uploading…</x:String>
+  <x:String x:Key="AlderText.DropComplete">Complete</x:String>
+  <x:String x:Key="AlderText.DropFailed">Failed</x:String>
+  <x:String x:Key="AlderText.DropTypeError">This file type is not supported.</x:String>
+  <x:String x:Key="AlderText.DropSizeError">The file is larger than the allowed limit.</x:String>
+  <x:String x:Key="AlderText.DropCountError">No more files can be added.</x:String>
+  <x:String x:Key="AlderText.DropUnavailable">The file picker or file is unavailable.</x:String>
+  <StreamGeometry x:Key="AlderDropUploadIcon">M7 16H5a4 4 0 0 1-.4-8 7 7 0 0 1 13.2 1A3.5 3.5 0 0 1 18 16h-1v-2h1a1.5 1.5 0 0 0 0-3h-1.8l-.1-1a5 5 0 0 0-9.8-.4L6 10H5a2 2 0 0 0 0 4h2zm5-5 4 4-1.4 1.4-1.6-1.6V22h-2v-7.2l-1.6 1.6L8 15Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderDropFileIcon">M5 2h9l5 5v15H5zm2 2v16h10V8h-4V4zm8 1v2h2z</StreamGeometry>
+  <DataTemplate x:Key="AlderDropFileTemplate" x:DataType="alder:AlderDropZoneFile">
+    <Border Classes.drop-file="True" Classes.failed="{CompiledBinding Status, Converter={x:Static alder:DropZoneStatus.Failed}}"
+            Classes.compact="{CompiledBinding $parent[alder:AlderDropZone].IsFileListCompact}"
+            BorderThickness="1" CornerRadius="16">
+      <Border.Styles>
+        <Style Selector="Border.drop-file">
+          <Setter Property="Padding" Value="12" />
+          <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+        </Style>
+        <Style Selector="Border.drop-file.compact"><Setter Property="Padding" Value="8,5" /></Style>
+        <Style Selector="Border.drop-file.failed"><Setter Property="BorderBrush" Value="{StaticResource AlderDropFileErrorOutline}" /></Style>
+      </Border.Styles>
+      <Grid ColumnDefinitions="32,*,Auto" ColumnSpacing="12">
+        <Panel VerticalAlignment="Top" Height="40">
+          <alder:AlderPathIcon Width="28" Height="28" Data="{StaticResource AlderDropFileIcon}" Foreground="{DynamicResource AlderMuted}" />
+          <Border VerticalAlignment="Bottom" HorizontalAlignment="Center" CornerRadius="3" Padding="3,1"
+                  Background="{DynamicResource AlderAccent}">
+            <alder:AlderTextBlock Text="{CompiledBinding Format}" FontSize="8" FontWeight="SemiBold" Foreground="{DynamicResource AlderOnAccent}" />
+          </Border>
+        </Panel>
+        <StackPanel Grid.Column="1" Spacing="2">
+          <alder:AlderTextBlock Text="{CompiledBinding Name}" FontSize="14" LineHeight="20" FontWeight="Medium" TextTrimming="CharacterEllipsis" />
+          <WrapPanel ItemSpacing="6">
+            <alder:AlderTextBlock Text="{CompiledBinding SizeText}" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}"
+                       IsVisible="{CompiledBinding SizeText, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+            <Border Width="1" Height="10" VerticalAlignment="Center" Background="{DynamicResource AlderBorder}">
+              <Border.IsVisible>
+                <MultiBinding Converter="{x:Static conv:BoolConverters.And}">
+                  <Binding Path="SizeText" Converter="{x:Static conv:StringConverters.IsNotNullOrEmpty}" />
+                  <Binding Path="Status" Converter="{x:Static alder:DropZoneStatus.Processing}" />
+                </MultiBinding>
+              </Border.IsVisible>
+            </Border>
+            <alder:AlderTextBlock Text="{DynamicResource AlderText.DropUploading}" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}"
+                       IsVisible="{CompiledBinding Status, Converter={x:Static alder:DropZoneStatus.Uploading}}" />
+            <alder:AlderTextBlock Text="{DynamicResource AlderText.DropComplete}" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderStatusSuccess}"
+                       IsVisible="{CompiledBinding Status, Converter={x:Static alder:DropZoneStatus.Complete}}" />
+            <alder:AlderTextBlock Text="{DynamicResource AlderText.DropFailed}" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderDanger}"
+                       IsVisible="{CompiledBinding Status, Converter={x:Static alder:DropZoneStatus.Failed}}" />
+          </WrapPanel>
+          <alder:AlderProgressBar Size="Small" Margin="0,6,0,0" Value="{CompiledBinding Progress}"
+                                 IsVisible="{CompiledBinding Status, Converter={x:Static alder:DropZoneStatus.Uploading}}" />
+          <alder:AlderProgressBar Size="Small" Margin="0,6,0,0" Value="100" Color="Success"
+                                 IsVisible="{CompiledBinding Status, Converter={x:Static alder:DropZoneStatus.Complete}}" />
+          <alder:AlderButton Size="Small" Margin="0,8,0,0" Variant="DangerSoft" HorizontalAlignment="Left"
+                             Content="{DynamicResource AlderText.DropRetry}"
+                             Command="{CompiledBinding $parent[alder:AlderDropZone].RetryFileCommand}" CommandParameter="{CompiledBinding}"
+                             IsVisible="{CompiledBinding Status, Converter={x:Static alder:DropZoneStatus.Failed}}" />
+        </StackPanel>
+        <alder:AlderButton Grid.Column="2" Size="Small" Variant="Ghost" IsIconOnly="True" VerticalAlignment="Top"
+                           Width="24" MinWidth="0" Height="24" MinHeight="0" CornerRadius="6"
+                           Icon="{DynamicResource AlderIconXmark}" AutomationProperties.Name="{DynamicResource AlderText.DropRemove}"
+                           Command="{CompiledBinding $parent[alder:AlderDropZone].RemoveFileCommand}" CommandParameter="{CompiledBinding}" />
+      </Grid>
+    </Border>
+  </DataTemplate>
+  <ControlTheme x:Key="{x:Type alder:AlderDropZone}" TargetType="alder:AlderDropZone">
+    <Setter Property="Title" Value="{DynamicResource AlderText.DropTitle}" />
+    <Setter Property="BrowseContent" Value="{DynamicResource AlderText.DropBrowse}" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="Padding" Value="24,28" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel Spacing="12">
+          <Border Name="PART_DropArea" MinHeight="198" Background="#000485F7" CornerRadius="{TemplateBinding CornerRadius}" Cursor="Hand"
+                  IsVisible="{TemplateBinding ShowDropArea}">
+            <Panel>
+              <Rectangle Name="Outline" Stroke="{DynamicResource AlderDropOutlineBrush}" StrokeDashArray="3,2" StrokeThickness="1"
+                         RadiusX="{CompiledBinding CornerRadius.TopLeft, RelativeSource={RelativeSource TemplatedParent}}" RadiusY="{CompiledBinding CornerRadius.TopLeft, RelativeSource={RelativeSource TemplatedParent}}" IsHitTestVisible="False" />
+              <StackPanel Margin="{TemplateBinding Padding}" Spacing="8" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Panel>
+                  <alder:AlderPathIcon Name="DefaultIcon" Width="32" Height="32" Foreground="{DynamicResource AlderMuted}"
+                            Data="{StaticResource AlderDropUploadIcon}" HorizontalAlignment="Center"
+                            IsVisible="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNull}}" />
+                  <ContentPresenter Content="{TemplateBinding Icon}" HorizontalAlignment="Center" />
+                </Panel>
+                <alder:AlderTextBlock Name="DropTitle" Text="{TemplateBinding Title}" TextWrapping="Wrap" TextAlignment="Center" FontSize="14" LineHeight="20" FontWeight="Medium" />
+                <alder:AlderTextBlock Text="{TemplateBinding Description}" TextWrapping="Wrap" TextAlignment="Center" FontSize="12" LineHeight="16"
+                           Foreground="{DynamicResource AlderMuted}"
+                           IsVisible="{CompiledBinding Description, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+                <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8" Margin="0,4,0,0">
+                  <alder:AlderButton Name="PART_Browse" Content="{TemplateBinding BrowseContent}" Variant="Outline" CornerRadius="24"
+                                     Command="{CompiledBinding BrowseCommand, RelativeSource={RelativeSource TemplatedParent}}" IsVisible="{TemplateBinding ShowBrowseButton}"
+                                     AutomationProperties.LabeledBy="{CompiledBinding #DropTitle}" />
+                  <ContentPresenter Content="{TemplateBinding Actions}"
+                                    IsVisible="{CompiledBinding Actions, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+                </WrapPanel>
+              </StackPanel>
+            </Panel>
+          </Border>
+          <alder:AlderTextBlock Name="DropError" Foreground="{DynamicResource AlderDangerInk}" FontSize="12" TextWrapping="Wrap"
+                     IsVisible="False" AutomationProperties.LiveSetting="Polite" />
+          <alder:AlderItemsControl Name="FileList" ItemsSource="{CompiledBinding Files, RelativeSource={RelativeSource TemplatedParent}}" IsVisible="False" ItemTemplate="{StaticResource AlderDropFileTemplate}"
+                        ClipToBounds="False">
+            <alder:AlderItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Spacing="8" /></ItemsPanelTemplate></alder:AlderItemsControl.ItemsPanel>
+          </alder:AlderItemsControl>
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ Border#PART_DropArea">
+      <Setter Property="Transitions">
+        <Transitions><BrushTransition Property="Background" Duration="0:0:0.15" Easing="0.25,0.1,0.25,1" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^ /template/ Rectangle#Outline">
+      <Setter Property="Transitions">
+        <Transitions><BrushTransition Property="Stroke" Duration="0:0:0.15" Easing="0.25,0.1,0.25,1" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^:has-files[ShowFileList=True] /template/ ItemsControl#FileList"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:drop-target /template/ Border#PART_DropArea"><Setter Property="Background" Value="{DynamicResource AlderDropHighlightBrush}" /></Style>
+    <Style Selector="^:drop-target /template/ Rectangle#Outline, ^:focus-within /template/ Rectangle#Outline">
+      <Setter Property="Stroke" Value="{DynamicResource AlderAccent}" />
+    </Style>
+    <Style Selector="^[LastError=Type] /template/ TextBlock#DropError">
+      <Setter Property="IsVisible" Value="True" /><Setter Property="Text" Value="{DynamicResource AlderText.DropTypeError}" />
+    </Style>
+    <Style Selector="^[LastError=Size] /template/ TextBlock#DropError">
+      <Setter Property="IsVisible" Value="True" /><Setter Property="Text" Value="{DynamicResource AlderText.DropSizeError}" />
+    </Style>
+    <Style Selector="^[LastError=Count] /template/ TextBlock#DropError">
+      <Setter Property="IsVisible" Value="True" /><Setter Property="Text" Value="{DynamicResource AlderText.DropCountError}" />
+    </Style>
+    <Style Selector="^[LastError=Unavailable] /template/ TextBlock#DropError">
+      <Setter Property="IsVisible" Value="True" /><Setter Property="Text" Value="{DynamicResource AlderText.DropUnavailable}" />
+    </Style>
+    <Style Selector="^:disabled /template/ Border#PART_DropArea"><Setter Property="Opacity" Value=".5" /><Setter Property="Cursor" Value="Arrow" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#PART_DropArea,
+                     ^[(alder|AlderMotion.Reduced)=True] /template/ Rectangle#Outline">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

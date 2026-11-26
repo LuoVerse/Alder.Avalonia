@@ -1,0 +1,203 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             xmlns:c="using:Avalonia.Data.Converters"
+             x:Class="Alder.Avalonia.Gallery.Views.CommandExample" x:DataType="vm:CommandViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="CommandKeyboardHintsTemplate">
+      <WrapPanel ItemSpacing="12" LineSpacing="4">
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <StackPanel Orientation="Horizontal" Spacing="4" FlowDirection="LeftToRight">
+            <alder:AlderKbd MinHeight="20" FontSize="12" Padding="6,0">
+              <alder:AlderKbdKey KeyValue="Up" />
+            </alder:AlderKbd>
+            <alder:AlderKbd MinHeight="20" FontSize="12" Padding="6,0">
+              <alder:AlderKbdKey KeyValue="Down" />
+            </alder:AlderKbd>
+          </StackPanel>
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CommandNavigate}" VerticalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <alder:AlderKbd MinHeight="20" FontSize="12" Padding="6,0">
+            <alder:AlderKbdKey KeyValue="Enter" />
+          </alder:AlderKbd>
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CommandSelect}" VerticalAlignment="Center" />
+        </StackPanel>
+      </WrapPanel>
+    </DataTemplate>
+  </UserControl.Resources>
+  <StackPanel Spacing="24">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton Variant="Outline" Foreground="{DynamicResource AlderInk}"
+                           Command="{CompiledBinding OpenPaletteCommand}" CommandParameter="{CompiledBinding $self}" Tag="{x:Static vm:CommandDemo.Usage}"
+                           HorizontalAlignment="Center" Content="{DynamicResource GalleryText.CommandOpen}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var palette = new AlderCommand { Groups = groups, Header = title, Footer = keyboardHints };
+        await palette.ShowAsync(trigger);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleLauncher" Title="{DynamicResource GalleryText.CommandLauncher}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton Variant="Outline" Foreground="{DynamicResource AlderInk}"
+                           Command="{CompiledBinding OpenPaletteCommand}" CommandParameter="{CompiledBinding $self}"
+                           HotKey="{CompiledBinding LauncherGesture}" Tag="{x:Static vm:CommandDemo.Launcher}"
+                           HorizontalAlignment="Center" AutomationProperties.Name="{DynamicResource GalleryText.CommandLauncher}">
+          <StackPanel Orientation="Horizontal" Spacing="10">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.CommandLauncher}" VerticalAlignment="Center" />
+            <alder:AlderKbd FlowDirection="LeftToRight">
+              <alder:AlderTextBlock Text="{CompiledBinding LauncherShortcut}" />
+            </alder:AlderKbd>
+          </StackPanel>
+        </alder:AlderButton>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var palette = new AlderCommand
+        {
+            Groups = applicationsAndTools, Size = AlderSize.Large, ShowDismissButton = false,
+            Footer = launcherActions
+        };
+        await palette.ShowAsync(trigger);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDevToolbar" Title="{DynamicResource GalleryText.CommandDevToolbar}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton Variant="Outline" Foreground="{DynamicResource AlderInk}"
+                           Command="{CompiledBinding OpenPaletteCommand}" CommandParameter="{CompiledBinding $self}" Tag="{x:Static vm:CommandDemo.Toolbar}"
+                           HorizontalAlignment="Center" Content="{DynamicResource GalleryText.CommandDevToolbar}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var palette = new AlderCommand { Groups = developmentGroups, Placeholder = searchHint };
+        await palette.ShowAsync(trigger);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSizes" Title="{DynamicResource GalleryText.OverlaySizes}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+          <alder:AlderButton Variant="Outline"
+                             Command="{CompiledBinding OpenPaletteCommand}" CommandParameter="{CompiledBinding $self}" Tag="{x:Static alder:AlderSize.Small}"
+                             Content="{DynamicResource GalleryText.OverlaySizeSmall}" />
+          <alder:AlderButton Variant="Outline"
+                             Command="{CompiledBinding OpenPaletteCommand}" CommandParameter="{CompiledBinding $self}" Tag="{x:Static alder:AlderSize.Medium}"
+                             Content="{DynamicResource GalleryText.OverlaySizeMedium}" />
+          <alder:AlderButton Variant="Outline"
+                             Command="{CompiledBinding OpenPaletteCommand}" CommandParameter="{CompiledBinding $self}" Tag="{x:Static alder:AlderSize.Large}"
+                             Content="{DynamicResource GalleryText.OverlaySizeLarge}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var palette = new AlderCommand { Groups = groups, Size = selectedSize, Footer = keyboardHints };
+        await palette.ShowAsync(trigger);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleBackdrops" Title="{DynamicResource GalleryText.OverlayBackdrops}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+          <alder:AlderButton Variant="Outline"
+                             Command="{CompiledBinding OpenPaletteCommand}" CommandParameter="{CompiledBinding $self}" Tag="{x:Static alder:DialogBackdrop.Transparent}"
+                             Content="{DynamicResource GalleryText.OverlayBackdropTransparent}" />
+          <alder:AlderButton Variant="Outline"
+                             Command="{CompiledBinding OpenPaletteCommand}" CommandParameter="{CompiledBinding $self}" Tag="{x:Static alder:DialogBackdrop.Opaque}"
+                             Content="{DynamicResource GalleryText.OverlayBackdropOpaque}" />
+          <alder:AlderButton Variant="Outline"
+                             Command="{CompiledBinding OpenPaletteCommand}" CommandParameter="{CompiledBinding $self}" Tag="{x:Static alder:DialogBackdrop.Blur}"
+                             Content="{DynamicResource GalleryText.OverlayBackdropBlur}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var palette = new AlderCommand { Groups = groups };
+        await palette.ShowAsync(trigger, selectedBackdrop);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleClean" Title="{DynamicResource GalleryText.CommandClean}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton Variant="Outline" Foreground="{DynamicResource AlderInk}"
+                           Command="{CompiledBinding OpenPaletteCommand}" CommandParameter="{CompiledBinding $self}" Tag="{x:Static vm:CommandDemo.Clean}"
+                           HorizontalAlignment="Center" Content="{DynamicResource GalleryText.CommandClean}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var searchProjects = new AlderCommandItem { Label = searchProjectsLabel, Groups = projectGroups };
+        var palette = new AlderCommand
+        {
+            Groups = [new AlderCommandGroup { Items = [searchProjects] }],
+            Size = AlderSize.Large, ShowDismissButton = false
+        };
+        await palette.ShowAsync(trigger);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleMinimal" Title="{DynamicResource GalleryText.CommandMinimal}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton Variant="Outline" Foreground="{DynamicResource AlderInk}"
+                           Command="{CompiledBinding OpenPaletteCommand}" CommandParameter="{CompiledBinding $self}" Tag="{x:Static vm:CommandDemo.Minimal}"
+                           HorizontalAlignment="Center" Content="{DynamicResource GalleryText.CommandMinimal}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var palette = new AlderCommand
+        {
+            Header = issueContext, Size = AlderSize.Large, ShowDismissButton = false,
+            Groups = [new AlderCommandGroup { Items = issueActions }]
+        };
+        await palette.ShowAsync(trigger);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSplit" Title="{DynamicResource GalleryText.CommandSplitView}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton Variant="Outline" Foreground="{DynamicResource AlderInk}"
+                           Command="{CompiledBinding OpenPaletteCommand}" CommandParameter="{CompiledBinding $self}" Tag="{x:Static vm:CommandDemo.Split}"
+                           HorizontalAlignment="Center" Content="{DynamicResource GalleryText.CommandSplitView}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var palette = new AlderCommand
+        {
+            Groups = components, Size = AlderSize.Large, ShowDismissButton = false,
+            PreviewTemplate = new FuncDataTemplate<AlderCommandItem>((item, _) => CreateComponentPreview(item!))
+        };
+        await palette.ShowAsync(trigger);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSearchTerms" Title="{DynamicResource GalleryText.CommandMultipleTerms}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton Variant="Outline" Foreground="{DynamicResource AlderInk}"
+                           Command="{CompiledBinding OpenPaletteCommand}" CommandParameter="{CompiledBinding $self}" Tag="{x:Static vm:CommandDemo.SearchTerms}"
+                           HorizontalAlignment="Center" Content="{DynamicResource GalleryText.CommandMultipleTerms}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var palette = new AlderCommand
+        {
+            Groups = searchGroups, Size = AlderSize.Large, ShowDismissButton = false,
+            SearchFooter = categoryTags, Footer = keyboardHints
+        };
+        await palette.ShowAsync(trigger);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleInline" Title="{DynamicResource GalleryText.CommandInline}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderCommand Groups="{CompiledBinding Groups}">
+          <alder:AlderCommand.Footer>
+            <alder:AlderContentControl Content="" ContentTemplate="{StaticResource CommandKeyboardHintsTemplate}" />
+          </alder:AlderCommand.Footer>
+        </alder:AlderCommand>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.Feedback>
+        <alder:AlderTextBlock Text="{CompiledBinding Status}" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}"
+                   IsVisible="{CompiledBinding Status, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}"
+                   AutomationProperties.LiveSetting="Polite" />
+      </gallery:ExampleCard.Feedback>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var palette = new AlderCommand
+        {
+            Groups = [
+                new AlderCommandGroup
+                {
+                    Heading = "Workspace",
+                    Items = [new AlderCommandItem { Label = "New note", Command = createNote }]
+                }
+            ]
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

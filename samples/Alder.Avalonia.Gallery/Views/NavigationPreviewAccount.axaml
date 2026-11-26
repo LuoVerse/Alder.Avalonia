@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.NavigationPreviewAccount"
+             x:Name="Account" x:DataType="vm:NavigationPreview">
+  <UserControl.Resources>
+    <RadialGradientBrush x:Key="PreviewAccountAvatarBrush" Center="68%,75%" GradientOrigin="71%,76%"
+                         RadiusX="78%" RadiusY="78%">
+      <GradientStop Color="#277EA2" Offset="0" />
+      <GradientStop Color="#428FB5" Offset="0.25" />
+      <GradientStop Color="#63CAAA" Offset="0.54" />
+      <GradientStop Color="#A9EAC5" Offset="0.80" />
+      <GradientStop Color="#CBF0D7" Offset="1" />
+    </RadialGradientBrush>
+    <DataTemplate x:Key="PreviewAccountAvatar" x:DataType="vm:NavigationPreview">
+      <Grid>
+        <Ellipse Fill="{StaticResource PreviewAccountAvatarBrush}" IsVisible="{Binding AccountUsesGradient}" />
+        <alder:AlderAvatar Size="Small" MinWidth="0" MinHeight="0" Variant="Soft" Color="Success" Fallback="{Binding AccountMark}"
+                           IsVisible="{Binding !AccountUsesGradient}" />
+      </Grid>
+    </DataTemplate>
+  </UserControl.Resources>
+  <alder:AlderUserMenu x:Name="AccountTrigger" HorizontalAlignment="Stretch"
+                      Title="{Binding AccountDisplayName}" TriggerTitle="{Binding Account}" Description="{Binding AccountEmail}"
+                      Initials="{Binding AccountMark}" AvatarData="{Binding}" AvatarTemplate="{StaticResource PreviewAccountAvatar}"
+                      ShowAvatarInMenu="{Binding !AccountInNavbarOnly}" MenuWidth="{Binding AccountMenuWidth}"
+                      ShowLabel="{Binding #Account.ShowLabel}" ShowThemeSwitcher="{Binding #Account.ShowThemeSwitcher}"
+                      ShowLogOut="True">
+    <alder:AlderUserMenu.Styles>
+      <Style Selector=":is(MenuItem)">
+        <Setter Property="FontWeight" Value="Normal" />
+      </Style>
+    </alder:AlderUserMenu.Styles>
+  </alder:AlderUserMenu>
+</UserControl>

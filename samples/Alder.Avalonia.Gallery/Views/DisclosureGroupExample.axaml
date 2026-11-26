@@ -1,0 +1,232 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.DisclosureGroupExample" x:DataType="vm:DisclosureGroupViewModel" FontFamily="fonts:Inter#Inter">
+  <Design.DataContext><vm:DisclosureGroupViewModel /></Design.DataContext>
+  <UserControl.Resources>
+    <ControlTheme x:Key="GhostDisclosureRow" TargetType="ToggleButton" BasedOn="{StaticResource AlderDisclosureTriggerTheme}">
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+      <Style Selector="^:pointerover:not(:disabled), ^:pressed:not(:disabled)">
+        <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+      </Style>
+    </ControlTheme>
+    <ControlTheme x:Key="SelectableDisclosureRow" TargetType="ToggleButton" BasedOn="{StaticResource GhostDisclosureRow}">
+      <Style Selector="^:checked">
+        <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+        <Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" />
+      </Style>
+      <Style Selector="^:checked:not(:disabled):pointerover, ^:checked:not(:disabled):pressed">
+        <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+      </Style>
+    </ControlTheme>
+  </UserControl.Resources>
+  <UserControl.Styles>
+    <Style Selector="alder|AlderDisclosure"><Setter Property="Foreground" Value="{DynamicResource AlderMuted}" /></Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderDisclosureGroup x:Name="DefaultGroup" DefaultExpandedKeys="preview">
+          <alder:AlderDisclosure Key="preview" TriggerTheme="{StaticResource SelectableDisclosureRow}" Padding="16,12"
+                            Icon="{StaticResource AlderIconGlobe}" Header="{DynamicResource GalleryText.DisclosureDesktopPreview}"
+                            Content="{DynamicResource GalleryText.DisclosureDesktopBody}" />
+          <Border Height="1" Margin="0,8" Background="{DynamicResource AlderSeparator}" IsHitTestVisible="False" />
+          <alder:AlderDisclosure Key="notes" TriggerTheme="{StaticResource SelectableDisclosureRow}" Padding="16,12"
+                            Icon="{StaticResource AlderIconBookmark}" Header="{DynamicResource GalleryText.DisclosureReleaseNotes}"
+                            Content="{DynamicResource GalleryText.DisclosureReleaseBody}" />
+        </alder:AlderDisclosureGroup>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var disclosureGroup = new AlderDisclosureGroup { DefaultExpandedKeys = ["preview"] };
+
+        var disclosure1 = new AlderDisclosure
+        {
+            Key = "preview",
+            TriggerTheme = (ControlTheme)this.FindResource("SelectableDisclosureRow")!,
+            Padding = new Thickness(16, 12),
+            Icon = (Geometry)this.FindResource("AlderIconGlobe")!,
+            Header = "Desktop preview",
+            Content = "Open the Gallery to try the controls with a mouse or keyboard.",
+        };
+        disclosureGroup.Items.Add(disclosure1);
+
+        var disclosure2 = new AlderDisclosure
+        {
+            Key = "notes",
+            TriggerTheme = (ControlTheme)this.FindResource("SelectableDisclosureRow")!,
+            Padding = new Thickness(16, 12),
+            Icon = (Geometry)this.FindResource("AlderIconBookmark")!,
+            Header = "Release notes",
+            Content = "This release includes localized examples and support for right-to-left layouts.",
+        };
+        disclosureGroup.Items.Add(disclosure2);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <WrapPanel ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Size="Small" Variant="Secondary" Command="{Binding Previous}" Content="{DynamicResource GalleryText.Previous}" />
+            <alder:AlderButton Size="Small" Variant="Secondary" Command="{Binding Next}" Content="{DynamicResource GalleryText.Next}" />
+            <alder:AlderButton Size="Small" Variant="Ghost" Command="{Binding CollapseAll}" Content="{DynamicResource GalleryText.DisclosureCollapseAll}" />
+            <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding Reset}" />
+          </WrapPanel>
+          <alder:AlderDisclosureGroup x:Name="ControlledGroup" ExpandedKeys="{Binding ExpandedKeys}">
+            <alder:AlderDisclosure Key="preview" TriggerTheme="{StaticResource SelectableDisclosureRow}" Padding="16,12"
+                              Icon="{StaticResource AlderIconGlobe}" Header="{DynamicResource GalleryText.DisclosureDesktopPreview}"
+                              Content="{DynamicResource GalleryText.DisclosureDesktopBody}" />
+            <Border Height="1" Margin="0,8" Background="{DynamicResource AlderSeparator}" IsHitTestVisible="False" />
+            <alder:AlderDisclosure Key="notes" TriggerTheme="{StaticResource SelectableDisclosureRow}" Padding="16,12"
+                              Icon="{StaticResource AlderIconBookmark}" Header="{DynamicResource GalleryText.DisclosureReleaseNotes}"
+                              Content="{DynamicResource GalleryText.DisclosureReleaseBody}" />
+          </alder:AlderDisclosureGroup>
+          <alder:AlderTextBlock Classes="detail" Text="{Binding ExpandedSummary}" AutomationProperties.LiveSetting="Polite" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var disclosureGroup = new AlderDisclosureGroup();
+        disclosureGroup.Bind(AlderDisclosureGroup.ExpandedKeysProperty, CompiledBinding.Create((DisclosureGroupViewModel model) => model.ExpandedKeys));
+
+        var disclosure1 = new AlderDisclosure
+        {
+            Key = "preview",
+            TriggerTheme = (ControlTheme)this.FindResource("SelectableDisclosureRow")!,
+            Padding = new Thickness(16, 12),
+            Icon = (Geometry)this.FindResource("AlderIconGlobe")!,
+            Header = "Desktop preview",
+            Content = "Open the Gallery to try the controls with a mouse or keyboard.",
+        };
+        disclosureGroup.Items.Add(disclosure1);
+
+        var disclosure2 = new AlderDisclosure
+        {
+            Key = "notes",
+            TriggerTheme = (ControlTheme)this.FindResource("SelectableDisclosureRow")!,
+            Padding = new Thickness(16, 12),
+            Icon = (Geometry)this.FindResource("AlderIconBookmark")!,
+            Header = "Release notes",
+            Content = "This release includes localized examples and support for right-to-left layouts.",
+        };
+        disclosureGroup.Items.Add(disclosure2);
+
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((DisclosureGroupViewModel model) => model.Reset));
+        var preview = new StackPanel { Spacing = 8, Children = { disclosureGroup, reset } };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleAccordionMultiple" Title="{DynamicResource GalleryText.AccordionMultiple}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderDisclosureGroup x:Name="MultipleGroup" AllowsMultipleExpanded="True"
+                               Background="{DynamicResource AlderSurface}" Padding="8" CornerRadius="12">
+          <alder:AlderDisclosure IsExpanded="True" TriggerTheme="{StaticResource GhostDisclosureRow}" Padding="16,4,16,12"
+                            Header="{DynamicResource GalleryText.DisclosureBilling}" Content="{DynamicResource GalleryText.DisclosureBillingBody}" />
+          <Border Height="1" Background="{DynamicResource AlderSeparator}" IsHitTestVisible="False" />
+          <alder:AlderDisclosure IsExpanded="True" TriggerTheme="{StaticResource GhostDisclosureRow}" Padding="16,4,16,12"
+                            Header="{DynamicResource GalleryText.AccordionSupport}" Content="{DynamicResource GalleryText.DisclosureSupportBody}" />
+        </alder:AlderDisclosureGroup>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var disclosureGroup = new AlderDisclosureGroup
+        {
+            AllowsMultipleExpanded = true,
+            Background = (IBrush)this.FindResource("AlderSurface")!,
+            Padding = new Thickness(8),
+            CornerRadius = new CornerRadius(12),
+        };
+
+        var disclosure1 = new AlderDisclosure
+        {
+            IsExpanded = true,
+            TriggerTheme = (ControlTheme)this.FindResource("GhostDisclosureRow")!,
+            Padding = new Thickness(16, 4, 16, 12),
+            Header = "Billing",
+            Content = "View your invoices and update your billing details.",
+        };
+        disclosureGroup.Items.Add(disclosure1);
+
+        var disclosure2 = new AlderDisclosure
+        {
+            IsExpanded = true,
+            TriggerTheme = (ControlTheme)this.FindResource("GhostDisclosureRow")!,
+            Padding = new Thickness(16, 4, 16, 12),
+            Header = "Support",
+            Content = "Send the support team your account details so they can help with your request.",
+        };
+        disclosureGroup.Items.Add(disclosure2);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustomStyles" Title="{DynamicResource GalleryText.CustomStyles}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderDisclosureGroup Background="{DynamicResource AlderSurfaceSecondary}" Padding="8" CornerRadius="12">
+          <alder:AlderDisclosure TriggerTheme="{StaticResource GhostDisclosureRow}" Padding="8"
+                            Header="{DynamicResource GalleryText.DisclosureBilling}" Content="{DynamicResource GalleryText.DisclosureBillingBody}" />
+          <Border Height="1" Margin="0,4" Background="{DynamicResource AlderSeparator}" IsHitTestVisible="False" />
+          <alder:AlderDisclosure TriggerTheme="{StaticResource GhostDisclosureRow}" Padding="8"
+                            Header="{DynamicResource GalleryText.AccordionSupport}" Content="{DynamicResource GalleryText.DisclosureSupportBody}"
+                            IndicatorIcon="{StaticResource AlderIconPlus}" ExpandedIndicatorIcon="{StaticResource AlderIconMinus}"
+                            IndicatorRotation="0" />
+        </alder:AlderDisclosureGroup>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var disclosureGroup = new AlderDisclosureGroup
+        {
+            Background = (IBrush)this.FindResource("AlderSurfaceSecondary")!,
+            Padding = new Thickness(8),
+            CornerRadius = new CornerRadius(12),
+        };
+
+        var disclosure1 = new AlderDisclosure
+        {
+            TriggerTheme = (ControlTheme)this.FindResource("GhostDisclosureRow")!,
+            Padding = new Thickness(8),
+            Header = "Billing",
+            Content = "View your invoices and update your billing details.",
+        };
+        disclosureGroup.Items.Add(disclosure1);
+
+        var disclosure2 = new AlderDisclosure
+        {
+            TriggerTheme = (ControlTheme)this.FindResource("GhostDisclosureRow")!,
+            Padding = new Thickness(8),
+            Header = "Support",
+            Content = "Send the support team your account details so they can help with your request.",
+            IndicatorIcon = (Geometry)this.FindResource("AlderIconPlus")!,
+            ExpandedIndicatorIcon = (Geometry)this.FindResource("AlderIconMinus")!,
+            IndicatorRotation = 0,
+        };
+        disclosureGroup.Items.Add(disclosure2);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabledState" Title="{DynamicResource GalleryText.DisabledState}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderDisclosureGroup x:Name="DisabledGroup" IsEnabled="False">
+          <alder:AlderDisclosure TriggerTheme="{StaticResource SelectableDisclosureRow}"
+                            Header="{DynamicResource GalleryText.DisclosureDesktopPreview}" Content="{DynamicResource GalleryText.DisclosureDesktopBody}" />
+          <alder:AlderDisclosure TriggerTheme="{StaticResource SelectableDisclosureRow}"
+                            Header="{DynamicResource GalleryText.DisclosureReleaseNotes}" Content="{DynamicResource GalleryText.DisclosureReleaseBody}" />
+        </alder:AlderDisclosureGroup>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var disclosureGroup = new AlderDisclosureGroup { IsEnabled = false };
+
+        var disclosure1 = new AlderDisclosure
+        {
+            TriggerTheme = (ControlTheme)this.FindResource("SelectableDisclosureRow")!,
+            Header = "Desktop preview",
+            Content = "Open the Gallery to try the controls with a mouse or keyboard.",
+        };
+        disclosureGroup.Items.Add(disclosure1);
+
+        var disclosure2 = new AlderDisclosure
+        {
+            TriggerTheme = (ControlTheme)this.FindResource("SelectableDisclosureRow")!,
+            Header = "Release notes",
+            Content = "This release includes localized examples and support for right-to-left layouts.",
+        };
+        disclosureGroup.Items.Add(disclosure2);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

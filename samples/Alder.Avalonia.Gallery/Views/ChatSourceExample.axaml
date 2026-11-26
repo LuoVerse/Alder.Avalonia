@@ -1,0 +1,209 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" x:Class="Alder.Avalonia.Gallery.Views.ChatSourceExample" x:DataType="vm:AiExampleViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="CitationPreview" x:DataType="vm:AiCitation">
+      <a:AlderHoverCard Theme="{StaticResource AlderChatSourcePreviewTheme}" PreviewName="{CompiledBinding Title}">
+        <a:AlderHoverCard.Trigger>
+          <a:AlderChatSource Content="{CompiledBinding Title}" Logo="{CompiledBinding Logo}"
+                             Command="{CompiledBinding Open}" CommandParameter="{CompiledBinding Target}" />
+        </a:AlderHoverCard.Trigger>
+        <a:AlderButton Theme="{StaticResource AlderChatSourcePreviewLinkTheme}" AutomationProperties.Name="{CompiledBinding Title}"
+                       Command="{CompiledBinding Open}" CommandParameter="{CompiledBinding Target}">
+          <StackPanel Spacing="6">
+            <Grid ColumnDefinitions="16,*" ColumnSpacing="6">
+              <a:AlderImage Source="{CompiledBinding Logo}" Width="16" Height="16" VerticalAlignment="Center" HorizontalAlignment="Center" />
+              <a:AlderTextBlock Grid.Column="1" Text="{CompiledBinding Domain}" FontSize="14" LineHeight="20" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+            </Grid>
+            <a:AlderTextBlock Text="{CompiledBinding Title}" FontSize="14" LineHeight="20" FontWeight="Medium" TextWrapping="Wrap" />
+          </StackPanel>
+        </a:AlderButton>
+      </a:AlderHoverCard>
+    </DataTemplate>
+  </UserControl.Resources>
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleDefault" Title="{DynamicResource GalleryText.AiDefault}">
+      <g:ExampleCard.Preview>
+        <Border Padding="22,24" MinHeight="92">
+          <WrapPanel ItemSpacing="8" LineSpacing="8" VerticalAlignment="Center">
+            <a:AlderContentControl Content="{CompiledBinding Citations[0]}" ContentTemplate="{StaticResource CitationPreview}" />
+            <a:AlderChatSource Classes="document" Content="Q3-launch-brief.pdf" Icon="{DynamicResource AlderAiFile}" />
+          </WrapPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel();
+        var citation = model.Citations[0];
+        var link = new AlderChatSource { Content = citation.Title, Logo = citation.Logo,
+            Command = citation.Open, CommandParameter = citation.Target };
+        var document = new AlderChatSource { Content = "Q3-launch-brief.pdf", Classes = { "document" } };
+        document[!AlderChatSource.IconProperty] = new DynamicResourceExtension("AlderAiFile");
+        var items = new WrapPanel { ItemSpacing = 8, LineSpacing = 8, VerticalAlignment = VerticalAlignment.Center,
+            Children = { link, document } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGrouped" Title="{DynamicResource GalleryText.AiVariantGrouped}">
+      <g:ExampleCard.Preview>
+        <Border Padding="22,24" MinHeight="92">
+          <a:AlderDisclosure Theme="{StaticResource AlderChatSourcesTheme}" AutomationProperties.Name="{DynamicResource GalleryText.AiThreeSources}">
+            <a:AlderDisclosure.Header>
+              <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Panel Width="44" Height="20">
+                  <Border Width="20" Height="20" CornerRadius="10" BorderThickness="1.5" BorderBrush="{DynamicResource AlderSurface}" Background="{DynamicResource AlderSurface}" HorizontalAlignment="Left" ZIndex="2">
+                    <a:AlderImage Source="{CompiledBinding Citations[0].Logo}" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Border>
+                  <Border Width="20" Height="20" CornerRadius="10" BorderThickness="1.5" BorderBrush="{DynamicResource AlderSurface}" Background="{DynamicResource AlderSurface}" HorizontalAlignment="Center" ZIndex="1">
+                    <a:AlderImage Source="{CompiledBinding Citations[1].Logo}" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Border>
+                  <Border Width="20" Height="20" CornerRadius="10" BorderThickness="1.5" BorderBrush="{DynamicResource AlderSurface}" Background="{DynamicResource AlderSurface}" HorizontalAlignment="Right">
+                    <a:AlderImage Source="{CompiledBinding Citations[2].Logo}" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Border>
+                </Panel>
+                <a:AlderTextBlock Text="{DynamicResource GalleryText.AiThreeSources}" FontSize="12" LineHeight="16"
+                                  VerticalAlignment="Center" />
+              </StackPanel>
+            </a:AlderDisclosure.Header>
+            <WrapPanel ItemSpacing="8" LineSpacing="8">
+              <a:AlderContentControl Content="{CompiledBinding Citations[0]}" ContentTemplate="{StaticResource CitationPreview}" />
+              <a:AlderContentControl Content="{CompiledBinding Citations[1]}" ContentTemplate="{StaticResource CitationPreview}" />
+              <a:AlderContentControl Content="{CompiledBinding Citations[2]}" ContentTemplate="{StaticResource CitationPreview}" />
+            </WrapPanel>
+          </a:AlderDisclosure>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel();
+        var panel = new WrapPanel { ItemSpacing = 8, LineSpacing = 8 };
+        var logos = new Panel { Width = 44, Height = 20 };
+        var alignments = new[] { HorizontalAlignment.Left, HorizontalAlignment.Center, HorizontalAlignment.Right };
+        for (int i = 0; i < 3; i++)
+        {
+            var citation = model.Citations[i];
+            panel.Children.Add(new AlderChatSource
+            {
+                Content = citation.Title, Logo = citation.Logo, Command = citation.Open, CommandParameter = citation.Target
+            });
+            var tile = new Border
+            {
+                Width = 20, Height = 20, CornerRadius = new CornerRadius(10), BorderThickness = new Thickness(1.5),
+                HorizontalAlignment = alignments[i], ZIndex = 2 - i, Child = new AlderImage { Source = citation.Logo, Width = 16, Height = 16, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center }
+            };
+            tile[!Border.BorderBrushProperty] = new DynamicResourceExtension("AlderSurface");
+            tile[!Border.BackgroundProperty] = new DynamicResourceExtension("AlderSurface");
+            logos.Children.Add(tile);
+        }
+        var label = new AlderTextBlock { FontSize = 12, LineHeight = 16, VerticalAlignment = VerticalAlignment.Center };
+        label[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.AiThreeSources");
+        var group = new AlderDisclosure
+        {
+            Header = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, Children = { logos, label } },
+            Content = panel
+        };
+        group[!StyledElement.ThemeProperty] = new DynamicResourceExtension("AlderChatSourcesTheme");
+        group[!AutomationProperties.NameProperty] = new DynamicResourceExtension("GalleryText.AiThreeSources");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleMaxVisible" Title="{DynamicResource GalleryText.AiVariantMaxVisible}">
+      <g:ExampleCard.Preview>
+        <Border Padding="22,24" MinHeight="92">
+          <WrapPanel ItemSpacing="8" LineSpacing="8">
+            <a:AlderContentControl Content="{CompiledBinding Citations[0]}" ContentTemplate="{StaticResource CitationPreview}" />
+            <a:AlderContentControl Content="{CompiledBinding Citations[1]}" ContentTemplate="{StaticResource CitationPreview}" />
+            <a:AlderContentControl Content="{CompiledBinding Citations[2]}" ContentTemplate="{StaticResource CitationPreview}" />
+            <a:AlderContentControl Content="{CompiledBinding Citations[3]}" ContentTemplate="{StaticResource CitationPreview}" IsVisible="{CompiledBinding SourcesExpanded}" />
+            <a:AlderContentControl Content="{CompiledBinding Citations[4]}" ContentTemplate="{StaticResource CitationPreview}" IsVisible="{CompiledBinding SourcesExpanded}" />
+            <a:AlderToggleButton Name="SourcesOverflow" Theme="{StaticResource AlderChatSourcesToggleTheme}"
+                                 IsChecked="{CompiledBinding SourcesExpanded, Mode=TwoWay}">
+              <a:AlderToggleButton.Styles>
+                <Style Selector="a|AlderToggleButton">
+                  <Setter Property="Content" Value="{DynamicResource GalleryText.AiTwoMore}" />
+                  <Setter Property="AutomationProperties.Name" Value="{DynamicResource GalleryText.AiTwoMoreSources}" />
+                </Style>
+                <Style Selector="a|AlderToggleButton:checked">
+                  <Setter Property="Content" Value="{DynamicResource GalleryText.AiShowLess}" />
+                  <Setter Property="AutomationProperties.Name" Value="{DynamicResource GalleryText.AiShowLess}" />
+                </Style>
+              </a:AlderToggleButton.Styles>
+            </a:AlderToggleButton>
+          </WrapPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel();
+        var panel = new WrapPanel { ItemSpacing = 8, LineSpacing = 8 };
+        for (int i = 0; i < model.Citations.Length; i++)
+        {
+            var citation = model.Citations[i];
+            var chip = new AlderChatSource
+            {
+                Content = citation.Title, Logo = citation.Logo, Command = citation.Open, CommandParameter = citation.Target
+            };
+            if (i >= 3)
+                chip.Bind(Visual.IsVisibleProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.SourcesExpanded, source: model));
+            panel.Children.Add(chip);
+        }
+        var more = new AlderToggleButton();
+        more[!StyledElement.ThemeProperty] = new DynamicResourceExtension("AlderChatSourcesToggleTheme");
+        more.Bind(ToggleButton.IsCheckedProperty,
+            CompiledBinding.Create((AiExampleViewModel vm) => vm.SourcesExpanded, source: model, mode: BindingMode.TwoWay));
+        void UpdateLabel()
+        {
+            bool expanded = more.IsChecked == true;
+            more[!ContentControl.ContentProperty] = new DynamicResourceExtension(expanded ? "GalleryText.AiShowLess" : "GalleryText.AiTwoMore");
+            more[!AutomationProperties.NameProperty] = new DynamicResourceExtension(expanded ? "GalleryText.AiShowLess" : "GalleryText.AiTwoMoreSources");
+        }
+        more.IsCheckedChanged += (_, _) => UpdateLabel();
+        UpdateLabel();
+        panel.Children.Add(more);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleComposable" Title="{DynamicResource GalleryText.AiVariantComposable}">
+      <g:ExampleCard.Preview>
+        <Border Padding="22,24" MinHeight="92">
+          <a:AlderHoverCard Theme="{StaticResource AlderChatSourcePreviewTheme}" PreviewName="{CompiledBinding AvaloniaDocsCitation.Title}">
+            <a:AlderHoverCard.Trigger>
+              <a:AlderChatSource Content="{CompiledBinding AvaloniaDocsCitation.Title}" Logo="{CompiledBinding AvaloniaDocsCitation.Logo}"
+                                 Command="{CompiledBinding AvaloniaDocsCitation.Open}" CommandParameter="{CompiledBinding AvaloniaDocsCitation.Target}" />
+            </a:AlderHoverCard.Trigger>
+            <a:AlderButton Theme="{StaticResource AlderChatSourcePreviewLinkTheme}" AutomationProperties.Name="{CompiledBinding AvaloniaDocsCitation.Title}"
+                           Command="{CompiledBinding AvaloniaDocsCitation.Open}" CommandParameter="{CompiledBinding AvaloniaDocsCitation.Target}">
+              <StackPanel Spacing="6">
+                <Grid ColumnDefinitions="16,*" ColumnSpacing="6">
+                  <a:AlderImage Source="{CompiledBinding AvaloniaDocsCitation.Logo}" Width="16" Height="16" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                  <a:AlderTextBlock Grid.Column="1" Text="{CompiledBinding AvaloniaDocsCitation.Domain}" FontSize="14" LineHeight="20" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                </Grid>
+                <a:AlderTextBlock Text="{CompiledBinding AvaloniaDocsCitation.Title}" FontSize="14" LineHeight="20" FontWeight="Medium" />
+                <a:AlderTextBlock Text="{DynamicResource GalleryText.AiAvaloniaDocsDescription}" Foreground="{DynamicResource AlderMuted}"
+                                  FontSize="12" LineHeight="16" TextWrapping="Wrap" />
+              </StackPanel>
+            </a:AlderButton>
+          </a:AlderHoverCard>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel();
+        var citation = model.AvaloniaDocsCitation;
+        var source = new AlderChatSource { Content = citation.Title, Logo = citation.Logo,
+            Command = citation.Open, CommandParameter = citation.Target };
+        var header = new Grid { ColumnDefinitions = new ColumnDefinitions("16,*"), ColumnSpacing = 6 };
+        var domain = new AlderTextBlock { Text = citation.Domain, FontSize = 14, LineHeight = 20, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
+        Grid.SetColumn(domain, 1);
+        header.Children.Add(new AlderImage { Source = citation.Logo, Width = 16, Height = 16, VerticalAlignment = VerticalAlignment.Center });
+        header.Children.Add(domain);
+        var title = new AlderTextBlock { Text = citation.Title, FontSize = 14, LineHeight = 20, FontWeight = FontWeight.Medium };
+        var description = new AlderTextBlock { FontSize = 12, LineHeight = 16, TextWrapping = TextWrapping.Wrap };
+        description[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.AiAvaloniaDocsDescription");
+        description[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        var body = new AlderButton
+        {
+            Command = citation.Open, CommandParameter = citation.Target,
+            Content = new StackPanel { Spacing = 6, Children = { header, title, description } }
+        };
+        AutomationProperties.SetName(body, citation.Title);
+        body[!StyledElement.ThemeProperty] = new DynamicResourceExtension("AlderChatSourcePreviewLinkTheme");
+        var preview = new AlderHoverCard { Trigger = source, Content = body, PreviewName = citation.Title };
+        preview[!StyledElement.ThemeProperty] = new DynamicResourceExtension("AlderChatSourcePreviewTheme");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

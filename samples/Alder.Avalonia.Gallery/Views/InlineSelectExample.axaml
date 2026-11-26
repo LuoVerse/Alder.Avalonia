@@ -1,0 +1,81 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.InlineSelectExample" x:DataType="vm:InlineSelectViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="InlineSelectTeamItem" x:DataType="vm:InlineSelectTeam">
+      <Grid ColumnDefinitions="20,*" ColumnSpacing="8" VerticalAlignment="Center">
+        <Border Width="20" Height="20" CornerRadius="4" Background="{CompiledBinding BadgeBrush}">
+          <alder:AlderTextBlock Text="{CompiledBinding Initials}" FontSize="10" FontWeight="Bold" Foreground="White"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" AutomationProperties.AccessibilityView="Raw" />
+        </Border>
+        <alder:AlderTextBlock Grid.Column="1" Text="{CompiledBinding Title}" LineHeight="20" TextTrimming="CharacterEllipsis"
+                   VerticalAlignment="Center" />
+      </Grid>
+    </DataTemplate>
+  </UserControl.Resources>
+  <StackPanel x:Name="Examples" Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <Border MinHeight="320">
+          <alder:AlderInlineSelect HorizontalAlignment="Center" ItemsSource="{CompiledBinding Languages}"
+                                   TextSelector="{CompiledBinding ChoiceText}" SelectedIndex="0" DropDownWidth="140" MaxDropDownHeight="148"
+                                   AutomationProperties.Name="{DynamicResource GalleryText.FormDisplayLanguage}" />
+        </Border>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleTeam" Title="{DynamicResource GalleryText.FormTeamSwitcher}">
+      <g:ExampleCard.Preview>
+        <Border MinHeight="320">
+          <Grid ColumnDefinitions="24,Auto,*" ColumnSpacing="10" MinHeight="28"
+                HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border Width="16" Height="16" CornerRadius="4" Background="{DynamicResource AlderInk}"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" AutomationProperties.AccessibilityView="Raw">
+              <alder:AlderTextBlock Text="A" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource AlderSurface}"
+                         HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <alder:AlderTextBlock Grid.Column="1" Text="/" FontSize="18" LineHeight="28" FontWeight="Light"
+                       Foreground="{DynamicResource AlderBorder}" VerticalAlignment="Center"
+                       AutomationProperties.AccessibilityView="Raw" />
+            <alder:AlderInlineSelect Grid.Column="2" ItemsSource="{CompiledBinding Teams}" SelectedIndex="0"
+                                     TextSelector="{CompiledBinding ChoiceText}" DropDownWidth="200"
+                                     ItemTemplate="{StaticResource InlineSelectTeamItem}"
+                                     SelectionTemplate="{StaticResource InlineSelectTeamItem}" FontWeight="Medium"
+                                     AutomationProperties.Name="{DynamicResource GalleryText.FormSelectTeam}" />
+          </Grid>
+        </Border>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SamplePlacement" Title="{DynamicResource GalleryText.InlineSelectPlacements}">
+      <g:ExampleCard.Preview>
+        <Border MinHeight="320">
+          <alder:AlderInlineSelect HorizontalAlignment="Center" ItemsSource="{CompiledBinding Placements}"
+                                   SelectedItem="{CompiledBinding SelectedPlacement, Mode=TwoWay}"
+                                   TextSelector="{CompiledBinding ChoiceText}" DropDownMinWidth="186" MaxDropDownHeight="148"
+                                   DropDownPlacement="{CompiledBinding SelectedPlacement?.Mode}"
+                                   AutomationProperties.Name="{DynamicResource GalleryText.FormPlacements}" />
+        </Border>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleMulti" Title="{DynamicResource GalleryText.InlineSelectMulti}">
+      <g:ExampleCard.Preview>
+        <Border MinHeight="320">
+          <alder:AlderInlineSelect HorizontalAlignment="Center" ItemsSource="{CompiledBinding Notifications}"
+                                   SelectedItems="{CompiledBinding SelectedNotifications}" TextSelector="{CompiledBinding ChoiceText}"
+                                   SelectionMode="Multiple" DropDownWidth="192"
+                                   AutomationProperties.Name="{DynamicResource GalleryText.InlineSelectNotifications}" />
+        </Border>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleIndicator" Title="{DynamicResource GalleryText.InlineSelectCustomIndicator}">
+      <g:ExampleCard.Preview>
+        <Border MinHeight="320">
+          <alder:AlderInlineSelect HorizontalAlignment="Center" ItemsSource="{CompiledBinding Roles}"
+                                   TextSelector="{CompiledBinding ChoiceText}" SelectedIndex="1" DropDownWidth="124"
+                                   Indicator="{DynamicResource AlderIconChevronRight}"
+                                   AutomationProperties.Name="{DynamicResource GalleryText.FormSelectRole}" />
+        </Border>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

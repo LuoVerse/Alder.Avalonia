@@ -1,0 +1,129 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:ti="using:Avalonia.Input.TextInput">
+  <ControlTheme x:Key="{x:Type alder:AlderInputOtp}" TargetType="alder:AlderInputOtp">
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="FlowDirection" Value="LeftToRight" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="FontSize" Value="18" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Cursor" Value="IBeam" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="ContextFlyout" Value="{DynamicResource AlderTextEditMenu}" />
+    <Setter Property="ti:TextInputOptions.ContentType" Value="Digits" />
+    <Setter Property="ti:TextInputOptions.ShowSuggestions" Value="False" />
+    <Setter Property="ti:TextInputOptions.IsSensitive" Value="True" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Background="Transparent">
+          <!-- The single editor owns the native selection, clipboard, IME and automation peer. -->
+          <TextPresenter Name="PART_TextPresenter" Opacity="0" IsHitTestVisible="False"
+                         Text="{TemplateBinding Text, Mode=TwoWay}" CaretIndex="{TemplateBinding CaretIndex}"
+                         SelectionStart="{TemplateBinding SelectionStart}" SelectionEnd="{TemplateBinding SelectionEnd}" />
+          <Grid Name="PART_Slots" ColumnSpacing="8" Height="40" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:disabled">
+      <Setter Property="Opacity" Value="0.5" />
+      <Setter Property="Cursor" Value="No" />
+    </Style>
+    <Style Selector="^[IsInvalid=True]"><Setter Property="alder:AlderLabel.IsInvalid" Value="True" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:InputOtpSlot}" TargetType="alder:InputOtpSlot">
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="SlotFace" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
+                  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+            <Panel>
+              <alder:AlderTextBlock Name="Glyph" Text="{TemplateBinding Glyph}" LineHeight="24" LetterSpacing="-0.27"
+                         RenderTransformOrigin="50%,100%" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              <Border Name="Caret" Width="2" Height="16" CornerRadius="1" Background="{DynamicResource AlderMuted}"
+                      IsVisible="False" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Panel>
+          </Border>
+          <alder:InputFocusRing Name="SlotRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ Border#SlotFace">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldShadow}" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.15" Easing="0.25,0.1,0.25,1" />
+          <BrushTransition Property="BorderBrush" Duration="0:0:0.15" Easing="0.25,0.1,0.25,1" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^ /template/ alder|InputFocusRing#SlotRing">
+      <Setter Property="BoxShadow" Value="0 0 0 0 #000485F7" />
+      <Setter Property="Transitions">
+        <Transitions><BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^:secondary">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+    <Style Selector="^:secondary /template/ Border#SlotFace"><Setter Property="BoxShadow" Value="none" /></Style>
+    <Style Selector="^:pointerover:not(:active):not(:filled):not(:invalid):not(:disabled) /template/ Border#SlotFace">
+      <Setter Property="Background" Value="{DynamicResource AlderInputHover}" />
+    </Style>
+    <Style Selector="^:secondary:pointerover:not(:active):not(:filled):not(:invalid):not(:disabled) /template/ Border#SlotFace">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
+    <Style Selector="^:filled"><Setter Property="Foreground" Value="{DynamicResource AlderInk}" /></Style>
+    <Style Selector="^:active /template/ alder|InputFocusRing#SlotRing">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" />
+    </Style>
+    <Style Selector="^:invalid /template/ alder|InputFocusRing#SlotRing">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldInvalidOutline}" />
+    </Style>
+    <Style Selector="^:invalid:active /template/ alder|InputFocusRing#SlotRing">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldInvalidRing}" />
+    </Style>
+    <Style Selector="^:active:not(:filled) /template/ Border#Caret"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:active[(alder|AlderMotion.Reduced)=False]:not(:filled) /template/ Border#Caret">
+      <Style.Animations>
+        <Animation Duration="0:0:1.2" IterationCount="Infinite" Easing="0,0,0.2,1">
+          <KeyFrame Cue="0%"><Setter Property="Opacity" Value="1" /></KeyFrame>
+          <KeyFrame Cue="20%"><Setter Property="Opacity" Value="0" /></KeyFrame>
+          <KeyFrame Cue="50%"><Setter Property="Opacity" Value="0" /></KeyFrame>
+          <KeyFrame Cue="70%"><Setter Property="Opacity" Value="1" /></KeyFrame>
+          <KeyFrame Cue="100%"><Setter Property="Opacity" Value="1" /></KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+    <Style Selector="^:filled[(alder|AlderMotion.Reduced)=False] /template/ TextBlock#Glyph">
+      <Style.Animations>
+        <Animation Duration="0:0:0.25" Easing="0.25,0.1,0.25,1">
+          <KeyFrame Cue="0%">
+            <Setter Property="Opacity" Value="0" />
+            <Setter Property="TranslateTransform.Y" Value="8" />
+            <Setter Property="ScaleTransform.ScaleX" Value="0.8" />
+            <Setter Property="ScaleTransform.ScaleY" Value="0.8" />
+          </KeyFrame>
+          <KeyFrame Cue="100%">
+            <Setter Property="Opacity" Value="1" />
+            <Setter Property="TranslateTransform.Y" Value="0" />
+            <Setter Property="ScaleTransform.ScaleX" Value="1" />
+            <Setter Property="ScaleTransform.ScaleY" Value="1" />
+          </KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#SlotFace,
+                     ^[(alder|AlderMotion.Reduced)=True] /template/ alder|InputFocusRing#SlotRing">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

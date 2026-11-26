@@ -1,0 +1,785 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" xmlns:c="using:Avalonia.Data.Converters"
+             x:Class="Alder.Avalonia.Gallery.Views.CardExample" x:DataType="vm:CardViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="CardPromotionTemplate" x:DataType="vm:CardViewModel">
+      <Grid>
+        <alder:AlderCard Classes="cardSpotlight">
+          <alder:AlderCard.Header>
+            <Border Classes="cardSpotlightImage" CornerRadius="16" ClipToBounds="True">
+              <alder:AlderImage Stretch="UniformToFill" Source="avares://Alder.Avalonia.Gallery/Assets/Card/cherries.jpeg" RenderTransform="scale(1.25)"
+                     AutomationProperties.Name="{DynamicResource GalleryText.CardCherriesAlt}" />
+            </Border>
+          </alder:AlderCard.Header>
+          <Grid RowDefinitions="*,Auto" RowSpacing="12">
+            <StackPanel Spacing="4">
+              <alder:AlderTextBlock Classes="cardSpotlightTitle" Text="{DynamicResource GalleryText.CardPromotionTitle}" LineHeight="24" TextWrapping="Wrap" FontWeight="Medium" AutomationProperties.HeadingLevel="3" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardPromotionDescription}" LineHeight="20" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" />
+            </StackPanel>
+            <Grid Grid.Row="1" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="8">
+              <StackPanel Classes="cardSpotlightCaption">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardSpots}" LineHeight="20" TextWrapping="Wrap" FontWeight="Medium" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardSubmission}" LineHeight="16" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+              </StackPanel>
+              <alder:AlderButton Classes="cardSpotlightAction" Content="{DynamicResource GalleryText.CardApply}" />
+            </Grid>
+          </Grid>
+        </alder:AlderCard>
+        <alder:AlderButton Theme="{StaticResource AlderCloseButtonTheme}" Margin="12" HorizontalAlignment="Right" VerticalAlignment="Top"
+                Cursor="Hand" AutomationProperties.Name="{DynamicResource GalleryText.CardCloseBanner}">
+          <alder:AlderPathIcon Data="{StaticResource AlderIconXmark}" Width="10" Height="10" Foreground="{DynamicResource AlderMuted}" />
+        </alder:AlderButton>
+      </Grid>
+    </DataTemplate>
+  </UserControl.Resources>
+  <UserControl.Styles>
+    <Style Selector="Border.cardPreview">
+      <Setter Property="TextElement.FontFamily" Value="fonts:Inter#Inter" />
+      <Setter Property="TextElement.Foreground" Value="{DynamicResource AlderInk}" />
+    </Style>
+    <Style Selector="Border.cardPreview alder|AlderButton">
+      <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="alder|AlderLink.cardLink /template/ Viewbox#LinkIconBox">
+      <Setter Property="Width" Value="8" />
+      <Setter Property="Height" Value="8" />
+      <Setter Property="Margin" Value="5,-5,0,0" />
+    </Style>
+    <Style Selector="alder|AlderButton.cardPhotoAction /template/ alder|ButtonTint#Tint">
+      <Setter Property="Background" Value="White" />
+    </Style>
+    <Style Selector="alder|AlderCard.cardSpotlight">
+      <Setter Property="Orientation" Value="Horizontal" />
+    </Style>
+    <Style Selector="Border.cardSpotlightImage">
+      <Setter Property="Width" Value="120" />
+      <Setter Property="Height" Value="120" />
+    </Style>
+    <Style Selector="TextBlock.cardSpotlightTitle">
+      <Setter Property="Margin" Value="0,0,32,0" />
+    </Style>
+    <Style Selector="alder|AlderButton.cardSpotlightAction">
+      <Setter Property="Grid.Column" Value="1" />
+      <Setter Property="HorizontalAlignment" Value="Right" />
+      <Setter Property="VerticalAlignment" Value="Bottom" />
+    </Style>
+    <Style Selector="alder|AlderCard.cardRobotSide">
+      <Setter Property="MinHeight" Value="376" />
+    </Style>
+    <Style Selector="alder|AlderCard.cardRobotFront">
+      <Setter Property="MinHeight" Value="350" />
+    </Style>
+    <Style Selector=":is(Control).cardImagesRight">
+      <Setter Property="Grid.Column" Value="1" />
+    </Style>
+    <Style Selector="Grid.cardThumbnails">
+      <Setter Property="Margin" Value="0,8" />
+    </Style>
+    <Style Selector="alder|AlderCard.cardCommunitySecond, alder|AlderButton.cardCompareAction">
+      <Setter Property="Grid.Column" Value="1" />
+    </Style>
+    <ContainerQuery Name="CardPreview" Query="max-width:643">
+      <Style Selector=":is(Control).cardImagesLeft, :is(Control).cardImagesRight">
+        <Setter Property="Grid.ColumnSpan" Value="2" />
+      </Style>
+      <Style Selector=":is(Control).cardImagesRight">
+        <Setter Property="Grid.Column" Value="0" />
+        <Setter Property="Grid.Row" Value="1" />
+        <Setter Property="Margin" Value="0,16,0,0" />
+      </Style>
+      <Style Selector="alder|AlderCard.cardRobotSide">
+        <Setter Property="MinHeight" Value="200" />
+      </Style>
+      <Style Selector="alder|AlderCard.cardRobotFront">
+        <Setter Property="MinHeight" Value="300" />
+      </Style>
+    </ContainerQuery>
+    <ContainerQuery Name="CardPreview" Query="max-width:535">
+      <Style Selector="alder|AlderCard.cardSpotlight">
+        <Setter Property="Orientation" Value="Vertical" />
+      </Style>
+      <Style Selector="Border.cardSpotlightImage">
+        <Setter Property="Width" Value="NaN" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Height" Value="140" />
+      </Style>
+      <Style Selector="TextBlock.cardSpotlightTitle">
+        <Setter Property="Margin" Value="0" />
+      </Style>
+      <Style Selector="StackPanel.cardSpotlightCaption">
+        <Setter Property="Grid.ColumnSpan" Value="2" />
+      </Style>
+      <Style Selector="alder|AlderButton.cardSpotlightAction">
+        <Setter Property="Grid.Column" Value="0" />
+        <Setter Property="Grid.Row" Value="1" />
+        <Setter Property="Grid.ColumnSpan" Value="2" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Margin" Value="0,12,0,0" />
+      </Style>
+      <Style Selector="alder|AlderCard.cardRobotFront">
+        <Setter Property="MinHeight" Value="250" />
+      </Style>
+      <Style Selector="alder|AlderCard.cardCommunity">
+        <Setter Property="Grid.ColumnSpan" Value="2" />
+      </Style>
+      <Style Selector="alder|AlderCard.cardCommunitySecond">
+        <Setter Property="Grid.Column" Value="0" />
+        <Setter Property="Grid.Row" Value="1" />
+        <Setter Property="Margin" Value="0,16,0,0" />
+      </Style>
+      <Style Selector=":is(Control).cardUpgradeAction">
+        <Setter Property="Grid.ColumnSpan" Value="2" />
+      </Style>
+      <Style Selector="alder|AlderButton.cardCompareAction">
+        <Setter Property="Grid.Column" Value="0" />
+        <Setter Property="Grid.Row" Value="1" />
+        <Setter Property="Margin" Value="0,8,0,0" />
+      </Style>
+    </ContainerQuery>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleBasic" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="cardPreview" Padding="8,12" MinHeight="180">
+          <alder:AlderCard MaxWidth="400" Title="{DynamicResource GalleryText.CardCreatorTitle}" Description="{DynamicResource GalleryText.CardCreatorDescription}">
+            <alder:AlderCard.Header>
+              <Grid Width="24" Height="24" HorizontalAlignment="Left" Margin="0,0,0,12">
+                <alder:AlderPathIcon Data="{StaticResource AlderIconCurrencyCircle}" Width="21" Height="21" Foreground="{DynamicResource AlderInk}" />
+              </Grid>
+            </alder:AlderCard.Header>
+            <alder:AlderCard.Footer>
+              <alder:AlderLink Classes="cardLink" Content="{DynamicResource GalleryText.CardCreatorHub}" Foreground="{DynamicResource AlderInk}" Height="20" UnderlineOffset="0" UnderlineThickness="1" Icon="{StaticResource AlderIconLinkExternal}" />
+            </alder:AlderCard.Footer>
+          </alder:AlderCard>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        Application.Current!.TryFindResource("AlderIconCurrencyCircle", out var coinIcon);
+        var creatorHub = new AlderLink
+        {
+            Content = "Creator Hub",
+            ShowExternalIcon = true,
+            Height = 20
+        };
+        creatorHub[!TemplatedControl.ForegroundProperty] = new DynamicResourceExtension("AlderInk");
+        var card = new AlderCard
+        {
+            MaxWidth = 400,
+            Title = "Become an Acme Creator!",
+            Description = "Visit the Acme Creator Hub to sign up today and start earning credits from your fans and followers.",
+            Header = new Grid
+            {
+                Width = 24,
+                Height = 24,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(0, 0, 0, 12),
+                Children = { new AlderPathIcon { Data = (Geometry?)coinIcon, Width = 21, Height = 21 } }
+            },
+            Footer = creatorHub
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.Variants}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="cardPreview" Padding="8,12" MinHeight="180">
+          <StackPanel MaxWidth="320" Spacing="16">
+            <alder:AlderCard Variant="Transparent" Title="{DynamicResource GalleryText.LayoutTransparent}" Description="{DynamicResource GalleryText.CardTransparentDescription}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardTransparentBody}" LineHeight="28" TextWrapping="Wrap" FontSize="16" Foreground="{DynamicResource AlderTertiaryInk}" />
+            </alder:AlderCard>
+            <alder:AlderCard Variant="Default" Title="{DynamicResource GalleryText.Default}" Description="{DynamicResource GalleryText.CardDefaultDescription}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardDefaultBody}" LineHeight="28" TextWrapping="Wrap" FontSize="16" Foreground="{DynamicResource AlderTertiaryInk}" />
+            </alder:AlderCard>
+            <alder:AlderCard Variant="Secondary" Title="{DynamicResource GalleryText.Secondary}" Description="{DynamicResource GalleryText.CardSecondaryDescription}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardSecondaryBody}" LineHeight="28" TextWrapping="Wrap" FontSize="16" Foreground="{DynamicResource AlderTertiaryInk}" />
+            </alder:AlderCard>
+            <alder:AlderCard Variant="Tertiary" Title="{DynamicResource GalleryText.Tertiary}" Description="{DynamicResource GalleryText.CardTertiaryDescription}">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardTertiaryBody}" LineHeight="28" TextWrapping="Wrap" FontSize="16" Foreground="{DynamicResource AlderTertiaryInk}" />
+            </alder:AlderCard>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        AlderCard MakeCard(SurfaceVariant variant, string title, string description, string body) => new()
+        {
+            Variant = variant,
+            Title = title,
+            Description = description,
+            Content = new AlderTextBlock { Text = body, FontSize = 16, LineHeight = 28, TextWrapping = TextWrapping.Wrap }
+        };
+
+        var cards = new StackPanel { MaxWidth = 320, Spacing = 16 };
+        cards.Children.Add(MakeCard(SurfaceVariant.Transparent, "Transparent",
+            "Minimal prominence with transparent background", "Use for less important content or nested cards"));
+        cards.Children.Add(MakeCard(SurfaceVariant.Default, "Default",
+            "Standard card appearance (bg-surface)", "The default card variant for most use cases"));
+        cards.Children.Add(MakeCard(SurfaceVariant.Secondary, "Secondary",
+            "Medium prominence (bg-surface-secondary)", "Use to draw moderate attention"));
+        cards.Children.Add(MakeCard(SurfaceVariant.Tertiary, "Tertiary",
+            "Higher prominence (bg-surface-tertiary)", "Use for primary or featured content"));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleHorizontal" Title="{DynamicResource GalleryText.LayoutHorizontal}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="cardPreview" Padding="8,12" MinHeight="180" Container.Name="CardPreview" Container.Sizing="Width">
+          <ContentPresenter ClipToBounds="False" Content="{CompiledBinding}" ContentTemplate="{StaticResource CardPromotionTemplate}"
+                          VerticalAlignment="Center" HorizontalContentAlignment="Stretch" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        using var stream = AssetLoader.Open(new Uri("avares://Alder.Avalonia.Gallery/Assets/Card/cherries.jpeg"));
+        var image = new AlderImage
+        {
+            Source = new Bitmap(stream),
+            Stretch = Stretch.UniformToFill,
+            RenderTransform = new ScaleTransform(1.25, 1.25)
+        };
+        var cover = new Border
+        {
+            Width = 120, Height = 120, CornerRadius = new CornerRadius(16),
+            ClipToBounds = true, Child = image
+        };
+        var footer = new DockPanel { LastChildFill = true };
+        var action = new AlderButton { Content = "Apply Now", VerticalAlignment = VerticalAlignment.Bottom };
+        DockPanel.SetDock(action, Dock.Right);
+        footer.Children.Add(action);
+        footer.Children.Add(new StackPanel
+        {
+            Children =
+            {
+                new AlderTextBlock { Text = "Only 10 spots", LineHeight = 20, FontWeight = FontWeight.Medium },
+                new AlderTextBlock { Text = "Submission ends Oct 10.", LineHeight = 16, FontSize = 12 }
+            }
+        });
+        var content = new DockPanel { LastChildFill = true };
+        DockPanel.SetDock(footer, Dock.Bottom);
+        content.Children.Add(footer);
+        content.Children.Add(new StackPanel
+        {
+            Spacing = 4,
+            Children =
+            {
+                new AlderTextBlock { Text = "Become an ACME Creator!", LineHeight = 24, FontWeight = FontWeight.Medium },
+                new AlderTextBlock
+                {
+                    Text = "Lorem ipsum dolor sit amet consectetur. Sed arcu donec id aliquam dolor sed amet faucibus etiam.",
+                    LineHeight = 20,
+                    TextWrapping = TextWrapping.Wrap
+                }
+            }
+        });
+        var card = new AlderCard { Orientation = Orientation.Horizontal, Header = cover, Content = content };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleAvatar" Title="{DynamicResource GalleryText.CardWithAvatar}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="cardPreview" Padding="8,12" MinHeight="180">
+          <WrapPanel HorizontalAlignment="Center" ItemSpacing="16" LineSpacing="16">
+            <alder:AlderCard Width="200" Spacing="8">
+              <alder:AlderCard.Header>
+                <Border Width="56" Height="56" HorizontalAlignment="Left" CornerRadius="16" ClipToBounds="True">
+                  <alder:AlderImage Stretch="UniformToFill" Source="avares://Alder.Avalonia.Gallery/Assets/Card/demo1.jpg" AutomationProperties.Name="{DynamicResource GalleryText.CardHackersAlt}" />
+                </Border>
+              </alder:AlderCard.Header>
+              <StackPanel>
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardHackers}" LineHeight="24" TextWrapping="Wrap" FontWeight="Medium" AutomationProperties.HeadingLevel="3" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardHackersMembers}" LineHeight="20" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" />
+              </StackPanel>
+              <alder:AlderCard.Footer>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <Border Width="20" Height="20" CornerRadius="10" ClipToBounds="True">
+                    <alder:AlderImage Stretch="UniformToFill" Source="avares://Alder.Avalonia.Gallery/Assets/Card/red.jpg"
+                           AutomationProperties.Name="{DynamicResource GalleryText.CardAuthorAlt}" />
+                  </Border>
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardByMartha}" LineHeight="16" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource AlderTertiaryInk}" VerticalAlignment="Center" />
+                </StackPanel>
+              </alder:AlderCard.Footer>
+            </alder:AlderCard>
+            <alder:AlderCard Width="200" Spacing="8">
+              <alder:AlderCard.Header>
+                <Border Width="56" Height="56" HorizontalAlignment="Left" CornerRadius="16" ClipToBounds="True">
+                  <alder:AlderImage Stretch="UniformToFill" Source="avares://Alder.Avalonia.Gallery/Assets/Card/demo2.jpg" AutomationProperties.Name="{DynamicResource GalleryText.CardBuildersAlt}" />
+                </Border>
+              </alder:AlderCard.Header>
+              <StackPanel>
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardBuilders}" LineHeight="24" TextWrapping="Wrap" FontWeight="Medium" AutomationProperties.HeadingLevel="3" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardBuildersMembers}" LineHeight="20" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" />
+              </StackPanel>
+              <alder:AlderCard.Footer>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <Border Width="20" Height="20" CornerRadius="10" ClipToBounds="True">
+                    <alder:AlderImage Stretch="UniformToFill" Source="avares://Alder.Avalonia.Gallery/Assets/Card/blue.jpg"
+                           AutomationProperties.Name="{DynamicResource GalleryText.CardAuthorAlt}" />
+                  </Border>
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardByJohn}" LineHeight="16" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource AlderTertiaryInk}" VerticalAlignment="Center" />
+                </StackPanel>
+              </alder:AlderCard.Footer>
+            </alder:AlderCard>
+          </WrapPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        AlderCard GroupCard(Bitmap cover, string name, string members, Bitmap avatar, string author)
+        {
+            return new AlderCard
+            {
+                Width = 200,
+                Spacing = 8,
+                Header = new Border
+                {
+                    Width = 56, Height = 56, CornerRadius = new CornerRadius(16),
+                    HorizontalAlignment = HorizontalAlignment.Left, ClipToBounds = true,
+                    Child = new AlderImage { Source = cover, Stretch = Stretch.UniformToFill }
+                },
+                Content = new StackPanel
+                {
+                    Children =
+                    {
+                        new AlderTextBlock { Text = name, FontWeight = FontWeight.Medium, LineHeight = 24 },
+                        new AlderTextBlock { Text = members, LineHeight = 20 }
+                    }
+                },
+                Footer = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal, Spacing = 8,
+                    Children =
+                    {
+                        new Border
+                        {
+                            Width = 20, Height = 20, CornerRadius = new CornerRadius(10),
+                            ClipToBounds = true,
+                            Child = new AlderImage { Source = avatar, Stretch = Stretch.UniformToFill }
+                        },
+                        new AlderTextBlock { Text = author, FontSize = 12, LineHeight = 16, VerticalAlignment = VerticalAlignment.Center }
+                    }
+                }
+            };
+        }
+        Bitmap LoadPhoto(string name)
+        {
+            using var stream = AssetLoader.Open(new Uri($"avares://Alder.Avalonia.Gallery/Assets/Card/{name}"));
+            return new Bitmap(stream);
+        }
+        var first = GroupCard(LoadPhoto("demo1.jpg"), "Indie Hackers", "148 members", LoadPhoto("red.jpg"), "By Martha");
+        var second = GroupCard(LoadPhoto("demo2.jpg"), "AI Builders", "362 members", LoadPhoto("blue.jpg"), "By John");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleImage" Title="{DynamicResource GalleryText.CardWithImages}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="cardPreview" Padding="8,12" MinHeight="180" Container.Name="CardPreview" Container.Sizing="Width">
+          <Border MaxWidth="672" Padding="16">
+            <StackPanel Spacing="16">
+              <ContentPresenter ClipToBounds="False" Content="{CompiledBinding}" ContentTemplate="{StaticResource CardPromotionTemplate}" HorizontalContentAlignment="Stretch" />
+              <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="16">
+                <StackPanel Classes="cardImagesLeft" Spacing="16">
+                  <Grid>
+                    <alder:AlderCard>
+                      <alder:AlderCard.Header>
+                        <Grid Width="32" Height="32" HorizontalAlignment="Left">
+                          <alder:AlderPathIcon Data="{StaticResource AlderIconCurrencyCircle}" Width="28" Height="28" Foreground="{DynamicResource AlderInk}" />
+                        </Grid>
+                      </alder:AlderCard.Header>
+                      <StackPanel Spacing="4">
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardPayment}" LineHeight="16" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource AlderMuted}" FontWeight="Medium" />
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardWithdraw}" LineHeight="24" Margin="0,0,32,0" TextWrapping="Wrap" FontSize="16" FontWeight="Medium" AutomationProperties.HeadingLevel="3" />
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardWallet}" LineHeight="20" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" />
+                      </StackPanel>
+                      <alder:AlderCard.Footer>
+                        <alder:AlderLink Classes="cardLink" Content="{DynamicResource GalleryText.CardSettings}" Foreground="{DynamicResource AlderInk}" Height="20" UnderlineOffset="0" UnderlineThickness="1" Icon="{StaticResource AlderIconLinkExternal}" />
+                      </alder:AlderCard.Footer>
+                    </alder:AlderCard>
+                    <alder:AlderButton Theme="{StaticResource AlderCloseButtonTheme}" Margin="12" HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Cursor="Hand" AutomationProperties.Name="{DynamicResource GalleryText.CardClosePayment}">
+                      <alder:AlderPathIcon Data="{StaticResource AlderIconXmark}" Width="10" Height="10" Foreground="{DynamicResource AlderMuted}" />
+                    </alder:AlderButton>
+                  </Grid>
+                  <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="16">
+                    <alder:AlderCard Classes="cardCommunity" Spacing="8">
+                      <alder:AlderCard.Header>
+                        <Border Width="56" Height="56" HorizontalAlignment="Left" CornerRadius="12" ClipToBounds="True">
+                          <alder:AlderImage Stretch="UniformToFill" Source="avares://Alder.Avalonia.Gallery/Assets/Card/demo1.jpg" AutomationProperties.Name="{DynamicResource GalleryText.CardHackersAlt}" />
+                        </Border>
+                      </alder:AlderCard.Header>
+                      <StackPanel Spacing="4" Margin="0,4,0,0">
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardHackers}" LineHeight="16" TextWrapping="Wrap" FontWeight="Medium" />
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardHackersMembers}" LineHeight="16" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                      </StackPanel>
+                      <alder:AlderCard.Footer>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                          <Border Width="16" Height="16" CornerRadius="8" ClipToBounds="True">
+                            <alder:AlderImage Stretch="UniformToFill" Source="avares://Alder.Avalonia.Gallery/Assets/Card/red.jpg" AutomationProperties.Name="{DynamicResource GalleryText.CardAuthorAlt}" />
+                          </Border>
+                          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardByJohn}" LineHeight="16" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource AlderMuted}" VerticalAlignment="Center" />
+                        </StackPanel>
+                      </alder:AlderCard.Footer>
+                    </alder:AlderCard>
+                    <alder:AlderCard Classes="cardCommunity cardCommunitySecond" Spacing="8">
+                      <alder:AlderCard.Header>
+                        <Border Width="56" Height="56" HorizontalAlignment="Left" CornerRadius="12" ClipToBounds="True">
+                          <alder:AlderImage Stretch="UniformToFill" Source="avares://Alder.Avalonia.Gallery/Assets/Card/demo2.jpg" AutomationProperties.Name="{DynamicResource GalleryText.CardBuildersAlt}" />
+                        </Border>
+                      </alder:AlderCard.Header>
+                      <StackPanel Spacing="4" Margin="0,4,0,0">
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardBuilders}" LineHeight="16" TextWrapping="Wrap" FontWeight="Medium" />
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardBuildersMembers}" LineHeight="16" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                      </StackPanel>
+                      <alder:AlderCard.Footer>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                          <Border Width="16" Height="16" CornerRadius="8" ClipToBounds="True">
+                            <alder:AlderImage Stretch="UniformToFill" Source="avares://Alder.Avalonia.Gallery/Assets/Card/blue.jpg" AutomationProperties.Name="{DynamicResource GalleryText.CardAuthorAlt}" />
+                          </Border>
+                          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardByMartha}" LineHeight="16" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource AlderMuted}" VerticalAlignment="Center" />
+                        </StackPanel>
+                      </alder:AlderCard.Footer>
+                    </alder:AlderCard>
+                  </Grid>
+                </StackPanel>
+                <alder:AlderCard Classes="cardImagesRight cardRobotSide" AutomationProperties.Name="{DynamicResource GalleryText.CardRobotSideAlt}">
+                  <alder:AlderCard.Background>
+                    <ImageBrush Source="avares://Alder.Avalonia.Gallery/Assets/Card/neo2.jpeg" Stretch="UniformToFill" />
+                  </alder:AlderCard.Background>
+                  <alder:AlderCard.Header>
+                    <StackPanel>
+                      <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardNeo}" LineHeight="24" LetterSpacing="0.3" TextWrapping="Wrap" FontSize="12" Foreground="#B3000000" FontWeight="SemiBold" AutomationProperties.HeadingLevel="3" />
+                      <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardHomeRobot}" LineHeight="20" TextWrapping="Wrap" FontSize="14" Foreground="#80000000" FontWeight="Medium" />
+                    </StackPanel>
+                  </alder:AlderCard.Header>
+                  <alder:AlderCard.Footer>
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                      <StackPanel>
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardAvailableSoon}" LineHeight="20" TextWrapping="Wrap" FontSize="14" Foreground="Black" FontWeight="Medium" />
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardGetNotified}" LineHeight="16" TextWrapping="Wrap" FontSize="12" Foreground="#99000000" />
+                      </StackPanel>
+                      <alder:AlderButton Grid.Column="1" VerticalAlignment="Center" Classes="cardPhotoAction"
+                                    Variant="Tertiary" Size="Small" Background="White" Foreground="Black" Content="{DynamicResource GalleryText.CardNotifyMe}" />
+                    </Grid>
+                  </alder:AlderCard.Footer>
+                </alder:AlderCard>
+              </Grid>
+              <Grid ColumnDefinitions="2.078947*,*" RowDefinitions="Auto,Auto" ColumnSpacing="16">
+                <alder:AlderCard Classes="cardImagesLeft cardRobotFront" AutomationProperties.Name="{DynamicResource GalleryText.CardRobotFrontAlt}">
+                  <alder:AlderCard.Background>
+                    <ImageBrush Source="avares://Alder.Avalonia.Gallery/Assets/Card/neo1.jpeg" Stretch="UniformToFill" />
+                  </alder:AlderCard.Background>
+                  <alder:AlderCard.Footer>
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                      <StackPanel>
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardNeo}" LineHeight="28" TextWrapping="Wrap" FontSize="18" Foreground="Black" FontWeight="Medium" />
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardNeoPrice}" LineHeight="20" TextWrapping="Wrap" FontSize="14" Foreground="#80000000" FontWeight="Medium" />
+                      </StackPanel>
+                      <alder:AlderButton Grid.Column="1" VerticalAlignment="Bottom" Classes="cardPhotoAction"
+                                    Variant="Tertiary" Size="Small" Background="White" Foreground="Black" Content="{DynamicResource GalleryText.CardGetNow}" />
+                    </Grid>
+                  </alder:AlderCard.Footer>
+                </alder:AlderCard>
+                <Grid Classes="cardImagesRight cardThumbnails" RowDefinitions="Auto,*,Auto,*,Auto" RowSpacing="4">
+                  <alder:AlderCard Grid.Row="0" Variant="Transparent" Orientation="Horizontal" Padding="4" VerticalContentAlignment="Center">
+                    <alder:AlderCard.Header>
+                      <Border Width="80" Height="80" CornerRadius="12" ClipToBounds="True">
+                        <alder:AlderImage Stretch="UniformToFill" Source="avares://Alder.Avalonia.Gallery/Assets/Card/robot1.jpeg" AutomationProperties.Name="{DynamicResource GalleryText.CardPinkRobotAlt}" />
+                      </Border>
+                    </alder:AlderCard.Header>
+                    <StackPanel VerticalAlignment="Center" Spacing="4">
+                      <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardBridging}" LineHeight="24" TextWrapping="Wrap" FontWeight="Medium" AutomationProperties.HeadingLevel="3" />
+                      <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardToday}" LineHeight="20" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                    </StackPanel>
+                  </alder:AlderCard>
+                  <alder:AlderCard Grid.Row="2" Variant="Transparent" Orientation="Horizontal" Padding="4" VerticalContentAlignment="Center">
+                    <alder:AlderCard.Header>
+                      <Border Width="80" Height="80" CornerRadius="12" ClipToBounds="True">
+                        <alder:AlderImage Stretch="UniformToFill" Source="avares://Alder.Avalonia.Gallery/Assets/Card/avocado.jpeg" AutomationProperties.Name="{DynamicResource GalleryText.CardAvocadoAlt}" />
+                      </Border>
+                    </alder:AlderCard.Header>
+                    <StackPanel VerticalAlignment="Center" Spacing="4">
+                      <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardHackathon}" LineHeight="24" TextWrapping="Wrap" FontWeight="Medium" AutomationProperties.HeadingLevel="3" />
+                      <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardWednesday}" LineHeight="20" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                    </StackPanel>
+                  </alder:AlderCard>
+                  <alder:AlderCard Grid.Row="4" Variant="Transparent" Orientation="Horizontal" Padding="4" VerticalContentAlignment="Center">
+                    <alder:AlderCard.Header>
+                      <Border Width="80" Height="80" CornerRadius="12" ClipToBounds="True">
+                        <alder:AlderImage Stretch="UniformToFill" Source="avares://Alder.Avalonia.Gallery/Assets/Card/oranges.jpeg" AutomationProperties.Name="{DynamicResource GalleryText.CardOrangesAlt}" />
+                      </Border>
+                    </alder:AlderCard.Header>
+                    <StackPanel VerticalAlignment="Center" Spacing="4">
+                      <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardSound}" LineHeight="24" TextWrapping="Wrap" FontWeight="Medium" AutomationProperties.HeadingLevel="3" />
+                      <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardFriday}" LineHeight="20" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                    </StackPanel>
+                  </alder:AlderCard>
+                </Grid>
+              </Grid>
+            </StackPanel>
+          </Border>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        AlderCard RobotCard(string imageName, double height, StackPanel caption, string action)
+        {
+            var uri = new Uri($"avares://Alder.Avalonia.Gallery/Assets/Card/{imageName}");
+            using var stream = AssetLoader.Open(uri);
+            var button = new AlderButton
+            {
+                Content = action, Variant = ButtonVariant.Tertiary, Size = AlderSize.Small,
+                Background = Brushes.White, Foreground = Brushes.Black, VerticalAlignment = VerticalAlignment.Bottom
+            };
+            var footer = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto"), ColumnSpacing = 8 };
+            Grid.SetColumn(button, 1);
+            footer.Children.Add(caption);
+            footer.Children.Add(button);
+            return new AlderCard
+            {
+                MinHeight = height,
+                Background = new ImageBrush(new Bitmap(stream)) { Stretch = Stretch.UniformToFill },
+                Footer = footer
+            };
+        }
+
+        var front = RobotCard("neo1.jpeg", 350, new StackPanel
+        {
+            Children =
+            {
+                new AlderTextBlock { Text = "NEO", FontSize = 18, LineHeight = 28, Foreground = Brushes.Black },
+                new AlderTextBlock { Text = "$499/m", LineHeight = 20, Foreground = new SolidColorBrush(Color.FromUInt32(0x80000000)) }
+            }
+        }, "Get now");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleForm" Title="{DynamicResource GalleryText.CardWithForm}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="cardPreview" Padding="8,12" MinHeight="180">
+          <alder:AlderCard MaxWidth="448" Title="{DynamicResource GalleryText.CardLogin}" Description="{DynamicResource GalleryText.CardLoginDescription}">
+            <StackPanel Spacing="16">
+              <StackPanel Spacing="4">
+                <alder:AlderLabel Theme="{StaticResource AlderLabelTheme}" x:Name="CardEmailLabel" Height="20"
+                       Target="{CompiledBinding #CardEmail}" Content="{DynamicResource GalleryText.Email}" />
+                <alder:AlderInput x:Name="CardEmail" Text="{CompiledBinding Email, Mode=TwoWay}" Variant="Secondary" FullWidth="True"
+                             PlaceholderText="email@example.com" AutomationProperties.LabeledBy="{CompiledBinding #CardEmailLabel}" />
+              </StackPanel>
+              <StackPanel Spacing="4">
+                <alder:AlderLabel Theme="{StaticResource AlderLabelTheme}" x:Name="CardPasswordLabel" Height="20"
+                       Target="{CompiledBinding #CardPassword}" Content="{DynamicResource GalleryText.Password}" />
+                <alder:AlderInput x:Name="CardPassword" Text="{CompiledBinding Password, Mode=TwoWay}" Variant="Secondary" FullWidth="True"
+                             PlaceholderText="••••••••" PasswordChar="•" AutomationProperties.LabeledBy="{CompiledBinding #CardPasswordLabel}" />
+              </StackPanel>
+            </StackPanel>
+            <alder:AlderCard.Footer>
+              <StackPanel Spacing="8" Margin="0,4,0,0">
+                <alder:AlderButton FullWidth="True" Content="{DynamicResource GalleryText.CardSignIn}" Command="{CompiledBinding SignIn}" />
+                <alder:AlderLink Classes="cardLink" Content="{DynamicResource GalleryText.CardForgotPassword}" Foreground="{DynamicResource AlderInk}" Height="20" UnderlineOffset="0" UnderlineThickness="1" HorizontalAlignment="Center" />
+              </StackPanel>
+            </alder:AlderCard.Footer>
+          </alder:AlderCard>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.Feedback>
+        <alder:AlderTextBlock Text="{CompiledBinding Result}" FontSize="13" Margin="32,0,32,12"
+                   Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"
+                   IsVisible="{CompiledBinding Result, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+      </gallery:ExampleCard.Feedback>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var email = new AlderInput { Variant = InputVariant.Secondary, FullWidth = true, PlaceholderText = "email@example.com" };
+        var password = new AlderInput { Variant = InputVariant.Secondary, FullWidth = true, PlaceholderText = "••••••••", PasswordChar = '•' };
+        email.Bind(TextBox.TextProperty, CompiledBinding.Create((CardViewModel model) => model.Email, mode: BindingMode.TwoWay));
+        password.Bind(TextBox.TextProperty, CompiledBinding.Create((CardViewModel model) => model.Password, mode: BindingMode.TwoWay));
+
+        Application.Current!.TryFindResource("AlderLabelTheme", out var heroLabelTheme);
+        StackPanel Field(string caption, AlderInput input) => new()
+        {
+            Spacing = 4,
+            Children = { new AlderLabel { Content = caption, Target = input, Height = 20, Theme = (ControlTheme?)heroLabelTheme }, input }
+        };
+
+        var signIn = new AlderButton { FullWidth = true, Content = "Sign In" };
+        signIn.Bind(Button.CommandProperty, CompiledBinding.Create((CardViewModel model) => model.SignIn));
+
+        var card = new AlderCard
+        {
+            MaxWidth = 448,
+            Title = "Login",
+            Description = "Enter your credentials to access your account",
+            Content = new StackPanel { Spacing = 16, Children = { Field("Email", email), Field("Password", password) } },
+            Footer = new StackPanel
+            {
+                Spacing = 8,
+                Margin = new Thickness(0, 4, 0, 0),
+                Children = { signIn, new AlderLink { Content = "Forgot password?", HorizontalAlignment = HorizontalAlignment.Center } }
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustom" Title="{DynamicResource GalleryText.CardCustomized}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="cardPreview" Padding="8,12" MinHeight="180" Container.Name="CardPreview" Container.Sizing="Width">
+          <alder:AlderCard MaxWidth="448" CornerRadius="23.5" BorderThickness="1" BorderBrush="{DynamicResource GalleryCardProOutline}"
+                      Background="{DynamicResource GalleryCardProFill}" BoxShadow="{DynamicResource GalleryCardProShadow}">
+            <alder:AlderCard.Resources>
+              <ResourceDictionary>
+                <ResourceDictionary.ThemeDictionaries>
+                  <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="GalleryCardProOutline" Color="#330587F5" />
+                    <SolidColorBrush x:Key="GalleryCardProBadge" Color="#260786F8" />
+                    <SolidColorBrush x:Key="GalleryCardProGlyph" Color="#260786F8" />
+                    <SolidColorBrush x:Key="GalleryCardProInk" Color="#0485F7" />
+                    <BoxShadows x:Key="GalleryCardProShadow">0 10 15 -3 #1A0485F7, 0 4 6 -4 #1A0485F7</BoxShadows>
+                    <DrawingBrush x:Key="GalleryCardProFill" Stretch="Fill">
+                      <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                          <DrawingGroup.Children>
+                            <GeometryDrawing Geometry="M0,0 H448 V270 H0 Z">
+                              <GeometryDrawing.Brush>
+                                <!-- The diagonal follows the 448 × 270 design bounds. The radial stops reproduce the two soft corner highlights. -->
+                                <LinearGradientBrush StartPoint="0%,0%" EndPoint="53.3%,146.7%">
+                                  <GradientStop Color="#E5F1FF" Offset="0" />
+                                  <GradientStop Color="#F3F8FF" Offset="0.25" />
+                                  <GradientStop Color="#FCFEFF" Offset="0.5" />
+                                  <GradientStop Color="#F5F6F7" Offset="0.75" />
+                                  <GradientStop Color="#F0F0F0" Offset="1" />
+                                </LinearGradientBrush>
+                              </GeometryDrawing.Brush>
+                            </GeometryDrawing>
+                            <GeometryDrawing Geometry="M0,0 H448 V270 H0 Z">
+                              <GeometryDrawing.Brush>
+                                <RadialGradientBrush Center="93%,12%" GradientOrigin="93%,12%" RadiusX="47%" RadiusY="78%">
+                                  <GradientStop Color="#1B0485F7" Offset="0" />
+                                  <GradientStop Color="#150485F7" Offset="0.25" />
+                                  <GradientStop Color="#0A0485F7" Offset="0.5" />
+                                  <GradientStop Color="#030485F7" Offset="0.75" />
+                                  <GradientStop Color="#000485F7" Offset="1" />
+                                </RadialGradientBrush>
+                              </GeometryDrawing.Brush>
+                            </GeometryDrawing>
+                            <GeometryDrawing Geometry="M0,0 H448 V270 H0 Z">
+                              <GeometryDrawing.Brush>
+                                <RadialGradientBrush Center="6%,91%" GradientOrigin="6%,91%" RadiusX="30%" RadiusY="50%">
+                                  <GradientStop Color="#120485F7" Offset="0" />
+                                  <GradientStop Color="#0E0485F7" Offset="0.25" />
+                                  <GradientStop Color="#070485F7" Offset="0.5" />
+                                  <GradientStop Color="#020485F7" Offset="0.75" />
+                                  <GradientStop Color="#000485F7" Offset="1" />
+                                </RadialGradientBrush>
+                              </GeometryDrawing.Brush>
+                            </GeometryDrawing>
+                          </DrawingGroup.Children>
+                        </DrawingGroup>
+                      </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                  </ResourceDictionary>
+                  <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="GalleryCardProOutline" Color="#4D0384F8" />
+                    <SolidColorBrush x:Key="GalleryCardProBadge" Color="#400483F7" />
+                    <SolidColorBrush x:Key="GalleryCardProGlyph" Color="#330485F7" />
+                    <SolidColorBrush x:Key="GalleryCardProInk" Color="#61A8FB" />
+                    <BoxShadows x:Key="GalleryCardProShadow">0 10 15 -3 #0D0485F7, 0 4 6 -4 #0D0485F7</BoxShadows>
+                    <DrawingBrush x:Key="GalleryCardProFill" Stretch="Fill">
+                      <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                          <DrawingGroup.Children>
+                            <GeometryDrawing Geometry="M0,0 H448 V270 H0 Z">
+                              <GeometryDrawing.Brush>
+                                <LinearGradientBrush StartPoint="0%,0%" EndPoint="53.3%,146.7%">
+                                  <GradientStop Color="#1B2D45" Offset="0" />
+                                  <GradientStop Color="#1B222D" Offset="0.25" />
+                                  <GradientStop Color="#18191D" Offset="0.5" />
+                                  <GradientStop Color="#191D24" Offset="0.75" />
+                                  <GradientStop Color="#1A202A" Offset="1" />
+                                </LinearGradientBrush>
+                              </GeometryDrawing.Brush>
+                            </GeometryDrawing>
+                            <GeometryDrawing Geometry="M0,0 H448 V270 H0 Z">
+                              <GeometryDrawing.Brush>
+                                <RadialGradientBrush Center="93%,12%" GradientOrigin="93%,12%" RadiusX="47%" RadiusY="78%">
+                                  <GradientStop Color="#2A0485F7" Offset="0" />
+                                  <GradientStop Color="#210485F7" Offset="0.25" />
+                                  <GradientStop Color="#100485F7" Offset="0.5" />
+                                  <GradientStop Color="#050485F7" Offset="0.75" />
+                                  <GradientStop Color="#000485F7" Offset="1" />
+                                </RadialGradientBrush>
+                              </GeometryDrawing.Brush>
+                            </GeometryDrawing>
+                            <GeometryDrawing Geometry="M0,0 H448 V270 H0 Z">
+                              <GeometryDrawing.Brush>
+                                <RadialGradientBrush Center="6%,91%" GradientOrigin="6%,91%" RadiusX="35%" RadiusY="58%">
+                                  <GradientStop Color="#1F0485F7" Offset="0" />
+                                  <GradientStop Color="#180485F7" Offset="0.25" />
+                                  <GradientStop Color="#0C0485F7" Offset="0.5" />
+                                  <GradientStop Color="#030485F7" Offset="0.75" />
+                                  <GradientStop Color="#000485F7" Offset="1" />
+                                </RadialGradientBrush>
+                              </GeometryDrawing.Brush>
+                            </GeometryDrawing>
+                          </DrawingGroup.Children>
+                        </DrawingGroup>
+                      </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                  </ResourceDictionary>
+                </ResourceDictionary.ThemeDictionaries>
+                <BoxShadows x:Key="GalleryCardProButtonShadow">0 4 6 -1 #330485F7, 0 2 4 -2 #330485F7</BoxShadows>
+              </ResourceDictionary>
+            </alder:AlderCard.Resources>
+            <alder:AlderCard.Header>
+              <StackPanel Spacing="12">
+                <Border Background="{DynamicResource GalleryCardProBadge}" CornerRadius="10" Padding="10,2" HorizontalAlignment="Left">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardRecommended}" LineHeight="16" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource GalleryCardProInk}" FontWeight="Medium" LetterSpacing="0.3" />
+                </Border>
+                <Grid ColumnDefinitions="40,*" ColumnSpacing="12">
+                  <Border Width="40" Height="40" CornerRadius="12" Background="{DynamicResource GalleryCardProGlyph}" VerticalAlignment="Top">
+                    <alder:AlderPathIcon Data="{StaticResource AlderIconStarOutline}" Width="19" Height="19" Foreground="{DynamicResource GalleryCardProInk}" />
+                  </Border>
+                  <StackPanel Grid.Column="1" Spacing="4">
+                    <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardUpgradeTitle}" LineHeight="24" TextWrapping="Wrap" FontWeight="Medium" AutomationProperties.HeadingLevel="3" />
+                    <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardUpgradeDescription}" LineHeight="20" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" />
+                  </StackPanel>
+                </Grid>
+              </StackPanel>
+            </alder:AlderCard.Header>
+            <StackPanel Spacing="8">
+              <Grid ColumnDefinitions="16,*" ColumnSpacing="8">
+                <alder:AlderPathIcon Data="{StaticResource AlderIconCheck}" Width="12" Height="12" Foreground="{DynamicResource AlderAccent}" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardFeatureProjects}" LineHeight="20" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" Grid.Column="1" />
+              </Grid>
+              <Grid ColumnDefinitions="16,*" ColumnSpacing="8">
+                <alder:AlderPathIcon Data="{StaticResource AlderIconCheck}" Width="12" Height="12" Foreground="{DynamicResource AlderAccent}" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardFeatureSupport}" LineHeight="20" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" Grid.Column="1" />
+              </Grid>
+              <Grid ColumnDefinitions="16,*" ColumnSpacing="8">
+                <alder:AlderPathIcon Data="{StaticResource AlderIconCheck}" Width="12" Height="12" Foreground="{DynamicResource AlderAccent}" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.CardFeatureAnalytics}" LineHeight="20" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" Grid.Column="1" />
+              </Grid>
+            </StackPanel>
+            <alder:AlderCard.Footer>
+              <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="8">
+                <Border Classes="cardUpgradeAction" CornerRadius="24" BoxShadow="{DynamicResource GalleryCardProButtonShadow}">
+                  <alder:AlderButton FullWidth="True" Content="{DynamicResource GalleryText.CardUpgrade}" />
+                </Border>
+                <alder:AlderButton Classes="cardUpgradeAction cardCompareAction" Variant="Secondary" FullWidth="True" Content="{DynamicResource GalleryText.CardComparePlans}" />
+              </Grid>
+            </alder:AlderCard.Footer>
+          </alder:AlderCard>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var upgrade = new Border
+        {
+            CornerRadius = new CornerRadius(24),
+            BoxShadow = BoxShadows.Parse("0 4 6 -1 #330485F7, 0 2 4 -2 #330485F7"),
+            Child = new AlderButton { FullWidth = true, Content = "Upgrade now" }
+        };
+        var compare = new AlderButton { Variant = ButtonVariant.Secondary, FullWidth = true, Content = "Compare plans" };
+        Grid.SetColumn(compare, 1);
+
+        var card = new AlderCard
+        {
+            MaxWidth = 448,
+            CornerRadius = new CornerRadius(23.5),
+            BorderThickness = new Thickness(1),
+            [!TemplatedControl.BorderBrushProperty] = new DynamicResourceExtension("GalleryCardProOutline"),
+            [!TemplatedControl.BackgroundProperty] = new DynamicResourceExtension("GalleryCardProFill"),
+            [!AlderSurface.BoxShadowProperty] = new DynamicResourceExtension("GalleryCardProShadow"),
+            Header = header,
+            Content = features,
+            Footer = new Grid { ColumnDefinitions = new ColumnDefinitions("*,*"), ColumnSpacing = 8, Children = { upgrade, compare } }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

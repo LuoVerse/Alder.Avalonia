@@ -1,0 +1,161 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls">
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderResizableSecondaryLine" Color="#D8D8D8" />
+      <SolidColorBrush x:Key="AlderResizableTertiaryLine" Color="#CDCDCE" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderResizableSecondaryLine" Color="#343437" />
+      <SolidColorBrush x:Key="AlderResizableTertiaryLine" Color="#3C3C3F" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+  <x:String x:Key="AlderText.ResizableHandle">Resize panes</x:String>
+
+  <ControlTheme x:Key="{x:Type alder:AlderResizablePanel}" TargetType="alder:AlderResizablePanel">
+    <Setter Property="ClipToBounds" Value="True" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <ContentPresenter Name="PART_ContentPresenter" Background="{TemplateBinding Background}"
+                          Padding="{TemplateBinding Padding}"
+                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                          Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:collapsed-empty /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderResizableHandle}" TargetType="alder:AlderResizableHandle">
+    <Setter Property="Focusable" Value="True" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Cursor" Value="SizeWestEast" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="UseLayoutRounding" Value="False" />
+    <Setter Property="ZIndex" Value="1" />
+    <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.ResizableHandle}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Background="Transparent">
+          <alder:InputFocusRing Name="FocusRing" Width="1" HorizontalAlignment="Center"
+                                BoxShadow="{DynamicResource AlderSelectFocusShadow}" IsVisible="False" IsHitTestVisible="False" />
+          <Border Name="SeparatorLine" Width="1" HorizontalAlignment="Center"
+                  Background="{DynamicResource AlderSeparator}" IsHitTestVisible="False">
+            <Border.Transitions>
+              <Transitions><BrushTransition Property="Background" Duration="0:0:0.12" /></Transitions>
+            </Border.Transitions>
+          </Border>
+          <alder:AlderResizableIndicator Name="DefaultIndicator" Orientation="{TemplateBinding Orientation}"
+                                         IsVisible="False" IsHitTestVisible="False"
+                                         HorizontalAlignment="Center" VerticalAlignment="Center" />
+          <ContentPresenter Name="CustomIndicator" Content="{TemplateBinding Indicator}" IsVisible="False" IsHitTestVisible="False"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Orientation=Vertical]">
+      <Setter Property="Cursor" Value="SizeNorthSouth" />
+    </Style>
+    <Style Selector="^[Orientation=Vertical] /template/ Border#SeparatorLine">
+      <Setter Property="Width" Value="NaN" />
+      <Setter Property="Height" Value="1" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="^[Orientation=Vertical] /template/ alder|InputFocusRing#FocusRing">
+      <Setter Property="Width" Value="NaN" />
+      <Setter Property="Height" Value="1" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="^[Variant=Secondary] /template/ Border#SeparatorLine,
+                     ^:pointerover:not(:disabled) /template/ Border#SeparatorLine">
+      <Setter Property="Background" Value="{DynamicResource AlderResizableSecondaryLine}" />
+    </Style>
+    <Style Selector="^[Variant=Tertiary]:not(:pointerover) /template/ Border#SeparatorLine">
+      <Setter Property="Background" Value="{DynamicResource AlderResizableTertiaryLine}" />
+    </Style>
+    <Style Selector="^:dragging /template/ Border#SeparatorLine">
+      <Setter Property="Background" Value="{DynamicResource AlderSoft}" />
+    </Style>
+    <Style Selector="^[Type=Handle] /template/ Border#SeparatorLine">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^:indicator /template/ alder|AlderResizableIndicator#DefaultIndicator">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^:custom-indicator /template/ ContentPresenter#CustomIndicator">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^[Type=Drag] /template/ alder|AlderResizableIndicator#DefaultIndicator">
+      <Setter Property="Type" Value="Drag" />
+    </Style>
+    <Style Selector="^[Type=Pill]:pointerover:not(:disabled) /template/ alder|AlderResizableIndicator#DefaultIndicator,
+                     ^[Type=Handle]:pointerover:not(:disabled) /template/ alder|AlderResizableIndicator#DefaultIndicator,
+                     ^[Type=Drag]:pointerover:not(:disabled) /template/ alder|AlderResizableIndicator#DefaultIndicator,
+                     ^[Type=Pill]:dragging /template/ alder|AlderResizableIndicator#DefaultIndicator,
+                     ^[Type=Handle]:dragging /template/ alder|AlderResizableIndicator#DefaultIndicator">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ alder|InputFocusRing#FocusRing">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^:disabled">
+      <Setter Property="Cursor" Value="Arrow" />
+      <Setter Property="Opacity" Value="0.5" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#SeparatorLine">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderResizableIndicator}" TargetType="alder:AlderResizableIndicator">
+    <Setter Property="AutomationProperties.AccessibilityView" Value="Raw" />
+    <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="Pill" Width="6" Height="32" CornerRadius="16" Background="{TemplateBinding Background}"
+                  HorizontalAlignment="Center" VerticalAlignment="Center" />
+          <Border Name="Dots" IsVisible="False" Width="13" Height="20" CornerRadius="4" Background="{TemplateBinding Background}"
+                  HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderPathIcon Name="GripIcon" Data="{DynamicResource AlderFileTreeGripIcon}" Width="10" Height="10" Foreground="{DynamicResource AlderMuted}" />
+          </Border>
+          <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Type=Drag]:not(:custom) /template/ Border#Dots">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^[Type=Drag] /template/ Border#Pill, ^:custom /template/ Border#Pill">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^[Orientation=Vertical] /template/ Border#Pill">
+      <Setter Property="Width" Value="32" />
+      <Setter Property="Height" Value="6" />
+    </Style>
+    <Style Selector="^[Orientation=Vertical] /template/ Border#Dots">
+      <Setter Property="Width" Value="20" />
+      <Setter Property="Height" Value="13" />
+    </Style>
+    <Style Selector="^[Orientation=Vertical] /template/ PathIcon#GripIcon">
+      <Setter Property="RenderTransform" Value="rotate(90deg)" />
+    </Style>
+    <Style Selector="^ /template/ Border#Pill, ^ /template/ Border#Dots">
+      <Setter Property="Transitions">
+        <Transitions><BrushTransition Property="Background" Duration="0:0:0.12" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#Pill,
+                     ^[(alder|AlderMotion.Reduced)=True] /template/ Border#Dots">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

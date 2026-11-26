@@ -1,0 +1,179 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls">
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderAgendaHeader" Color="#F9F9FB" />
+      <SolidColorBrush x:Key="AlderAgendaWeekend" Color="#09062632" />
+      <SolidColorBrush x:Key="AlderAgendaNow" Color="#B23D34" />
+      <SolidColorBrush x:Key="AlderAgendaOnNow" Color="White" />
+      <SolidColorBrush x:Key="AlderAgendaNowTrack" Color="#55B23D34" />
+      <SolidColorBrush x:Key="AlderAgendaDropFill" Color="#360C83F0" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderAgendaHeader" Color="#202024" />
+      <SolidColorBrush x:Key="AlderAgendaWeekend" Color="#08D4DAEF" />
+      <SolidColorBrush x:Key="AlderAgendaNow" Color="#FA8A80" />
+      <SolidColorBrush x:Key="AlderAgendaOnNow" Color="#101116" />
+      <SolidColorBrush x:Key="AlderAgendaNowTrack" Color="#55FA8A80" />
+      <SolidColorBrush x:Key="AlderAgendaDropFill" Color="#40639EF4" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+  <x:String x:Key="AlderText.AgendaDay">Day</x:String>
+  <x:String x:Key="AlderText.AgendaWeek">Week</x:String>
+  <x:String x:Key="AlderText.AgendaMonth">Month</x:String>
+  <x:String x:Key="AlderText.AgendaToday">Today</x:String>
+  <x:String x:Key="AlderText.AgendaView">Schedule view</x:String>
+  <x:String x:Key="AlderText.AgendaTimeGrid">Schedule</x:String>
+  <x:String x:Key="AlderText.AgendaAllDay">All day</x:String>
+  <x:String x:Key="AlderText.AgendaCollapseAllDay">Collapse all-day events</x:String>
+  <x:String x:Key="AlderText.AgendaExpandAllDay">Expand all-day events</x:String>
+  <x:String x:Key="AlderText.AgendaEventCount">{0} events</x:String>
+  <x:String x:Key="AlderText.AgendaMore">+{0} more</x:String>
+
+  <ControlTheme x:Key="{x:Type alder:AlderAgenda}" TargetType="alder:AlderAgenda">
+    <Setter Property="MinHeight" Value="320" />
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="14" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}" ClipToBounds="True">
+          <Grid RowDefinitions="Auto,*">
+            <Border Background="{DynamicResource AlderAgendaHeader}" BorderBrush="{DynamicResource AlderSeparator}"
+                    BorderThickness="0,0,0,1" Padding="14,10,14,8">
+              <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="8">
+                <alder:AlderTextBlock Name="PART_Heading" FontSize="20" FontWeight="SemiBold"
+                           VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                <alder:AlderSegment Name="PART_View" Grid.Column="1" Size="Small" HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    AutomationProperties.Name="{DynamicResource AlderText.AgendaView}"
+                                    SelectedKey="{CompiledBinding View, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+                  <alder:AlderSegmentItem Key="{x:Static alder:AlderCalendarView.Day}" Content="{DynamicResource AlderText.AgendaDay}" />
+                  <alder:AlderSegmentItem Key="{x:Static alder:AlderCalendarView.Week}" Content="{DynamicResource AlderText.AgendaWeek}" />
+                  <alder:AlderSegmentItem Key="{x:Static alder:AlderCalendarView.Month}" Content="{DynamicResource AlderText.AgendaMonth}" />
+                </alder:AlderSegment>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                  <alder:AlderButton Name="PART_Previous" Variant="Ghost" Size="Small" IsIconOnly="True"
+                                     Icon="{StaticResource AlderIconChevronLeft}" AutomationProperties.Name="{DynamicResource AlderText.PreviousPeriod}" />
+                  <alder:AlderButton Name="PART_Today" Variant="Outline" Size="Small" Content="{DynamicResource AlderText.AgendaToday}" />
+                  <alder:AlderButton Name="PART_Next" Variant="Ghost" Size="Small" IsIconOnly="True"
+                                     Icon="{StaticResource AlderIconChevronRight}" AutomationProperties.Name="{DynamicResource AlderText.NextPeriod}" />
+                </StackPanel>
+              </Grid>
+            </Border>
+            <alder:AlderContentControl Name="PART_Body" Grid.Row="1" HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch" ClipToBounds="True" />
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:compact /template/ alder|AlderSegment#PART_View">
+      <Setter Property="Grid.Row" Value="1" />
+      <Setter Property="Grid.Column" Value="0" />
+      <Setter Property="Grid.ColumnSpan" Value="3" />
+      <Setter Property="Margin" Value="0,6,0,0" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderAgendaDayButtonTheme" TargetType="Button">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="MinWidth" Value="26" />
+    <Setter Property="MinHeight" Value="23" />
+    <Setter Property="Padding" Value="5,1" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="Surface" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" CornerRadius="6">
+          <ContentPresenter Content="{TemplateBinding Content}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^.outside"><Setter Property="Foreground" Value="{DynamicResource AlderMuted}" /></Style>
+    <Style Selector="^:pointerover"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
+    <Style Selector="^.today">
+      <Setter Property="Background" Value="{DynamicResource AlderAccent}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderOnAccent}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderAgendaSmallButtonTheme" TargetType="Button">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="MinHeight" Value="19" />
+    <Setter Property="Padding" Value="5,1" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" CornerRadius="4">
+          <ContentPresenter Content="{TemplateBinding Content}" VerticalContentAlignment="Center" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderAgendaEventButton}" TargetType="alder:AlderAgendaEventButton">
+    <Setter Property="Padding" Value="8,4,6,4" />
+    <Setter Property="Margin" Value="2,0,2,0" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Background="{TemplateBinding Background}" CornerRadius="6" ClipToBounds="True">
+            <Grid>
+              <Border Name="AccentEdge" Width="3" HorizontalAlignment="Left" Background="{TemplateBinding Accent}" />
+              <ContentPresenter Content="{TemplateBinding Content}" Padding="{TemplateBinding Padding}" />
+            </Grid>
+          </Border>
+          <Rectangle Name="Outline" Stroke="{TemplateBinding Accent}" StrokeThickness="1"
+                     RadiusX="6" RadiusY="6" IsVisible="False" IsHitTestVisible="False" />
+          <Border Name="HoverOverlay" Background="{TemplateBinding Accent}" CornerRadius="6" Opacity="0"
+                  IsHitTestVisible="False" />
+          <Border Name="ResizeZone" Height="8" VerticalAlignment="Bottom" Background="Transparent"
+                  Cursor="SizeNorthSouth" IsVisible="False">
+            <Border Name="ResizeHandle" Width="24" Height="2" CornerRadius="1"
+                    Background="{TemplateBinding Accent}" VerticalAlignment="Bottom" HorizontalAlignment="Center"
+                    Margin="2,0,2,3" Opacity="0" IsHitTestVisible="False">
+              <Border.Transitions><Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.12" /></Transitions></Border.Transitions>
+            </Border>
+          </Border>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^.compact">
+      <Setter Property="Padding" Value="7,1,4,1" />
+      <Setter Property="MinHeight" Value="20" />
+      <Setter Property="Margin" Value="2,0,2,2" />
+    </Style>
+    <Style Selector="^.short"><Setter Property="Padding" Value="8,2,4,1" /></Style>
+    <Style Selector="^.past"><Setter Property="Opacity" Value="0.65" /></Style>
+    <Style Selector="^.outlined /template/ Border#AccentEdge"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^.outlined /template/ Rectangle#Outline, ^.selected /template/ Rectangle#Outline, ^:focus-visible /template/ Rectangle#Outline">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^.dashed /template/ Rectangle#Outline"><Setter Property="StrokeDashArray" Value="4,3" /></Style>
+    <Style Selector="^.selected /template/ Rectangle#Outline, ^:focus-visible /template/ Rectangle#Outline">
+      <Setter Property="StrokeThickness" Value="1.5" />
+    </Style>
+    <Style Selector="^:pointerover /template/ Border#HoverOverlay"><Setter Property="Opacity" Value="0.09" /></Style>
+    <Style Selector="^.resizable /template/ Border#ResizeZone"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^ /template/ Border#ResizeZone:pointerover > Border#ResizeHandle, ^.resizing /template/ Border#ResizeHandle">
+      <Setter Property="Opacity" Value="0.65" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#ResizeHandle">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

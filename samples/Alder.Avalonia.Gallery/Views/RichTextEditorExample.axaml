@@ -1,0 +1,145 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.RichTextEditorExample" x:DataType="vm:RichTextEditorViewModel">
+  <UserControl.Styles>
+    <Style Selector="TextBlock.rich-summary"><Setter Property="Grid.Column" Value="1" /><Setter Property="HorizontalAlignment" Value="Right" /></Style>
+    <ContainerQuery Name="ControlledPreview" Query="max-width:639">
+      <Style Selector="TextBlock.rich-summary"><Setter Property="HorizontalAlignment" Value="Left" /></Style>
+    </ContainerQuery>
+    <ContainerQuery Name="ControlledPreview" Query="max-width:350">
+      <Style Selector="TextBlock.rich-summary">
+        <Setter Property="Grid.Column" Value="0" /><Setter Property="Grid.ColumnSpan" Value="2" /><Setter Property="Grid.Row" Value="1" />
+      </Style>
+    </ContainerQuery>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <alder:AlderRichTextEditor MaxWidth="700" HorizontalAlignment="Stretch" Value="{CompiledBinding Features, Mode=OneWay}" Footer="{DynamicResource GalleryText.RichJsonFooter}" />
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var editor = new AlderRichTextEditor { Value = viewModel.Features, Footer = "JSON-first editor state" };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSecondary" Title="{DynamicResource GalleryText.RichSecondary}">
+      <g:ExampleCard.Preview>
+        <alder:AlderRichTextEditor MaxWidth="700" HorizontalAlignment="Stretch" Value="{CompiledBinding Features, Mode=OneWay}" Variant="Secondary" Footer="{DynamicResource GalleryText.RichSecondaryFooter}" />
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var editor = new AlderRichTextEditor { Value = viewModel.Features, Variant = RichTextEditorVariant.Secondary };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.RichControlled}">
+      <g:ExampleCard.Preview>
+        <StackPanel MaxWidth="760" Spacing="12" Container.Name="ControlledPreview" Container.Sizing="Width">
+          <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="8">
+            <WrapPanel ItemSpacing="8">
+              <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.RichLoadGuide}" Command="{CompiledBinding LoadGuide}" />
+              <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.RichLoadNotes}" Command="{CompiledBinding LoadNotes}" />
+            </WrapPanel>
+            <alder:AlderTextBlock Classes="rich-summary" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource AlderMuted}">
+              <Run Text="{CompiledBinding #ControlledEditor.CharacterCount}" /><Run Text="{DynamicResource GalleryText.RichSummaryChars}" /><Run Text="{CompiledBinding #ControlledEditor.WordCount}" /><Run Text="{DynamicResource GalleryText.RichSummaryWords}" />
+            </alder:AlderTextBlock>
+          </Grid>
+          <alder:AlderRichTextEditor x:Name="ControlledEditor" Value="{CompiledBinding ControlledValue, Mode=TwoWay}" Footer="{DynamicResource GalleryText.RichControlled}" />
+          <Border Background="{DynamicResource AlderNeutral}" CornerRadius="16" ClipToBounds="True">
+            <alder:AlderScrollViewer MaxHeight="220" Padding="12" HorizontalScrollBarVisibility="Disabled">
+              <alder:AlderSelectableTextBlock Text="{CompiledBinding JsonPreview}" TextWrapping="Wrap" FontFamily="Menlo, Consolas, monospace"
+                                   FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" />
+            </alder:AlderScrollViewer>
+          </Border>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var editor = new AlderRichTextEditor { DataContext = viewModel, Footer = "Controlled JSON value" };
+        editor.Bind(AlderRichTextEditor.ValueProperty, CompiledBinding.Create(
+            (RichTextEditorViewModel vm) => vm.ControlledValue, mode: BindingMode.TwoWay));
+        var guide = new AlderButton { Size = AlderSize.Small, Variant = ButtonVariant.Secondary,
+            Content = "Load Guide", Command = viewModel.LoadGuide };
+        var notes = new AlderButton { Size = AlderSize.Small, Variant = ButtonVariant.Secondary,
+            Content = "Load Notes", Command = viewModel.LoadNotes };
+        var mirror = new AlderSelectableTextBlock { DataContext = viewModel, TextWrapping = TextWrapping.Wrap };
+        mirror.Bind(TextBlock.TextProperty, CompiledBinding.Create((RichTextEditorViewModel vm) => vm.JsonPreview));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleCharacterCount" Title="{DynamicResource GalleryText.RichLimitTitle}">
+      <g:ExampleCard.Preview>
+        <alder:AlderRichTextEditor MaxWidth="700" HorizontalAlignment="Stretch" Value="{CompiledBinding Limited, Mode=OneWay}" MaxLength="240" Footer="{DynamicResource GalleryText.RichLimitFooter}" />
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var editor = new AlderRichTextEditor { Value = viewModel.Limited, MaxLength = 240, Footer = "240 character limit" };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SamplePlaceholder" Title="{DynamicResource GalleryText.RichEmpty}">
+      <g:ExampleCard.Preview>
+        <alder:AlderRichTextEditor MaxWidth="700" HorizontalAlignment="Stretch" Placeholder="{DynamicResource GalleryText.RichPlaceholder}" Footer="{DynamicResource GalleryText.RichEmpty}" />
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var editor = new AlderRichTextEditor { Placeholder = "Start writing…", Footer = "Empty state" };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.RichDisabledCard}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="16">
+          <alder:AlderRichTextEditor MaxWidth="700" HorizontalAlignment="Stretch" Value="{CompiledBinding Disabled, Mode=OneWay}" IsEnabled="False" ShowWordCount="False" />
+          <alder:AlderRichTextEditor MaxWidth="700" HorizontalAlignment="Stretch" Value="{CompiledBinding ReadOnly, Mode=OneWay}" IsReadOnly="True" ShowWordCount="False" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var disabled = new AlderRichTextEditor { IsEnabled = false, Value = viewModel.Disabled, ShowWordCount = false };
+        var review = new AlderRichTextEditor { IsReadOnly = true, Value = viewModel.ReadOnly, ShowWordCount = false };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleComposition" Title="{DynamicResource GalleryText.RichCustom}">
+      <g:ExampleCard.Preview>
+        <alder:AlderRichTextEditor MaxWidth="700" HorizontalAlignment="Stretch" Value="{CompiledBinding Custom, Mode=OneWay}" ToolbarAtBottom="True" ToolbarCommands="{CompiledBinding CompactToolbar}" ShowWordCount="False" />
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var editor = new AlderRichTextEditor { Value = viewModel.Custom, ToolbarAtBottom = true,
+            ToolbarCommands = viewModel.CompactToolbar, ShowWordCount = false };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleExtensible" Title="{DynamicResource GalleryText.RichExtensible}">
+      <g:ExampleCard.Preview>
+        <alder:AlderRichTextEditor x:Name="ExtensionsEditor" MaxWidth="720" EmptyParagraphPlaceholder="{DynamicResource GalleryText.RichWriteNotes}" Footer="{DynamicResource GalleryText.RichExtensionsFooter}"
+            Value="{CompiledBinding Extensions, Mode=OneWay}" ToolbarCommands="{CompiledBinding EmptyToolbar}"
+            FloatingCommands="{CompiledBinding FloatingCommands}" Suggestions="{CompiledBinding Suggestions}" ShowSlashMenu="True" ShowFloatingMenu="True">
+          <alder:AlderRichTextEditor.AdditionalToolbarContent>
+            <StackPanel Orientation="Horizontal" Spacing="4">
+              <alder:AlderButton Classes="rich-command tertiary" alder:AlderToolTip.Tip="{DynamicResource GalleryText.RichDate}" AutomationProperties.Name="{DynamicResource GalleryText.RichDate}"
+                  Command="{CompiledBinding InsertDate}" CommandParameter="{Binding #ExtensionsEditor}">
+                <alder:AlderPathIcon Theme="{DynamicResource AlderIcon16Theme}" Data="{DynamicResource AlderRichIconDate}" />
+              </alder:AlderButton>
+              <alder:AlderButton Classes="rich-command tertiary" alder:AlderToolTip.Tip="{DynamicResource GalleryText.RichChecklist}" AutomationProperties.Name="{DynamicResource GalleryText.RichChecklist}"
+                  Command="{CompiledBinding InsertChecklist}" CommandParameter="{Binding #ExtensionsEditor}">
+                <alder:AlderPathIcon Theme="{DynamicResource AlderIcon16Theme}" Data="{DynamicResource AlderRichIconChecklist}" />
+              </alder:AlderButton>
+            </StackPanel>
+          </alder:AlderRichTextEditor.AdditionalToolbarContent>
+        </alder:AlderRichTextEditor>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var editor = new AlderRichTextEditor { Value = viewModel.Extensions, ToolbarCommands = [],
+            FloatingCommands = viewModel.FloatingCommands, EmptyParagraphPlaceholder = "Write notes...", Footer = "Extensible command surface",
+            Suggestions = viewModel.Suggestions, ShowSlashMenu = true, ShowFloatingMenu = true };
+        editor.AdditionalToolbarContent = new StackPanel { Orientation = Orientation.Horizontal, Children =
+        {
+            Tool("Insert date", "AlderRichIconDate", viewModel.InsertDate),
+            Tool("Insert launch checklist", "AlderRichIconChecklist", viewModel.InsertChecklist)
+        } };
+        Button Tool(string name, string iconKey, ICommand command)
+        {
+            var icon = new AlderPathIcon();
+            icon[!Control.ThemeProperty] = new DynamicResourceExtension("AlderIcon16Theme");
+            icon[!PathIcon.DataProperty] = new DynamicResourceExtension(iconKey);
+            var button = new AlderButton { Classes = { "rich-command", "tertiary" }, Content = icon,
+                Command = command, CommandParameter = editor };
+            AutomationProperties.SetName(button, name);
+            AlderToolTip.SetTip(button, name);
+            return button;
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

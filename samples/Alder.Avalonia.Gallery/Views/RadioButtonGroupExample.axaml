@@ -1,0 +1,892 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.RadioButtonGroupExample" x:DataType="vm:RadioButtonGroupViewModel">
+  <UserControl.Resources>
+    <ControlTheme x:Key="RadioDemoGrid" TargetType="alder:AlderRadioButtonGroup">
+      <Setter Property="MinColumnWidth" Value="145" />
+      <ContainerQuery Name="RadioPreview" Query="max-width:639">
+        <Style Selector="^"><Setter Property="Columns" Value="1" /></Style>
+      </ContainerQuery>
+    </ControlTheme>
+    <ControlTheme x:Key="RadioPaymentGrid" TargetType="alder:AlderRadioButtonGroup" BasedOn="{StaticResource RadioDemoGrid}">
+      <Setter Property="Columns" Value="2" />
+    </ControlTheme>
+
+    <ControlTheme x:Key="DeliveryRadioItem" TargetType="alder:AlderRadioButtonGroupItem" BasedOn="{StaticResource {x:Type alder:AlderRadioButtonGroupItem}}">
+      <Style Selector="^ /template/ TextBlock#CardDescription"><Setter Property="Margin" Value="0,4,0,0" /></Style>
+    </ControlTheme>
+    <ControlTheme x:Key="PaymentRadioItem" TargetType="alder:AlderRadioButtonGroupItem" BasedOn="{StaticResource {x:Type alder:AlderRadioButtonGroupItem}}">
+      <Setter Property="ShowIndicator" Value="False" />
+      <Style Selector="^ /template/ TextBlock#CardDescription"><Setter Property="Margin" Value="0,2,0,0" /></Style>
+    </ControlTheme>
+    <ControlTheme x:Key="ShippingPaymentRadioItem" TargetType="alder:AlderRadioButtonGroupItem" BasedOn="{StaticResource PaymentRadioItem}">
+      <Style Selector="^ /template/ ContentPresenter#LeadingIcon"><Setter Property="VerticalAlignment" Value="Top" /></Style>
+    </ControlTheme>
+    <ControlTheme x:Key="BillingRadioItem" TargetType="alder:AlderRadioButtonGroupItem" BasedOn="{StaticResource {x:Type alder:AlderRadioButtonGroupItem}}">
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="SelectionBrush" Value="Transparent" />
+      <Setter Property="Padding" Value="20,16,46,16" />
+      <Setter Property="IndicatorVerticalAlignment" Value="Center" />
+      <Style Selector="^:checked">
+        <Setter Property="Background" Value="{DynamicResource AlderInk}" />
+        <Setter Property="Foreground" Value="{DynamicResource AlderSurface}" />
+      </Style>
+      <Style Selector="^ /template/ Border#CardFace">
+        <Setter Property="Transitions">
+          <Transitions><BrushTransition Property="Background" Duration="0:0:0.15" Easing="0.4,0,0.2,1" /></Transitions>
+        </Setter>
+      </Style>
+      <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#CardFace">
+        <Setter Property="Transitions" Value="{x:Null}" />
+      </Style>
+    </ControlTheme>
+    <ControlTheme x:Key="RadioSelectedPrice" TargetType="TextBlock">
+      <Style Selector="^.selected"><Setter Property="Foreground" Value="{DynamicResource AlderAccent}" /></Style>
+    </ControlTheme>
+    <StreamGeometry x:Key="RadioPlanStarterIcon">M6 6l2-2a2 2 0 0 1 3 3L8 10a2 2 0 0 1-3 0 M10 10l-2 2a2 2 0 0 1-3-3l3-3a2 2 0 0 1 3 0 M7 9l2-2</StreamGeometry>
+    <StreamGeometry x:Key="RadioPlanGrowthIcon">M8 2c1 3 4 4 4 7a4 4 0 1 1-8 0c0-1.5 1-3 2-4 0 2 1 2 1 2 1-1 1-3 1-5Z M8 10c1 1 1.5 1 1.5 2a1.5 1.5 0 0 1-3 0c0-1 1.5-2 1.5-2Z</StreamGeometry>
+    <StreamGeometry x:Key="RadioPlanBusinessIcon">M6 10l-1-1 2-3c1-2 3-3 6-3 0 3-1 5-3 6l-3 2-1-1 M7 6H4L2 9l3 1 M10 9v3l-3 2-1-3 M10 6h.1 M5 11l-2 2</StreamGeometry>
+    <StreamGeometry x:Key="RadioPlanScaleIcon">M2 6l3-3h6l3 3-6 7-6-7Z M2 6h12 M5 3l1 3 2 7 2-7 1-3</StreamGeometry>
+    <StreamGeometry x:Key="RadioPlanEnterpriseIcon">M2 5l3 2 3-4 3 4 3-2-2 7H4L2 5Z M5 10h6</StreamGeometry>
+  </UserControl.Resources>
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <StackPanel MaxWidth="360" Spacing="12">
+            <alder:AlderTextBlock x:Name="DefaultTitle" Text="{DynamicResource GalleryText.FormRadioPlanTitle}" FontWeight="Medium" LineHeight="20" TextWrapping="Wrap" />
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormRadioPlanHint}" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+            <alder:AlderRadioButtonGroup SelectedKey="pro" AutomationProperties.LabeledBy="{CompiledBinding #DefaultTitle}">
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="starter"
+                  Content="{DynamicResource GalleryText.Starter}" Description="{DynamicResource GalleryText.FormRadioStarterHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20">
+                    <Run Text="{DynamicResource GalleryText.FormRadioStarterPrice}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.FormRadioPricePeriod}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                  </alder:AlderTextBlock>
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="pro"
+                  Content="{DynamicResource GalleryText.SelectPro}" Description="{DynamicResource GalleryText.FormRadioProHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20">
+                    <Run Text="{DynamicResource GalleryText.FormRadioProPrice}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.FormRadioPricePeriod}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                  </alder:AlderTextBlock>
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="enterprise"
+                  Content="{DynamicResource GalleryText.FormEnterprise}" Description="{DynamicResource GalleryText.FormEnterpriseHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20">
+                    <Run Text="{DynamicResource GalleryText.FormRadioEnterprisePrice}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.FormRadioPricePeriod}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                  </alder:AlderTextBlock>
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+            </alder:AlderRadioButtonGroup>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderRadioButtonGroup { MaxWidth = 360 };
+        group.Children.Add(Plan("starter", "Starter", "For individuals and small projects", "US$5"));
+        group.Children.Add(Plan("pro", "Pro", "For growing teams and businesses", "US$15"));
+        group.Children.Add(Plan("enterprise", "Enterprise", "For large organizations at scale", "US$45"));
+        group.SelectedKey = "pro";
+
+        static AlderRadioButtonGroupItem Plan(string key, string title, string description, string amount)
+        {
+            var value = new AlderTextBlock { LineHeight = 20 };
+            value.Inlines!.Add(new Run(amount) { FontWeight = FontWeight.SemiBold });
+            value.Inlines.Add(new Run("/mo") { FontSize = 12, Foreground = Brushes.Gray });
+            var card = new AlderRadioButtonGroupItem { Content = title, Description = description, Details = value };
+            AlderChoiceGroup.SetKey(card, key);
+            return card;
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDelivery" Title="{DynamicResource GalleryText.RadioDeliveryAndPayment}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120" Container.Name="RadioPreview" Container.Sizing="Width">
+          <StackPanel MaxWidth="486" Spacing="40">
+            <StackPanel MaxWidth="486" Spacing="12">
+              <alder:AlderTextBlock x:Name="DeliveryAndPaymentTitle" Text="{DynamicResource GalleryText.RadioDeliveryMethod}" FontWeight="Medium" LineHeight="20" TextWrapping="Wrap" />
+              <alder:AlderRadioButtonGroup SelectedKey="express" AutomationProperties.LabeledBy="{CompiledBinding #DeliveryAndPaymentTitle}" Layout="Grid" Theme="{StaticResource RadioDemoGrid}">
+                <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="standard" Theme="{StaticResource DeliveryRadioItem}"
+                    Content="{DynamicResource GalleryText.Standard}" Description="{DynamicResource GalleryText.RadioDemoStandardTime}">
+                  <alder:AlderRadioButtonGroupItem.Details>
+                    <alder:AlderTextBlock LineHeight="20" FontWeight="SemiBold" Text="{DynamicResource GalleryText.RadioDemoStandardPrice}" />
+                  </alder:AlderRadioButtonGroupItem.Details>
+                </alder:AlderRadioButtonGroupItem>
+                <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="express" Theme="{StaticResource DeliveryRadioItem}"
+                    Content="{DynamicResource GalleryText.Express}" Description="{DynamicResource GalleryText.RadioDemoExpressTime}">
+                  <alder:AlderRadioButtonGroupItem.Details>
+                    <alder:AlderTextBlock LineHeight="20" FontWeight="SemiBold" Text="{DynamicResource GalleryText.RadioDemoExpressPrice}" />
+                  </alder:AlderRadioButtonGroupItem.Details>
+                </alder:AlderRadioButtonGroupItem>
+                <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="fast" Theme="{StaticResource DeliveryRadioItem}"
+                    Content="{DynamicResource GalleryText.RadioDemoSuperFast}" Description="{DynamicResource GalleryText.RadioDeliveryFastTime}">
+                  <alder:AlderRadioButtonGroupItem.Details>
+                    <alder:AlderTextBlock LineHeight="20" FontWeight="SemiBold" Text="{DynamicResource GalleryText.RadioDemoFastPrice}" />
+                  </alder:AlderRadioButtonGroupItem.Details>
+                </alder:AlderRadioButtonGroupItem>
+              </alder:AlderRadioButtonGroup>
+            </StackPanel>
+            <StackPanel MaxWidth="486" Spacing="12">
+              <alder:AlderTextBlock x:Name="DeliveryPaymentTitle" Text="{DynamicResource GalleryText.FormPaymentMethod}" FontWeight="Medium" LineHeight="20" TextWrapping="Wrap" />
+              <alder:AlderRadioButtonGroup SelectedKey="visa" AutomationProperties.LabeledBy="{CompiledBinding #DeliveryPaymentTitle}" Layout="Grid" Theme="{StaticResource RadioPaymentGrid}">
+                <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="visa" Theme="{StaticResource ShippingPaymentRadioItem}"
+                    Content="{DynamicResource GalleryText.RadioDemoVisa}" Description="{DynamicResource GalleryText.RadioDemoVisaExpiry}">
+                  <alder:AlderRadioButtonGroupItem.Icon>
+                    <alder:AlderPathIcon Width="24" Height="24" Data="{StaticResource GalleryIconVisa}" Foreground="#1434CB" />
+                  </alder:AlderRadioButtonGroupItem.Icon>
+                </alder:AlderRadioButtonGroupItem>
+                <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="mastercard" Theme="{StaticResource ShippingPaymentRadioItem}"
+                    Content="{DynamicResource GalleryText.RadioDemoMastercard}" Description="{DynamicResource GalleryText.RadioDemoMastercardExpiry}">
+                  <alder:AlderRadioButtonGroupItem.Icon>
+                    <Panel Width="24" Height="24">
+                      <Ellipse Width="14" Height="14" Fill="#EB001B" HorizontalAlignment="Left" />
+                      <Ellipse Width="14" Height="14" Fill="#F79E1B" HorizontalAlignment="Right" />
+                      <Ellipse Width="5" Height="10" Fill="#FF5F00" HorizontalAlignment="Center" />
+                    </Panel>
+                  </alder:AlderRadioButtonGroupItem.Icon>
+                </alder:AlderRadioButtonGroupItem>
+                <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="paypal" Theme="{StaticResource ShippingPaymentRadioItem}"
+                    Content="{DynamicResource GalleryText.FormPayPal}" Description="{DynamicResource GalleryText.RadioPayPalHint}">
+                  <alder:AlderRadioButtonGroupItem.Icon>
+                    <Panel Width="24" Height="24">
+                    <alder:AlderPathIcon Width="16" Height="16" Data="{StaticResource GalleryIconPayPal}" Foreground="#003087" />
+                  </Panel>
+                  </alder:AlderRadioButtonGroupItem.Icon>
+                </alder:AlderRadioButtonGroupItem>
+              </alder:AlderRadioButtonGroup>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var delivery = new AlderRadioButtonGroup
+        {
+            Layout = RadioButtonGroupLayout.Grid, Columns = 3, MinColumnWidth = 146
+        };
+        AddDelivery("standard", "Standard", "4-10 business days", "US$5.00");
+        AddDelivery("express", "Express", "2-5 business days", "US$16.00");
+        AddDelivery("fast", "Super Fast", "1 business day", "US$25.00");
+        delivery.SelectedKey = "express";
+
+        void AddDelivery(string key, string title, string description, string price)
+        {
+            var card = new AlderRadioButtonGroupItem
+            {
+                Content = title, Description = description,
+                Details = new AlderTextBlock { Text = price, LineHeight = 20, FontWeight = FontWeight.SemiBold }
+            };
+            AlderChoiceGroup.SetKey(card, key);
+            delivery.Children.Add(card);
+        }
+
+        var payment = new AlderRadioButtonGroup
+        {
+            Layout = RadioButtonGroupLayout.Grid, Columns = 2, MinColumnWidth = 150
+        };
+        AddPayment("visa", "**** 0123", "Exp. on 01/2026", "GalleryIconVisa", Color.Parse("#1434CB"));
+        AddPayment("mastercard", "**** 8304", "Exp. on 06/2028", "GalleryIconMastercard", Color.Parse("#EB001B"));
+        AddPayment("paypal", "PayPal", "Pay with PayPal", "GalleryIconPayPal", Color.Parse("#003087"));
+        payment.SelectedKey = "visa";
+
+        void AddPayment(string key, string title, string description, string icon, Color color)
+        {
+            var card = new AlderRadioButtonGroupItem
+            {
+                Content = title, Description = description, ShowIndicator = false, MinHeight = 72,
+                Icon = new AlderPathIcon
+                {
+                    Width = 24, Height = 24, Foreground = new SolidColorBrush(color),
+                    Data = (Geometry)Application.Current!.FindResource(icon)!
+                }
+            };
+            AlderChoiceGroup.SetKey(card, key);
+            payment.Children.Add(card);
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleBilling" Title="{DynamicResource GalleryText.CardSubscriptionPlans}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <StackPanel MaxWidth="400" Spacing="12">
+            <alder:AlderRadioButtonGroup SelectedKey="year" AutomationProperties.Name="{DynamicResource GalleryText.FormRadioBilling}">
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="year" x:Name="AnnualRadio" Theme="{StaticResource BillingRadioItem}"
+                  AutomationProperties.Name="{DynamicResource GalleryText.FormYearly}">
+                <alder:AlderRadioButtonGroupItem.Content>
+                  <StackPanel Spacing="4">
+                    <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormYearly}" FontSize="20" FontWeight="Bold" LineHeight="28" TextWrapping="Wrap"
+                               Foreground="{CompiledBinding #AnnualRadio.Foreground}" />
+                    <alder:AlderTextBlock Text="{DynamicResource GalleryText.RadioDemoAnnualBilling}" FontSize="12" LineHeight="16" TextWrapping="Wrap"
+                               Foreground="{CompiledBinding #AnnualRadio.Foreground}" Opacity="0.7" />
+                  </StackPanel>
+                </alder:AlderRadioButtonGroupItem.Content>
+                <alder:AlderRadioButtonGroupItem.Indicator>
+                  <alder:AlderPathIcon Width="20" Height="20" Data="{StaticResource AlderIconCheckCircleFilled}" Foreground="#E95F2A" />
+                </alder:AlderRadioButtonGroupItem.Indicator>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="toolkit" x:Name="ToolkitRadio" Theme="{StaticResource BillingRadioItem}"
+                  AutomationProperties.Name="{DynamicResource GalleryText.FormYearlyToolkit}">
+                <alder:AlderRadioButtonGroupItem.Content>
+                  <Panel ClipToBounds="False">
+                    <StackPanel Spacing="4">
+                      <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormYearlyToolkit}" FontSize="20" FontWeight="Bold" LineHeight="28" TextWrapping="Wrap"
+                                 Foreground="{CompiledBinding #ToolkitRadio.Foreground}" />
+                      <alder:AlderTextBlock Text="{DynamicResource GalleryText.RadioDemoToolkitBilling}" FontSize="12" LineHeight="16" TextWrapping="Wrap"
+                                 Foreground="{CompiledBinding #ToolkitRadio.Foreground}" Opacity="0.7" />
+                    </StackPanel>
+                    <Border Background="#E95F2A" CornerRadius="10" Padding="7,0" RenderTransform="translate(-24px,-22px)"
+                            HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="False">
+                      <alder:AlderTextBlock Text="{DynamicResource GalleryText.RadioDemoSavings}" FontSize="12" LineHeight="20" Foreground="Black" />
+                    </Border>
+                  </Panel>
+                </alder:AlderRadioButtonGroupItem.Content>
+                <alder:AlderRadioButtonGroupItem.Indicator>
+                  <alder:AlderPathIcon Width="20" Height="20" Data="{StaticResource AlderIconCheckCircleFilled}" Foreground="#E95F2A" />
+                </alder:AlderRadioButtonGroupItem.Indicator>
+              </alder:AlderRadioButtonGroupItem>
+            </alder:AlderRadioButtonGroup>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var billing = new AlderRadioButtonGroup { MaxWidth = 400 };
+        var theme = (ControlTheme)Application.Current!.FindResource(typeof(AlderRadioButtonGroupItem))!;
+        var check = (Geometry)Application.Current!.FindResource("AlderIconCheckCircleFilled")!;
+        AddBilling("year", "Annual", "Billed at USD 99.99/year (US$ 8.33/month)");
+        AddBilling("toolkit", "Annual + Toolkit", "Billed at USD 149.99/year (US$ 12.50/month)");
+        billing.SelectedKey = "year";
+
+        void AddBilling(string key, string title, string description)
+        {
+            var card = new AlderRadioButtonGroupItem
+            {
+                Theme = theme, Content = title, Description = description, BorderThickness = new Thickness(0),
+                IndicatorVerticalAlignment = VerticalAlignment.Center, SelectionBrush = Brushes.Transparent,
+                Indicator = new AlderPathIcon { Width = 20, Height = 20, Data = check, Foreground = Brushes.Coral }
+            };
+            AlderChoiceGroup.SetKey(card, key);
+            billing.Children.Add(card);
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGrid" Title="{DynamicResource GalleryText.CardGridLayout}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120" Container.Name="RadioPreview" Container.Sizing="Width">
+          <StackPanel MaxWidth="486" Spacing="12">
+            <alder:AlderTextBlock x:Name="DeliveryGridTitle" Text="{DynamicResource GalleryText.RadioDeliveryMethod}" FontWeight="Medium" LineHeight="20" TextWrapping="Wrap" />
+            <alder:AlderRadioButtonGroup SelectedKey="express" AutomationProperties.LabeledBy="{CompiledBinding #DeliveryGridTitle}" Layout="Grid" Theme="{StaticResource RadioDemoGrid}">
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="standard" Theme="{StaticResource DeliveryRadioItem}"
+                  Content="{DynamicResource GalleryText.Standard}" Description="{DynamicResource GalleryText.RadioDemoStandardTime}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20" FontWeight="SemiBold" Text="{DynamicResource GalleryText.RadioDemoStandardPrice}" />
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="express" Theme="{StaticResource DeliveryRadioItem}"
+                  Content="{DynamicResource GalleryText.Express}" Description="{DynamicResource GalleryText.RadioDemoExpressTime}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20" FontWeight="SemiBold" Text="{DynamicResource GalleryText.RadioDemoExpressPrice}" />
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="fast" Theme="{StaticResource DeliveryRadioItem}"
+                  Content="{DynamicResource GalleryText.RadioDemoSuperFast}" Description="{DynamicResource GalleryText.RadioDeliveryFastTime}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20" FontWeight="SemiBold" Text="{DynamicResource GalleryText.RadioDemoFastPrice}" />
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+            </alder:AlderRadioButtonGroup>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var delivery = new AlderRadioButtonGroup
+        {
+            Layout = RadioButtonGroupLayout.Grid, Columns = 3, MinColumnWidth = 146
+        };
+        AddDelivery("standard", "Standard", "4-10 business days", "US$5.00");
+        AddDelivery("express", "Express", "2-5 business days", "US$16.00");
+        AddDelivery("fast", "Super Fast", "1 business day", "US$25.00");
+        delivery.SelectedKey = "express";
+
+        void AddDelivery(string key, string title, string description, string price)
+        {
+            var card = new AlderRadioButtonGroupItem
+            {
+                Content = title, Description = description,
+                Details = new AlderTextBlock { Text = price, LineHeight = 20, FontWeight = FontWeight.SemiBold }
+            };
+            AlderChoiceGroup.SetKey(card, key);
+            delivery.Children.Add(card);
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SamplePaymentIcons" Title="{DynamicResource GalleryText.CardWithIcons}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120" Container.Name="RadioPreview" Container.Sizing="Width">
+          <StackPanel MaxWidth="368" Spacing="12">
+            <alder:AlderTextBlock x:Name="PaymentIconsTitle" Text="{DynamicResource GalleryText.FormPaymentMethod}" FontWeight="Medium" LineHeight="20" TextWrapping="Wrap" />
+            <alder:AlderRadioButtonGroup SelectedKey="visa" AutomationProperties.LabeledBy="{CompiledBinding #PaymentIconsTitle}" Layout="Grid" Theme="{StaticResource RadioPaymentGrid}">
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="visa" Theme="{StaticResource PaymentRadioItem}"
+                  Content="{DynamicResource GalleryText.RadioDemoVisa}" Description="{DynamicResource GalleryText.RadioDemoVisaExpiry}">
+                <alder:AlderRadioButtonGroupItem.Icon>
+                  <alder:AlderPathIcon Width="24" Height="24" Data="{StaticResource GalleryIconVisa}" Foreground="#1434CB" />
+                </alder:AlderRadioButtonGroupItem.Icon>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="mastercard" Theme="{StaticResource PaymentRadioItem}"
+                  Content="{DynamicResource GalleryText.RadioDemoMastercard}" Description="{DynamicResource GalleryText.RadioDemoMastercardExpiry}">
+                <alder:AlderRadioButtonGroupItem.Icon>
+                  <Panel Width="24" Height="24">
+                    <Ellipse Width="14" Height="14" Fill="#EB001B" HorizontalAlignment="Left" />
+                    <Ellipse Width="14" Height="14" Fill="#F79E1B" HorizontalAlignment="Right" />
+                    <Ellipse Width="5" Height="10" Fill="#FF5F00" HorizontalAlignment="Center" />
+                  </Panel>
+                </alder:AlderRadioButtonGroupItem.Icon>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="paypal" Theme="{StaticResource PaymentRadioItem}"
+                  Content="{DynamicResource GalleryText.FormPayPal}" Description="{DynamicResource GalleryText.RadioPayPalHint}">
+                <alder:AlderRadioButtonGroupItem.Icon>
+                  <Viewbox Width="24" Height="24">
+                    <alder:AlderTextBlock FontSize="14" FontWeight="Bold" FontStyle="Italic" FlowDirection="LeftToRight">
+                      <Run Text="Pay" Foreground="#003087" /><Run Text="Pal" Foreground="#009CDE" />
+                    </alder:AlderTextBlock>
+                  </Viewbox>
+                </alder:AlderRadioButtonGroupItem.Icon>
+              </alder:AlderRadioButtonGroupItem>
+            </alder:AlderRadioButtonGroup>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var payment = new AlderRadioButtonGroup
+        {
+            Layout = RadioButtonGroupLayout.Grid, Columns = 2, MinColumnWidth = 150
+        };
+        AddPayment("visa", "**** 0123", "Exp. on 01/2026", "GalleryIconVisa", Color.Parse("#1434CB"));
+        AddPayment("mastercard", "**** 8304", "Exp. on 06/2028", "GalleryIconMastercard", Color.Parse("#EB001B"));
+        AddPayment("paypal", "PayPal", "Pay with PayPal", "GalleryIconPayPal", Color.Parse("#003087"));
+        payment.SelectedKey = "visa";
+
+        void AddPayment(string key, string title, string description, string icon, Color color)
+        {
+            var card = new AlderRadioButtonGroupItem
+            {
+                Content = title, Description = description, ShowIndicator = false, MinHeight = 72,
+                Icon = new AlderPathIcon
+                {
+                    Width = 24, Height = 24, Foreground = new SolidColorBrush(color),
+                    Data = (Geometry)Application.Current!.FindResource(icon)!
+                }
+            };
+            AlderChoiceGroup.SetKey(card, key);
+            payment.Children.Add(card);
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleIcons" Title="{DynamicResource GalleryText.FormIconCards}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <StackPanel MaxWidth="520" Spacing="12">
+            <alder:AlderTextBlock x:Name="WorkspacePlanTitle" Text="{DynamicResource GalleryText.RadioDemoWorkspace}" FontWeight="Medium" LineHeight="20" TextWrapping="Wrap" />
+            <alder:AlderRadioButtonGroup SelectedKey="starter" AutomationProperties.LabeledBy="{CompiledBinding #WorkspacePlanTitle}">
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="starter" Background="{DynamicResource AlderNeutral}" AutomationProperties.Name="{DynamicResource GalleryText.Starter}">
+                <alder:AlderRadioButtonGroupItem.Content>
+                  <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                      <Border Width="32" Height="32" CornerRadius="12" Background="{DynamicResource AlderSurface}">
+                        <Viewbox Width="16" Height="16">
+                          <Path Width="16" Height="16" Data="{StaticResource RadioPlanStarterIcon}" Stroke="{DynamicResource AlderInk}"
+                                StrokeThickness="1.3" StrokeLineCap="Round" StrokeJoin="Round" />
+                        </Viewbox>
+                      </Border>
+                      <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.Starter}" FontWeight="SemiBold" LineHeight="20" />
+                        <alder:AlderChip Content="{DynamicResource GalleryText.RadioDemoPopular}" Size="Small" Height="20" MinHeight="20" Color="Success" Variant="Soft" />
+                      </StackPanel>
+                    </StackPanel>
+                    <StackPanel Spacing="4">
+                      <alder:AlderTextBlock LineHeight="32" FontSize="24">
+                        <Run Text="{DynamicResource GalleryText.RadioDemoSoloPrice}" FontWeight="Bold" /><Run Text="{DynamicResource GalleryText.RadioDemoPerMonth}" FontSize="14" Foreground="{DynamicResource AlderMuted}" />
+                      </alder:AlderTextBlock>
+                      <alder:AlderTextBlock Text="{DynamicResource GalleryText.RadioDemoSoloHint}" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                    </StackPanel>
+                  </StackPanel>
+                </alder:AlderRadioButtonGroupItem.Content>
+                <alder:AlderRadioButtonGroupItem.Indicator>
+                  <alder:AlderPathIcon Width="20" Height="20" Data="{StaticResource AlderIconCheckCircleFilled}" Foreground="{DynamicResource AlderAccent}" />
+                </alder:AlderRadioButtonGroupItem.Indicator>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="growth" Background="{DynamicResource AlderNeutral}" AutomationProperties.Name="{DynamicResource GalleryText.FormGrowth}">
+                <alder:AlderRadioButtonGroupItem.Content>
+                  <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                      <Border Width="32" Height="32" CornerRadius="12" Background="{DynamicResource AlderSurface}">
+                        <Viewbox Width="16" Height="16">
+                          <Path Width="16" Height="16" Data="{StaticResource RadioPlanGrowthIcon}" Stroke="{DynamicResource AlderInk}"
+                                StrokeThickness="1.3" StrokeLineCap="Round" StrokeJoin="Round" />
+                        </Viewbox>
+                      </Border>
+                      <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormGrowth}" FontWeight="SemiBold" LineHeight="20" />
+                      </StackPanel>
+                    </StackPanel>
+                    <StackPanel Spacing="4">
+                      <alder:AlderTextBlock LineHeight="32" FontSize="24">
+                        <Run Text="{DynamicResource GalleryText.RadioDemoGrowthPrice}" FontWeight="Bold" /><Run Text="{DynamicResource GalleryText.RadioDemoPerMonth}" FontSize="14" Foreground="{DynamicResource AlderMuted}" />
+                      </alder:AlderTextBlock>
+                      <alder:AlderTextBlock Text="{DynamicResource GalleryText.RadioDemoGrowthHint}" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                    </StackPanel>
+                  </StackPanel>
+                </alder:AlderRadioButtonGroupItem.Content>
+                <alder:AlderRadioButtonGroupItem.Indicator>
+                  <alder:AlderPathIcon Width="20" Height="20" Data="{StaticResource AlderIconCheckCircleFilled}" Foreground="{DynamicResource AlderAccent}" />
+                </alder:AlderRadioButtonGroupItem.Indicator>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="business" Background="{DynamicResource AlderNeutral}" AutomationProperties.Name="{DynamicResource GalleryText.RadioDemoBusiness}">
+                <alder:AlderRadioButtonGroupItem.Content>
+                  <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                      <Border Width="32" Height="32" CornerRadius="12" Background="{DynamicResource AlderSurface}">
+                        <Viewbox Width="16" Height="16">
+                          <Path Width="16" Height="16" Data="{StaticResource RadioPlanBusinessIcon}" Stroke="{DynamicResource AlderInk}"
+                                StrokeThickness="1.3" StrokeLineCap="Round" StrokeJoin="Round" />
+                        </Viewbox>
+                      </Border>
+                      <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.RadioDemoBusiness}" FontWeight="SemiBold" LineHeight="20" />
+                      </StackPanel>
+                    </StackPanel>
+                    <StackPanel Spacing="4">
+                      <alder:AlderTextBlock LineHeight="32" FontSize="24">
+                        <Run Text="{DynamicResource GalleryText.RadioDemoBusinessPrice}" FontWeight="Bold" /><Run Text="{DynamicResource GalleryText.RadioDemoPerMonth}" FontSize="14" Foreground="{DynamicResource AlderMuted}" />
+                      </alder:AlderTextBlock>
+                      <alder:AlderTextBlock Text="{DynamicResource GalleryText.RadioDemoBusinessHint}" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                    </StackPanel>
+                  </StackPanel>
+                </alder:AlderRadioButtonGroupItem.Content>
+                <alder:AlderRadioButtonGroupItem.Indicator>
+                  <alder:AlderPathIcon Width="20" Height="20" Data="{StaticResource AlderIconCheckCircleFilled}" Foreground="{DynamicResource AlderAccent}" />
+                </alder:AlderRadioButtonGroupItem.Indicator>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="scale" Background="{DynamicResource AlderNeutral}" AutomationProperties.Name="{DynamicResource GalleryText.RadioDemoScale}">
+                <alder:AlderRadioButtonGroupItem.Content>
+                  <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                      <Border Width="32" Height="32" CornerRadius="12" Background="{DynamicResource AlderSurface}">
+                        <Viewbox Width="16" Height="16">
+                          <Path Width="16" Height="16" Data="{StaticResource RadioPlanScaleIcon}" Stroke="{DynamicResource AlderInk}"
+                                StrokeThickness="1.3" StrokeLineCap="Round" StrokeJoin="Round" />
+                        </Viewbox>
+                      </Border>
+                      <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.RadioDemoScale}" FontWeight="SemiBold" LineHeight="20" />
+                      </StackPanel>
+                    </StackPanel>
+                    <StackPanel Spacing="4">
+                      <alder:AlderTextBlock LineHeight="32" FontSize="24">
+                        <Run Text="{DynamicResource GalleryText.RadioDemoScalePrice}" FontWeight="Bold" /><Run Text="{DynamicResource GalleryText.RadioDemoPerMonth}" FontSize="14" Foreground="{DynamicResource AlderMuted}" />
+                      </alder:AlderTextBlock>
+                      <alder:AlderTextBlock Text="{DynamicResource GalleryText.RadioDemoScaleHint}" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                    </StackPanel>
+                  </StackPanel>
+                </alder:AlderRadioButtonGroupItem.Content>
+                <alder:AlderRadioButtonGroupItem.Indicator>
+                  <alder:AlderPathIcon Width="20" Height="20" Data="{StaticResource AlderIconCheckCircleFilled}" Foreground="{DynamicResource AlderAccent}" />
+                </alder:AlderRadioButtonGroupItem.Indicator>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="enterprise" Background="{DynamicResource AlderNeutral}" AutomationProperties.Name="{DynamicResource GalleryText.FormEnterprise}">
+                <alder:AlderRadioButtonGroupItem.Content>
+                  <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                      <Border Width="32" Height="32" CornerRadius="12" Background="{DynamicResource AlderSurface}">
+                        <Viewbox Width="16" Height="16">
+                          <Path Width="16" Height="16" Data="{StaticResource RadioPlanEnterpriseIcon}" Stroke="{DynamicResource AlderInk}"
+                                StrokeThickness="1.3" StrokeLineCap="Round" StrokeJoin="Round" />
+                        </Viewbox>
+                      </Border>
+                      <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormEnterprise}" FontWeight="SemiBold" LineHeight="20" />
+                      </StackPanel>
+                    </StackPanel>
+                    <StackPanel Spacing="4">
+                      <alder:AlderTextBlock LineHeight="32" FontSize="24">
+                        <Run Text="{DynamicResource GalleryText.RadioDemoEnterprisePrice}" FontWeight="Bold" /><Run Text="{DynamicResource GalleryText.RadioDemoPerMonth}" FontSize="14" Foreground="{DynamicResource AlderMuted}" />
+                      </alder:AlderTextBlock>
+                      <alder:AlderTextBlock Text="{DynamicResource GalleryText.RadioDemoEnterpriseHint}" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                    </StackPanel>
+                  </StackPanel>
+                </alder:AlderRadioButtonGroupItem.Content>
+                <alder:AlderRadioButtonGroupItem.Indicator>
+                  <alder:AlderPathIcon Width="20" Height="20" Data="{StaticResource AlderIconCheckCircleFilled}" Foreground="{DynamicResource AlderAccent}" />
+                </alder:AlderRadioButtonGroupItem.Indicator>
+              </alder:AlderRadioButtonGroupItem>
+            </alder:AlderRadioButtonGroup>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var workspace = new AlderRadioButtonGroup { MaxWidth = 520 };
+        AddPlan("starter", "Starter", "US$12", true);
+        AddPlan("growth", "Growth", "US$29");
+        AddPlan("business", "Business", "US$59");
+        AddPlan("scale", "Scale", "US$149");
+        AddPlan("enterprise", "Enterprise", "US$299");
+        workspace.SelectedKey = "starter";
+
+        void AddPlan(string key, string title, string amount, bool popular = false)
+        {
+            var header = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
+            header.Children.Add(new AlderTextBlock { Text = title, FontWeight = FontWeight.SemiBold });
+            if (popular)
+                header.Children.Add(new AlderChip { Content = "Most popular", Color = AlderStatusColor.Success, Variant = ChipVariant.Soft });
+            var card = new AlderRadioButtonGroupItem
+            {
+                Content = new StackPanel
+                {
+                    Spacing = 8,
+                    Children = { header, new AlderTextBlock { Text = amount, FontSize = 24, FontWeight = FontWeight.Bold } }
+                },
+                Indicator = new AlderPathIcon
+                {
+                    Width = 20, Height = 20,
+                    Data = (Geometry)Application.Current!.FindResource("AlderIconCheckCircleFilled")!
+                }
+            };
+            AlderChoiceGroup.SetKey(card, key);
+            workspace.Children.Add(card);
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleRipple" Title="{DynamicResource GalleryText.FormRadioRipple}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120" Container.Name="RadioPreview" Container.Sizing="Width">
+          <StackPanel MaxWidth="672" Spacing="12">
+            <alder:AlderTextBlock x:Name="DeployRegionTitle" Text="{DynamicResource GalleryText.RadioDemoDeployRegion}" FontWeight="Medium" LineHeight="20" TextWrapping="Wrap" />
+            <alder:AlderRadioButtonGroup SelectedKey="east" AutomationProperties.LabeledBy="{CompiledBinding #DeployRegionTitle}" Layout="Grid" Theme="{StaticResource RadioDemoGrid}">
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="east" IsRippleEnabled="True"
+                  Content="{DynamicResource GalleryText.FormEast}" Description="{DynamicResource GalleryText.RadioDemoEastHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.RadioDemoEastCode}" FontFamily="Cascadia Mono, Menlo, monospace" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="west" IsRippleEnabled="True"
+                  Content="{DynamicResource GalleryText.FormWestEurope}" Description="{DynamicResource GalleryText.RadioDemoWestHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.RadioDemoWestCode}" FontFamily="Cascadia Mono, Menlo, monospace" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="asia" IsRippleEnabled="True"
+                  Content="{DynamicResource GalleryText.FormAsiaPacific}" Description="{DynamicResource GalleryText.RadioDemoAsiaHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.RadioDemoAsiaCode}" FontFamily="Cascadia Mono, Menlo, monospace" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+            </alder:AlderRadioButtonGroup>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderRadioButtonGroup { Layout = RadioButtonGroupLayout.Grid, Columns = 3 };
+        AddRegion("east", "US East", "Lowest latency for US-based users", "us-east-1");
+        AddRegion("west", "EU West", "Covers Western Europe and UK", "eu-west-1");
+        AddRegion("asia", "Asia Pacific", "Optimized for Asia-Pacific traffic", "ap-south-1");
+        group.SelectedKey = "east";
+
+        void AddRegion(string key, string title, string description, string code)
+        {
+            var region = new AlderRadioButtonGroupItem
+            {
+                Content = title, Description = description, IsRippleEnabled = true,
+                Details = new AlderTextBlock { Text = code, FontFamily = new FontFamily("Cascadia Mono, Menlo, monospace"), FontSize = 12 }
+            };
+            AlderChoiceGroup.SetKey(region, key);
+            group.Children.Add(region);
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.RadioDemoDisabledGroup}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <StackPanel MaxWidth="360" Spacing="12">
+            <alder:AlderTextBlock x:Name="DisabledTitle" Text="{DynamicResource GalleryText.FormRadioPlanTitle}" FontWeight="Medium" LineHeight="20" TextWrapping="Wrap" />
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.RadioDemoChangesUnavailable}" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+            <alder:AlderRadioButtonGroup SelectedKey="pro" AutomationProperties.LabeledBy="{CompiledBinding #DisabledTitle}" IsEnabled="False">
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="starter"
+                  Content="{DynamicResource GalleryText.Starter}" Description="{DynamicResource GalleryText.FormRadioStarterHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20">
+                    <Run Text="{DynamicResource GalleryText.FormRadioStarterPrice}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.FormRadioPricePeriod}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                  </alder:AlderTextBlock>
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="pro"
+                  Content="{DynamicResource GalleryText.SelectPro}" Description="{DynamicResource GalleryText.FormRadioProHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20">
+                    <Run Text="{DynamicResource GalleryText.FormRadioProPrice}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.FormRadioPricePeriod}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                  </alder:AlderTextBlock>
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="enterprise"
+                  Content="{DynamicResource GalleryText.FormEnterprise}" Description="{DynamicResource GalleryText.FormEnterpriseHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20">
+                    <Run Text="{DynamicResource GalleryText.FormRadioEnterprisePrice}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.FormRadioPricePeriod}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                  </alder:AlderTextBlock>
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+            </alder:AlderRadioButtonGroup>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderRadioButtonGroup { MaxWidth = 360, IsEnabled = false };
+        group.Children.Add(Plan("starter", "Starter", "For individuals and small projects", "US$5"));
+        group.Children.Add(Plan("pro", "Pro", "For growing teams and businesses", "US$15"));
+        group.Children.Add(Plan("enterprise", "Enterprise", "For large organizations at scale", "US$45"));
+        group.SelectedKey = "pro";
+
+        static AlderRadioButtonGroupItem Plan(string key, string title, string description, string amount)
+        {
+            var value = new AlderTextBlock { LineHeight = 20 };
+            value.Inlines!.Add(new Run(amount) { FontWeight = FontWeight.SemiBold });
+            value.Inlines.Add(new Run("/mo") { FontSize = 12, Foreground = Brushes.Gray });
+            var card = new AlderRadioButtonGroupItem { Content = title, Description = description, Details = value };
+            AlderChoiceGroup.SetKey(card, key);
+            return card;
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <StackPanel MaxWidth="360" Spacing="12">
+            <alder:AlderTextBlock x:Name="ControlledTitle" Text="{DynamicResource GalleryText.FormRadioPlanTitle}" FontWeight="Medium" LineHeight="20" TextWrapping="Wrap" />
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormRadioPlanHint}" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+            <alder:AlderRadioButtonGroup SelectedKey="{CompiledBinding Plan, Mode=TwoWay}" AutomationProperties.LabeledBy="{CompiledBinding #ControlledTitle}">
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="starter"
+                  Content="{DynamicResource GalleryText.Starter}" Description="{DynamicResource GalleryText.FormRadioStarterHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20">
+                    <Run Text="{DynamicResource GalleryText.FormRadioStarterPrice}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.FormRadioPricePeriod}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                  </alder:AlderTextBlock>
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="pro"
+                  Content="{DynamicResource GalleryText.SelectPro}" Description="{DynamicResource GalleryText.FormRadioProHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20">
+                    <Run Text="{DynamicResource GalleryText.FormRadioProPrice}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.FormRadioPricePeriod}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                  </alder:AlderTextBlock>
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="enterprise"
+                  Content="{DynamicResource GalleryText.FormEnterprise}" Description="{DynamicResource GalleryText.FormEnterpriseHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20">
+                    <Run Text="{DynamicResource GalleryText.FormRadioEnterprisePrice}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.FormRadioPricePeriod}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                  </alder:AlderTextBlock>
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+            </alder:AlderRadioButtonGroup>
+            <alder:AlderTextBlock LineHeight="20">
+              <Run Text="{DynamicResource GalleryText.RadioDemoSelected}" Foreground="{DynamicResource AlderMuted}" /><Run Text="{CompiledBinding Plan}" FontWeight="Medium" />
+            </alder:AlderTextBlock>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderRadioButtonGroup { MaxWidth = 360 };
+        group.Children.Add(Plan("starter", "Starter", "For individuals and small projects", "US$5"));
+        group.Children.Add(Plan("pro", "Pro", "For growing teams and businesses", "US$15"));
+        group.Children.Add(Plan("enterprise", "Enterprise", "For large organizations at scale", "US$45"));
+        group.Bind(AlderRadioButtonGroup.SelectedKeyProperty,
+            CompiledBinding.Create((RadioButtonGroupViewModel model) => model.Plan, mode: BindingMode.TwoWay));
+
+        static AlderRadioButtonGroupItem Plan(string key, string title, string description, string amount)
+        {
+            var value = new AlderTextBlock { LineHeight = 20 };
+            value.Inlines!.Add(new Run(amount) { FontWeight = FontWeight.SemiBold });
+            value.Inlines.Add(new Run("/mo") { FontSize = 12, Foreground = Brushes.Gray });
+            var card = new AlderRadioButtonGroupItem { Content = title, Description = description, Details = value };
+            AlderChoiceGroup.SetKey(card, key);
+            return card;
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleIndicators" Title="{DynamicResource GalleryText.RadioDemoCustomIndicator}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120" Container.Name="RadioPreview" Container.Sizing="Width">
+          <StackPanel MaxWidth="672" Spacing="12">
+            <alder:AlderTextBlock x:Name="MailingListTitle" Text="{DynamicResource GalleryText.RadioDemoMailingList}" FontWeight="Medium" LineHeight="20" TextWrapping="Wrap" />
+            <alder:AlderRadioButtonGroup SelectedKey="newsletter" AutomationProperties.LabeledBy="{CompiledBinding #MailingListTitle}" Layout="Grid" Theme="{StaticResource RadioDemoGrid}">
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="newsletter"
+                  Content="{DynamicResource GalleryText.RadioDemoNewsletter}" Description="{DynamicResource GalleryText.RadioDemoNewsletterHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20" Margin="0,4,0,0">
+                    <Run Text="{DynamicResource GalleryText.RadioDemoNewsletterCount}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.RadioDemoUserCountSuffix}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                  </alder:AlderTextBlock>
+                </alder:AlderRadioButtonGroupItem.Details>
+                <alder:AlderRadioButtonGroupItem.Indicator>
+                  <alder:AlderPathIcon Width="20" Height="20" Data="{StaticResource AlderIconCheckCircleFilled}" Foreground="{DynamicResource AlderAccent}" />
+                </alder:AlderRadioButtonGroupItem.Indicator>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="existing"
+                  Content="{DynamicResource GalleryText.RadioDemoExistingCustomers}" Description="{DynamicResource GalleryText.RadioDemoExistingHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20" Margin="0,4,0,0">
+                    <Run Text="{DynamicResource GalleryText.RadioDemoExistingCount}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.RadioDemoUserCountSuffix}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                  </alder:AlderTextBlock>
+                </alder:AlderRadioButtonGroupItem.Details>
+                <alder:AlderRadioButtonGroupItem.Indicator>
+                  <alder:AlderPathIcon Width="20" Height="20" Data="{StaticResource AlderIconCheckCircleFilled}" Foreground="{DynamicResource AlderAccent}" />
+                </alder:AlderRadioButtonGroupItem.Indicator>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="trial"
+                  Content="{DynamicResource GalleryText.RadioDemoTrialUsers}" Description="{DynamicResource GalleryText.RadioDemoTrialHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20" Margin="0,4,0,0">
+                    <Run Text="{DynamicResource GalleryText.RadioDemoTrialCount}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.RadioDemoUserCountSuffix}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                  </alder:AlderTextBlock>
+                </alder:AlderRadioButtonGroupItem.Details>
+                <alder:AlderRadioButtonGroupItem.Indicator>
+                  <alder:AlderPathIcon Width="20" Height="20" Data="{StaticResource AlderIconCheckCircleFilled}" Foreground="{DynamicResource AlderAccent}" />
+                </alder:AlderRadioButtonGroupItem.Indicator>
+              </alder:AlderRadioButtonGroupItem>
+            </alder:AlderRadioButtonGroup>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderRadioButtonGroup { Layout = RadioButtonGroupLayout.Grid, Columns = 3 };
+        var check = (Geometry)Application.Current!.FindResource("AlderIconCheckCircleFilled")!;
+        AddList("newsletter", "Newsletter", "Last message sent an hour ago", "621 users");
+        AddList("existing", "Existing Customers", "Last message sent 2 weeks ago", "1,200 users");
+        AddList("trial", "Trial Users", "Last message sent 4 days ago", "2,740 users");
+        group.SelectedKey = "newsletter";
+
+        void AddList(string key, string title, string description, string count)
+        {
+            var card = new AlderRadioButtonGroupItem
+            {
+                Content = title, Description = description, Details = new AlderTextBlock { Text = count },
+                Indicator = new AlderPathIcon { Width = 20, Height = 20, Foreground = Brushes.DodgerBlue, Data = check }
+            };
+            AlderChoiceGroup.SetKey(card, key);
+            group.Children.Add(card);
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleNoIndicator" Title="{DynamicResource GalleryText.RadioDemoNoIndicator}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <StackPanel MaxWidth="360" Spacing="12">
+            <alder:AlderTextBlock x:Name="HiddenTitle" Text="{DynamicResource GalleryText.FormRadioPlanTitle}" FontWeight="Medium" LineHeight="20" TextWrapping="Wrap" />
+            <alder:AlderRadioButtonGroup SelectedKey="pro" AutomationProperties.LabeledBy="{CompiledBinding #HiddenTitle}">
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="starter" ShowIndicator="False"
+                  Content="{DynamicResource GalleryText.Starter}" Description="{DynamicResource GalleryText.FormRadioStarterHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20">
+                    <Run Text="{DynamicResource GalleryText.FormRadioStarterPrice}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.FormRadioPricePeriod}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                  </alder:AlderTextBlock>
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="pro" ShowIndicator="False"
+                  Content="{DynamicResource GalleryText.SelectPro}" Description="{DynamicResource GalleryText.FormRadioProHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20">
+                    <Run Text="{DynamicResource GalleryText.FormRadioProPrice}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.FormRadioPricePeriod}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                  </alder:AlderTextBlock>
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="enterprise" ShowIndicator="False"
+                  Content="{DynamicResource GalleryText.FormEnterprise}" Description="{DynamicResource GalleryText.FormEnterpriseHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20">
+                    <Run Text="{DynamicResource GalleryText.FormRadioEnterprisePrice}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.FormRadioPricePeriod}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                  </alder:AlderTextBlock>
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+            </alder:AlderRadioButtonGroup>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderRadioButtonGroup { MaxWidth = 360 };
+        group.Children.Add(Plan("starter", "Starter", "For individuals and small projects", "US$5"));
+        group.Children.Add(Plan("pro", "Pro", "For growing teams and businesses", "US$15"));
+        group.Children.Add(Plan("enterprise", "Enterprise", "For large organizations at scale", "US$45"));
+        group.SelectedKey = "pro";
+
+        static AlderRadioButtonGroupItem Plan(string key, string title, string description, string amount)
+        {
+            var value = new AlderTextBlock { LineHeight = 20 };
+            value.Inlines!.Add(new Run(amount) { FontWeight = FontWeight.SemiBold });
+            value.Inlines.Add(new Run("/mo") { FontSize = 12, Foreground = Brushes.Gray });
+            var card = new AlderRadioButtonGroupItem { Content = title, Description = description, Details = value, ShowIndicator = false };
+            AlderChoiceGroup.SetKey(card, key);
+            return card;
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDynamic" Title="{DynamicResource GalleryText.FormRadioDynamicDetails}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <StackPanel MaxWidth="360" Spacing="12">
+            <alder:AlderTextBlock x:Name="ReactiveTitle" Text="{DynamicResource GalleryText.FormRadioPlanTitle}" FontWeight="Medium" LineHeight="20" TextWrapping="Wrap" />
+            <alder:AlderRadioButtonGroup SelectedKey="pro" AutomationProperties.LabeledBy="{CompiledBinding #ReactiveTitle}">
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="starter" x:Name="ReactiveStarter"
+                  Content="{DynamicResource GalleryText.Starter}" Description="{DynamicResource GalleryText.FormRadioStarterHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20" Theme="{StaticResource RadioSelectedPrice}" Classes.selected="{CompiledBinding #ReactiveStarter.IsChecked, TargetNullValue=False}">
+                    <Run Text="{DynamicResource GalleryText.FormRadioStarterPrice}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.FormRadioPricePeriod}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                  </alder:AlderTextBlock>
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="pro" x:Name="ReactivePro"
+                  Content="{DynamicResource GalleryText.SelectPro}" Description="{DynamicResource GalleryText.FormRadioProHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20" Theme="{StaticResource RadioSelectedPrice}" Classes.selected="{CompiledBinding #ReactivePro.IsChecked, TargetNullValue=False}">
+                    <Run Text="{DynamicResource GalleryText.FormRadioProPrice}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.FormRadioPricePeriod}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                  </alder:AlderTextBlock>
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+              <alder:AlderRadioButtonGroupItem alder:AlderChoiceGroup.Key="enterprise" x:Name="ReactiveEnterprise"
+                  Content="{DynamicResource GalleryText.FormEnterprise}" Description="{DynamicResource GalleryText.FormEnterpriseHint}">
+                <alder:AlderRadioButtonGroupItem.Details>
+                  <alder:AlderTextBlock LineHeight="20" Theme="{StaticResource RadioSelectedPrice}" Classes.selected="{CompiledBinding #ReactiveEnterprise.IsChecked, TargetNullValue=False}">
+                    <Run Text="{DynamicResource GalleryText.FormRadioEnterprisePrice}" FontWeight="SemiBold" /><Run Text="{DynamicResource GalleryText.FormRadioPricePeriod}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                  </alder:AlderTextBlock>
+                </alder:AlderRadioButtonGroupItem.Details>
+              </alder:AlderRadioButtonGroupItem>
+            </alder:AlderRadioButtonGroup>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderRadioButtonGroup { MaxWidth = 360 };
+        group.Children.Add(Plan("starter", "Starter", "For individuals and small projects", "US$5"));
+        group.Children.Add(Plan("pro", "Pro", "For growing teams and businesses", "US$15"));
+        group.Children.Add(Plan("enterprise", "Enterprise", "For large organizations at scale", "US$45"));
+        group.SelectedKey = "pro";
+
+        static AlderRadioButtonGroupItem Plan(string key, string title, string description, string amount)
+        {
+            var value = new AlderTextBlock { LineHeight = 20 };
+            value.Inlines!.Add(new Run(amount) { FontWeight = FontWeight.SemiBold });
+            value.Inlines.Add(new Run("/mo") { FontSize = 12, Foreground = Brushes.Gray });
+            var card = new AlderRadioButtonGroupItem { Content = title, Description = description, Details = value };
+            AlderChoiceGroup.SetKey(card, key);
+            card.PropertyChanged += (_, change) =>
+            {
+                if (change.Property == ToggleButton.IsCheckedProperty)
+                    value.Foreground = card.IsChecked == true ? Brushes.DodgerBlue : null;
+            };
+            return card;
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

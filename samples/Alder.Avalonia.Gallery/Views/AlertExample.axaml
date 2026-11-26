@@ -1,0 +1,172 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.AlertExample" x:DataType="vm:FeedbackViewModel">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+          <LinearGradientBrush x:Key="GalleryAlertWarningSurface" StartPoint="0%,0%" EndPoint="100%,100%">
+            <GradientStop Offset="0" Color="#FEF6E9" />
+            <GradientStop Offset=".5" Color="#FFFFFF" />
+            <GradientStop Offset="1" Color="#EFEFF0" />
+          </LinearGradientBrush>
+          <SolidColorBrush x:Key="GalleryAlertWarningOutline" Color="#33F5A524" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+          <LinearGradientBrush x:Key="GalleryAlertWarningSurface" StartPoint="0%,0%" EndPoint="100%,100%">
+            <GradientStop Offset="0" Color="#393023" />
+            <GradientStop Offset=".5" Color="#18181B" />
+            <GradientStop Offset="1" Color="#23201E" />
+          </LinearGradientBrush>
+          <SolidColorBrush x:Key="GalleryAlertWarningOutline" Color="#4DF7B750" />
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleBasic" Title="{DynamicResource GalleryText.FeedbackBasic}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderAlert MaxWidth="576" Title="{DynamicResource GalleryText.FeedbackAlertDefault}"
+                     Description="{DynamicResource GalleryText.FeedbackAlertDefaultDescription}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var alert = new AlderAlert { Title = "Workspace notice", Description = "Team members can view this project." };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.Variants}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="576">
+          <alder:AlderAlert Color="Default" Title="{DynamicResource GalleryText.FeedbackAlertDefault}"
+                       Description="{DynamicResource GalleryText.FeedbackAlertDefaultDescription}" />
+          <alder:AlderAlert Color="Accent" Title="{DynamicResource GalleryText.FeedbackAlertAccent}"
+                       Description="{DynamicResource GalleryText.FeedbackAlertAccentDescription}" />
+          <alder:AlderAlert Color="Success" Title="{DynamicResource GalleryText.FeedbackAlertSuccess}" />
+          <alder:AlderAlert Color="Warning" Title="{DynamicResource GalleryText.FeedbackAlertWarning}"
+                       Description="{DynamicResource GalleryText.FeedbackAlertWarningDescription}" />
+          <alder:AlderAlert Color="Danger" Title="{DynamicResource GalleryText.FeedbackAlertDanger}"
+                       Description="{DynamicResource GalleryText.FeedbackAlertDangerDescription}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var defaultAlert = new AlderAlert { Color = FeedbackColor.Default, Title = "Workspace notice", Description = "Team members can view this project." };
+        var accentAlert = new AlderAlert { Color = FeedbackColor.Accent, Title = "Update available", Description = "A newer version is ready to install." };
+        var successAlert = new AlderAlert { Color = FeedbackColor.Success, Title = "Changes saved" };
+        var warningAlert = new AlderAlert { Color = FeedbackColor.Warning, Title = "Storage is almost full", Description = "Review your files to free up space." };
+        var dangerAlert = new AlderAlert { Color = FeedbackColor.Danger, Title = "Upload failed", Description = "Check your connection and try again." };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleActions" Title="{DynamicResource GalleryText.FeedbackAlertActions}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="576">
+          <alder:AlderAlert Color="Accent" IsVisible="{CompiledBinding ShowAlert}" Title="{DynamicResource GalleryText.FeedbackAlertAccent}"
+                       Description="{DynamicResource GalleryText.FeedbackAlertAccentDescription}">
+            <alder:AlderAlert.Indicator>
+              <alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconBell}" />
+            </alder:AlderAlert.Indicator>
+            <alder:AlderAlert.Actions>
+              <alder:AlderButton Theme="{StaticResource AlderCloseButtonTheme}" ClipToBounds="False"
+                      Command="{CompiledBinding DismissAlertCommand}">
+                <alder:AlderPathIcon Data="{StaticResource AlderIconXmark}" Width="10" Height="10" />
+              </alder:AlderButton>
+            </alder:AlderAlert.Actions>
+          </alder:AlderAlert>
+          <WrapPanel ItemSpacing="8" LineSpacing="8">
+            <alder:AlderCheckBox IsChecked="{CompiledBinding ShowAlert, Mode=TwoWay}" Content="{DynamicResource GalleryText.FeedbackShowAlert}" VerticalAlignment="Center" />
+            <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetAlertCommand}" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var alert = new AlderAlert { Color = FeedbackColor.Accent, Title = "Update available" };
+        alert.Bind(Visual.IsVisibleProperty, CompiledBinding.Create((FeedbackViewModel model) => model.ShowAlert));
+        var dismiss = new AlderButton
+        {
+            Theme = (ControlTheme)this.FindResource("AlderCloseButtonTheme")!,
+            ClipToBounds = false,
+            Content = new AlderPathIcon
+            {
+                Data = (Geometry)this.FindResource("AlderIconXmark")!,
+                Width = 10,
+                Height = 10
+            }
+        };
+        dismiss.Bind(Button.CommandProperty, CompiledBinding.Create((FeedbackViewModel model) => model.DismissAlertCommand));
+        alert.Actions = dismiss;
+
+        var show = new AlderCheckBox { Content = "Show alert", VerticalAlignment = VerticalAlignment.Center };
+        show.Bind(ToggleButton.IsCheckedProperty, CompiledBinding.Create((FeedbackViewModel model) => model.ShowAlert, mode: BindingMode.TwoWay));
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((FeedbackViewModel model) => model.ResetAlertCommand));
+        var actions = new WrapPanel { ItemSpacing = 8, LineSpacing = 8, Children = { show, reset } };
+        var preview = new StackPanel { Spacing = 12, MaxWidth = 576, Children = { alert, actions } };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleContent" Title="{DynamicResource GalleryText.FeedbackRichContent}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderAlert MaxWidth="576" Color="Danger" Title="{DynamicResource GalleryText.FeedbackAlertDanger}"
+                     Description="{DynamicResource GalleryText.FeedbackAlertDangerDescription}">
+          <StackPanel Spacing="4" Margin="0,8,0,0">
+            <alder:AlderTextBlock TextWrapping="Wrap" Text="{DynamicResource GalleryText.FeedbackAlertConnection}" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderTextBlock TextWrapping="Wrap" Text="{DynamicResource GalleryText.FeedbackAlertRetry}" Foreground="{DynamicResource AlderMuted}" />
+          </StackPanel>
+        </alder:AlderAlert>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var alert = new AlderAlert
+        {
+            Color = FeedbackColor.Danger,
+            Title = "Upload failed",
+            Description = "Check your connection and try again.",
+            Content = new StackPanel
+            {
+                Spacing = 4,
+                Children =
+                {
+                    new AlderTextBlock { Text = "Verify that you are online." },
+                    new AlderTextBlock { Text = "Retry the upload when the connection returns." }
+                }
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleLoading" Title="{DynamicResource GalleryText.Loading}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderAlert MaxWidth="576" Color="Accent" Title="{DynamicResource GalleryText.FeedbackAlertLoading}"
+                     Description="{DynamicResource GalleryText.FeedbackAlertLoadingDescription}">
+          <alder:AlderAlert.Indicator>
+            <alder:AlderSpinner Size="Small" Color="Default" />
+          </alder:AlderAlert.Indicator>
+        </alder:AlderAlert>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var alert = new AlderAlert
+        {
+            Color = FeedbackColor.Accent,
+            Title = "Syncing your changes",
+            Description = "Keep this window open while your files sync.",
+            Indicator = new AlderSpinner { Size = SpinnerSize.Small, Color = FeedbackColor.Default }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustom" Title="{DynamicResource GalleryText.CustomStyles}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderAlert MaxWidth="576" Color="Warning" Title="{DynamicResource GalleryText.FeedbackAlertWarning}"
+                     Description="{DynamicResource GalleryText.FeedbackAlertWarningDescription}" CornerRadius="12"
+                     Background="{DynamicResource GalleryAlertWarningSurface}"
+                     BorderBrush="{DynamicResource GalleryAlertWarningOutline}" BorderThickness="1"
+                     BoxShadow="0 1 3 0 #1A000000, 0 1 2 -1 #1A000000" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var alert = new AlderAlert
+        {
+            Title = "Storage is almost full", Color = FeedbackColor.Warning,
+            CornerRadius = new CornerRadius(12), BorderThickness = new Thickness(1)
+        };
+        alert[!AlderAlert.BackgroundProperty] = new DynamicResourceExtension("GalleryAlertWarningSurface");
+        alert[!AlderAlert.BorderBrushProperty] = new DynamicResourceExtension("GalleryAlertWarningOutline");
+        alert.BoxShadow = BoxShadows.Parse("0 1 3 0 #1A000000, 0 1 2 -1 #1A000000");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

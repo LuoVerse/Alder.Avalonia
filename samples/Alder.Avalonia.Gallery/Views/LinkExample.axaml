@@ -1,0 +1,81 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.LinkExample" x:DataType="vm:LinkViewModel">
+  <Design.DataContext><vm:LinkViewModel /></Design.DataContext>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderLink ShowExternalIcon="True" NavigateUri="{CompiledBinding Documentation}"
+                    Content="{DynamicResource GalleryText.LinkDocumentation}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var link = new AlderLink { ShowExternalIcon = true, Content = "Avalonia documentation" };
+        link.Bind(AlderLink.NavigateUriProperty, CompiledBinding.Create((LinkViewModel model) => model.Documentation));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleLinkIconPlacement" Title="{DynamicResource GalleryText.LinkIconPlacement}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="16" LineSpacing="8">
+          <alder:AlderLink ShowExternalIcon="True" IconPlacement="Start" Command="{CompiledBinding Activate}"
+                      Content="{DynamicResource GalleryText.LinkIconStart}" />
+          <alder:AlderLink ShowExternalIcon="True" Command="{CompiledBinding Activate}"
+                      Content="{DynamicResource GalleryText.LinkIconEnd}" />
+          <alder:AlderLink Icon="{StaticResource AlderIconBookmark}" Command="{CompiledBinding Activate}"
+                      Content="{DynamicResource GalleryText.LinkBookmark}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var link1 = new AlderLink
+        {
+            ShowExternalIcon = true,
+            IconPlacement = AlderLinkIconPlacement.Start,
+            Content = "Leading icon",
+        };
+        link1.Bind(AlderLink.CommandProperty, CompiledBinding.Create((LinkViewModel model) => model.Activate));
+
+        var link2 = new AlderLink { ShowExternalIcon = true, Content = "Trailing icon" };
+        link2.Bind(AlderLink.CommandProperty, CompiledBinding.Create((LinkViewModel model) => model.Activate));
+
+        var link3 = new AlderLink
+        {
+            Icon = (Geometry)this.FindResource("AlderIconBookmark")!,
+            Content = "Bookmark",
+        };
+        link3.Bind(AlderLink.CommandProperty, CompiledBinding.Create((LinkViewModel model) => model.Activate));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleLinkDecoration" Title="{DynamicResource GalleryText.LinkDecoration}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <WrapPanel ItemSpacing="16" LineSpacing="8">
+            <alder:AlderLink Command="{CompiledBinding Activate}" Content="{DynamicResource GalleryText.LinkHoverUnderline}" />
+            <alder:AlderLink Underline="Always" UnderlineOffset="4" Command="{CompiledBinding Activate}"
+                        Content="{DynamicResource GalleryText.LinkAlwaysUnderline}" />
+            <alder:AlderLink Underline="None" Command="{CompiledBinding Activate}" Content="{DynamicResource GalleryText.LinkNoUnderline}" />
+            <alder:AlderLink IsEnabled="False" Command="{CompiledBinding Activate}" Content="{DynamicResource GalleryText.Disabled}" />
+          </WrapPanel>
+          <alder:AlderTextBlock Classes="detail" Text="{CompiledBinding Status}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var link1 = new AlderLink { Content = "Underline on hover" };
+        link1.Bind(AlderLink.CommandProperty, CompiledBinding.Create((LinkViewModel model) => model.Activate));
+
+        var link2 = new AlderLink
+        {
+            Underline = AlderLinkUnderline.Always,
+            UnderlineOffset = 4,
+            Content = "Always underlined",
+        };
+        link2.Bind(AlderLink.CommandProperty, CompiledBinding.Create((LinkViewModel model) => model.Activate));
+
+        var link3 = new AlderLink { Underline = AlderLinkUnderline.None, Content = "No underline" };
+        link3.Bind(AlderLink.CommandProperty, CompiledBinding.Create((LinkViewModel model) => model.Activate));
+
+        var link4 = new AlderLink { IsEnabled = false, Content = "Disabled" };
+        link4.Bind(AlderLink.CommandProperty, CompiledBinding.Create((LinkViewModel model) => model.Activate));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

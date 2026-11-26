@@ -1,0 +1,16 @@
+HeroUI Card documentation examples
+
+Original example images:
+avocado.jpeg, cherries.jpeg, demo1.jpg, demo2.jpg, neo1.jpeg, neo2.jpeg, oranges.jpeg, robot1.jpeg
+
+Original author avatars:
+blue.jpg, red.jpg
+
+HeroUI AI preview thumbnails
+egg.jpeg — egg.webp
+casa-lago.jpeg — 7.jpg
+
+Gallery ecosystem icons
+ai-avalonia.png  https://avaloniaui.net/images/brand/avalonia-logo-dark.svg (symbol, in brand blue)
+ai-dotnet.png    https://dotnet.microsoft.com/favicon.ico
+ai-nuget.png     https://www.nuget.org/favicon.ico

@@ -1,0 +1,562 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:c="using:Avalonia.Data.Converters">
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <BoxShadows x:Key="AlderSelectFocusShadow">0 0 0 4 #0485F7, 0 0 0 2 #F5F5F5</BoxShadows>
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <BoxShadows x:Key="AlderSelectFocusShadow">0 0 0 4 #0485F7, 0 0 0 2 #060607</BoxShadows>
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+  <x:String x:Key="AlderText.PickerPlaceholder">Select one</x:String>
+  <x:String x:Key="AlderText.PickerSearch">Search...</x:String>
+  <x:String x:Key="AlderText.PickerEmpty">No results found</x:String>
+  <x:String x:Key="AlderText.PickerLoading">Loading…</x:String>
+  <x:String x:Key="AlderText.PickerOpen">Open options</x:String>
+  <x:String x:Key="AlderText.PickerClear">Clear selection</x:String>
+  <x:String x:Key="AlderText.PickerRemove">Remove this selection</x:String>
+  <x:String x:Key="AlderText.SelectSeparator" xml:space="preserve">, </x:String>
+  <x:String x:Key="AlderText.SelectPair">{0} and {1}</x:String>
+  <x:String x:Key="AlderText.SelectListEnd">{0}, and {1}</x:String>
+
+  <ControlTheme x:Key="AlderPickerButtonTheme" TargetType="Button">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="PickerButtonSurface" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+          <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderAutocompleteTriggerTheme" TargetType="Button" BasedOn="{StaticResource AlderPickerButtonTheme}">
+    <Style Selector="^ /template/ Border#PickerButtonSurface">
+      <Setter Property="BoxShadow" Value="0 0 0 0 #000485F7" />
+      <Setter Property="Transitions"><Transitions><BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions></Setter>
+    </Style>
+    <Style Selector="^:focus-visible /template/ Border#PickerButtonSurface">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#PickerButtonSurface">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderSelectTriggerTheme" TargetType="Button" BasedOn="{StaticResource AlderPickerButtonTheme}">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel ClipToBounds="False">
+          <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+          </Border>
+          <alder:InputFocusRing Name="SelectTriggerRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ alder|InputFocusRing#SelectTriggerRing">
+      <Setter Property="BoxShadow" Value="0 0 0 4 #000485F7, 0 0 0 2 #000485F7" />
+      <Setter Property="Transitions"><Transitions><BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions></Setter>
+    </Style>
+    <Style Selector="^:focus-visible /template/ alder|InputFocusRing#SelectTriggerRing">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderSelectFocusShadow}" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ alder|InputFocusRing#SelectTriggerRing">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderSelectClearTheme" TargetType="Button" BasedOn="{StaticResource AlderPickerButtonTheme}">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="Transparent">
+          <Border Margin="2" Background="{TemplateBinding Background}" CornerRadius="10">
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
+                              HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+          </Border>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="RenderTransform" Value="scale(0.93)" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderComboBoxToggleTheme" TargetType="Button" BasedOn="{StaticResource AlderPickerButtonTheme}">
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Foreground" Duration="0:0:0.15" Easing="0.4,0,0.2,1" />
+        <DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="0.4,0,0.2,1" />
+      </Transitions>
+    </Setter>
+    <Style Selector="^:pointerover:not(:disabled)"><Setter Property="Foreground" Value="{DynamicResource AlderInk}" /></Style>
+    <Style Selector="^:pressed"><Setter Property="Opacity" Value="0.7" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True]"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderPickerTagRemoveTheme" TargetType="Button" BasedOn="{StaticResource AlderPickerButtonTheme}">
+    <Style Selector="^:pointerover, ^:focus-visible">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ Border#PickerButtonSurface">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderPickerRowTheme" TargetType="ListBoxItem">
+    <Setter Property="Padding" Value="10,8" />
+    <Setter Property="MinHeight" Value="36" />
+    <Setter Property="Margin" Value="0,2" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="OptionSurface" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}"
+                  CornerRadius="{TemplateBinding CornerRadius}">
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+          </Border>
+          <Border Name="OptionFocus" IsVisible="False" IsHitTestVisible="False" BorderThickness="2"
+                  BorderBrush="{DynamicResource AlderAccent}" CornerRadius="{TemplateBinding CornerRadius}" />
+          <alder:InputFocusRing Name="SelectOptionRing" IsVisible="False" IsHitTestVisible="False" ClipToBounds="False"
+                            CornerRadius="{TemplateBinding CornerRadius}" BoxShadow="{DynamicResource AlderSelectFocusShadow}" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover:not(:disabled)"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
+    <Style Selector="^:selected:not(.pointer-mode) /template/ Border#OptionFocus"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:disabled:not(.section):not(.separator)"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^.section">
+      <Setter Property="MinHeight" Value="28" />
+      <Setter Property="Padding" Value="10,6" />
+      <Setter Property="Cursor" Value="Arrow" />
+    </Style>
+    <Style Selector="^.separator">
+      <Setter Property="MinHeight" Value="1" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Margin" Value="0,3" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderSelectRowTheme" TargetType="ListBoxItem" BasedOn="{StaticResource AlderPickerRowTheme}">
+    <Setter Property="Padding" Value="10,6,8,6" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Style Selector="^.section">
+      <Setter Property="MinHeight" Value="26" />
+      <Setter Property="Padding" Value="8,6,8,4" />
+      <Setter Property="Margin" Value="0" />
+    </Style>
+    <Style Selector="^.group-option"><Setter Property="Margin" Value="0" /></Style>
+    <Style Selector="^.separator">
+      <Setter Property="Padding" Value="7,0" />
+      <Setter Property="Margin" Value="0,4" />
+    </Style>
+    <Style Selector="^:selected:not(.pointer-mode) /template/ Border#OptionFocus">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^:selected:not(.pointer-mode) /template/ alder|InputFocusRing#SelectOptionRing">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^ /template/ Border#OptionSurface">
+      <Setter Property="RenderTransform" Value="scale(1)" />
+      <Setter Property="Transitions"><Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25" Easing="0.165,0.84,0.44,1" /></Transitions></Setter>
+    </Style>
+    <Style Selector="^:pressed:not(:disabled) /template/ Border#OptionSurface">
+      <Setter Property="RenderTransform" Value="scale(0.98)" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#OptionSurface"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderSelectCheckTheme" TargetType="Path">
+    <Setter Property="Stroke" Value="{DynamicResource AlderInk}" />
+    <Setter Property="StrokeThickness" Value="1.1" />
+    <Setter Property="StrokeLineCap" Value="Round" />
+    <Setter Property="StrokeJoin" Value="Round" />
+    <Setter Property="StrokeDashArray" Value="12,12" />
+    <Setter Property="StrokeDashOffset" Value="12" />
+    <Setter Property="Opacity" Value="0" />
+    <Style Selector="^.draw:not(.checked)"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^.draw.checked">
+      <Setter Property="Transitions"><Transitions><DoubleTransition Property="StrokeDashOffset" Duration="0:0:0.25" /></Transitions></Setter>
+    </Style>
+    <Style Selector="^.checked"><Setter Property="StrokeDashOffset" Value="0" /><Setter Property="Opacity" Value="1" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True]"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderPickerListTheme" TargetType="ListBox">
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="KeyboardNavigation.IsTabStop" Value="False" />
+    <Setter Property="ItemContainerTheme" Value="{StaticResource AlderPickerRowTheme}" />
+    <Setter Property="ItemsPanel"><ItemsPanelTemplate><VirtualizingStackPanel /></ItemsPanelTemplate></Setter>
+    <Setter Property="ItemTemplate">
+      <DataTemplate x:DataType="alder:PickerRow">
+        <Panel>
+          <alder:AlderTextBlock IsVisible="{CompiledBinding IsHeader}" Text="{CompiledBinding Text}" FontSize="12"
+                     Foreground="{DynamicResource AlderMuted}" FontWeight="Medium" LineHeight="16" />
+          <Border IsVisible="{CompiledBinding IsSeparator}" Height="1" Background="{DynamicResource AlderSeparator}" />
+          <Grid IsVisible="{CompiledBinding IsOption}" ColumnDefinitions="*,16" ColumnSpacing="8">
+            <alder:AlderContentControl IsVisible="{CompiledBinding HasTemplate}" Content="{CompiledBinding Item}"
+                            ContentTemplate="{CompiledBinding Template}"
+                            HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" />
+            <Grid IsVisible="{CompiledBinding !HasTemplate}" ColumnDefinitions="Auto,*">
+              <alder:AlderAvatar Width="24" Height="24" CornerRadius="12" Margin="0,0,8,0" Source="{CompiledBinding Image}"
+                            IsVisible="{CompiledBinding Image, Converter={x:Static c:ObjectConverters.IsNotNull}}"
+                            AutomationProperties.AccessibilityView="Raw" />
+              <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <alder:AlderTextBlock Text="{CompiledBinding Text}" TextWrapping="Wrap" LineHeight="20" />
+                <alder:AlderTextBlock Text="{CompiledBinding Description}" IsVisible="{CompiledBinding Description, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}"
+                           Foreground="{DynamicResource AlderMuted}" FontSize="12" LineHeight="16" TextWrapping="Wrap" />
+              </StackPanel>
+            </Grid>
+            <Panel Grid.Column="1" IsVisible="{CompiledBinding !UsesListBoxRows}">
+              <alder:AlderPathIcon Width="10" Height="10" Data="{DynamicResource AlderIconCheck}"
+                        Foreground="{DynamicResource AlderMuted}" IsVisible="{CompiledBinding IsCommitted}" />
+            </Panel>
+            <Path Grid.Column="1" Width="10" Height="10" VerticalAlignment="Center" HorizontalAlignment="Center"
+                  Data="M1.1,5 L4.43,7.78 L8.88,2.22" Theme="{StaticResource AlderSelectCheckTheme}"
+                  IsVisible="{CompiledBinding UsesListBoxRows}" Classes.checked="{CompiledBinding IsCommitted}" Classes.draw="{CompiledBinding AnimateCheck}" />
+          </Grid>
+        </Panel>
+      </DataTemplate>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <alder:AlderScrollViewer Name="PART_PickerScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                      IsScrollChainingEnabled="False" Focusable="False">
+          <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+        </alder:AlderScrollViewer>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderSelectListTheme" TargetType="ListBox" BasedOn="{StaticResource AlderPickerListTheme}">
+    <Setter Property="ItemContainerTheme" Value="{StaticResource AlderSelectRowTheme}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <alder:AlderScrollViewer Name="PART_PickerScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                      IsScrollChainingEnabled="False" Focusable="False">
+          <ItemsPresenter Name="PART_ItemsPresenter" Margin="6,4" ItemsPanel="{TemplateBinding ItemsPanel}" />
+        </alder:AlderScrollViewer>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^.sections /template/ ItemsPresenter#PART_ItemsPresenter"><Setter Property="Margin" Value="6" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderInlineSelectListTheme" TargetType="ListBox" BasedOn="{StaticResource AlderSelectListTheme}">
+    <Style Selector="^ /template/ alder|AlderScrollViewer#PART_PickerScroll">
+      <Setter Property="Theme" Value="{DynamicResource AlderInlineSelectScrollViewerTheme}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderPicker}" TargetType="alder:AlderPicker">
+    <Setter Property="Width" Value="256" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="PlaceholderText" Value="{DynamicResource AlderText.PickerPlaceholder}" />
+    <Setter Property="SearchPlaceholderText" Value="{DynamicResource AlderText.PickerSearch}" />
+    <Setter Property="EmptyText" Value="{DynamicResource AlderText.PickerEmpty}" />
+    <Setter Property="LoadingText" Value="{DynamicResource AlderText.PickerLoading}" />
+    <Setter Property="Indicator" Value="{DynamicResource AlderIconChevronDown}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel Spacing="4">
+          <alder:AlderLabel Name="PickerLabel" Theme="{StaticResource AlderLabelTheme}"
+                 alder:AlderLabel.IsRequired="{TemplateBinding IsRequired}" alder:AlderLabel.IsInvalid="{TemplateBinding IsInvalid}"
+                 Content="{TemplateBinding Label}" IsVisible="{CompiledBinding #PickerLabel.Content, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+          <Panel Name="PART_Field" ClipToBounds="False">
+            <Panel Name="SelectField" ClipToBounds="False">
+              <Border Name="FieldFill" CornerRadius="{TemplateBinding CornerRadius}" Background="{TemplateBinding Background}" />
+              <alder:AlderButton Name="PART_Trigger" Theme="{StaticResource AlderPickerButtonTheme}" HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center"
+                      AutomationProperties.LabeledBy="{CompiledBinding #PickerLabel}" Height="36" CornerRadius="{TemplateBinding CornerRadius}">
+                <Grid Name="TriggerContent" ColumnDefinitions="*,16" ColumnSpacing="4" Margin="12,8,8,8">
+                  <alder:AlderTextBlock Name="Placeholder" Foreground="{DynamicResource AlderMuted}" Text="{TemplateBinding PlaceholderText}"
+                             TextTrimming="CharacterEllipsis" LineHeight="20" />
+                  <alder:AlderTextBlock Name="SelectedText" Foreground="{TemplateBinding Foreground}" Text="{TemplateBinding SelectionText}"
+                             TextTrimming="CharacterEllipsis" LineHeight="20" IsVisible="False" />
+                  <ContentPresenter Name="SelectedItem" IsVisible="False" VerticalAlignment="Center"
+                                    Content="{TemplateBinding SelectedItem}" ContentTemplate="{TemplateBinding SelectionTemplate}" />
+                  <WrapPanel Name="PART_SelectionTags" IsVisible="False" ItemSpacing="4" LineSpacing="4" />
+                  <alder:AlderPathIcon Name="SelectArrow" Grid.Column="1" Width="12" Height="8" Data="{TemplateBinding Indicator}"
+                            Foreground="{DynamicResource AlderMuted}" />
+                </Grid>
+              </alder:AlderButton>
+              <alder:InputFocusRing Name="PickerFocusRing" CornerRadius="{TemplateBinding CornerRadius}" ClipToBounds="False" IsHitTestVisible="False" />
+            </Panel>
+            <alder:AlderInput Name="PART_Editor" IsVisible="False" FullWidth="True" CornerRadius="{TemplateBinding CornerRadius}"
+                         Padding="12,8,28,8" Variant="{TemplateBinding Variant}" IsInvalid="{TemplateBinding IsInvalid}"
+                         Background="{TemplateBinding Background}" Foreground="{TemplateBinding Foreground}" FontSize="{TemplateBinding FontSize}"
+                         BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                         IsReadOnly="{TemplateBinding IsReadOnly}" Text="{TemplateBinding Text, Mode=TwoWay}"
+                         AutomationProperties.LabeledBy="{CompiledBinding #PickerLabel}"
+                         PlaceholderText="{TemplateBinding PlaceholderText}" />
+            <alder:AlderButton Name="PART_Toggle" IsVisible="False" Height="36" Width="24" HorizontalAlignment="Right"
+                    Theme="{StaticResource AlderComboBoxToggleTheme}" Focusable="False"
+                    AutomationProperties.Name="{DynamicResource AlderText.PickerOpen}">
+              <alder:AlderPathIcon Name="ComboArrow" Width="10.5" Height="6" Margin="0,0,8,0" Data="{TemplateBinding Indicator}"
+                        Foreground="{CompiledBinding #PART_Toggle.Foreground}" />
+            </alder:AlderButton>
+            <alder:AlderButton Name="PART_Clear" IsVisible="False" Height="24" Width="24" Margin="0,0,26,0"
+                    HorizontalAlignment="Right" VerticalAlignment="Center" KeyboardNavigation.IsTabStop="False"
+                    Theme="{StaticResource AlderPickerButtonTheme}" CornerRadius="12"
+                    AutomationProperties.Name="{DynamicResource AlderText.PickerClear}">
+              <alder:AlderPathIcon Width="9" Height="9" Data="{DynamicResource AlderIconXmark}" Foreground="{DynamicResource AlderMuted}" />
+            </alder:AlderButton>
+
+          </Panel>
+          <alder:AlderTextBlock Name="MultipleValue" Text="{TemplateBinding SelectionText}" FontSize="{TemplateBinding FontSize}" LineHeight="20"
+                     TextWrapping="Wrap" Foreground="{TemplateBinding Foreground}" IsVisible="False" />
+          <alder:AlderTextBlock Name="MultiplePlaceholder" Text="{TemplateBinding SelectionPlaceholderText}" FontSize="{TemplateBinding FontSize}"
+                     LineHeight="20" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" IsVisible="False" />
+          <alder:AlderTextBlock Name="PickerDescription" Text="{TemplateBinding Description}" FontSize="12" LineHeight="16" TextWrapping="Wrap"
+                     Foreground="{DynamicResource AlderMuted}" IsVisible="False" />
+          <alder:AlderTextBlock Name="PickerError" Text="{TemplateBinding ErrorText}" FontSize="12" LineHeight="16" TextWrapping="Wrap"
+                     Foreground="{DynamicResource AlderDangerInk}" IsVisible="False" />
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[FullWidth=True]">
+      <Setter Property="Width" Value="NaN" /><Setter Property="HorizontalAlignment" Value="Stretch" />
+    </Style>
+    <Style Selector="^ /template/ Border#FieldFill">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldShadow}" />
+      <Setter Property="Transitions"><Transitions><BrushTransition Property="Background" Duration="0:0:0.15" Easing="0.25,0.1,0.25,1" /></Transitions></Setter>
+    </Style>
+    <Style Selector="^[Variant=Primary][IsReadOnly=False]:pointerover:not(:open):not(alder|AlderInlineSelect):not(alder|AlderNativeSelect) /template/ Border#FieldFill">
+      <Setter Property="Background" Value="{DynamicResource AlderFieldHover}" />
+    </Style>
+    <Style Selector="^[Variant=Secondary]"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
+    <Style Selector="^[Variant=Secondary] /template/ Border#FieldFill"><Setter Property="BoxShadow" Value="none" /></Style>
+    <Style Selector="^[Variant=Secondary][IsReadOnly=False]:pointerover:not(:open):not(alder|AlderInlineSelect):not(alder|AlderNativeSelect) /template/ Border#FieldFill">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
+    <Style Selector="^[IsEditable=True] /template/ Panel#SelectField"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^[IsEditable=True] /template/ alder|AlderInput#PART_Editor, ^[IsEditable=True] /template/ :is(Button)#PART_Toggle">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^[IsReadOnly=True] /template/ :is(Button)#PART_Toggle, ^[IsReadOnly=True] /template/ :is(Button)#PART_Trigger">
+      <Setter Property="Cursor" Value="Arrow" />
+    </Style>
+    <Style Selector="^:has-selection /template/ TextBlock#Placeholder, ^:selection-template /template/ TextBlock#SelectedText">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^:has-selection:not(:selection-template):not(:selection-tags) /template/ TextBlock#SelectedText,
+                     ^:selection-template /template/ ContentPresenter#SelectedItem, ^:selection-tags /template/ WrapPanel#PART_SelectionTags">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^:clearable /template/ :is(Button)#PART_Clear, ^[IsEditable=True]:multiple:has-selection /template/ TextBlock#MultipleValue">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^:selection-placeholder /template/ TextBlock#MultiplePlaceholder">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^:clearable /template/ TextBlock#SelectedText, ^:clearable /template/ ContentPresenter#SelectedItem,
+                     ^:clearable /template/ WrapPanel#PART_SelectionTags">
+      <Setter Property="Margin" Value="0,0,24,0" />
+    </Style>
+    <Style Selector="^:clearable /template/ alder|AlderInput#PART_Editor"><Setter Property="Padding" Value="12,8,52,8" /></Style>
+    <Style Selector="^ /template/ :is(Button)#PART_Clear:pointerover"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
+    <Style Selector="^ /template/ PathIcon#SelectArrow, ^ /template/ PathIcon#ComboArrow">
+      <Setter Property="RenderTransform" Value="rotate(0deg)" />
+      <Setter Property="Transitions"><Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" Easing="CubicEaseOut" /></Transitions></Setter>
+    </Style>
+    <Style Selector="^:open /template/ PathIcon#SelectArrow, ^:open /template/ PathIcon#ComboArrow">
+      <Setter Property="RenderTransform" Value="rotate(180deg)" />
+    </Style>
+    <Style Selector="^ /template/ alder|InputFocusRing#PickerFocusRing">
+      <Setter Property="BoxShadow" Value="0 0 0 0 #000485F7" />
+      <Setter Property="Transitions"><Transitions><BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions></Setter>
+    </Style>
+    <Style Selector="^:not(:autocomplete):not(:select):open /template/ alder|InputFocusRing#PickerFocusRing,
+                     ^:not(:autocomplete):not(:select):focus-within /template/ alder|InputFocusRing#PickerFocusRing">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" />
+    </Style>
+    <Style Selector="^[IsInvalid=True] /template/ alder|InputFocusRing#PickerFocusRing">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldInvalidOutline}" />
+    </Style>
+    <Style Selector="^[IsRequired=True]"><Setter Property="AutomationProperties.IsRequiredForForm" Value="True" /></Style>
+    <Style Selector="^[IsEditable=False]:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^:field-error /template/ TextBlock#PickerError, ^:has-description /template/ TextBlock#PickerDescription">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ PathIcon#SelectArrow, ^[(alder|AlderMotion.Reduced)=True] /template/ PathIcon#ComboArrow,
+                     ^[(alder|AlderMotion.Reduced)=True] /template/ Border#FieldFill, ^[(alder|AlderMotion.Reduced)=True] /template/ alder|InputFocusRing#PickerFocusRing">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+    <Style Selector="^:select /template/ :is(Button)#PART_Trigger, ^:autocomplete /template/ :is(Button)#PART_Trigger">
+      <Setter Property="Height" Value="NaN" />
+      <Setter Property="MinHeight" Value="36" />
+    </Style>
+    <Style Selector="^[IsInvalid=False]:select /template/ :is(Button)#PART_Trigger">
+      <Setter Property="Theme" Value="{StaticResource AlderSelectTriggerTheme}" />
+    </Style>
+    <Style Selector="^[IsInvalid=False]:autocomplete /template/ :is(Button)#PART_Trigger">
+      <Setter Property="Theme" Value="{StaticResource AlderAutocompleteTriggerTheme}" />
+    </Style>
+    <Style Selector="^:select /template/ TextBlock#SelectedText, ^:select /template/ TextBlock#Placeholder,
+                     ^:autocomplete /template/ TextBlock#SelectedText, ^:autocomplete /template/ TextBlock#Placeholder">
+      <Setter Property="TextWrapping" Value="Wrap" /><Setter Property="TextTrimming" Value="None" />
+    </Style>
+    <Style Selector="^:select /template/ PathIcon#SelectArrow, ^:autocomplete /template/ PathIcon#SelectArrow">
+      <Setter Property="Width" Value="10.5" /><Setter Property="Height" Value="6" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="^:select.custom-indicator /template/ PathIcon#SelectArrow, ^:autocomplete.custom-indicator /template/ PathIcon#SelectArrow">
+      <Setter Property="Width" Value="12" /><Setter Property="Height" Value="12" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderInlineSelectTriggerTheme" TargetType="Button" BasedOn="{StaticResource AlderSelectTriggerTheme}">
+    <Setter Property="Background" Value="Transparent" />
+    <Style Selector="^:pointerover, ^:pressed"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderSelect}" TargetType="alder:AlderSelect" BasedOn="{StaticResource {x:Type alder:AlderPicker}}">
+    <Style Selector="^:select /template/ :is(Button)#PART_Clear">
+      <Setter Property="Focusable" Value="False" />
+      <Setter Property="Theme" Value="{StaticResource AlderSelectClearTheme}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderNavbarInlineSelectTheme" TargetType="alder:AlderSelect" BasedOn="{StaticResource {x:Type alder:AlderSelect}}">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="DropDownMinWidth" Value="200" />
+    <Setter Property="DropDownGap" Value="4" />
+    <Setter Property="DropDownHorizontalAlignment" Value="Center" />
+    <Setter Property="Indicator" Value="{DynamicResource AlderIconChevronsExpandVertical}" />
+    <Style Selector="^:select /template/ PathIcon#SelectArrow">
+      <Setter Property="Width" Value="12" />
+      <Setter Property="Height" Value="12" />
+    </Style>
+    <Style Selector="^:select:open /template/ PathIcon#SelectArrow">
+      <Setter Property="RenderTransform" Value="rotate(0deg)" />
+    </Style>
+    <Style Selector="^:select /template/ Border#FieldFill">
+      <Setter Property="BoxShadow" Value="none" />
+    </Style>
+    <Style Selector="^:select:pointerover /template/ Border#FieldFill, ^:select:open /template/ Border#FieldFill">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+    <Style Selector="^:select /template/ :is(Button)#PART_Trigger">
+      <Setter Property="MinHeight" Value="32" />
+      <Setter Property="Theme" Value="{StaticResource AlderInlineSelectTriggerTheme}" />
+    </Style>
+    <Style Selector="^:select /template/ Grid#TriggerContent"><Setter Property="Margin" Value="7,4" /></Style>
+    <Style Selector="^:select /template/ TextBlock#SelectedText">
+      <Setter Property="TextWrapping" Value="NoWrap" /><Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderInlineSelect}" TargetType="alder:AlderInlineSelect"
+                BasedOn="{StaticResource {x:Type alder:AlderSelect}}">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="6" />
+    <Setter Property="Width" Value="NaN" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="DropDownMinWidth" Value="140" />
+    <Setter Property="DropDownGap" Value="8" />
+    <Setter Property="DropDownHorizontalAlignment" Value="Right" />
+    <Setter Property="Indicator" Value="{DynamicResource AlderIconChevronsExpandVertical}" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.15" Easing="0.4,0,0.2,1" />
+        <BrushTransition Property="Foreground" Duration="0:0:0.15" Easing="0.4,0,0.2,1" />
+      </Transitions>
+    </Setter>
+    <Style Selector="^:select /template/ TextBlock#SelectedText, ^:select /template/ TextBlock#Placeholder">
+      <Setter Property="MaxWidth" Value="192" />
+      <Setter Property="TextWrapping" Value="NoWrap" /><Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+    <Style Selector="^:select /template/ :is(Button)#PART_Trigger">
+      <Setter Property="Height" Value="24" /><Setter Property="MinHeight" Value="24" />
+      <Setter Property="ClickMode" Value="Press" />
+    </Style>
+    <Style Selector="^:select /template/ Grid#TriggerContent"><Setter Property="Margin" Value="4,2" /></Style>
+    <Style Selector="^:select /template/ PathIcon#SelectArrow">
+      <Setter Property="Width" Value="12" /><Setter Property="Height" Value="12" />
+      <Setter Property="HorizontalAlignment" Value="Right" />
+      <Setter Property="Transitions" Value="{x:Null}" />
+      <Setter Property="Foreground" Value="{CompiledBinding Foreground, RelativeSource={RelativeSource AncestorType=alder:AlderInlineSelect}}" />
+    </Style>
+    <Style Selector="^:select /template/ TextBlock#Placeholder">
+      <Setter Property="Foreground" Value="{CompiledBinding Foreground, RelativeSource={RelativeSource AncestorType=alder:AlderInlineSelect}}" />
+    </Style>
+    <Style Selector="^:select:open /template/ PathIcon#SelectArrow"><Setter Property="RenderTransform" Value="rotate(0deg)" /></Style>
+    <Style Selector="^:select /template/ Border#FieldFill">
+      <Setter Property="BoxShadow" Value="none" />
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+    <Style Selector="^[IsPointerOver=True][IsDropDownOpen=False][IsReadOnly=False]:not(:disabled)">
+      <Setter Property="Background" Value="{DynamicResource AlderInputHover}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True]">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderNativeSelect}" TargetType="alder:AlderNativeSelect"
+                BasedOn="{StaticResource {x:Type alder:AlderSelect}}">
+    <Setter Property="Width" Value="NaN" />
+    <Setter Property="MinWidth" Value="129" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="DropDownCornerRadius" Value="12" />
+    <Setter Property="DropDownBorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="DropDownBorderThickness" Value="1" />
+    <Setter Property="MaxDropDownHeight" Value="280" />
+    <Setter Property="Transitions">
+      <Transitions><BrushTransition Property="Background" Duration="0:0:0.15" Easing="0.25,0.1,0.25,1" /></Transitions>
+    </Setter>
+    <Style Selector="^ /template/ Border#FieldFill"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^[Variant=Primary][IsPointerOver=True][IsDropDownOpen=False][IsReadOnly=False]:not(:focus-within)">
+      <Setter Property="Background" Value="{DynamicResource AlderInputHover}" />
+    </Style>
+    <Style Selector="^[Variant=Secondary][IsPointerOver=True][IsDropDownOpen=False][IsReadOnly=False]:not(:focus-within)">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True]"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^:select:open /template/ PathIcon#SelectArrow"><Setter Property="RenderTransform" Value="rotate(0deg)" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderAutocomplete}" TargetType="alder:AlderAutocomplete" BasedOn="{StaticResource {x:Type alder:AlderPicker}}">
+    <Setter Property="ShowClearButton" Value="True" />
+    <Style Selector="^:autocomplete /template/ :is(Button)#PART_Clear">
+      <Setter Property="Width" Value="20" /><Setter Property="Height" Value="20" />
+      <Setter Property="Margin" Value="0,0,28,0" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderComboBox}" TargetType="alder:AlderComboBox" BasedOn="{StaticResource {x:Type alder:AlderPicker}}">
+    <Style Selector="^:disabled /template/ :is(Label)#PickerLabel"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^ /template/ PathIcon#ComboArrow">
+      <Setter Property="Transitions"><Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" Easing="0.4,0,0.2,1" /></Transitions></Setter>
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ PathIcon#ComboArrow"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^.custom-indicator /template/ PathIcon#ComboArrow">
+      <Setter Property="Width" Value="12" /><Setter Property="Height" Value="12" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

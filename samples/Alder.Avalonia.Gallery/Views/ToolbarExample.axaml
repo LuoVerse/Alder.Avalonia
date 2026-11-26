@@ -1,0 +1,483 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             xmlns:media="using:Avalonia.Media"
+             x:Class="Alder.Avalonia.Gallery.Views.ToolbarExample" x:DataType="vm:ToolbarViewModel">
+  <UserControl.Styles>
+    <Style Selector="alder|AlderToolbar alder|AlderButton">
+      <Setter Property="FontFamily" Value="fonts:Inter#Inter" />
+    </Style>
+    <Style Selector=":is(ToggleButton).format">
+      <Setter Property="Theme" Value="{StaticResource AlderToggleButtonTheme}" />
+      <Setter Property="Width" Value="36" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="ContentTemplate">
+        <DataTemplate x:DataType="media:Geometry">
+          <alder:AlderPathIcon Data="{Binding}" Width="16" Height="16" IsHitTestVisible="False" />
+        </DataTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="TextBlock.sample.bold"><Setter Property="FontWeight" Value="Bold" /></Style>
+    <Style Selector="TextBlock.sample.italic"><Setter Property="FontStyle" Value="Italic" /></Style>
+    <Style Selector="TextBlock.sample.underline"><Setter Property="TextDecorations" Value="Underline" /></Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleHorizontal" Title="{DynamicResource GalleryText.Horizontal}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderToolbar AutomationProperties.Name="{DynamicResource GalleryText.TextFormatting}">
+          <alder:AlderToggleButtonGroup Mode="Multiple" SelectedKeys="{Binding Formatting}" AutomationProperties.Name="{DynamicResource GalleryText.TextStyle}">
+            <alder:AlderToggleButton Classes="format" alder:AlderChoiceGroup.Key="Bold" Content="{StaticResource AlderIconBold}" AutomationProperties.Name="{DynamicResource GalleryText.Bold}" />
+            <alder:AlderToggleButton Classes="format" alder:AlderChoiceGroup.Key="Italic" Content="{StaticResource AlderIconItalic}" AutomationProperties.Name="{DynamicResource GalleryText.Italic}" />
+            <alder:AlderToggleButton Classes="format" alder:AlderChoiceGroup.Key="Underline" Content="{StaticResource AlderIconUnderline}" AutomationProperties.Name="{DynamicResource GalleryText.Underline}" />
+          </alder:AlderToggleButtonGroup>
+          <Border Width="1" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="1" Background="{DynamicResource AlderSeparator}" />
+          <alder:AlderButtonGroup Variant="Tertiary" AutomationProperties.Name="{DynamicResource GalleryText.EditingActions}">
+            <alder:AlderButton Icon="{StaticResource AlderIconCopy}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.Copy}" Click="CopyText" />
+            <alder:AlderButton Icon="{StaticResource AlderIconCut}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.Cut}" Click="CutText" />
+          </alder:AlderButtonGroup>
+        </alder:AlderToolbar>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var toolbar = new AlderToolbar();
+        AutomationProperties.SetName(toolbar, "Text formatting");
+
+        var toggleButtonGroup1 = new AlderToggleButtonGroup { Mode = ChoiceMode.Multiple };
+        toggleButtonGroup1.Bind(AlderToggleButtonGroup.SelectedKeysProperty, CompiledBinding.Create((ToolbarViewModel model) => model.Formatting));
+        AutomationProperties.SetName(toggleButtonGroup1, "Text style");
+
+        var toggleButton1 = new AlderToggleButton();
+        toggleButton1.Classes.Add("format");
+        AlderChoiceGroup.SetKey(toggleButton1, "Bold");
+        AutomationProperties.SetName(toggleButton1, "Bold");
+        toggleButtonGroup1.Children.Add(toggleButton1);
+
+        var toggleButton2 = new AlderToggleButton();
+        toggleButton2.Classes.Add("format");
+        AlderChoiceGroup.SetKey(toggleButton2, "Italic");
+        AutomationProperties.SetName(toggleButton2, "Italic");
+        toggleButtonGroup1.Children.Add(toggleButton2);
+
+        var toggleButton3 = new AlderToggleButton();
+        toggleButton3.Classes.Add("format");
+        AlderChoiceGroup.SetKey(toggleButton3, "Underline");
+        AutomationProperties.SetName(toggleButton3, "Underline");
+        toggleButtonGroup1.Children.Add(toggleButton3);
+        toolbar.Children.Add(toggleButtonGroup1);
+
+        var border1 = new Border
+        {
+            Height = 18,
+            CornerRadius = new CornerRadius(1),
+            Background = (IBrush)this.FindResource("AlderSeparator")!,
+        };
+        toolbar.Children.Add(border1);
+
+        var buttonGroup1 = new AlderButtonGroup { Variant = ButtonVariant.Tertiary };
+        AutomationProperties.SetName(buttonGroup1, "Editing actions");
+
+        var button1 = new AlderButton
+        {
+            Icon = (Geometry)this.FindResource("AlderIconCopy")!,
+            IsIconOnly = true,
+        };
+        AutomationProperties.SetName(button1, "Copy");
+        button1.Click += CopyText;
+        buttonGroup1.Children.Add(button1);
+
+        var button2 = new AlderButton
+        {
+            Icon = (Geometry)this.FindResource("AlderIconCut")!,
+            IsIconOnly = true,
+        };
+        AutomationProperties.SetName(button2, "Cut");
+        button2.Click += CutText;
+        buttonGroup1.Children.Add(button2);
+        toolbar.Children.Add(buttonGroup1);
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource AlderBorder}" Padding="24,11">
+          <Grid RowDefinitions="Auto,Auto" RowSpacing="4">
+            <alder:AlderTextBlock Classes="sample" Classes.bold="{Binding Bold}" Classes.italic="{Binding Italic}" Classes.underline="{Binding Underline}"
+                       Text="{Binding Sample}" MinHeight="18" TextWrapping="Wrap" TextAlignment="{Binding Alignment}" Foreground="{DynamicResource AlderInk}" />
+            <alder:AlderTextBlock Grid.Row="1" Classes="detail" Text="{Binding Status}" AutomationProperties.LiveSetting="Polite" />
+          </Grid>
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVertical" Title="{DynamicResource GalleryText.Vertical}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderToolbar Orientation="Vertical" HorizontalAlignment="Left" AutomationProperties.Name="{DynamicResource GalleryText.VerticalTools}">
+          <alder:AlderToggleButtonGroup Orientation="Vertical" Mode="Multiple" SelectedKeys="{Binding Formatting}" AutomationProperties.Name="{DynamicResource GalleryText.TextStyle}">
+            <alder:AlderToggleButton Classes="format" alder:AlderChoiceGroup.Key="Bold" Content="{StaticResource AlderIconBold}" AutomationProperties.Name="{DynamicResource GalleryText.Bold}" />
+            <alder:AlderToggleButton Classes="format" alder:AlderChoiceGroup.Key="Italic" Content="{StaticResource AlderIconItalic}" AutomationProperties.Name="{DynamicResource GalleryText.Italic}" />
+            <alder:AlderToggleButton Classes="format" alder:AlderChoiceGroup.Key="Underline" Content="{StaticResource AlderIconUnderline}" AutomationProperties.Name="{DynamicResource GalleryText.Underline}" />
+          </alder:AlderToggleButtonGroup>
+          <Border Width="18" Height="1" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="1" Background="{DynamicResource AlderSeparator}" />
+          <alder:AlderButtonGroup Orientation="Vertical" Variant="Tertiary" AutomationProperties.Name="{DynamicResource GalleryText.EditingActions}">
+            <alder:AlderButton Icon="{StaticResource AlderIconUndo}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.Undo}" Command="{Binding Edit}" CommandParameter="Undo" />
+            <alder:AlderButton Icon="{StaticResource AlderIconRedo}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.Redo}" Command="{Binding Edit}" CommandParameter="Redo" />
+          </alder:AlderButtonGroup>
+        </alder:AlderToolbar>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var toolbar = new AlderToolbar { Orientation = Orientation.Vertical };
+        AutomationProperties.SetName(toolbar, "Vertical tools");
+
+        var toggleButtonGroup1 = new AlderToggleButtonGroup
+        {
+            Orientation = Orientation.Vertical,
+            Mode = ChoiceMode.Multiple,
+        };
+        toggleButtonGroup1.Bind(AlderToggleButtonGroup.SelectedKeysProperty, CompiledBinding.Create((ToolbarViewModel model) => model.Formatting));
+        AutomationProperties.SetName(toggleButtonGroup1, "Text style");
+
+        var toggleButton1 = new AlderToggleButton();
+        toggleButton1.Classes.Add("format");
+        AlderChoiceGroup.SetKey(toggleButton1, "Bold");
+        AutomationProperties.SetName(toggleButton1, "Bold");
+        toggleButtonGroup1.Children.Add(toggleButton1);
+
+        var toggleButton2 = new AlderToggleButton();
+        toggleButton2.Classes.Add("format");
+        AlderChoiceGroup.SetKey(toggleButton2, "Italic");
+        AutomationProperties.SetName(toggleButton2, "Italic");
+        toggleButtonGroup1.Children.Add(toggleButton2);
+
+        var toggleButton3 = new AlderToggleButton();
+        toggleButton3.Classes.Add("format");
+        AlderChoiceGroup.SetKey(toggleButton3, "Underline");
+        AutomationProperties.SetName(toggleButton3, "Underline");
+        toggleButtonGroup1.Children.Add(toggleButton3);
+        toolbar.Children.Add(toggleButtonGroup1);
+
+        var border1 = new Border
+        {
+            Height = 1,
+            CornerRadius = new CornerRadius(1),
+            Background = (IBrush)this.FindResource("AlderSeparator")!,
+        };
+        toolbar.Children.Add(border1);
+
+        var buttonGroup1 = new AlderButtonGroup
+        {
+            Orientation = Orientation.Vertical,
+            Variant = ButtonVariant.Tertiary,
+        };
+        AutomationProperties.SetName(buttonGroup1, "Editing actions");
+
+        var button1 = new AlderButton
+        {
+            Icon = (Geometry)this.FindResource("AlderIconUndo")!,
+            IsIconOnly = true,
+            CommandParameter = "Undo",
+        };
+        AutomationProperties.SetName(button1, "Undo");
+        button1.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ToolbarViewModel model) => model.Edit));
+        buttonGroup1.Children.Add(button1);
+
+        var button2 = new AlderButton
+        {
+            Icon = (Geometry)this.FindResource("AlderIconRedo")!,
+            IsIconOnly = true,
+            CommandParameter = "Redo",
+        };
+        AutomationProperties.SetName(button2, "Redo");
+        button2.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ToolbarViewModel model) => model.Edit));
+        buttonGroup1.Children.Add(button2);
+        toolbar.Children.Add(buttonGroup1);
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource AlderBorder}" Padding="24,11">
+          <Grid RowDefinitions="Auto,Auto" RowSpacing="4">
+            <alder:AlderTextBlock Classes="sample" Classes.bold="{Binding Bold}" Classes.italic="{Binding Italic}" Classes.underline="{Binding Underline}"
+                       Text="{Binding Sample}" MinHeight="18" TextWrapping="Wrap" TextAlignment="{Binding Alignment}" Foreground="{DynamicResource AlderInk}" />
+            <alder:AlderTextBlock Grid.Row="1" Classes="detail" Text="{Binding Status}" AutomationProperties.LiveSetting="Polite" />
+          </Grid>
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleAttached" Title="{DynamicResource GalleryText.Attached}">
+      <gallery:ExampleCard.Preview>
+        <Border Theme="{StaticResource AlderAttachedToolbarSurfaceTheme}">
+          <alder:AlderToolbar AutomationProperties.Name="{DynamicResource GalleryText.AttachedFormattingToolbar}">
+            <alder:AlderToggleButtonGroup Mode="Multiple" SelectedKeys="{Binding Formatting}" AutomationProperties.Name="{DynamicResource GalleryText.TextStyle}">
+              <alder:AlderToggleButton Classes="format" alder:AlderChoiceGroup.Key="Bold" Content="{StaticResource AlderIconBold}" AutomationProperties.Name="{DynamicResource GalleryText.Bold}" />
+              <alder:AlderToggleButton Classes="format" alder:AlderChoiceGroup.Key="Italic" Content="{StaticResource AlderIconItalic}" AutomationProperties.Name="{DynamicResource GalleryText.Italic}" />
+              <alder:AlderToggleButton Classes="format" alder:AlderChoiceGroup.Key="Underline" Content="{StaticResource AlderIconUnderline}" AutomationProperties.Name="{DynamicResource GalleryText.Underline}" />
+            </alder:AlderToggleButtonGroup>
+            <Border Width="1" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="1" Background="{DynamicResource AlderSeparator}" />
+            <alder:AlderButtonGroup Variant="Tertiary" AutomationProperties.Name="{DynamicResource GalleryText.EditingActions}">
+              <alder:AlderButton Icon="{StaticResource AlderIconCopy}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.Copy}" Click="CopyText" />
+              <alder:AlderButton Icon="{StaticResource AlderIconCut}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.Cut}" Click="CutText" />
+            </alder:AlderButtonGroup>
+          </alder:AlderToolbar>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var toolbar = new AlderToolbar();
+        AutomationProperties.SetName(toolbar, "Attached formatting toolbar");
+
+        var toggleButtonGroup1 = new AlderToggleButtonGroup { Mode = ChoiceMode.Multiple };
+        toggleButtonGroup1.Bind(AlderToggleButtonGroup.SelectedKeysProperty, CompiledBinding.Create((ToolbarViewModel model) => model.Formatting));
+        AutomationProperties.SetName(toggleButtonGroup1, "Text style");
+
+        var toggleButton1 = new AlderToggleButton();
+        toggleButton1.Classes.Add("format");
+        AlderChoiceGroup.SetKey(toggleButton1, "Bold");
+        AutomationProperties.SetName(toggleButton1, "Bold");
+        toggleButtonGroup1.Children.Add(toggleButton1);
+
+        var toggleButton2 = new AlderToggleButton();
+        toggleButton2.Classes.Add("format");
+        AlderChoiceGroup.SetKey(toggleButton2, "Italic");
+        AutomationProperties.SetName(toggleButton2, "Italic");
+        toggleButtonGroup1.Children.Add(toggleButton2);
+
+        var toggleButton3 = new AlderToggleButton();
+        toggleButton3.Classes.Add("format");
+        AlderChoiceGroup.SetKey(toggleButton3, "Underline");
+        AutomationProperties.SetName(toggleButton3, "Underline");
+        toggleButtonGroup1.Children.Add(toggleButton3);
+        toolbar.Children.Add(toggleButtonGroup1);
+
+        var border1 = new Border
+        {
+            Height = 18,
+            CornerRadius = new CornerRadius(1),
+            Background = (IBrush)this.FindResource("AlderSeparator")!,
+        };
+        toolbar.Children.Add(border1);
+
+        var buttonGroup1 = new AlderButtonGroup { Variant = ButtonVariant.Tertiary };
+        AutomationProperties.SetName(buttonGroup1, "Editing actions");
+
+        var button1 = new AlderButton
+        {
+            Icon = (Geometry)this.FindResource("AlderIconCopy")!,
+            IsIconOnly = true,
+        };
+        AutomationProperties.SetName(button1, "Copy");
+        button1.Click += CopyText;
+        buttonGroup1.Children.Add(button1);
+
+        var button2 = new AlderButton
+        {
+            Icon = (Geometry)this.FindResource("AlderIconCut")!,
+            IsIconOnly = true,
+        };
+        AutomationProperties.SetName(button2, "Cut");
+        button2.Click += CutText;
+        buttonGroup1.Children.Add(button2);
+        toolbar.Children.Add(buttonGroup1);
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource AlderBorder}" Padding="24,11">
+          <Grid RowDefinitions="Auto,Auto" RowSpacing="4">
+            <alder:AlderTextBlock Classes="sample" Classes.bold="{Binding Bold}" Classes.italic="{Binding Italic}" Classes.underline="{Binding Underline}"
+                       Text="{Binding Sample}" MinHeight="18" TextWrapping="Wrap" TextAlignment="{Binding Alignment}" Foreground="{DynamicResource AlderInk}" />
+            <alder:AlderTextBlock Grid.Row="1" Classes="detail" Text="{Binding Status}" AutomationProperties.LiveSetting="Polite" />
+          </Grid>
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleWithButtonGroup" Title="{DynamicResource GalleryText.WithButtonGroup}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderToolbar AutomationProperties.Name="{DynamicResource GalleryText.EditorToolbar}">
+          <alder:AlderButtonGroup Variant="Tertiary" AutomationProperties.Name="{DynamicResource GalleryText.EditingActions}">
+            <alder:AlderButton Icon="{StaticResource AlderIconUndo}" Content="{DynamicResource GalleryText.Undo}" Command="{Binding Edit}" CommandParameter="Undo" />
+            <alder:AlderButton Icon="{StaticResource AlderIconRedo}" Content="{DynamicResource GalleryText.Redo}" Command="{Binding Edit}" CommandParameter="Redo" />
+          </alder:AlderButtonGroup>
+          <Border Width="1" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="1" Background="{DynamicResource AlderSeparator}" />
+          <alder:AlderToggleButtonGroup Mode="Multiple" SelectedKeys="{Binding Formatting}" AutomationProperties.Name="{DynamicResource GalleryText.TextStyle}">
+            <alder:AlderToggleButton Classes="format" alder:AlderChoiceGroup.Key="Bold" Content="{StaticResource AlderIconBold}" AutomationProperties.Name="{DynamicResource GalleryText.Bold}" />
+            <alder:AlderToggleButton Classes="format" alder:AlderChoiceGroup.Key="Italic" Content="{StaticResource AlderIconItalic}" AutomationProperties.Name="{DynamicResource GalleryText.Italic}" />
+            <alder:AlderToggleButton Classes="format" alder:AlderChoiceGroup.Key="Underline" Content="{StaticResource AlderIconUnderline}" AutomationProperties.Name="{DynamicResource GalleryText.Underline}" />
+          </alder:AlderToggleButtonGroup>
+          <Border Width="1" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="1" Background="{DynamicResource AlderSeparator}" />
+          <alder:AlderButtonGroup Variant="Tertiary" AutomationProperties.Name="{DynamicResource GalleryText.EditingActions}">
+            <alder:AlderButton Icon="{StaticResource AlderIconAlignLeft}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.AlignLeft}" Command="{Binding Edit}" CommandParameter="Left" />
+            <alder:AlderButton Icon="{StaticResource AlderIconAlignCenter}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.AlignCenter}" Command="{Binding Edit}" CommandParameter="Center" />
+            <alder:AlderButton Icon="{StaticResource AlderIconAlignRight}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.AlignRight}" Command="{Binding Edit}" CommandParameter="Right" />
+          </alder:AlderButtonGroup>
+        </alder:AlderToolbar>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var toolbar = new AlderToolbar();
+        AutomationProperties.SetName(toolbar, "Editor toolbar");
+
+        var buttonGroup1 = new AlderButtonGroup { Variant = ButtonVariant.Tertiary };
+        AutomationProperties.SetName(buttonGroup1, "Editing actions");
+
+        var button1 = new AlderButton
+        {
+            Icon = (Geometry)this.FindResource("AlderIconUndo")!,
+            Content = "Undo",
+            CommandParameter = "Undo",
+        };
+        button1.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ToolbarViewModel model) => model.Edit));
+        buttonGroup1.Children.Add(button1);
+
+        var button2 = new AlderButton
+        {
+            Icon = (Geometry)this.FindResource("AlderIconRedo")!,
+            Content = "Redo",
+            CommandParameter = "Redo",
+        };
+        button2.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ToolbarViewModel model) => model.Edit));
+        buttonGroup1.Children.Add(button2);
+        toolbar.Children.Add(buttonGroup1);
+
+        var border1 = new Border
+        {
+            Height = 18,
+            CornerRadius = new CornerRadius(1),
+            Background = (IBrush)this.FindResource("AlderSeparator")!,
+        };
+        toolbar.Children.Add(border1);
+
+        var toggleButtonGroup1 = new AlderToggleButtonGroup { Mode = ChoiceMode.Multiple };
+        toggleButtonGroup1.Bind(AlderToggleButtonGroup.SelectedKeysProperty, CompiledBinding.Create((ToolbarViewModel model) => model.Formatting));
+        AutomationProperties.SetName(toggleButtonGroup1, "Text style");
+
+        var toggleButton1 = new AlderToggleButton();
+        toggleButton1.Classes.Add("format");
+        AlderChoiceGroup.SetKey(toggleButton1, "Bold");
+        AutomationProperties.SetName(toggleButton1, "Bold");
+        toggleButtonGroup1.Children.Add(toggleButton1);
+
+        var toggleButton2 = new AlderToggleButton();
+        toggleButton2.Classes.Add("format");
+        AlderChoiceGroup.SetKey(toggleButton2, "Italic");
+        AutomationProperties.SetName(toggleButton2, "Italic");
+        toggleButtonGroup1.Children.Add(toggleButton2);
+
+        var toggleButton3 = new AlderToggleButton();
+        toggleButton3.Classes.Add("format");
+        AlderChoiceGroup.SetKey(toggleButton3, "Underline");
+        AutomationProperties.SetName(toggleButton3, "Underline");
+        toggleButtonGroup1.Children.Add(toggleButton3);
+        toolbar.Children.Add(toggleButtonGroup1);
+
+        var border2 = new Border
+        {
+            Height = 18,
+            CornerRadius = new CornerRadius(1),
+            Background = (IBrush)this.FindResource("AlderSeparator")!,
+        };
+        toolbar.Children.Add(border2);
+
+        var buttonGroup2 = new AlderButtonGroup { Variant = ButtonVariant.Tertiary };
+        AutomationProperties.SetName(buttonGroup2, "Editing actions");
+
+        var button3 = new AlderButton
+        {
+            Icon = (Geometry)this.FindResource("AlderIconAlignLeft")!,
+            IsIconOnly = true,
+            CommandParameter = "Left",
+        };
+        AutomationProperties.SetName(button3, "Align left");
+        button3.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ToolbarViewModel model) => model.Edit));
+        buttonGroup2.Children.Add(button3);
+
+        var button4 = new AlderButton
+        {
+            Icon = (Geometry)this.FindResource("AlderIconAlignCenter")!,
+            IsIconOnly = true,
+            CommandParameter = "Center",
+        };
+        AutomationProperties.SetName(button4, "Align center");
+        button4.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ToolbarViewModel model) => model.Edit));
+        buttonGroup2.Children.Add(button4);
+
+        var button5 = new AlderButton
+        {
+            Icon = (Geometry)this.FindResource("AlderIconAlignRight")!,
+            IsIconOnly = true,
+            CommandParameter = "Right",
+        };
+        AutomationProperties.SetName(button5, "Align right");
+        button5.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ToolbarViewModel model) => model.Edit));
+        buttonGroup2.Children.Add(button5);
+        toolbar.Children.Add(buttonGroup2);
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource AlderBorder}" Padding="24,11">
+          <Grid RowDefinitions="Auto,Auto" RowSpacing="4">
+            <alder:AlderTextBlock Classes="sample" Classes.bold="{Binding Bold}" Classes.italic="{Binding Italic}" Classes.underline="{Binding Underline}"
+                       Text="{Binding Sample}" MinHeight="18" TextWrapping="Wrap" TextAlignment="{Binding Alignment}" Foreground="{DynamicResource AlderInk}" />
+            <alder:AlderTextBlock Grid.Row="1" Classes="detail" Text="{Binding Status}" AutomationProperties.LiveSetting="Polite" />
+          </Grid>
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustomStyles" Title="{DynamicResource GalleryText.CustomStyles}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel>
+          <StackPanel.Styles>
+            <Style Selector="alder|AlderToolbar.custom :is(ToggleButton).format">
+              <Setter Property="CornerRadius" Value="8" />
+            </Style>
+            <Style Selector="alder|AlderToolbar.custom :is(ToggleButton).format:checked">
+              <Setter Property="Background" Value="{DynamicResource AlderAccent}" />
+              <Setter Property="Foreground" Value="{DynamicResource AlderOnAccent}" />
+            </Style>
+            <Style Selector="alder|AlderToolbar.custom :is(ToggleButton).format:checked /template/ alder|ButtonTint#Tint">
+              <Setter Property="Background" Value="{DynamicResource AlderAccent}" />
+            </Style>
+          </StackPanel.Styles>
+          <Border Background="{DynamicResource AlderSurfaceSecondary}" BorderBrush="{DynamicResource GalleryToolbarCustomBorder}"
+                  BorderThickness="1" CornerRadius="12" Padding="6">
+            <alder:AlderToolbar Classes="custom" AutomationProperties.Name="{DynamicResource GalleryText.CustomFormattingToolbar}">
+              <alder:AlderToggleButtonGroup Joined="False" Spacing="2" Mode="Multiple" SelectedKeys="{Binding Formatting}" AutomationProperties.Name="{DynamicResource GalleryText.TextStyle}">
+                <alder:AlderToggleButton Classes="format" alder:AlderChoiceGroup.Key="Bold" Content="{StaticResource AlderIconBold}" AutomationProperties.Name="{DynamicResource GalleryText.Bold}" />
+                <alder:AlderToggleButton Classes="format" alder:AlderChoiceGroup.Key="Italic" Content="{StaticResource AlderIconItalic}" AutomationProperties.Name="{DynamicResource GalleryText.Italic}" />
+                <alder:AlderToggleButton Classes="format" alder:AlderChoiceGroup.Key="Underline" Content="{StaticResource AlderIconUnderline}" AutomationProperties.Name="{DynamicResource GalleryText.Underline}" />
+              </alder:AlderToggleButtonGroup>
+            </alder:AlderToolbar>
+          </Border>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var toolbar = new AlderToolbar();
+        toolbar.Classes.Add("custom");
+        AutomationProperties.SetName(toolbar, "Custom formatting toolbar");
+
+        var toggleButtonGroup1 = new AlderToggleButtonGroup
+        {
+            Joined = false,
+            Spacing = 2,
+            Mode = ChoiceMode.Multiple,
+        };
+        toggleButtonGroup1.Bind(AlderToggleButtonGroup.SelectedKeysProperty, CompiledBinding.Create((ToolbarViewModel model) => model.Formatting));
+        AutomationProperties.SetName(toggleButtonGroup1, "Text style");
+
+        var toggleButton1 = new AlderToggleButton();
+        toggleButton1.Classes.Add("format");
+        AlderChoiceGroup.SetKey(toggleButton1, "Bold");
+        AutomationProperties.SetName(toggleButton1, "Bold");
+        toggleButtonGroup1.Children.Add(toggleButton1);
+
+        var toggleButton2 = new AlderToggleButton();
+        toggleButton2.Classes.Add("format");
+        AlderChoiceGroup.SetKey(toggleButton2, "Italic");
+        AutomationProperties.SetName(toggleButton2, "Italic");
+        toggleButtonGroup1.Children.Add(toggleButton2);
+
+        var toggleButton3 = new AlderToggleButton();
+        toggleButton3.Classes.Add("format");
+        AlderChoiceGroup.SetKey(toggleButton3, "Underline");
+        AutomationProperties.SetName(toggleButton3, "Underline");
+        toggleButtonGroup1.Children.Add(toggleButton3);
+        toolbar.Children.Add(toggleButtonGroup1);
+      ]]></gallery:ExampleCard.CSharpSource>
+      <gallery:ExampleCard.Feedback>
+        <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource AlderBorder}" Padding="24,11">
+          <Grid RowDefinitions="Auto,Auto" RowSpacing="4">
+            <alder:AlderTextBlock Classes="sample" Classes.bold="{Binding Bold}" Classes.italic="{Binding Italic}" Classes.underline="{Binding Underline}"
+                       Text="{Binding Sample}" MinHeight="18" TextWrapping="Wrap" TextAlignment="{Binding Alignment}" Foreground="{DynamicResource AlderInk}" />
+            <alder:AlderTextBlock Grid.Row="1" Classes="detail" Text="{Binding Status}" AutomationProperties.LiveSetting="Polite" />
+          </Grid>
+        </Border>
+      </gallery:ExampleCard.Feedback>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

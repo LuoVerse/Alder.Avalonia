@@ -1,0 +1,1703 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:md="using:Alder.NativeMarkdown.UI.Extensions" xmlns:a="using:Alder.Avalonia.Controls" xmlns:c="using:Avalonia.Data.Converters">
+  <StreamGeometry x:Key="AlderAiFile">F0 M3 1h6l4 4v10H3z M4.4 2.4v11.2h7.2V6H8V2.4z M9.2 2.8v2h2z M5.5 8h5v1h-5z M5.5 10.5h3.5v1H5.5z</StreamGeometry>
+  <StreamGeometry x:Key="AlderAiChatGlyph">F0 M8 1.25C4.1 1.25 1 3.95 1 7.4c0 1.55.64 3 1.8 4.12l-.7 3.2 3.6-1.6c.74.22 1.52.33 2.3.33 3.9 0 7-2.68 7-6.05S11.9 1.25 8 1.25z M8 2.55c3.15 0 5.65 2.14 5.65 4.85 0 2.7-2.5 4.75-5.65 4.75-.82 0-1.6-.12-2.35-.4l-1.85.82.35-1.55C2.95 10.13 2.3 8.8 2.3 7.4 2.3 4.7 4.83 2.55 8 2.55z</StreamGeometry>
+  <StreamGeometry x:Key="AlderAiSpark">M7.1 0H8.9L8.6 5.5 11.6 1 13.1 2 9.9 6.4 15 4.3 15.7 6 10.3 7.7 16 8.4 15.7 10.1 10.25 9.15 14.2 13 12.9 14.2 9.3 10.15 10.7 15.6 9 16 8 10.55 6.2 15.7 4.5 15.05 6.6 10 2.35 13.35 1.3 11.9 5.7 8.95.2 10.05 0 8.3 5.5 7.6.5 5.5 1.25 3.9 6.2 6.4 3.1 1.8 4.6.85 7.4 5.55Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderAiThumbUp">F0 M1 7h3v8H1z M5 7l3.6-5.8c.45-.75 1.5-.65 2 .1.5.7.5 1.6.3 2.4l-.55 2.1h3.1c1.45 0 2.4 1.3 2.1 2.65l-1.15 4.9c-.2.9-1 1.65-2 1.65H5z M6.3 7.4v6.3h6.15c.3 0 .64-.2.72-.55l1.15-4.9c.15-.65-.22-1.1-.83-1.1H8.65l1-3.85c.13-.4.14-.85.03-1.15z</StreamGeometry>
+  <StreamGeometry x:Key="AlderAiThumbOutline">F0 M1.5 7A.7 .7 0 0 1 2.9 7V13.6A.7 .7 0 0 1 1.5 13.6Z M5 7 8.1 2C8.7 1 9.8 1.1 10.5 1.7 11.4 2.4 11.4 3.7 11.1 4.7l-.3 1.3h2.1c1.3 0 2.2 1.1 1.9 2.4l-1.1 4.4a2 2 0 0 1-1.9 1.5H6.6a1.7 1.7 0 0 1-1.7-1.7V7.4Z M6.2 7.6v5c0 .2.2.4.4.4h5.2c.3 0 .5-.2.6-.5l1.1-4.4c.1-.4-.2-.8-.6-.8H9l.8-3c.2-.8.1-1.4-.3-1.6-.1-.1-.2-.1-.3.1Z</StreamGeometry>
+  <SolidColorBrush x:Key="AlderAiSuccess" Color="#15864E" />
+  <x:String x:Key="AlderText.AiDismiss">Dismiss</x:String>
+  <x:String x:Key="AlderText.AiApprove">Approve</x:String>
+  <x:String x:Key="AlderText.AiReject">Reject</x:String>
+  <x:String x:Key="AlderText.AiApproved">Approved</x:String>
+  <x:String x:Key="AlderText.AiRejected">Rejected</x:String>
+  <x:String x:Key="AlderText.AiAsk">Ask anything</x:String>
+  <x:String x:Key="AlderText.AiSend">Send message</x:String>
+  <x:String x:Key="AlderText.AiStop">Stop generating</x:String>
+  <x:String x:Key="AlderText.AiAttach">Attach files</x:String>
+  <x:String x:Key="AlderText.AiRemove">Remove attachment</x:String>
+  <x:String x:Key="AlderText.AiCopy">Copy</x:String>
+  <x:String x:Key="AlderText.AiCopyCode">Copy code</x:String>
+  <x:String x:Key="AlderText.AiJump">Scroll to bottom</x:String>
+  <x:String x:Key="AlderText.AiConversation">Conversation</x:String>
+  <StreamGeometry x:Key="AlderAiRegenerateIcon">M1.25 2.5a.75.75 0 0 1 1.5 0v2a6 6 0 0 1 11.2 2h-1.58a4.5 4.5 0 0 0-8.18-1h2.06a.75.75 0 0 1 0 1.5H2a.75.75 0 0 1-.75-.75z M14.75 13.5a.75.75 0 0 1-1.5 0v-2a6 6 0 0 1-11.2-2h1.58a4.5 4.5 0 0 0 8.18 1H9.75a.75.75 0 0 1 0-1.5H14a.75.75 0 0 1 .75.75z</StreamGeometry>
+  <x:String x:Key="AlderText.AiLike">Good response</x:String>
+  <x:String x:Key="AlderText.AiDislike">Bad response</x:String>
+  <x:String x:Key="AlderText.AiRetry">Regenerate</x:String>
+  <x:String x:Key="AlderText.AiThinking">Thinking</x:String>
+  <x:String x:Key="AlderText.AiReasoningCompleted">Thought for a few seconds</x:String>
+  <x:String x:Key="AlderText.AiReasoningCompletedFor">Thought for {0}</x:String>
+  <x:String x:Key="AlderText.AiReasoningStopped">Stopped thinking</x:String>
+  <x:String x:Key="AlderText.AiReasoningStoppedFor">Stopped after {0}</x:String>
+  <x:String x:Key="AlderText.AiReasoningFailed">Couldn't finish thinking</x:String>
+  <x:String x:Key="AlderText.AiTool">Tool call</x:String>
+  <x:String x:Key="AlderText.AiModel">Model</x:String>
+  <x:String x:Key="AlderText.AiSmarter">Smarter</x:String>
+  <x:String x:Key="AlderText.AiFaster">Faster</x:String>
+  <x:String x:Key="AlderText.AiModels">Models</x:String>
+  <x:String x:Key="AlderText.AiModelSearch">Search models</x:String>
+  <x:String x:Key="AlderText.AiNoModels">No matching models</x:String>
+  <x:String x:Key="AlderText.AiMaxEffortHint">Max uses your usage limit faster.</x:String>
+  <x:String x:Key="AlderText.AiUltraEffortHint">Ultra uses your limit fastest.</x:String>
+  <x:String x:Key="AlderText.AiEffort">Effort</x:String>
+  <x:String x:Key="AlderText.AiStepInterrupted">Interrupted</x:String>
+  <x:String x:Key="AlderText.AiStepError">Failed</x:String>
+  <x:String x:Key="AlderText.AiStepPending">Not started</x:String>
+  <x:String x:Key="AlderText.AiStepActive">In progress</x:String>
+  <x:String x:Key="AlderText.AiStepComplete">Completed</x:String>
+  <x:String x:Key="AlderText.AiLoad">Loading</x:String>
+  <x:String x:Key="AlderText.AiArguments">Input</x:String>
+  <x:String x:Key="AlderText.AiResult">Result</x:String>
+
+  <StreamGeometry x:Key="AlderChatToolWrench">F0 M10.05 1.1A4.9 4.9 0 0 0 5.36 7.22L1.94 10.65a2.47 2.47 0 0 0 3.5 3.5l3.43-3.42A4.9 4.9 0 0 0 14.93 5.9l-.2-1.2a.66.66 0 0 0-1.12-.35l-2.2 2.2a.99.99 0 0 1-1.4-1.4l2.19-2.2a.7.7 0 0 0-.38-1.16z M10.1 2.55l.32.02-1.47 1.55a2.3 2.3 0 0 0 3.25 3.25l1.33-1.28a3.38 3.38 0 0 1-4.69 3.14l-.36-.17-4.05 4.05a1 1 0 1 1-1.42-1.42l4.05-4.05-.17-.36a3.38 3.38 0 0 1 3.21-4.73Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderChatToolErrorGlyph">F0 M8 1 A7 7 0 1 0 8 15 A7 7 0 1 0 8 1Z M8 2.5 A5.5 5.5 0 1 1 8 13.5 A5.5 5.5 0 1 1 8 2.5Z M5.45 6.5 L6.5 5.45 L8 6.95 L9.5 5.45 L10.55 6.5 L9.05 8 L10.55 9.5 L9.5 10.55 L8 9.05 L6.5 10.55 L5.45 9.5 L6.95 8Z</StreamGeometry>
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderPromptSuggestionHover" Color="#66EBEBEC" />
+      <SolidColorBrush x:Key="AlderPromptStarterEdge" Color="Transparent" />
+      <BoxShadows x:Key="AlderPromptStarterShadow">0 2 8 0 #0F000000, 0 -6 12 0 #08000000, 0 14 28 0 #14000000</BoxShadows>
+      <SolidColorBrush x:Key="AlderChatRowHover" Color="#80EBEBEC" />
+      <SolidColorBrush x:Key="AlderChatRowDivider" Color="#80CACACC" />
+      <SolidColorBrush x:Key="AlderChatSourceBorder" Color="#E0E0E3" />
+      <SolidColorBrush x:Key="AlderChainSettledSurface" Color="#1218181B" />
+      <SolidColorBrush x:Key="AlderChainInterruptedSurface" Color="#1F71717A" />
+      <SolidColorBrush x:Key="AlderChainPendingTitle" Color="#CC71717A" />
+      <SolidColorBrush x:Key="AlderChainSettledTitle" Color="#DB18181B" />
+      <SolidColorBrush x:Key="AlderChatToolErrorBorder" Color="#4DFF383C" />
+      <SolidColorBrush x:Key="AlderChatToolApprovalBorder" Color="#66F5A524" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderPromptSuggestionHover" Color="#6629292B" />
+      <SolidColorBrush x:Key="AlderPromptStarterEdge" Color="#08FFFFFF" />
+      <BoxShadows x:Key="AlderPromptStarterShadow">none</BoxShadows>
+      <SolidColorBrush x:Key="AlderChatRowHover" Color="#8027272A" />
+      <SolidColorBrush x:Key="AlderChatRowDivider" Color="#803D3D42" />
+      <SolidColorBrush x:Key="AlderChatSourceBorder" Color="#28282C" />
+      <SolidColorBrush x:Key="AlderChainSettledSurface" Color="#12FCFCFC" />
+      <SolidColorBrush x:Key="AlderChainInterruptedSurface" Color="#1F9F9FA9" />
+      <SolidColorBrush x:Key="AlderChainPendingTitle" Color="#CC9F9FA9" />
+      <SolidColorBrush x:Key="AlderChainSettledTitle" Color="#DBFCFCFC" />
+      <SolidColorBrush x:Key="AlderChatToolErrorBorder" Color="#4DDB3B3E" />
+      <SolidColorBrush x:Key="AlderChatToolApprovalBorder" Color="#66F7B750" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+
+  <ControlTheme x:Key="AlderChatRowTheme" TargetType="a:AlderListViewItem">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="Padding" Value="16,12" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid RowDefinitions="*,Auto">
+          <Border Name="ChatRowSurface" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+            <Grid ColumnDefinitions="Auto,Auto,*,Auto">
+              <a:AlderCheckBox Name="ChatRowSelection" VerticalAlignment="Center" Margin="0,0,12,0"
+                               IsChecked="{TemplateBinding IsSelected, Mode=OneWay}" Variant="Secondary" IsVisible="False"
+                               Focusable="False" IsHitTestVisible="False" IsReadOnly="True" AutomationProperties.AccessibilityView="Raw" />
+              <ContentPresenter Name="ChatRowIcon" Grid.Column="1" Margin="0,0,12,0" VerticalAlignment="Center"
+                                Foreground="{DynamicResource AlderMuted}" Content="{TemplateBinding Icon}"
+                                IsVisible="{CompiledBinding #ChatRowIcon.Content, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+              <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                <a:AlderTextBlock Name="ChatRowTitle" Text="{TemplateBinding Title}" FontSize="14" LineHeight="20"
+                                  FontWeight="Medium" Foreground="{DynamicResource AlderInk}" TextTrimming="CharacterEllipsis"
+                                  IsVisible="{CompiledBinding #ChatRowTitle.Text, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+                <Panel Name="ChatRowPreviewSlot">
+                  <a:AlderTextBlock Name="ChatRowPreview" Text="{TemplateBinding Description}" FontSize="12" LineHeight="16" Margin="0,2,0,0"
+                                    Foreground="{DynamicResource AlderMuted}" TextTrimming="CharacterEllipsis"
+                                    IsVisible="{CompiledBinding #ChatRowPreview.Text, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+                </Panel>
+                <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  IsVisible="{CompiledBinding #PART_ContentPresenter.Content, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+              </StackPanel>
+              <Panel Name="ChatRowMetaSlot" Grid.Column="3">
+                <ContentPresenter Name="ChatRowMeta" Content="{TemplateBinding Action}" Margin="8,0,0,0"
+                                  VerticalAlignment="Center" FontSize="11" Foreground="{DynamicResource AlderMuted}"
+                                  IsVisible="{CompiledBinding #ChatRowMeta.Content, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+              </Panel>
+            </Grid>
+          </Border>
+          <Border Name="ChatRowDivider" Grid.Row="1" Height="1" Background="{DynamicResource AlderChatRowDivider}" IsHitTestVisible="False" />
+          <Border Name="ChatRowFocus" BorderBrush="{DynamicResource AlderAccent}" BorderThickness="1" CornerRadius="4"
+                  IsVisible="False" IsHitTestVisible="False" />
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover:not(:disabled)"><Setter Property="Background" Value="{DynamicResource AlderChatRowHover}" /></Style>
+    <Style Selector="^:selected"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#ChatRowFocus"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^.selection-indicator /template/ a|AlderCheckBox#ChatRowSelection"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^.chat-last-row /template/ Border#ChatRowDivider"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^.chat-compact /template/ Panel#ChatRowPreviewSlot, ^.chat-compact /template/ Panel#ChatRowMetaSlot">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type a:AlderChatListView}" TargetType="a:AlderChatListView" BasedOn="{StaticResource {x:Type a:AlderListView}}">
+    <Setter Property="ItemContainerTheme" Value="{StaticResource AlderChatRowTheme}" />
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderCodeCopyTheme" TargetType="Button">
+    <Setter Property="Width" Value="24" />
+    <Setter Property="Height" Value="24" />
+    <Setter Property="CornerRadius" Value="24" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Style Selector="^:focus-visible">
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" />
+    </Style>
+    <Style Selector="^:disabled">
+      <Setter Property="Opacity" Value="0.5" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type a:AlderLoader}" TargetType="a:AlderLoader">
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid ColumnDefinitions="Auto,*">
+          <Border Name="IndicatorSlot" Width="20" Height="20" IsHitTestVisible="False" />
+          <ContentPresenter Grid.Column="1" Margin="8,0,0,0" MinHeight="20" FontSize="14"
+                            VerticalContentAlignment="Center" Foreground="{DynamicResource AlderMuted}"
+                            Content="{TemplateBinding Label}" AutomationProperties.AccessibilityView="Raw"
+                            IsVisible="{CompiledBinding Label, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Color=Accent]"><Setter Property="Foreground" Value="{DynamicResource AlderAccent}" /></Style>
+    <Style Selector="^[Color=Success]"><Setter Property="Foreground" Value="{DynamicResource AlderFeedbackSuccess}" /></Style>
+    <Style Selector="^[Color=Warning]"><Setter Property="Foreground" Value="{DynamicResource AlderFeedbackWarning}" /></Style>
+    <Style Selector="^[Color=Danger]"><Setter Property="Foreground" Value="{DynamicResource AlderDanger}" /></Style>
+    <Style Selector="^[Size=Small] /template/ Border#IndicatorSlot"><Setter Property="Width" Value="16" /><Setter Property="Height" Value="16" /></Style>
+    <Style Selector="^[Size=Large] /template/ Border#IndicatorSlot, ^[Size=ExtraLarge] /template/ Border#IndicatorSlot">
+      <Setter Property="Width" Value="24" /><Setter Property="Height" Value="24" />
+    </Style>
+    <Style Selector="^[Variant=Infinity] /template/ Border#IndicatorSlot"><Setter Property="Width" Value="30" /></Style>
+    <Style Selector="^[Variant=Infinity][Size=Small] /template/ Border#IndicatorSlot"><Setter Property="Width" Value="24" /></Style>
+    <Style Selector="^[Variant=Infinity][Size=Large] /template/ Border#IndicatorSlot, ^[Variant=Infinity][Size=ExtraLarge] /template/ Border#IndicatorSlot">
+      <Setter Property="Width" Value="36" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderChatToolTipButtonTheme" TargetType="a:AlderButton" BasedOn="{StaticResource {x:Type a:AlderButton}}">
+    <Setter Property="a:AlderToolTip.ShowDelay" Value="0" />
+    <Setter Property="a:AlderToolTip.CloseDelay" Value="500" />
+    <Setter Property="a:AlderToolTip.AnimateWhenWarm" Value="True" />
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderChatConversationJumpTheme" TargetType="a:AlderButton" BasedOn="{StaticResource AlderChatToolTipButtonTheme}">
+    <ControlTheme.Resources>
+      <ResourceDictionary>
+        <ResourceDictionary.ThemeDictionaries>
+          <ResourceDictionary x:Key="Light"><SolidColorBrush x:Key="AlderChatScrollButtonBorder" Color="Transparent" /></ResourceDictionary>
+          <ResourceDictionary x:Key="Dark"><SolidColorBrush x:Key="AlderChatScrollButtonBorder" Color="#28282C" /></ResourceDictionary>
+        </ResourceDictionary.ThemeDictionaries>
+      </ResourceDictionary>
+    </ControlTheme.Resources>
+    <Setter Property="Size" Value="Small" /><Setter Property="IsIconOnly" Value="True" />
+    <Setter Property="Variant" Value="Secondary" />
+    <Style Selector="^[Variant=Secondary]">
+      <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderChatScrollButtonBorder}" />
+      <Setter Property="BorderThickness" Value="1" />
+    </Style>
+    <Style Selector="^ /template/ a|ButtonFeedback#Face">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldShadow}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type a:AlderChatLoader}" TargetType="a:AlderChatLoader" BasedOn="{StaticResource {x:Type a:AlderLoader}}">
+    <Setter Property="Template" Value="{x:Null}" />
+    <Setter Property="IsHitTestVisible" Value="False" />
+    <Style Selector="^[Variant=Dots]"><Setter Property="Foreground" Value="{DynamicResource AlderMuted}" /></Style>
+    <Style Selector="^[Variant=Ring]">
+      <Setter Property="Template">
+        <ControlTemplate>
+          <a:AlderSpinner Size="{TemplateBinding Size}" Color="Default" SpinDuration="0:0:0.75"
+                          Foreground="{TemplateBinding Foreground}" AutomationProperties.AccessibilityView="Raw" />
+        </ControlTemplate>
+      </Setter>
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type a:AlderChatSkeleton}" TargetType="a:AlderChatSkeleton">
+    <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="IsHitTestVisible" Value="False" />
+    <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.AiLoad}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid ColumnDefinitions="Auto,*">
+          <Border Name="ChatSkeletonAvatar" Width="32" Height="32" CornerRadius="24" Margin="0,0,12,0" VerticalAlignment="Top"
+                  Background="{TemplateBinding Background}" IsVisible="{TemplateBinding ShowAvatar}" />
+          <StackPanel Grid.Column="1" Spacing="8">
+            <Border Name="ChatSkeletonFirstLine" Classes="chat-skeleton-line" Background="{TemplateBinding Background}" />
+            <Grid ColumnDefinitions="17*,3*">
+              <Border Name="ChatSkeletonSecondLine" Classes="chat-skeleton-line" Background="{TemplateBinding Background}" />
+            </Grid>
+            <Grid ColumnDefinitions="13*,7*">
+              <Border Name="ChatSkeletonThirdLine" Classes="chat-skeleton-line" Background="{TemplateBinding Background}" />
+            </Grid>
+          </StackPanel>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ Border.chat-skeleton-line"><Setter Property="Height" Value="12" /><Setter Property="CornerRadius" Value="6" /></Style>
+    <Style Selector="^[Size=Small] /template/ Border.chat-skeleton-line"><Setter Property="Height" Value="10" /></Style>
+    <Style Selector="^[Size=Small] /template/ Border#ChatSkeletonAvatar"><Setter Property="Width" Value="24" /><Setter Property="Height" Value="24" /></Style>
+    <Style Selector="^[Size=Large] /template/ Border.chat-skeleton-line"><Setter Property="Height" Value="14" /></Style>
+    <Style Selector="^[Size=Large] /template/ Border#ChatSkeletonAvatar"><Setter Property="Width" Value="36" /><Setter Property="Height" Value="36" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type a:AlderChatConversation}" TargetType="a:AlderChatConversation"
+                BasedOn="{StaticResource {x:Type a:AlderScrollViewer}}">
+    <Setter Property="Focusable" Value="True" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.AiConversation}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid ColumnDefinitions="*,Auto" Container.Name="ChatConversationViewport" Container.Sizing="Width">
+          <ScrollContentPresenter Name="PART_ContentPresenter" Background="{TemplateBinding Background}"
+                                  Padding="{TemplateBinding Padding}" ClipToBounds="True"
+                                  VerticalSnapPointsType="{TemplateBinding VerticalSnapPointsType}"
+                                  VerticalSnapPointsAlignment="{TemplateBinding VerticalSnapPointsAlignment}"
+                                  ScrollViewer.IsScrollInertiaEnabled="{TemplateBinding IsScrollInertiaEnabled}">
+            <ScrollContentPresenter.GestureRecognizers>
+              <ScrollGestureRecognizer CanVerticallyScroll="{CompiledBinding #PART_ContentPresenter.CanVerticallyScroll}"
+                                       IsScrollInertiaEnabled="{CompiledBinding #PART_ContentPresenter.(ScrollViewer.IsScrollInertiaEnabled)}"
+                                       Offset="{CompiledBinding #PART_ContentPresenter.Offset}"
+                                       Viewport="{CompiledBinding #PART_ContentPresenter.Viewport}"
+                                       Extent="{CompiledBinding #PART_ContentPresenter.Extent}" />
+            </ScrollContentPresenter.GestureRecognizers>
+          </ScrollContentPresenter>
+          <a:AlderScrollBar Name="PART_VerticalScrollBar" Grid.Column="1" Orientation="Vertical" />
+          <Panel Name="ScrollButtonMotion" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                 Margin="0,0,0,16" IsVisible="{TemplateBinding ShowScrollButton}" Opacity="0" IsHitTestVisible="False"
+                 RenderTransform="translateY(5px) scale(0.9)">
+            <Panel.Transitions>
+              <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.16" />
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" Easing="0.23,1,0.32,1" />
+              </Transitions>
+            </Panel.Transitions>
+            <a:AlderButton Name="PART_ScrollButton" Theme="{StaticResource AlderChatConversationJumpTheme}" IsEnabled="False"
+                           AutomationProperties.AccessibilityView="Raw" AutomationProperties.Name="{DynamicResource AlderText.AiJump}"
+                           a:AlderToolTip.Tip="{DynamicResource AlderText.AiJump}">
+              <a:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconArrowUp}" RenderTransform="rotate(180deg)" />
+            </a:AlderButton>
+          </Panel>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:scroll-button-visible /template/ Panel#ScrollButtonMotion">
+      <Setter Property="Opacity" Value="1" /><Setter Property="IsHitTestVisible" Value="True" />
+      <Setter Property="RenderTransform" Value="none" />
+    </Style>
+    <Style Selector="^:scroll-button-visible /template/ a|AlderButton#PART_ScrollButton">
+      <Setter Property="IsEnabled" Value="True" /><Setter Property="AutomationProperties.AccessibilityView" Value="Control" />
+    </Style>
+    <Style Selector="^[(a|AlderMotion.Reduced)=True] /template/ Panel#ScrollButtonMotion">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+    <Style Selector="^:compact-width /template/ a|AlderButton#PART_ScrollButton">
+      <Setter Property="Width" Value="36" /><Setter Property="Height" Value="36" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type a:AlderChatMessage}" TargetType="a:AlderChatMessage">
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="MessageCard" ClipToBounds="False">
+          <Grid Name="MessageRow" ColumnDefinitions="Auto,*">
+            <Border Name="AvatarSlot" Background="{DynamicResource AlderNeutral}" CornerRadius="16" MinWidth="32" Height="32"
+                    Margin="0,0,12,0" VerticalAlignment="Top"
+                    IsVisible="{CompiledBinding Avatar, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}">
+              <ContentPresenter Name="Avatar" Content="{TemplateBinding Avatar}" HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center" FontSize="12" FontWeight="Medium" />
+            </Border>
+            <StackPanel Grid.Column="1" Spacing="8">
+              <Border Name="Bubble" CornerRadius="16">
+                <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" TextBlock.TextWrapping="Wrap" TextBlock.LineHeight="22.75" />
+              </Border>
+              <ContentPresenter Name="ActionSlot" Content="{TemplateBinding Actions}"
+                                IsVisible="{CompiledBinding Actions, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}">
+                <ContentPresenter.Transitions>
+                  <Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" /></Transitions>
+                </ContentPresenter.Transitions>
+              </ContentPresenter>
+            </StackPanel>
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ Grid#MessageRow"><Setter Property="Margin" Value="0,8" /></Style>
+    <Style Selector="^[IsUser=True] /template/ Grid#MessageRow, ^[IsCard=True] /template/ Grid#MessageRow"><Setter Property="Margin" Value="0" /></Style>
+    <Style Selector="^[IsUser=True] /template/ Border#Bubble">
+      <Setter Property="HorizontalAlignment" Value="Right" />
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+      <Setter Property="Padding" Value="16,8" />
+    </Style>
+    <Style Selector="^[IsUser=True] /template/ ContentPresenter#ActionSlot"><Setter Property="HorizontalAlignment" Value="Right" /></Style>
+    <Style Selector="^[IsUser=False][IsCard=True] /template/ Border#MessageCard">
+      <Setter Property="Background" Value="{TemplateBinding Background}" />
+      <Setter Property="BorderBrush" Value="{TemplateBinding BorderBrush}" />
+      <Setter Property="BorderThickness" Value="{TemplateBinding BorderThickness}" />
+      <Setter Property="CornerRadius" Value="{TemplateBinding CornerRadius}" />
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldShadow}" />
+      <Setter Property="Padding" Value="20,16,20,20" />
+    </Style>
+    <Style Selector="^[IsUser=False][IsCard=True]">
+      <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+      <Setter Property="CornerRadius" Value="16" />
+    </Style>
+    <Style Selector="^ /template/ ContentPresenter#ActionSlot"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^:pointerover /template/ ContentPresenter#ActionSlot, ^:focus-within /template/ ContentPresenter#ActionSlot">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="^[(a|AlderMotion.Reduced)=True] /template/ ContentPresenter#ActionSlot">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+
+  <StreamGeometry x:Key="AlderAttachmentOutline">F0 M4 1H9.4L14 5.6V13A2 2 0 0 1 12 15H4A2 2 0 0 1 2 13V3A2 2 0 0 1 4 1Z M4 2.5A.5 .5 0 0 0 3.5 3V13A.5 .5 0 0 0 4 13.5H12A.5 .5 0 0 0 12.5 13V6.2L8.8 2.5Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderAttachmentPdf">F0 M0 0 H3 A2.3 2.3 0 0 1 3 4.6 H1.5 V7 H0 Z M1.5 1.4 V3.2 H3 A.9 .9 0 0 0 3 1.4 Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderAttachmentArchive">M0 0H2V1.5H0Z M2 1.5H4V3H2Z M0 3H2V4.5H0Z M2 4.5H4V6H2Z M0 6H2V7.5H0Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderAttachmentSpreadsheet">M0 0H1.8L3.5 2.5L5.2 0H7L4.4 3.5L7 7H5.2L3.5 4.5L1.8 7H0L2.6 3.5Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderAttachmentDocument">M0 0H1.4L2.3 4.8L3.3 1H4.7L5.7 4.8L6.6 0H8L6.5 7H5L4 3.4L3 7H1.5Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderAttachmentCode">M2.4 0L3.5 1L1.8 3L3.5 5L2.4 6L0 3Z M5.6 0L8 3L5.6 6L4.5 5L6.2 3L4.5 1Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderAttachmentImage">M0 6L2.4 2.5L4.1 4.5L5.6 3L8 6Z M5 1.3A1 1 0 1 0 7 1.3A1 1 0 1 0 5 1.3Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderAttachmentVideo">M0 0L6 3.5L0 7Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderAttachmentAudio">M2.8 1L7 0V5.4A2 1.4 0 1 1 5.6 4V2L4.2 2.4V6.4A2 1.4 0 1 1 2.8 5Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderAttachmentGeneric">M0 1H6V2.4H0Z M0 4H4.5V5.4H0Z</StreamGeometry>
+
+  <ControlTheme x:Key="AlderAttachmentCloseTheme" TargetType="a:AlderButton" BasedOn="{StaticResource AlderCloseButtonTheme}">
+    <Setter Property="Width" Value="20" />
+    <Setter Property="Height" Value="20" />
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="MinWidth" Value="0" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Content" Value="{x:Null}" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Transitions">
+      <Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" /></Transitions>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderAttachmentMediaCloseTheme" TargetType="a:AlderButton" BasedOn="{StaticResource AlderAttachmentCloseTheme}">
+    <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    <Style Selector="^ /template/ a|ButtonFeedback#Face"><Setter Property="BoxShadow" Value="{DynamicResource AlderFieldShadow}" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type a:AlderChatAttachment}" TargetType="a:AlderChatAttachment">
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Height" Value="64" />
+    <Setter Property="MaxWidth" Value="256" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="AutomationProperties.Name" Value="{Binding FileName, RelativeSource={RelativeSource Self}}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="Frame" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}">
+          <Grid ColumnDefinitions="*,Auto">
+            <Grid Name="File" ColumnDefinitions="20,*" ColumnSpacing="10" Margin="12,0" VerticalAlignment="Center">
+              <Panel Width="20" Height="20" VerticalAlignment="Center" IsHitTestVisible="False">
+                <a:AlderPathIcon Width="18" Height="18" Data="{StaticResource AlderAttachmentOutline}" Foreground="{DynamicResource AlderMuted}" />
+                <Viewbox Width="8" Height="8" Margin="0,3,0,0" Stretch="None" HorizontalAlignment="Center" VerticalAlignment="Center">
+                  <Path Name="FileGlyph" Fill="{DynamicResource AlderMuted}" />
+                </Viewbox>
+              </Panel>
+              <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                <a:AlderTextBlock Name="FileName" Text="{TemplateBinding FileName}" TextTrimming="CharacterEllipsis" FontSize="14" FontWeight="Medium" LineHeight="20"
+                                  a:AlderToolTip.Tip="{TemplateBinding FileName}" />
+                <a:AlderTextBlock Name="FileSize" Text="{TemplateBinding DisplayDescription}" TextTrimming="CharacterEllipsis" FontSize="12" LineHeight="16"
+                                  Foreground="{DynamicResource AlderMuted}"
+                                  IsVisible="{CompiledBinding DisplayDescription, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+              </StackPanel>
+            </Grid>
+            <Border Name="Thumbnail" Grid.ColumnSpan="2" CornerRadius="11" ClipToBounds="True" IsHitTestVisible="False">
+              <Panel>
+                <a:AlderImage Source="{TemplateBinding Preview}" Stretch="UniformToFill" />
+                <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+                <Border Name="Caption" Padding="6,20,6,4" VerticalAlignment="Bottom" IsHitTestVisible="False">
+                  <Border.Background>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                      <GradientStop Offset="0" Color="#00000000" /><GradientStop Offset="1" Color="#C4000000" />
+                    </LinearGradientBrush>
+                  </Border.Background>
+                  <Border.Transitions><Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" /></Transitions></Border.Transitions>
+                  <a:AlderTextBlock Foreground="White" FontSize="12" FontWeight="Medium" LineHeight="16"
+                                    Text="{TemplateBinding FileName}" TextTrimming="CharacterEllipsis" />
+                </Border>
+              </Panel>
+            </Border>
+            <a:AlderButton Name="Open" Variant="Ghost" MinWidth="0" MinHeight="0" Padding="0" CornerRadius="11"
+                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                           Command="{TemplateBinding OpenCommand}" CommandParameter="{TemplateBinding CommandParameter}"
+                           AutomationProperties.Name="{TemplateBinding FileName}"
+                           IsVisible="{CompiledBinding OpenCommand, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+            <a:AlderButton Name="Remove" HorizontalAlignment="Right"
+                           AutomationProperties.Name="{DynamicResource AlderText.AiRemove}" Command="{TemplateBinding RemoveCommand}"
+                           CommandParameter="{TemplateBinding CommandParameter}"
+                           IsVisible="{CompiledBinding RemoveCommand, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}">
+              <a:AlderPathIcon Name="RemoveGlyph" Data="{DynamicResource AlderIconXmark}" Width="10" Height="10" />
+            </a:AlderButton>
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ Path#FileGlyph"><Setter Property="Data" Value="{StaticResource AlderAttachmentGeneric}" /></Style>
+    <Style Selector="^[FileKind=Pdf] /template/ Path#FileGlyph"><Setter Property="Data" Value="{StaticResource AlderAttachmentPdf}" /></Style>
+    <Style Selector="^[FileKind=Archive] /template/ Path#FileGlyph"><Setter Property="Data" Value="{StaticResource AlderAttachmentArchive}" /></Style>
+    <Style Selector="^[FileKind=Spreadsheet] /template/ Path#FileGlyph"><Setter Property="Data" Value="{StaticResource AlderAttachmentSpreadsheet}" /></Style>
+    <Style Selector="^[FileKind=Document] /template/ Path#FileGlyph"><Setter Property="Data" Value="{StaticResource AlderAttachmentDocument}" /></Style>
+    <Style Selector="^[FileKind=Code] /template/ Path#FileGlyph"><Setter Property="Data" Value="{StaticResource AlderAttachmentCode}" /></Style>
+    <Style Selector="^[FileKind=Image] /template/ Path#FileGlyph"><Setter Property="Data" Value="{StaticResource AlderAttachmentImage}" /></Style>
+    <Style Selector="^[FileKind=Video] /template/ Path#FileGlyph"><Setter Property="Data" Value="{StaticResource AlderAttachmentVideo}" /></Style>
+    <Style Selector="^[FileKind=Audio] /template/ Path#FileGlyph"><Setter Property="Data" Value="{StaticResource AlderAttachmentAudio}" /></Style>
+
+    <Style Selector="^ /template/ Border#Thumbnail"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^:media"><Setter Property="Width" Value="64" /></Style>
+    <Style Selector="^:media:not(:openable)"><Setter Property="Focusable" Value="True" /></Style>
+    <Style Selector="^:media /template/ Grid#File"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^:media /template/ Border#Thumbnail"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^ /template/ Border#Caption"><Setter Property="Opacity" Value="0" /></Style>
+    <Style Selector="^:pointerover /template/ Border#Caption, ^:focus-within /template/ Border#Caption">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="^ /template/ a|AlderButton#Remove">
+      <Setter Property="Theme" Value="{StaticResource AlderAttachmentCloseTheme}" />
+      <Setter Property="Grid.Column" Value="1" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="Margin" Value="-2,0,12,0" />
+    </Style>
+    <Style Selector="^:media /template/ a|AlderButton#Remove">
+      <Setter Property="Theme" Value="{StaticResource AlderAttachmentMediaCloseTheme}" />
+      <Setter Property="Grid.Column" Value="0" />
+      <Setter Property="Grid.ColumnSpan" Value="2" />
+      <Setter Property="VerticalAlignment" Value="Top" />
+      <Setter Property="Margin" Value="0,6,6,0" />
+      <Setter Property="Width" Value="14" />
+      <Setter Property="Height" Value="14" />
+      <Setter Property="Opacity" Value="0" />
+      <Setter Property="IsHitTestVisible" Value="False" />
+    </Style>
+    <Style Selector="^:media:pointerover /template/ a|AlderButton#Remove, ^:media:focus-within /template/ a|AlderButton#Remove">
+      <Setter Property="Opacity" Value="1" />
+      <Setter Property="IsHitTestVisible" Value="True" />
+    </Style>
+    <Style Selector="^[(a|AlderMotion.Reduced)=True] /template/ Border#Caption, ^[(a|AlderMotion.Reduced)=True] /template/ a|AlderButton#Remove">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderAiFittedIconTheme" TargetType="PathIcon">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <a:AlderFittedIcon Data="{TemplateBinding Data}" Fill="{TemplateBinding Foreground}" IsHitTestVisible="False" />
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type a:AlderChatSource}" TargetType="a:AlderChatSource" BasedOn="{StaticResource AlderButtonTheme}">
+    <Setter Property="Height" Value="24" />
+    <Setter Property="MinHeight" Value="24" />
+    <Setter Property="MaxWidth" Value="240" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="FontWeight" Value="Normal" />
+    <Setter Property="Padding" Value="4,0,8,0" />
+    <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderChatSourceBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Icon" Value="{DynamicResource AlderIconGlobe}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderTertiaryInk}" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel ClipToBounds="False">
+          <Border Name="CitationSurface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}">
+            <Grid ColumnDefinitions="Auto,*" Margin="{TemplateBinding Padding}" VerticalAlignment="Center">
+              <Panel VerticalAlignment="Center" IsHitTestVisible="False">
+                <Panel IsVisible="{CompiledBinding #CitationLogo.Source, Converter={x:Static c:ObjectConverters.IsNull}}">
+                  <a:AlderPathIcon Name="CitationIcon" Theme="{StaticResource AlderAiFittedIconTheme}"
+                                   Width="16" Height="16" Margin="0,0,4,0" VerticalAlignment="Center"
+                                   Data="{TemplateBinding Icon}" Foreground="{TemplateBinding Foreground}"
+                                   IsVisible="{CompiledBinding #CitationIcon.Data, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+                </Panel>
+                <a:AlderImage Name="CitationLogo" Source="{TemplateBinding Logo}" Stretch="Uniform"
+                              VerticalAlignment="Center" Width="16" Height="16" Margin="0,0,4,0"
+                              IsVisible="{CompiledBinding #CitationLogo.Source, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+              </Panel>
+              <ContentPresenter Name="PART_ContentPresenter" Grid.Column="1" VerticalAlignment="Center" VerticalContentAlignment="Center"
+                                TextBlock.LineHeight="16" TextBlock.TextTrimming="CharacterEllipsis"
+                                Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
+            </Grid>
+          </Border>
+          <Border Name="FocusRing" CornerRadius="{TemplateBinding CornerRadius}" Margin="-3" BorderThickness="2"
+                  BorderBrush="{DynamicResource AlderAccent}" IsVisible="False" IsHitTestVisible="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover:not(:disabled):not(.document) /template/ Border#CitationSurface">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
+    <Style Selector="^ /template/ Border#CitationSurface">
+      <Setter Property="Transitions"><Transitions><BrushTransition Property="Background" Duration="0:0:0.15" /></Transitions></Setter>
+    </Style>
+    <Style Selector="^[(a|AlderMotion.Reduced)=True] /template/ Border#CitationSurface"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^.document"><Setter Property="Focusable" Value="False" /><Setter Property="Cursor" Value="Arrow" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderMessageSourceTheme" TargetType="a:AlderChatSource" BasedOn="{StaticResource {x:Type a:AlderChatSource}}">
+    <Setter Property="Icon" Value="{x:Null}" />
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderChatSourcePreviewTheme" TargetType="a:AlderHoverCard" BasedOn="{StaticResource {x:Type a:AlderHoverCard}}">
+    <Setter Property="KeepShadowInsideViewport" Value="True" />
+    <Setter Property="Placement" Value="BottomEdgeAlignedLeft" />
+    <Setter Property="OpenDelay" Value="400" />
+    <Setter Property="Offset" Value="8" />
+    <Setter Property="MaxContentWidth" Value="320" />
+  </ControlTheme>
+  <ControlTheme x:Key="AlderChatSourcePreviewLinkTheme" TargetType="a:AlderButton" BasedOn="{StaticResource AlderButtonTheme}">
+    <Setter Property="Width" Value="288" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="FontWeight" Value="Normal" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Background="Transparent">
+          <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" />
+          <Border Name="FocusRing" CornerRadius="8" Margin="-3" BorderThickness="2"
+                  BorderBrush="{DynamicResource AlderAccent}" IsVisible="False" IsHitTestVisible="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderChatSourcesTriggerTheme" TargetType="ToggleButton" BasedOn="{StaticResource AlderDisclosureTriggerTheme}">
+    <Setter Property="MinHeight" Value="32" />
+    <Setter Property="Padding" Value="0,4" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Style Selector="^:pointerover:not(:disabled), ^:pressed:not(:disabled)">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderChatSourcesTheme" TargetType="a:AlderDisclosure" BasedOn="{StaticResource {x:Type a:AlderDisclosure}}">
+    <Setter Property="TriggerTheme" Value="{StaticResource AlderChatSourcesTriggerTheme}" />
+    <Setter Property="Padding" Value="8,16,8,4" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel>
+          <a:AlderToggleButton Name="PART_Trigger" Theme="{TemplateBinding TriggerTheme}"
+                               AutomationProperties.Name="{TemplateBinding (AutomationProperties.Name)}"
+                               IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+              <ContentPresenter Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}" />
+              <a:AlderPathIcon Name="PART_Indicator" Width="12" Height="12" VerticalAlignment="Center" />
+            </StackPanel>
+          </a:AlderToggleButton>
+          <Border Height="1" Background="{DynamicResource AlderChatSourceBorder}" />
+          <a:AlderAccordionPanel Name="PART_Panel" ClipToBounds="True">
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}" Padding="{TemplateBinding Padding}" />
+          </a:AlderAccordionPanel>
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderChatSourcesToggleTheme" TargetType="ToggleButton" BasedOn="{StaticResource AlderDisclosureTriggerTheme}">
+    <Setter Property="Height" Value="24" />
+    <Setter Property="MinHeight" Value="24" />
+    <Setter Property="Padding" Value="8,0" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="FontWeight" Value="Normal" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderChatSourceBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type a:AlderPromptSuggestion}" TargetType="a:AlderPromptSuggestion" BasedOn="{StaticResource {x:Type a:AlderButton}}">
+    <Setter Property="Variant" Value="Outline" />
+    <Setter Property="FontWeight" Value="Normal" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="HorizontalContentAlignment" Value="Left" />
+    <Setter Property="VerticalContentAlignment" Value="Top" />
+    <Setter Property="Padding" Value="16,12" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="MinHeight" Value="64" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <a:ButtonFeedback Name="Face" ClipToBounds="False" Background="Transparent">
+          <Grid>
+            <a:SurfaceFill Name="SuggestionSurface" ClipToBounds="False" IsHitTestVisible="False"
+                           Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
+                           BorderThickness="{TemplateBinding BorderThickness}" />
+            <a:ButtonTint Name="Tint" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+            <Border Name="RippleClip" CornerRadius="{TemplateBinding CornerRadius}" ClipToBounds="True" IsHitTestVisible="False" />
+            <Border BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}"
+                    BorderBrush="{TemplateBinding BorderBrush}">
+              <Grid Margin="{TemplateBinding Padding}" ColumnDefinitions="Auto,*,Auto" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                <a:AlderPathIcon Width="16" Height="16" Margin="0,0,8,0" Data="{TemplateBinding Icon}" Foreground="{TemplateBinding Foreground}"
+                                 IsVisible="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+                <StackPanel Grid.Column="1" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
+                  <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    TextBlock.TextWrapping="Wrap" TextBlock.LineHeight="19.25" />
+                  <a:AlderTextBlock Name="Detail" Text="{TemplateBinding Description}" FontSize="14" LineHeight="20" FontWeight="Normal"
+                                    Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap"
+                                    IsVisible="{CompiledBinding Description, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+                </StackPanel>
+                <Border Name="EndIconSlot" Grid.Column="2" Width="16" Height="16" Margin="12,2,0,0" VerticalAlignment="Top" IsVisible="{TemplateBinding ShowEndIcon}" IsHitTestVisible="False">
+                  <a:AlderPathIcon Name="EndArrow" Width="6" Height="11" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Data="{DynamicResource AlderIconChevronRight}" Foreground="{DynamicResource AlderMuted}" />
+                </Border>
+              </Grid>
+            </Border>
+            <Border Name="FocusRing" Margin="-3" CornerRadius="{TemplateBinding CornerRadius}" BorderThickness="2" BorderBrush="{DynamicResource AlderAccent}" IsVisible="False" IsHitTestVisible="False" />
+          </Grid>
+        </a:ButtonFeedback>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ PathIcon#EndArrow">
+      <Setter Property="Opacity" Value="0" />
+      <Setter Property="Transitions"><Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="0.4,0,0.2,1" /></Transitions></Setter>
+    </Style>
+    <Style Selector="^[(a|AlderMotion.Reduced)=True] /template/ PathIcon#EndArrow"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^:pointerover:not(:disabled) /template/ PathIcon#EndArrow"><Setter Property="Opacity" Value="1" /></Style>
+    <Style Selector="^[Variant=Outline] /template/ a|ButtonTint#Tint"><Setter Property="Background" Value="{DynamicResource AlderPromptSuggestionHover}" /></Style>
+    <Style Selector="^[Variant=Outline]:pointerover:not(:disabled) /template/ a|ButtonTint#Tint,
+                     ^[Variant=Outline]:pressed:not(:disabled) /template/ a|ButtonTint#Tint"><Setter Property="Opacity" Value="1" /></Style>
+    <Style Selector="^[Appearance=Card]">
+      <Setter Property="FontWeight" Value="Medium" />
+      <Setter Property="Padding" Value="16" />
+      <Setter Property="MinHeight" Value="0" />
+    </Style>
+    <Style Selector="^[Appearance=Card][Variant=Outline]">
+      <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+      <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style Selector="^[Appearance=Card][Variant=Outline] /template/ a|ButtonTint#Tint"><Setter Property="Background" Value="{DynamicResource AlderSurfaceSecondary}" /></Style>
+    <Style Selector="^[Appearance=Card] /template/ a|SurfaceFill#SuggestionSurface">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldShadow}" />
+    </Style>
+    <Style Selector="^[Appearance=Card] /template/ Border#EndIconSlot"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^[Appearance=Card] /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="TextBlock.LineHeight" Value="24" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderChatMessageActionTheme" TargetType="a:AlderButton" BasedOn="{StaticResource AlderChatToolTipButtonTheme}">
+    <Setter Property="Variant" Value="Ghost" />
+    <Setter Property="Size" Value="Small" />
+    <Setter Property="IsIconOnly" Value="True" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Style Selector="^[Variant=Ghost]"><Setter Property="Foreground" Value="{DynamicResource AlderMuted}" /></Style>
+    <ContainerQuery Name="ChatConversationViewport" Query="max-width:639">
+      <Style Selector="^">
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="36" />
+      </Style>
+    </ContainerQuery>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderChatMessageDislikeTheme" TargetType="a:AlderButton" BasedOn="{StaticResource AlderChatMessageActionTheme}">
+    <Style Selector="^ /template/ PathIcon#LeadingIcon"><Setter Property="RenderTransform" Value="rotate(180deg)" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type a:AlderChatMessageActions}" TargetType="a:AlderChatMessageActions">
+    <Setter Property="CopyIcon" Value="{DynamicResource AlderIconCopy}" />
+    <Setter Property="LikeIcon" Value="{DynamicResource AlderAiThumbUp}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <a:AlderToolbar Spacing="0">
+          <a:AlderButton Name="Copy" Theme="{StaticResource AlderChatMessageActionTheme}" Icon="{TemplateBinding CopyIcon}" AutomationProperties.Name="{DynamicResource AlderText.AiCopy}" a:AlderToolTip.Tip="{DynamicResource AlderText.AiCopy}" Command="{TemplateBinding CopyCommand}" CommandParameter="{TemplateBinding CommandParameter}" IsVisible="{CompiledBinding CopyCommand, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+          <a:AlderButton Name="Like" Theme="{StaticResource AlderChatMessageActionTheme}" Icon="{TemplateBinding LikeIcon}" AutomationProperties.Name="{DynamicResource AlderText.AiLike}" a:AlderToolTip.Tip="{DynamicResource AlderText.AiLike}" Command="{TemplateBinding LikeCommand}" CommandParameter="{TemplateBinding CommandParameter}" IsVisible="{CompiledBinding LikeCommand, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+          <a:AlderButton Name="Dislike" Theme="{StaticResource AlderChatMessageDislikeTheme}" Icon="{DynamicResource AlderAiThumbUp}" AutomationProperties.Name="{DynamicResource AlderText.AiDislike}" a:AlderToolTip.Tip="{DynamicResource AlderText.AiDislike}" Command="{TemplateBinding DislikeCommand}" CommandParameter="{TemplateBinding CommandParameter}" IsVisible="{CompiledBinding DislikeCommand, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+          <a:AlderButton Name="Retry" Theme="{StaticResource AlderChatMessageActionTheme}" Icon="{DynamicResource AlderAiRegenerateIcon}" AutomationProperties.Name="{DynamicResource AlderText.AiRetry}" a:AlderToolTip.Tip="{DynamicResource AlderText.AiRetry}" Command="{TemplateBinding RetryCommand}" CommandParameter="{TemplateBinding CommandParameter}" IsVisible="{CompiledBinding RetryCommand, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+          <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
+        </a:AlderToolbar>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:copied /template/ a|AlderButton#Copy"><Setter Property="Icon" Value="{DynamicResource AlderIconCheck}" /></Style>
+    <Style Selector="^[IsHelpful=True] /template/ a|AlderButton#Like, ^[IsHelpful=False] /template/ a|AlderButton#Dislike"><Setter Property="Foreground" Value="{DynamicResource AlderAccent}" /></Style>
+    <Style Selector="^:copied[(a|AlderMotion.Reduced)=False] /template/ a|AlderButton#Copy">
+      <Style.Animations>
+        <Animation Duration="0:0:0.16" Easing="CubicEaseOut">
+          <KeyFrame Cue="0%"><Setter Property="ScaleTransform.ScaleX" Value="0.85" /><Setter Property="ScaleTransform.ScaleY" Value="0.85" /></KeyFrame>
+          <KeyFrame Cue="100%"><Setter Property="ScaleTransform.ScaleX" Value="1" /><Setter Property="ScaleTransform.ScaleY" Value="1" /></KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderModelPopupRowTheme" TargetType="ListBoxItem" BasedOn="{StaticResource AlderPickerRowTheme}">
+    <Setter Property="MinHeight" Value="36" />
+    <Setter Property="Padding" Value="8,4" />
+    <Setter Property="Margin" Value="0" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Style Selector="^.section">
+      <Setter Property="MinHeight" Value="30" />
+      <Setter Property="Padding" Value="8,8,8,4" />
+      <Setter Property="Margin" Value="0" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderModelPopupListTheme" TargetType="ListBox" BasedOn="{StaticResource AlderPickerListTheme}">
+    <Setter Property="ItemContainerTheme" Value="{StaticResource AlderModelPopupRowTheme}" />
+    <Setter Property="ItemTemplate">
+      <DataTemplate x:DataType="a:PickerRow">
+        <Panel>
+          <a:AlderTextBlock IsVisible="{CompiledBinding IsHeader}" Text="{CompiledBinding Text}" Foreground="{DynamicResource AlderMuted}"
+                            FontSize="12" LineHeight="16" VerticalAlignment="Center" />
+          <Grid IsVisible="{CompiledBinding IsOption}" ColumnDefinitions="*,12" ColumnSpacing="4">
+            <a:AlderContentControl IsVisible="{CompiledBinding HasTemplate}" Content="{CompiledBinding Item}" ContentTemplate="{CompiledBinding Template}"
+                                   HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" />
+            <Grid IsVisible="{CompiledBinding !HasTemplate}" ColumnDefinitions="Auto,*">
+              <a:AlderImage Width="16" Height="16" Margin="0,0,8,0" Source="{CompiledBinding Image}" IsVisible="{CompiledBinding Image, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+              <a:AlderTextBlock Grid.Column="1" Text="{CompiledBinding Text}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"
+                                Classes.committed="{CompiledBinding IsCommitted}" a:AlderToolTip.Tip="{CompiledBinding Description}">
+                <a:AlderTextBlock.Styles>
+                  <Style Selector="TextBlock.committed"><Setter Property="FontWeight" Value="Medium" /></Style>
+                </a:AlderTextBlock.Styles>
+              </a:AlderTextBlock>
+            </Grid>
+            <a:AlderPathIcon Grid.Column="1" Width="10" Height="10" Foreground="{DynamicResource AlderInk}" Data="{DynamicResource AlderIconCheck}"
+                             IsVisible="{CompiledBinding IsCommitted}" />
+          </Grid>
+        </Panel>
+      </DataTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderModelEffortTrackTheme" TargetType="a:AlderModelEffortTrack">
+    <Setter Property="AccentBrush" Value="{DynamicResource AlderAccent}" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <DoubleTransition Property="Value" Duration="0:0:0.2" Easing="0.23,1,0.32,1" />
+        <DoubleTransition Property="AccentAmount" Duration="0:0:0.15" />
+        <DoubleTransition Property="HoverAmount" Duration="0:0:0.15" />
+        <DoubleTransition Property="SheenAmount" Duration="0:0:0.15" Easing="0.25,0.1,0.25,1" />
+        <DoubleTransition Property="UltraAmount" Duration="0:0:0.2" Easing="0.25,0.1,0.25,1" />
+      </Transitions>
+    </Setter>
+    <Style Selector="^.accent-effort"><Setter Property="AccentAmount" Value="1" /></Style>
+    <Style Selector="^.ultra-effort"><Setter Property="UltraAmount" Value="1" /></Style>
+    <Style Selector="^[(a|AlderMotion.Reduced)=True]"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderAiEffortSliderTheme" TargetType="a:AlderModelEffortSlider" BasedOn="{StaticResource {x:Type a:AlderSlider}}">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid Background="Transparent" ClipToBounds="False">
+          <a:AlderModelEffortTrack Name="EffortTrack" x:DataType="a:AlderModelSelector" Theme="{StaticResource AlderModelEffortTrackTheme}" IsHitTestVisible="False"
+                                   Value="{TemplateBinding Value}" Maximum="{TemplateBinding Maximum}"
+                                   Classes.accent-effort="{CompiledBinding SelectedEffort, Converter={x:Static a:AlderModelSelector.IsHighEffort}}"
+                                   Classes.ultra-effort="{CompiledBinding SelectedEffort, Converter={x:Static a:AlderModelSelector.IsUltraEffort}}"
+                                   ShowOuterSparks="{CompiledBinding ShowOuterSparks}" />
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:focus-visible /template/ a|AlderModelEffortTrack">
+      <Setter Property="Focused" Value="True" />
+    </Style>
+    <Style Selector="^:pointerover /template/ a|AlderModelEffortTrack">
+      <Setter Property="HoverAmount" Value="1" />
+    </Style>
+    <Style Selector="^ /template/ a|AlderModelEffortTrack.accent-effort">
+      <Setter Property="SheenAmount" Value="1" />
+    </Style>
+    <Style Selector="^ /template/ a|AlderModelEffortTrack.ultra-effort">
+      <Setter Property="SheenAmount" Value="0.25" />
+    </Style>
+    <Style Selector="^:effort-dragging /template/ a|AlderModelEffortTrack">
+      <Setter Property="SheenAmount" Value="0" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderAiEffortLevels" TargetType="ListBox">
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="Template"><ControlTemplate>
+      <StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="4">
+          <a:AlderTextBlock FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" Text="{DynamicResource AlderText.AiEffort}" />
+          <ContentPresenter FontSize="12" TextBlock.LineHeight="16" FontWeight="Medium" Content="{TemplateBinding SelectedItem}" />
+        </StackPanel>
+        <a:AlderModelEffortSlider Name="EffortSlider" Theme="{StaticResource AlderAiEffortSliderTheme}" Margin="0,6,0,2" Height="24" MinHeight="24" Minimum="0"
+                       Maximum="{CompiledBinding ItemCount, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static a:AlderModelSelector.EffortMaximum}}"
+                       IsSnapToTickEnabled="True" TickFrequency="1" SmallChange="1" LargeChange="1"
+                       Value="{Binding SelectedIndex, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                       FocusAdorner="{x:Null}" ClipToBounds="False" AutomationProperties.Name="{DynamicResource AlderText.AiEffort}" />
+        <Grid ColumnDefinitions="*,Auto">
+          <a:AlderTextBlock FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" Text="{DynamicResource AlderText.AiFaster}" />
+          <a:AlderTextBlock Grid.Column="1" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" Text="{DynamicResource AlderText.AiSmarter}" />
+        </Grid>
+        <a:AlderAccordionPanel Name="EffortHint" ClipToBounds="True" IsHitTestVisible="False">
+          <Grid ColumnDefinitions="12,*" ColumnSpacing="8" Margin="0,12,0,0">
+            <a:AlderPathIcon Width="12" Height="12" VerticalAlignment="Top" Margin="0,2,0,0"
+                             Foreground="{DynamicResource AlderMuted}" Data="{DynamicResource AlderIconInfo}" Theme="{StaticResource AlderAiFittedIconTheme}" />
+            <Panel Grid.Column="1">
+              <a:AlderTextBlock Name="MaxHint" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}"
+                                Text="{DynamicResource AlderText.AiMaxEffortHint}" TextWrapping="Wrap" />
+              <a:AlderTextBlock Name="UltraHint" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}"
+                                Text="{DynamicResource AlderText.AiUltraEffortHint}" TextWrapping="Wrap" />
+            </Panel>
+          </Grid>
+        </a:AlderAccordionPanel>
+      </StackPanel>
+    </ControlTemplate></Setter>
+    <Style Selector="^ /template/ a|AlderAccordionPanel#EffortHint[Progress=0] > Grid,
+                     ^ /template/ :is(TextBlock)#MaxHint[Opacity=0],
+                     ^ /template/ :is(TextBlock)#UltraHint[Opacity=0]">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^ /template/ a|AlderAccordionPanel#EffortHint">
+      <Setter Property="Progress" Value="0" />
+      <Setter Property="Opacity" Value="0" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <DoubleTransition Property="Progress" Duration="0:0:0.2" Easing="0.23,1,0.32,1" />
+          <DoubleTransition Property="Opacity" Duration="0:0:0.2" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^.accent-effort /template/ a|AlderAccordionPanel#EffortHint">
+      <Setter Property="Progress" Value="1" /><Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="^ /template/ :is(TextBlock)#MaxHint, ^ /template/ :is(TextBlock)#UltraHint">
+      <Setter Property="Opacity" Value="0" />
+      <Setter Property="Transitions"><Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.2" /></Transitions></Setter>
+    </Style>
+    <Style Selector="^.accent-effort:not(.ultra-effort) /template/ :is(TextBlock)#MaxHint, ^.ultra-effort /template/ :is(TextBlock)#UltraHint">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="^[(a|AlderMotion.Reduced)=True] /template/ a|AlderAccordionPanel#EffortHint,
+                     ^[(a|AlderMotion.Reduced)=True] /template/ :is(TextBlock)#MaxHint,
+                     ^[(a|AlderMotion.Reduced)=True] /template/ :is(TextBlock)#UltraHint">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderModelPickerTheme" TargetType="a:AlderSelect" BasedOn="{StaticResource {x:Type a:AlderSelect}}">
+    <Setter Property="CornerRadius" Value="24" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Name="PART_Field" ClipToBounds="False">
+          <a:AlderButton Name="PART_Trigger" CornerRadius="{TemplateBinding CornerRadius}" MinHeight="36"
+                         HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center"
+                         AutomationProperties.Name="{TemplateBinding (AutomationProperties.Name)}">
+            <Grid ColumnDefinitions="Auto,*,Auto" Margin="8,0,6,0">
+              <Panel IsVisible="{TemplateBinding (a:AlderModelPicker.ShowIcon)}">
+                <Panel IsVisible="{CompiledBinding #ModelLeadingContent.Content, Converter={x:Static c:ObjectConverters.IsNull}}">
+                  <a:AlderImage Name="ModelTriggerIcon" Width="16" Height="16" Margin="0,0,6,0"
+                                Source="{CompiledBinding SelectedItem, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static a:AlderModelSelector.ModelImage}}"
+                                IsVisible="{CompiledBinding #ModelTriggerIcon.Source, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+                </Panel>
+                <ContentPresenter Name="ModelLeadingContent" Margin="0,0,6,0" VerticalAlignment="Center"
+                                  Content="{TemplateBinding (a:AlderModelPicker.LeadingContent)}"
+                                  IsVisible="{CompiledBinding #ModelLeadingContent.Content, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+              </Panel>
+              <a:AlderTextBlock Name="ModelPlaceholder" Grid.Column="1" VerticalAlignment="Center" MaxWidth="160"
+                                Foreground="{DynamicResource AlderMuted}" Text="{TemplateBinding PlaceholderText}"
+                                FontSize="14" LineHeight="20" TextTrimming="CharacterEllipsis" />
+              <a:AlderTextBlock Name="ModelTriggerName" Grid.Column="1" VerticalAlignment="Center" MaxWidth="160"
+                                Text="{CompiledBinding SelectedItem, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static a:AlderModelSelector.Caption}}"
+                                FontSize="14" FontWeight="Medium" LineHeight="20" TextTrimming="CharacterEllipsis" IsVisible="False" />
+              <Panel Grid.Column="2" Width="16" Margin="6,0,0,0">
+                <a:AlderPathIcon Name="SelectArrow" Data="{TemplateBinding Indicator}" Foreground="{DynamicResource AlderMuted}"
+                                 HorizontalAlignment="Center" VerticalAlignment="Center" />
+              </Panel>
+            </Grid>
+          </a:AlderButton>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:has-selection /template/ TextBlock#ModelPlaceholder"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^:has-selection /template/ TextBlock#ModelTriggerName"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:select /template/ :is(Button)#PART_Trigger">
+      <Setter Property="Theme" Value="{StaticResource AlderInlineSelectTriggerTheme}" />
+      <Setter Property="Transitions"><Transitions><BrushTransition Property="Background" Duration="0:0:0.15" Easing="0.23,1,0.32,1" /></Transitions></Setter>
+    </Style>
+    <Style Selector="^:open /template/ :is(Button)#PART_Trigger">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+    <Style Selector="^[(a|AlderMotion.Reduced)=True] /template/ :is(Button)#PART_Trigger">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+    <ContainerQuery Name="ModelSelectorComposer" Query="min-width:0">
+      <Style Selector="^ /template/ a|AlderButton#PART_Trigger"><Setter Property="Height" Value="40" /></Style>
+    </ContainerQuery>
+    <ContainerQuery Name="ModelSelectorComposer" Query="min-width:768">
+      <Style Selector="^ /template/ a|AlderButton#PART_Trigger"><Setter Property="Height" Value="36" /></Style>
+    </ContainerQuery>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type a:AlderModelSelector}" TargetType="a:AlderModelSelector">
+    <Setter Property="Template">
+      <ControlTemplate>
+          <a:AlderModelPicker Name="PART_Models" Width="NaN" MinWidth="0" MaxDropDownHeight="304" ShowSearch="{TemplateBinding ShowSearch}"
+                         ShowIcon="{TemplateBinding ShowIcon}" LeadingContent="{TemplateBinding LeadingContent}" Theme="{StaticResource AlderModelPickerTheme}"
+                         DropDownGap="8" DropDownHorizontalAlignment="Right" DropDownPadding="6" ItemTemplate="{TemplateBinding ItemTemplate}" DropDownCornerRadius="16" ItemsSource="{TemplateBinding ItemsSource}" Indicator="{DynamicResource AlderIconChevronDown}"
+                         AutomationProperties.Name="{DynamicResource AlderText.AiModel}" SelectedItem="{Binding SelectedModel, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+            <a:AlderModelPicker.DropDownHeader><a:AlderTextBlock Margin="8,6,8,2" Text="{DynamicResource AlderText.AiModels}" FontSize="12" LineHeight="16" FontWeight="Medium" Foreground="{DynamicResource AlderMuted}" /></a:AlderModelPicker.DropDownHeader>
+            <a:AlderModelPicker.DropDownFooter>
+              <StackPanel x:DataType="a:AlderModelSelector" Spacing="4">
+                <a:AlderContentControl Content="{CompiledBinding EffortNote}" Margin="8,0" FontSize="12" Foreground="{DynamicResource AlderMuted}"
+                                  IsVisible="{CompiledBinding EffortNote, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+                <Border Height="1" Background="{DynamicResource AlderSeparator}" Margin="0,4,0,4" IsVisible="{CompiledBinding #EffortLevels.IsVisible}" />
+                <a:AlderListBox Name="EffortLevels" Margin="8,0,8,4" Theme="{StaticResource AlderAiEffortLevels}"
+                                ItemsSource="{CompiledBinding Efforts}" SelectedItem="{CompiledBinding SelectedEffort, Mode=TwoWay}"
+                                Classes.accent-effort="{CompiledBinding SelectedEffort, Converter={x:Static a:AlderModelSelector.IsHighEffort}}"
+                                Classes.ultra-effort="{CompiledBinding SelectedEffort, Converter={x:Static a:AlderModelSelector.IsUltraEffort}}"
+                                IsVisible="{CompiledBinding #EffortLevels.ItemCount, Converter={x:Static a:AlderModelSelector.HasEffortChoices}}" />
+              </StackPanel>
+            </a:AlderModelPicker.DropDownFooter>
+          </a:AlderModelPicker>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ a|AlderSelect#PART_Models"><Setter Property="DropDownMinWidth" Value="240" /></Style>
+    <Style Selector="^[ShowSearch=True] /template/ a|AlderSelect#PART_Models"><Setter Property="DropDownMinWidth" Value="288" /></Style>
+  </ControlTheme>
+
+  <DataTemplate x:Key="AlderAiTimelineRunningHeader" x:DataType="x:String">
+    <a:AlderTextShimmer Text="{CompiledBinding .}" HorizontalAlignment="Left" />
+  </DataTemplate>
+  <ControlTheme x:Key="AlderAiTimelineGlyph" TargetType="PathIcon">
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Path Data="{TemplateBinding Data}" Fill="{TemplateBinding Foreground}" Stretch="Uniform"
+              VerticalAlignment="Center" IsHitTestVisible="False" />
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderAiTimelineTrigger" TargetType="ToggleButton">
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Padding" Value="8,0" />
+    <Setter Property="MinHeight" Value="32" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Transitions">
+      <Transitions><BrushTransition Property="Foreground" Duration="0:0:0.15" Easing="0.23,1,0.32,1" /></Transitions>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Background="{TemplateBinding Background}">
+          <Border Name="TimelineHover" Background="{DynamicResource AlderNeutral}" CornerRadius="{TemplateBinding CornerRadius}"
+                  IsHitTestVisible="False" />
+          <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Padding="{TemplateBinding Padding}" VerticalContentAlignment="Center"
+                            Foreground="{TemplateBinding Foreground}" />
+          <a:InputFocusRing Name="TimelineFocus" CornerRadius="{TemplateBinding CornerRadius}" ClipToBounds="False" IsHitTestVisible="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ Border#TimelineHover">
+      <Setter Property="Opacity" Value="0" />
+      <Setter Property="Transitions">
+        <Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="0.23,1,0.32,1" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^:pointerover:not(:disabled), ^:pressed:not(:disabled), ^:focus-visible:not(:disabled)">
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    </Style>
+    <Style Selector="^:pointerover:not(:disabled) /template/ Border#TimelineHover, ^:pressed:not(:disabled) /template/ Border#TimelineHover">
+      <Setter Property="Opacity" Value=".6" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ a|InputFocusRing#TimelineFocus">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" />
+    </Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value=".5" /></Style>
+    <Style Selector="^[(a|AlderMotion.Reduced)=True], ^[(a|AlderMotion.Reduced)=True] /template/ Border#TimelineHover">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type a:AlderReasoning}" TargetType="a:AlderReasoning" BasedOn="{StaticResource {x:Type a:AlderDisclosure}}">
+    <Setter Property="TriggerTheme" Value="{StaticResource AlderAiTimelineTrigger}" />
+    <Setter Property="Padding" Value="0,8,0,0" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="AutomationProperties.Name" Value="{Binding ResolvedHeader, RelativeSource={RelativeSource Self}}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel>
+          <a:AlderToggleButton Name="PART_Trigger" Theme="{TemplateBinding TriggerTheme}" Margin="-8,0,0,0"
+                              AutomationProperties.Name="{TemplateBinding (AutomationProperties.Name)}"
+                              IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+            <Grid ColumnDefinitions="Auto,Auto,Auto,Auto">
+              <Border Name="ReasoningLoaderSlot" ClipToBounds="True" IsHitTestVisible="False" VerticalAlignment="Center"
+                      AutomationProperties.AccessibilityView="Raw">
+                <Panel HorizontalAlignment="Left">
+                  <a:AlderLoader Name="ReasoningLoader" Variant="{TemplateBinding LoaderVariant}" Size="Small"
+                                 IsVisible="{CompiledBinding LoaderContent, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNull}}"/>
+                  <ContentPresenter Content="{TemplateBinding LoaderContent}" VerticalContentAlignment="Center" />
+                </Panel>
+              </Border>
+              <PathIcon Grid.Column="1" Data="{TemplateBinding Icon}" Width="14" Height="14" Margin="0,0,8,0"
+                        IsVisible="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+              <Panel Grid.Column="2" VerticalAlignment="Center">
+                <TextBlock Name="ReasoningStatusLabel" FontSize="14" LineHeight="20" FontWeight="Medium" TextWrapping="Wrap" />
+                <a:AlderTextShimmer Name="ReasoningStreamingLabel" Text="{TemplateBinding ResolvedHeader}"
+                                    FontSize="14" LineHeight="20" FontWeight="Medium" TextWrapping="Wrap" IsVisible="False" />
+                <ContentPresenter Name="ReasoningCustomHeader" Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                  VerticalContentAlignment="Center" IsVisible="False" />
+              </Panel>
+              <Panel Grid.Column="3" Name="ReasoningIndicatorSlot" Width="14" Height="14" Margin="8,0,0,0" VerticalAlignment="Center"
+                     IsHitTestVisible="False" IsVisible="{Binding #PART_Indicator.Data, Converter={x:Static c:ObjectConverters.IsNotNull}}">
+                <a:AlderPathIcon Name="PART_Indicator" Theme="{StaticResource AlderAiTimelineGlyph}" Width="10" Height="10"
+                                 HorizontalAlignment="Center" VerticalAlignment="Center" />
+              </Panel>
+            </Grid>
+          </a:AlderToggleButton>
+          <a:AlderAccordionPanel Name="PART_Panel" ClipToBounds="True">
+            <Panel Name="ReasoningBody" Margin="{TemplateBinding Padding}">
+              <a:AlderTextBlock Text="{TemplateBinding Text}" FontSize="14" LineHeight="20" TextWrapping="Wrap"
+                                Foreground="{TemplateBinding Foreground}"
+                                IsVisible="{CompiledBinding Content, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNull}}" />
+              <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                Foreground="{TemplateBinding Foreground}" FontSize="14" FontWeight="Normal"
+                                TextBlock.LineHeight="20" TextBlock.TextWrapping="Wrap" />
+            </Panel>
+          </a:AlderAccordionPanel>
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ Border#ReasoningLoaderSlot">
+      <Setter Property="Width" Value="0" />
+      <Setter Property="Opacity" Value="0" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <DoubleTransition Property="Width" Duration="0:0:0.15" Easing="0.23,1,0.32,1" />
+          <DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="0.23,1,0.32,1" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^[Status=Running][ShowLoader=True] /template/ Border#ReasoningLoaderSlot">
+      <Setter Property="Width" Value="24" />
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="^[Status=Running][ShowLoader=True][LoaderVariant=Infinity] /template/ Border#ReasoningLoaderSlot">
+      <Setter Property="Width" Value="32" />
+    </Style>
+    <Style Selector="^ /template/ Border#ReasoningLoaderSlot[Width=0] > Panel, ^ /template/ a|AlderAccordionPanel[Progress=0] > Panel#ReasoningBody">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^[(a|AlderMotion.Reduced)=True] /template/ Border#ReasoningLoaderSlot">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderMessageReasoningTheme" TargetType="a:AlderReasoning" BasedOn="{StaticResource {x:Type a:AlderReasoning}}">
+    <Setter Property="ShowLoader" Value="False" />
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type a:AlderChainOfThought}" TargetType="a:AlderChainOfThought" BasedOn="{StaticResource {x:Type a:AlderDisclosure}}">
+    <Setter Property="TriggerTheme" Value="{StaticResource AlderAiTimelineTrigger}" />
+    <Setter Property="Header" Value="{DynamicResource AlderText.AiThinking}" />
+    <Setter Property="Padding" Value="0,8,0,0" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel>
+          <a:AlderToggleButton Name="PART_Trigger" Theme="{TemplateBinding TriggerTheme}" Margin="-8,0,0,0"
+                        AutomationProperties.Name="{TemplateBinding (AutomationProperties.Name)}"
+                        IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+            <DockPanel>
+              <Panel DockPanel.Dock="Right" Width="16" Height="16" Margin="8,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False"
+                     IsVisible="{Binding #PART_Indicator.Data, Converter={x:Static c:ObjectConverters.IsNotNull}}">
+                <a:AlderPathIcon Name="PART_Indicator" Theme="{StaticResource AlderAiTimelineGlyph}" Width="11" Height="11"
+                                 HorizontalAlignment="Center" VerticalAlignment="Center" />
+              </Panel>
+              <Border Name="TimelineLoaderSlot" DockPanel.Dock="Left" ClipToBounds="True" IsHitTestVisible="False">
+                <a:AlderLoader Name="RunLoader" Variant="Grid" Width="16" Height="16" VerticalAlignment="Center" HorizontalAlignment="Left"
+                               AutomationProperties.AccessibilityView="Raw" />
+              </Border>
+              <a:AlderPathIcon Name="CustomRunIcon" DockPanel.Dock="Left" Theme="{StaticResource AlderAiTimelineGlyph}"
+                               Width="14" Height="14" Margin="0,0,8,0" VerticalAlignment="Center"
+                               Data="{TemplateBinding Icon}" IsHitTestVisible="False" />
+              <ContentPresenter Name="ActivityHeader" VerticalContentAlignment="Center"
+                                Content="{TemplateBinding Header}" TextBlock.TextWrapping="Wrap" />
+            </DockPanel>
+          </a:AlderToggleButton>
+          <a:AlderAccordionPanel Name="PART_Panel" ClipToBounds="True">
+            <ContentPresenter Name="PART_ContentPresenter" Padding="{TemplateBinding Padding}"
+                              Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                              TextBlock.TextWrapping="Wrap" />
+          </a:AlderAccordionPanel>
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ ContentPresenter#ActivityHeader">
+      <Setter Property="ContentTemplate" Value="{TemplateBinding HeaderTemplate}" />
+    </Style>
+    <Style Selector="^:plain-header[Status=Running] /template/ ContentPresenter#ActivityHeader">
+      <Setter Property="ContentTemplate" Value="{StaticResource AlderAiTimelineRunningHeader}" />
+    </Style>
+    <Style Selector="^ /template/ PathIcon#PART_Indicator">
+      <Setter Property="Transitions">
+        <Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25" Easing="0.4,0,0.2,1" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^ /template/ Border#TimelineLoaderSlot">
+      <Setter Property="Width" Value="0" />
+      <Setter Property="Transitions">
+        <Transitions><DoubleTransition Property="Width" Duration="0:0:0.15" Easing="0.23,1,0.32,1" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^ /template/ a|AlderLoader#RunLoader">
+      <Setter Property="Opacity" Value="0" />
+      <Setter Property="Transitions">
+        <Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="0.23,1,0.32,1" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^[Status=Running] /template/ Border#TimelineLoaderSlot"><Setter Property="Width" Value="24" /></Style>
+    <Style Selector="^[Status=Running] /template/ a|AlderLoader#RunLoader"><Setter Property="Opacity" Value="1" /></Style>
+    <Style Selector="^[(a|AlderMotion.Reduced)=True] /template/ PathIcon#PART_Indicator,
+                     ^[(a|AlderMotion.Reduced)=True] /template/ Border#TimelineLoaderSlot,
+                     ^[(a|AlderMotion.Reduced)=True] /template/ a|AlderLoader#RunLoader">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+    <Style Selector="^ /template/ PathIcon#CustomRunIcon">
+      <Setter Property="IsVisible" Value="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+    </Style>
+    <Style Selector="^[Status=Running] /template/ PathIcon#CustomRunIcon"><Setter Property="IsVisible" Value="False" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type a:AlderChainOfThoughtStep}" TargetType="a:AlderChainOfThoughtStep">
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="CompletedIcon" Value="{DynamicResource AlderIconCheck}" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="AutomationProperties.AccessibilityView" Value="Control" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid ColumnDefinitions="20,*" ColumnSpacing="12" MinHeight="20">
+          <Panel IsHitTestVisible="False" AutomationProperties.AccessibilityView="Raw">
+            <Panel Name="Connector" Margin="0,22,0,2">
+              <Border Name="SettledLine" Width="1" HorizontalAlignment="Center" Background="{DynamicResource AlderMuted}" />
+              <Line Name="DottedLine" Width="1" HorizontalAlignment="Center" Stretch="Fill"
+                    StartPoint="0,0" EndPoint="0,1" Stroke="{DynamicResource AlderMuted}" StrokeThickness="1" StrokeDashArray="2,2" />
+            </Panel>
+            <Panel Height="20" Width="20" VerticalAlignment="Top">
+              <Border Name="SettledDisc" Width="18" Height="18" CornerRadius="9" Background="{DynamicResource AlderChainSettledSurface}">
+                <Panel>
+                  <a:AlderPathIcon Name="CompletedMark" Width="8" Height="8" Foreground="{DynamicResource AlderMuted}" Data="{TemplateBinding CompletedIcon}" />
+                  <a:AlderPathIcon Name="ErrorMark" Width="6" Height="6" Foreground="{DynamicResource AlderDanger}" Data="{DynamicResource AlderIconXmark}" />
+                  <Border Name="InterruptedMark" Width="6" Height="6" CornerRadius="2" Background="{DynamicResource AlderMuted}" />
+                </Panel>
+              </Border>
+              <Border Name="NeutralMark" Width="6" Height="6" CornerRadius="3" Background="{DynamicResource AlderMuted}" />
+              <Ellipse Name="PendingMark" Width="13.5" Height="13.5" Stroke="{DynamicResource AlderMuted}" StrokeThickness="1" StrokeDashArray="1,1" />
+              <Border Name="ActiveDisc" Width="20" Height="20" CornerRadius="10" Background="{DynamicResource AlderAccent}" />
+              <a:AlderLoader Name="ActiveRing" Variant="Ring" Width="12" Height="12"
+                             AutomationProperties.AccessibilityView="Raw" />
+            </Panel>
+          </Panel>
+          <StackPanel Grid.Column="1">
+            <ContentPresenter Name="StepTitle" Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}"
+                              FontSize="14" TextBlock.LineHeight="20" TextBlock.TextWrapping="Wrap" />
+            <a:AlderTextBlock Margin="0,4,0,0" Text="{TemplateBinding Description}" TextWrapping="Wrap" FontSize="12" LineHeight="16"
+                       Foreground="{DynamicResource AlderMuted}"
+                       IsVisible="{CompiledBinding Description, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+            <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
+            <Border Name="StepGap" Height="16" />
+          </StackPanel>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ Panel#Connector, ^ /template/ Border#StepGap, ^ /template/ a|AlderLoader#ActiveRing[Opacity=0]">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^:connected /template/ Panel#Connector, ^:connected /template/ Border#StepGap">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^ /template/ Border#SettledDisc,
+                     ^ /template/ PathIcon#CompletedMark,
+                     ^ /template/ PathIcon#ErrorMark,
+                     ^ /template/ Border#InterruptedMark,
+                     ^ /template/ Border#NeutralMark,
+                     ^ /template/ Ellipse#PendingMark,
+                     ^ /template/ Border#ActiveDisc,
+                     ^ /template/ a|AlderLoader#ActiveRing,
+                     ^ /template/ Line#DottedLine">
+      <Setter Property="Opacity" Value="0" />
+    </Style>
+    <Style Selector="^ /template/ Border#SettledDisc,
+                     ^ /template/ PathIcon#CompletedMark,
+                     ^ /template/ PathIcon#ErrorMark,
+                     ^ /template/ Border#InterruptedMark,
+                     ^ /template/ Border#NeutralMark,
+                     ^ /template/ Ellipse#PendingMark,
+                     ^ /template/ Border#ActiveDisc,
+                     ^ /template/ a|AlderLoader#ActiveRing,
+                     ^ /template/ Line#DottedLine,
+                     ^ /template/ Border#SettledLine">
+      <Setter Property="Transitions"><Transitions>
+        <DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="0.23,1,0.32,1" />
+      </Transitions></Setter>
+    </Style>
+    <Style Selector="^[(a|AlderMotion.Reduced)=True] /template/ Border#SettledDisc,
+                     ^[(a|AlderMotion.Reduced)=True] /template/ PathIcon#CompletedMark,
+                     ^[(a|AlderMotion.Reduced)=True] /template/ PathIcon#ErrorMark,
+                     ^[(a|AlderMotion.Reduced)=True] /template/ Border#InterruptedMark,
+                     ^[(a|AlderMotion.Reduced)=True] /template/ Border#NeutralMark,
+                     ^[(a|AlderMotion.Reduced)=True] /template/ Ellipse#PendingMark,
+                     ^[(a|AlderMotion.Reduced)=True] /template/ Border#ActiveDisc,
+                     ^[(a|AlderMotion.Reduced)=True] /template/ a|AlderLoader#ActiveRing,
+                     ^[(a|AlderMotion.Reduced)=True] /template/ Line#DottedLine,
+                     ^[(a|AlderMotion.Reduced)=True] /template/ Border#SettledLine">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+    <Style Selector="^ /template/ Border#SettledLine"><Setter Property="Opacity" Value=".26" /></Style>
+    <Style Selector="^:active /template/ Border#SettledLine, ^:pending /template/ Border#SettledLine"><Setter Property="Opacity" Value="0" /></Style>
+    <Style Selector="^:active /template/ Line#DottedLine, ^:pending /template/ Line#DottedLine"><Setter Property="Opacity" Value=".45" /></Style>
+    <Style Selector="^:complete /template/ Border#SettledDisc, ^:error /template/ Border#SettledDisc, ^:interrupted /template/ Border#SettledDisc,
+                     ^:complete /template/ PathIcon#CompletedMark, ^:error /template/ PathIcon#ErrorMark, ^:interrupted /template/ Border#InterruptedMark,
+                     ^:neutral /template/ Border#NeutralMark, ^:pending /template/ Ellipse#PendingMark">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="^:active /template/ Border#ActiveDisc"><Setter Property="Opacity" Value=".15" /></Style>
+    <Style Selector="^:active /template/ a|AlderLoader#ActiveRing"><Setter Property="Opacity" Value="1" /></Style>
+    <Style Selector="^:interrupted /template/ Border#SettledDisc"><Setter Property="Background" Value="{DynamicResource AlderChainInterruptedSurface}" /></Style>
+    <Style Selector="^:complete /template/ ContentPresenter#StepTitle"><Setter Property="Foreground" Value="{DynamicResource AlderChainSettledTitle}" /></Style>
+    <Style Selector="^:pending /template/ ContentPresenter#StepTitle"><Setter Property="Foreground" Value="{DynamicResource AlderChainPendingTitle}" /></Style>
+    <Style Selector="^ /template/ ContentPresenter#StepTitle">
+      <Setter Property="Transitions"><Transitions>
+        <BrushTransition Property="Foreground" Duration="0:0:0.15" Easing="0.23,1,0.32,1" />
+      </Transitions></Setter>
+    </Style>
+    <Style Selector="^[(a|AlderMotion.Reduced)=True] /template/ ContentPresenter#StepTitle"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^:active /template/ ContentPresenter#StepTitle"><Setter Property="FontWeight" Value="Medium" /></Style>
+    <Style Selector="^:interrupted /template/ ContentPresenter#StepTitle">
+      <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    </Style>
+  </ControlTheme>
+
+  <DataTemplate x:Key="AlderAiPayload" x:DataType="x:String">
+    <a:AlderCodeBlock Language="json" Code="{CompiledBinding .}" md:MarkdownServices.Services="{x:Static a:AlderChatTool.PayloadServices}">
+      <a:AlderCodeBlock.Resources>
+        <ResourceDictionary>
+          <x:Double x:Key="Md.CodeFontSize">11</x:Double>
+          <x:Double x:Key="Md.CodeLineHeight">20</x:Double>
+          <CornerRadius x:Key="Md.CornerRadius">12</CornerRadius>
+        </ResourceDictionary>
+      </a:AlderCodeBlock.Resources>
+    </a:AlderCodeBlock>
+  </DataTemplate>
+
+  <ControlTheme x:Key="AlderChatToolTriggerTheme" TargetType="ToggleButton" BasedOn="{StaticResource AlderDisclosureTriggerTheme}">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="CornerRadius" Value="11" />
+    <Setter Property="Padding" Value="12,8" />
+    <Setter Property="MinHeight" Value="36" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="FontWeight" Value="Normal" />
+    <Style Selector="^:checked"><Setter Property="CornerRadius" Value="11,11,0,0" /></Style>
+    <Style Selector="^:pointerover:not(:disabled), ^:pressed:not(:disabled)"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type a:AlderChatTool}" TargetType="a:AlderChatTool" BasedOn="{StaticResource {x:Type a:AlderDisclosure}}">
+    <Setter Property="Icon" Value="{DynamicResource AlderChatToolWrench}" />
+    <Setter Property="Header" Value="{DynamicResource AlderText.AiTool}" />
+    <Setter Property="TriggerTheme" Value="{StaticResource AlderChatToolTriggerTheme}" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="AutomationProperties.Name" Value="{Binding DisplayTitle, RelativeSource={RelativeSource Self}}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="ToolSurface" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}"
+                BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="{TemplateBinding CornerRadius}">
+          <StackPanel>
+            <a:AlderToggleButton Name="PART_Trigger" Theme="{TemplateBinding TriggerTheme}"
+                                 HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                 AutomationProperties.Name="{TemplateBinding (AutomationProperties.Name)}"
+                                 IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+              <Grid ColumnDefinitions="Auto,*,Auto">
+                <a:AlderPathIcon Name="StatusIcon" Theme="{StaticResource AlderAiFittedIconTheme}" Width="14" Height="14" Margin="0,0,8,0" VerticalAlignment="Center"
+                                 Foreground="{DynamicResource AlderMuted}" Data="{TemplateBinding Icon}" />
+                <Grid Name="ToolLabel" Grid.Column="1" ColumnDefinitions="Auto,*" VerticalAlignment="Center">
+                  <ContentPresenter Name="TraceHeader" Content="{TemplateBinding Header}" TextBlock.LineHeight="16"
+                                    VerticalAlignment="Center" />
+                  <ContentPresenter Name="ToolName" Grid.Column="1" Margin="8,0,0,0" Content="{TemplateBinding ToolName}"
+                                    FontWeight="Medium" TextBlock.LineHeight="16" TextBlock.TextTrimming="CharacterEllipsis"
+                                    VerticalAlignment="Center" IsVisible="{CompiledBinding ToolName, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+                </Grid>
+                <a:AlderTextShimmer Name="StreamingTitle" Grid.Column="1" Text="{TemplateBinding DisplayTitle}"
+                                    FontSize="12" LineHeight="16" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" IsVisible="False" />
+                <Panel Name="ToolIndicatorSlot" Grid.Column="2" Width="14" Height="14" Margin="8,0,0,0" VerticalAlignment="Center">
+                  <a:AlderPathIcon Name="PART_Indicator" Theme="{StaticResource AlderAiTimelineGlyph}" Width="10" Height="10"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource AlderMuted}" />
+                </Panel>
+              </Grid>
+            </a:AlderToggleButton>
+            <a:AlderAccordionPanel Name="PART_Panel" ClipToBounds="True">
+              <StackPanel Name="ToolBody" Spacing="4" Margin="12">
+                <StackPanel Name="ToolArguments">
+                  <a:AlderTextBlock Name="ArgumentsCaption" Text="{TemplateBinding ArgumentsLabel}" FontSize="10" LineHeight="13.3333"
+                                    FontWeight="Medium" Foreground="{DynamicResource AlderMuted}"
+                                    IsVisible="{CompiledBinding #ArgumentsCaption.Text, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+                  <ContentPresenter Margin="0,4" Content="{TemplateBinding Arguments}" ContentTemplate="{StaticResource AlderAiPayload}" />
+                </StackPanel>
+                <StackPanel Name="ToolResult">
+                  <a:AlderTextBlock Name="ResultCaption" Text="{TemplateBinding ResultLabel}" FontSize="10" LineHeight="13.3333"
+                                    FontWeight="Medium" Foreground="{DynamicResource AlderMuted}"
+                                    IsVisible="{CompiledBinding #ResultCaption.Text, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+                  <ContentPresenter Margin="0,4" Content="{TemplateBinding Result}" ContentTemplate="{StaticResource AlderAiPayload}" />
+                </StackPanel>
+                <a:AlderSelectableTextBlock Name="ResultText" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderDanger}"
+                                            TextWrapping="Wrap" Text="{TemplateBinding Result}" />
+                <ContentPresenter Name="CustomToolContent" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  IsVisible="{CompiledBinding #CustomToolContent.Content, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+                <ContentPresenter Name="ToolApproval" Content="{TemplateBinding Approval}" Margin="0,12,0,0"
+                                  IsVisible="{CompiledBinding #ToolApproval.Content, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+                <StackPanel Name="ApprovalActions" Margin="0,12,0,0" HorizontalAlignment="Right" Orientation="Horizontal" Spacing="8" IsVisible="False">
+                  <a:AlderButton Classes="approval-action" Size="Small" Variant="Secondary" Content="{DynamicResource AlderText.AiReject}"
+                                 Command="{TemplateBinding RejectCommand}" CommandParameter="{TemplateBinding ApprovalCommandParameter}"
+                                 IsVisible="{CompiledBinding RejectCommand, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+                  <a:AlderButton Classes="approval-action" Size="Small" Content="{DynamicResource AlderText.AiApprove}"
+                                 Command="{TemplateBinding ApproveCommand}" CommandParameter="{TemplateBinding ApprovalCommandParameter}"
+                                 IsVisible="{CompiledBinding ApproveCommand, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+                </StackPanel>
+              </StackPanel>
+            </a:AlderAccordionPanel>
+          </StackPanel>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ a|AlderAccordionPanel[Progress=0] > StackPanel#ToolBody, ^:not(:has-details) /template/ StackPanel#ToolBody"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^ /template/ ContentPresenter#TraceHeader"><Setter Property="ContentTemplate" Value="{TemplateBinding HeaderTemplate}" /></Style>
+    <Style Selector="^:not(:has-details) /template/ :is(ToggleButton)#PART_Trigger"><Setter Property="IsEnabled" Value="False" /></Style>
+    <Style Selector="^:not(:has-details) /template/ Panel#ToolIndicatorSlot, ^:not(:has-details) /template/ PathIcon#PART_Indicator"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^:not(:has-arguments) /template/ StackPanel#ToolArguments">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^:not(:has-result) /template/ StackPanel#ToolResult, ^[Status=Failed] /template/ StackPanel#ToolResult">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^ /template/ a|AlderSelectableTextBlock#ResultText"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^:has-result[Status=Failed] /template/ a|AlderSelectableTextBlock#ResultText"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^[Status=Failed]"><Setter Property="Icon" Value="{DynamicResource AlderChatToolErrorGlyph}" /><Setter Property="BorderBrush" Value="{DynamicResource AlderChatToolErrorBorder}" /></Style>
+    <Style Selector="^[Status=Failed] /template/ PathIcon#StatusIcon"><Setter Property="Foreground" Value="{DynamicResource AlderDanger}" /></Style>
+    <Style Selector="^[Status=Completed]"><Setter Property="Icon" Value="{DynamicResource AlderIconCheckCircle}" /></Style>
+    <Style Selector="^[Status=Completed] /template/ PathIcon#StatusIcon"><Setter Property="Foreground" Value="{DynamicResource AlderFeedbackSuccess}" /></Style>
+    <Style Selector="^[Status=Stopped]"><Setter Property="Icon" Value="{DynamicResource AlderIconBan}" /></Style>
+    <Style Selector="^:requires-approval"><Setter Property="Icon" Value="{DynamicResource AlderIconAlert}" /><Setter Property="BorderBrush" Value="{DynamicResource AlderChatToolApprovalBorder}" /></Style>
+    <Style Selector="^:requires-approval /template/ PathIcon#StatusIcon"><Setter Property="Foreground" Value="{DynamicResource AlderFeedbackWarning}" /></Style>
+    <Style Selector="^.tool-group /template/ PathIcon#StatusIcon"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^:not(:requires-approval) /template/ ContentPresenter#ToolApproval"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^:default-approval /template/ StackPanel#ApprovalActions"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:compact /template/ a|AlderButton.approval-action"><Setter Property="MinHeight" Value="36" /></Style>
+    <Style Selector="^:plain-header[Status=Running] /template/ Grid#ToolLabel"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^:plain-header[Status=Running] /template/ a|AlderTextShimmer#StreamingTitle"><Setter Property="IsVisible" Value="True" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type a:AlderApprovalCard}" TargetType="a:AlderApprovalCard">
+    <Setter Property="MaxWidth" Value="400" />
+    <Setter Property="VerticalAlignment" Value="Top" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="18" />
+    <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldShadow}" />
+    <Setter Property="Padding" Value="16" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="ApproveLabel" Value="{DynamicResource AlderText.AiApprove}" />
+    <Setter Property="RejectLabel" Value="{DynamicResource AlderText.AiReject}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="ApprovalSurface" CornerRadius="{TemplateBinding CornerRadius}" Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                BoxShadow="{TemplateBinding BoxShadow}" Padding="{TemplateBinding Padding}">
+          <StackPanel Spacing="8">
+            <Grid Name="ApprovalHeader" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+              <ContentPresenter Name="ApprovalTitle" FontSize="16" VerticalAlignment="Center" Content="{TemplateBinding Header}"
+                                ContentTemplate="{TemplateBinding HeaderTemplate}" FontWeight="SemiBold" TextBlock.TextWrapping="Wrap" />
+              <a:AlderButton Name="Dismiss" Grid.Column="1" Theme="{StaticResource AlderCloseButtonTheme}"
+                             Command="{TemplateBinding DismissCommand}" VerticalAlignment="Top" AutomationProperties.Name="{DynamicResource AlderText.AiDismiss}"
+                             IsVisible="{CompiledBinding DismissCommand, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+            </Grid>
+            <ContentPresenter Name="ApprovalContent" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" TextBlock.TextWrapping="Wrap" />
+            <Grid Name="Footer" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="8" Margin="0,4,0,0">
+              <ContentPresenter Name="ApprovalFooterContent" Content="{TemplateBinding Footer}" VerticalAlignment="Center" />
+              <StackPanel Grid.Column="1" Name="Choices" Orientation="Horizontal" Spacing="8"
+                          HorizontalAlignment="Right" VerticalAlignment="Center">
+                <a:AlderButton Name="PART_Reject" Size="Small" Variant="{TemplateBinding RejectVariant}" Content="{TemplateBinding RejectLabel}" />
+                <a:AlderButton Name="PART_Approve" IsEnabled="{TemplateBinding CanApprove}" Size="Small"
+                               MinWidth="84" Content="{TemplateBinding ApproveLabel}" />
+              </StackPanel>
+            </Grid>
+            <a:AlderTextBlock Name="Decision" IsVisible="False" HorizontalAlignment="Right" Foreground="{DynamicResource AlderMuted}" />
+          </StackPanel>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^.tool-approval"><Setter Property="MaxWidth" Value="Infinity" /></Style>
+    <Style Selector="^.tool-approval /template/ Border#ApprovalSurface"><Setter Property="BoxShadow" Value="none" /><Setter Property="Background" Value="Transparent" /><Setter Property="BorderThickness" Value="0" /><Setter Property="Padding" Value="0" /></Style>
+    <Style Selector="^.tool-approval /template/ Grid#ApprovalHeader"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^.tool-approval /template/ ContentPresenter#ApprovalContent:empty"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^.tool-approval /template/ Grid#Footer"><Setter Property="Margin" Value="0" /></Style>
+    <Style Selector="^.tool-approval /template/ a|AlderButton#PART_Approve, ^.tool-approval /template/ a|AlderButton#PART_Reject">
+      <Setter Property="Size" Value="Medium" /><Setter Property="MinWidth" Value="0" />
+    </Style>
+    <Style Selector="^[Decision=Approved] /template/ StackPanel#Choices, ^[Decision=Rejected] /template/ StackPanel#Choices"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^[Decision=Approved] /template/ TextBlock#Decision"><Setter Property="IsVisible" Value="True" /><Setter Property="Text" Value="{DynamicResource AlderText.AiApproved}" /></Style>
+    <Style Selector="^[Decision=Rejected] /template/ TextBlock#Decision"><Setter Property="IsVisible" Value="True" /><Setter Property="Text" Value="{DynamicResource AlderText.AiRejected}" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderAiPromptEditorTheme" TargetType="a:AlderInput" BasedOn="{StaticResource {x:Type a:AlderInput}}">
+    <Setter Property="FullWidth" Value="True" />
+    <Setter Property="VerticalAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Top" />
+    <Setter Property="Padding" Value="2,4" />
+    <Style Selector="^ /template/ Border#FieldSurface">
+      <Setter Property="BoxShadow" Value="none" />
+    </Style>
+    <Style Selector="^:pointerover /template/ Border#FieldSurface">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="^ /template/ a|InputFocusRing#FieldRing">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderPromptInputBaseTheme" TargetType="a:AlderPromptInput">
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Placeholder" Value="{DynamicResource AlderText.AiAsk}" />
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="Surface" Background="{TemplateBinding Background}" />
+          <Border Name="FileDropHighlight" Background="{DynamicResource AlderSoft}" IsHitTestVisible="False">
+            <Border.Transitions><Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" /></Transitions></Border.Transitions>
+            <Rectangle Name="FileDropOutline" RadiusX="16" RadiusY="16" Stroke="{DynamicResource AlderAccent}"
+                       StrokeThickness="1" StrokeDashArray="2,2" />
+          </Border>
+          <Border Name="Inset">
+            <Grid Name="ComposerGrid" ColumnDefinitions="Auto,*,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="4">
+              <ContentPresenter Name="AttachmentSlot" Grid.ColumnSpan="4" Content="{TemplateBinding Attachments}" />
+              <a:AlderInput Name="PART_Editor" Theme="{StaticResource AlderAiPromptEditorTheme}" Height="NaN" Background="Transparent" BorderThickness="0" Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" AcceptsReturn="True" TextWrapping="Wrap" MaxHeight="{TemplateBinding MaxEditorHeight}" PlaceholderText="{TemplateBinding Placeholder}" AutomationProperties.Name="{TemplateBinding Placeholder}" />
+
+              <a:AlderMentionHighlights Name="PART_Highlights" Grid.Row="1" Grid.ColumnSpan="4" IsHitTestVisible="False" Focusable="False" Foreground="{DynamicResource AlderAccent}" IsVisible="{CompiledBinding Tokens, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+              <StackPanel Name="LeadingToolbar" Grid.Row="2" Orientation="Horizontal" Spacing="8">
+                <a:AlderButton Name="Attach" IsIconOnly="True" Icon="{DynamicResource AlderIconPaperclip}" Command="{TemplateBinding AttachCommand}" IsVisible="{CompiledBinding AttachCommand, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" AutomationProperties.Name="{DynamicResource AlderText.AiAttach}" />
+                <ContentPresenter Name="LeftTools" HorizontalAlignment="Left" VerticalAlignment="Center" Content="{TemplateBinding LeadingTools}"
+                                  IsVisible="{CompiledBinding LeadingTools, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+              </StackPanel>
+              <ContentPresenter Name="TrailingTools" Grid.Row="2" Grid.Column="2" Content="{TemplateBinding Tools}" VerticalAlignment="Center" />
+              <ContentPresenter Grid.Row="2" Grid.Column="3" Name="EmptyAction" Content="{TemplateBinding EmptyAction}" />
+              <a:AlderButton Name="Send" Grid.Row="2" Grid.Column="3" IsIconOnly="True" Icon="{DynamicResource AlderIconArrowUp}" Command="{TemplateBinding SendCommand}" CommandParameter="{TemplateBinding Text}" AutomationProperties.Name="{DynamicResource AlderText.AiSend}" />
+              <a:AlderButton Name="Stop" Grid.Row="2" Grid.Column="3" IsIconOnly="True" IsVisible="{TemplateBinding IsRunning}"
+                             Command="{TemplateBinding StopCommand}" AutomationProperties.Name="{DynamicResource AlderText.AiStop}">
+                <Border Name="StopGlyph" Width="10" Height="10" CornerRadius="2" Background="{DynamicResource AlderOnAccent}" />
+              </a:AlderButton>
+              <a:AlderButton Name="Pending" Grid.Row="2" Grid.Column="3" IsIconOnly="True" IsEnabled="False" Opacity=".8"
+                             IsVisible="{TemplateBinding IsSubmitting}" AutomationProperties.Name="{DynamicResource AlderText.AiLoad}">
+                <a:AlderLoader Name="PendingGlyph" Variant="Ring" Width="16" Height="16" Foreground="{DynamicResource AlderOnAccent}" />
+              </a:AlderButton>
+              <a:AlderPopup Name="PART_TokenPopup" ShouldUseOverlayLayer="True" TakesFocusFromNativeControl="False"
+                            WindowManagerAddShadowHint="False" Placement="AnchorAndGravity" PlacementAnchor="TopLeft"
+                            PlacementGravity="TopRight" VerticalOffset="-4">
+                <Border Background="{DynamicResource AlderSurface}" CornerRadius="12" BoxShadow="{DynamicResource AlderToolbarShadow}" Padding="4">
+                  <a:AlderListBox Name="PART_Tokens" Background="Transparent" BorderThickness="0" Padding="0"
+                                  Width="216" Focusable="False" IsVisible="False" MaxHeight="264"
+                                  ItemTemplate="{TemplateBinding TokenItemTemplate}" ItemContainerTheme="{StaticResource AlderPickerRowTheme}" />
+                </Border>
+              </a:AlderPopup>
+            </Grid>
+          </Border>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ Border#Inset"><Setter Property="Padding" Value="10" /></Style>
+    <Style Selector="^ /template/ Border#Surface, ^ /template/ Border#FileDropHighlight"><Setter Property="CornerRadius" Value="16" /></Style>
+    <Style Selector="^ /template/ Border#FileDropHighlight"><Setter Property="Opacity" Value="0" /></Style>
+    <Style Selector="^:file-over /template/ Border#FileDropHighlight"><Setter Property="Opacity" Value="1" /></Style>
+    <Style Selector="^[(a|AlderMotion.Reduced)=True] /template/ Border#FileDropHighlight"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^ /template/ a|AlderButton#Attach, ^ /template/ a|AlderButton#Send"><Setter Property="Size" Value="Small" /></Style>
+    <Style Selector="^ /template/ a|AlderButton#Attach"><Setter Property="Variant" Value="Ghost" /></Style>
+    <Style Selector="^ /template/ :is(TextBox)#PART_Editor">
+      <Setter Property="Grid.Row" Value="1" /><Setter Property="Grid.ColumnSpan" Value="4" /><Setter Property="MinHeight" Value="38" />
+    </Style>
+    <Style Selector="^:line-layout /template/ :is(TextBox)#PART_Editor">
+      <Setter Property="Grid.Row" Value="2" /><Setter Property="Grid.Column" Value="1" /><Setter Property="Grid.ColumnSpan" Value="1" />
+    </Style>
+    <Style Selector="^:line-layout /template/ a|AlderMentionHighlights"><Setter Property="Grid.Row" Value="2" /><Setter Property="Grid.Column" Value="1" /><Setter Property="Grid.ColumnSpan" Value="1" /></Style>
+    <Style Selector="^:line-layout /template/ Border#Inset"><Setter Property="Padding" Value="6,2" /></Style>
+    <Style Selector="^:line-layout:not(:multiline) /template/ Border#Surface, ^:line-layout:not(:multiline) /template/ Border#FileDropHighlight">
+      <Setter Property="CornerRadius" Value="24" />
+    </Style>
+    <Style Selector="^:line-layout:not(:multiline) /template/ Rectangle#FileDropOutline">
+      <Setter Property="RadiusX" Value="24" /><Setter Property="RadiusY" Value="24" />
+    </Style>
+
+    <Style Selector="^[Variant=Secondary]"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
+    <Style Selector="^ /template/ ContentPresenter#EmptyAction"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^:has-empty-action:empty[IsRunning=False][IsSubmitting=False] /template/ ContentPresenter#EmptyAction"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:has-empty-action:empty /template/ a|AlderButton#Send"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^:empty /template/ a|AlderButton#Send"><Setter Property="IsEnabled" Value="False" /></Style>
+    <Style Selector="^[IsRunning=True] /template/ a|AlderButton#Send, ^[IsSubmitting=True] /template/ a|AlderButton#Send,
+                     ^[IsSubmitting=True] /template/ a|AlderButton#Stop"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^:input-locked /template/ :is(TextBox)#PART_Editor"><Setter Property="IsEnabled" Value="False" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderConversationComposerTheme" TargetType="a:AlderPromptInput"
+                BasedOn="{StaticResource AlderPromptInputBaseTheme}">
+    <Style Selector="^ /template/ Border#Inset">
+      <Setter Property="Padding" Value="12,12,12,8" />
+    </Style>
+    <Style Selector="^ /template/ :is(TextBox)#PART_Editor">
+      <Setter Property="MinHeight" Value="44" /><Setter Property="Padding" Value="0,0,0,8" />
+    </Style>
+    <Style Selector="^ /template/ a|AlderButton#Send, ^ /template/ a|AlderButton#Stop">
+      <Setter Property="Size" Value="Medium" />
+      <Setter Property="Height" Value="36" />
+    </Style>
+    <Style Selector="^:compact-width /template/ :is(TextBox)#PART_Editor"><Setter Property="MinHeight" Value="40" /></Style>
+    <Style Selector="^:compact-width /template/ a|AlderButton#Send, ^:compact-width /template/ a|AlderButton#Stop">
+      <Setter Property="Width" Value="40" /><Setter Property="Height" Value="40" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderModelComposerTheme" TargetType="a:AlderPromptInput"
+                BasedOn="{StaticResource AlderConversationComposerTheme}">
+    <!-- The preview viewport determines the size, even when the composer is already capped at 640 DIP. -->
+    <Style Selector="^ /template/ :is(TextBox)#PART_Editor"><Setter Property="MinHeight" Value="40" /></Style>
+    <Style Selector="^ /template/ a|AlderButton#Send, ^ /template/ a|AlderButton#Stop">
+      <Setter Property="MinWidth" Value="40" /><Setter Property="Height" Value="40" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <ContainerQuery Name="ModelSelectorComposer" Query="min-width:768">
+      <Style Selector="^ /template/ :is(TextBox)#PART_Editor"><Setter Property="MinHeight" Value="44" /></Style>
+      <Style Selector="^ /template/ a|AlderButton#Send, ^ /template/ a|AlderButton#Stop">
+        <Setter Property="MinWidth" Value="36" /><Setter Property="MaxWidth" Value="36" /><Setter Property="Height" Value="36" />
+      </Style>
+    </ContainerQuery>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderAttachmentComposerTheme" TargetType="a:AlderPromptInput" BasedOn="{StaticResource AlderPromptInputBaseTheme}">
+    <Style Selector="^ /template/ Border#Inset"><Setter Property="Padding" Value="12,8" /></Style>
+    <Style Selector="^ /template/ :is(TextBox)#PART_Editor">
+      <Setter Property="MinHeight" Value="44" />
+      <Setter Property="Padding" Value="0,4,0,8" />
+    </Style>
+    <Style Selector="^.has-files /template/ :is(TextBox)#PART_Editor"><Setter Property="MinHeight" Value="56" /></Style>
+    <Style Selector="^ /template/ a|AlderButton#Attach, ^ /template/ a|AlderButton#Send">
+      <Setter Property="Size" Value="Large" />
+      <Setter Property="Height" Value="40" />
+      <Setter Property="MinHeight" Value="40" />
+    </Style>
+    <Style Selector="^ /template/ a|AlderButton#Attach"><Setter Property="Variant" Value="Tertiary" /></Style>
+    <ContainerQuery Name="ModelSelectorComposer" Query="min-width:768">
+      <Style Selector="^:not(.has-files) /template/ :is(TextBox)#PART_Editor"><Setter Property="MinHeight" Value="48" /></Style>
+      <Style Selector="^ /template/ a|AlderButton#Attach, ^ /template/ a|AlderButton#Send">
+        <Setter Property="Size" Value="Medium" /><Setter Property="Height" Value="36" /><Setter Property="MinHeight" Value="36" />
+      </Style>
+    </ContainerQuery>
+  </ControlTheme>
+
+  <StreamGeometry x:Key="AlderComposerVoiceIcon">F0 M8 1A3 3 0 0 1 11 4V7.5A3 3 0 1 1 5 7.5V4A3 3 0 0 1 8 1Z M8 2.4A1.6 1.6 0 0 0 6.4 4V7.5A1.6 1.6 0 0 0 9.6 7.5V4A1.6 1.6 0 0 0 8 2.4Z M3 7.25H4.4V7.5A3.6 3.6 0 0 0 11.6 7.5V7.25H13V7.5A5 5 0 0 1 8.7 12.45V15H7.3V12.45A5 5 0 0 1 3 7.5Z</StreamGeometry>
+
+  <ControlTheme x:Key="AlderModelComposerVoiceTheme" TargetType="a:AlderToggleButton" BasedOn="{StaticResource {x:Type a:AlderToggleButton}}">
+    <Setter Property="IsIconOnly" Value="True" />
+    <Setter Property="Icon" Value="{StaticResource AlderComposerVoiceIcon}" />
+    <Setter Property="MinWidth" Value="40" /><Setter Property="Height" Value="40" />
+    <Style Selector="^:not(:checked)"><Setter Property="Foreground" Value="{DynamicResource AlderInk}" /></Style>
+    <ContainerQuery Name="ModelSelectorComposer" Query="min-width:768">
+      <Style Selector="^"><Setter Property="MinWidth" Value="36" /><Setter Property="Height" Value="36" /></Style>
+    </ContainerQuery>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderModelComposerAttachTheme" TargetType="a:AlderButton" BasedOn="{StaticResource {x:Type a:AlderButton}}">
+    <Setter Property="Variant" Value="Tertiary" />
+    <Setter Property="IsIconOnly" Value="True" />
+    <Setter Property="Icon" Value="{DynamicResource AlderIconPlus}" />
+    <Setter Property="MinWidth" Value="40" /><Setter Property="Height" Value="40" />
+    <ContainerQuery Name="ModelSelectorComposer" Query="min-width:768">
+      <Style Selector="^"><Setter Property="MinWidth" Value="36" /><Setter Property="Height" Value="36" /></Style>
+    </ContainerQuery>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderPromptComposerTheme" TargetType="a:AlderPromptInput" BasedOn="{StaticResource AlderConversationComposerTheme}">
+    <Style Selector="^ /template/ ContentPresenter#TrailingTools"><Setter Property="Margin" Value="0,0,8,0" /></Style>
+    <Style Selector="^ /template/ a|AlderButton#Attach">
+      <Setter Property="Size" Value="Medium" /><Setter Property="Variant" Value="Tertiary" />
+    </Style>
+    <Style Selector="^[Variant=Secondary] /template/ a|AlderButton#Attach"><Setter Property="Variant" Value="Outline" /></Style>
+    <Style Selector="^ /template/ a|AlderButton#Pending"><Setter Property="Size" Value="Medium" /><Setter Property="Height" Value="36" /></Style>
+    <Style Selector="^:compact-width /template/ a|AlderButton#Pending, ^:compact-width /template/ a|AlderButton#Attach">
+      <Setter Property="Width" Value="40" /><Setter Property="Height" Value="40" />
+    </Style>
+    <Style Selector="^:line-layout /template/ Border#Inset"><Setter Property="Padding" Value="8" /></Style>
+    <Style Selector="^:line-layout /template/ Grid#ComposerGrid"><Setter Property="RowSpacing" Value="0" /></Style>
+    <Style Selector="^:line-layout /template/ :is(TextBox)#PART_Editor">
+      <Setter Property="MinHeight" Value="32" /><Setter Property="Padding" Value="0,6" /><Setter Property="Margin" Value="8,0" />
+    </Style>
+    <Style Selector="^:line-layout /template/ ContentPresenter#TrailingTools"><Setter Property="Margin" Value="0" /></Style>
+    <Style Selector="^:line-layout /template/ StackPanel#LeadingToolbar, ^:line-layout /template/ a|AlderButton#Send,
+                     ^:line-layout /template/ a|AlderButton#Stop, ^:line-layout /template/ a|AlderButton#Attach">
+      <Setter Property="VerticalAlignment" Value="Top" />
+    </Style>
+    <Style Selector="^[Variant=Compact] /template/ a|AlderButton#Send, ^[Variant=Compact] /template/ a|AlderButton#Stop,
+                     ^[Variant=Compact] /template/ a|AlderButton#Attach, ^[Variant=Compact] /template/ a|AlderButton#Pending,
+                     ^:line-layout /template/ a|AlderButton#Send, ^:line-layout /template/ a|AlderButton#Stop,
+                     ^:line-layout /template/ a|AlderButton#Attach, ^:line-layout /template/ a|AlderButton#Pending">
+      <Setter Property="Size" Value="Small" /><Setter Property="Width" Value="32" /><Setter Property="Height" Value="32" />
+    </Style>
+    <Style Selector="^.review-composer /template/ a|AlderButton#Send, ^.review-composer /template/ a|AlderButton#Stop,
+                     ^.review-composer /template/ a|AlderButton#Pending">
+      <Setter Property="Background" Value="{DynamicResource AlderInk}" /><Setter Property="Foreground" Value="{DynamicResource AlderSurface}" />
+    </Style>
+    <Style Selector="^.review-composer /template/ Border#StopGlyph"><Setter Property="Background" Value="{DynamicResource AlderSurface}" /></Style>
+    <Style Selector="^.review-composer /template/ a|AlderLoader#PendingGlyph"><Setter Property="Foreground" Value="{DynamicResource AlderSurface}" /></Style>
+    <Style Selector="^.review-composer:line-layout /template/ Border#Inset"><Setter Property="Padding" Value="8,6" /></Style>
+    <Style Selector="^.starter-composer /template/ Border#Surface">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderPromptStarterShadow}" />
+      <Setter Property="BackgroundSizing" Value="OuterBorderEdge" />
+      <Setter Property="BorderThickness" Value="1" /><Setter Property="BorderBrush" Value="{DynamicResource AlderPromptStarterEdge}" />
+    </Style>
+    <Style Selector="^.starter-composer /template/ :is(TextBox)#PART_Editor"><Setter Property="MinHeight" Value="64" /></Style>
+    <Style Selector="^.starter-composer:compact-width /template/ :is(TextBox)#PART_Editor"><Setter Property="MinHeight" Value="60" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type a:AlderPromptInput}" TargetType="a:AlderPromptInput" BasedOn="{StaticResource AlderPromptComposerTheme}" />
+  <ControlTheme x:Key="AlderPromptReviewVoiceTheme" TargetType="a:AlderToggleButton" BasedOn="{StaticResource {x:Type a:AlderToggleButton}}">
+    <Setter Property="Size" Value="Small" />
+    <Setter Property="IsIconOnly" Value="True" />
+    <Setter Property="Height" Value="32" />
+    <Setter Property="Background" Value="{DynamicResource AlderInk}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="Icon" Value="{StaticResource AlderComposerVoiceIcon}" />
+  </ControlTheme>
+</ResourceDictionary>

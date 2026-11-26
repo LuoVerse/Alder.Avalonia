@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net11.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Desktop" Version="12.2.0" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.2.0" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.2.0" />
+    <PackageReference Include="ReactiveUI.Avalonia" Version="12.1.6" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.3.0" />
+    <ProjectReference Include="../../src/Alder.Avalonia/Alder.Avalonia.csproj" />
+    <AvaloniaResource Include="Assets/Card/*.jpg;Assets/Card/*.jpeg;Assets/Card/ai-*.png;Assets/Carousel/*.png" />
+    <AvaloniaResource Include="Assets/Separator/*.png" />
+    <AvaloniaResource Include="Assets/Avatar/*.jpg" />
+    <AvaloniaResource Include="Assets/Map/*.json" />
+    <EmbeddedResource Include="Views/*Example.axaml;Views/*Example.axaml.cs;ViewModels/*ViewModel.cs;Localization/*.json" />
+    <EmbeddedResource Include="Controls/AiLivePreview.cs;ViewModels/AiExampleViewModel.Chain.cs" />
+    <EmbeddedResource Include="Views/NavigationPreview*.axaml;Views/NavigationPreview*.axaml.cs;ViewModels/NavigationPreview.cs;ViewModels/NavigationPreviewCatalog.cs;ViewModels/LayoutSamples.cs" />
+  </ItemGroup>
+</Project>

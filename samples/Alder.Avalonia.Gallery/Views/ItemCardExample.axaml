@@ -1,0 +1,800 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.ItemCardExample" x:Name="Example" x:DataType="vm:ProDataDisplayViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.ProDemoItemCardUsage}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="456" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayLanguage}" Description="{DynamicResource GalleryText.ProDisplayLanguageHint}">
+            <alder:AlderItemCard.Icon>
+              <alder:AlderPathIcon Data="{StaticResource AlderIconGlobe}" Width="16" Height="16" />
+            </alder:AlderItemCard.Icon>
+            <alder:AlderItemCard.Action>
+              <alder:AlderButton Size="Small" Variant="Outline">
+                <alder:AlderButton.Flyout>
+                  <alder:AlderDropdownFlyout Placement="BottomEdgeAlignedRight" MinMenuWidth="220">
+                    <alder:AlderMenuItem Header="{DynamicResource GalleryText.ProDisplayEnglish}" Command="{CompiledBinding #Example.((vm:ProDataDisplayViewModel)DataContext).ChooseItemCardLanguage}" CommandParameter="ProDisplayEnglish" />
+                    <alder:AlderMenuItem Header="{DynamicResource GalleryText.ProDisplayChinese}" Command="{CompiledBinding #Example.((vm:ProDataDisplayViewModel)DataContext).ChooseItemCardLanguage}" CommandParameter="ProDisplayChinese" />
+                    <alder:AlderMenuItem Header="{DynamicResource GalleryText.ProDisplaySpanish}" Command="{CompiledBinding #Example.((vm:ProDataDisplayViewModel)DataContext).ChooseItemCardLanguage}" CommandParameter="ProDisplaySpanish" />
+                  </alder:AlderDropdownFlyout>
+                </alder:AlderButton.Flyout>
+                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                  <alder:AlderTextBlock Text="{CompiledBinding ItemCardLanguage}" />
+                  <alder:AlderPathIcon Data="{StaticResource AlderIconChevronRightCircle}" Width="14" Height="14" />
+                </StackPanel>
+              </alder:AlderButton>
+            </alder:AlderItemCard.Action>
+          </alder:AlderItemCard>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var resources = Application.Current!;
+        var menu = new AlderDropdownFlyout { Placement = PlacementMode.BottomEdgeAlignedRight, MinMenuWidth = 220 };
+        string[] keys = ["ProDisplayEnglish", "ProDisplayChinese", "ProDisplaySpanish"];
+        foreach (var (title, key) in model.Languages.Zip(keys))
+            menu.Items.Add(new AlderMenuItem
+            {
+                Header = title, Command = model.ChooseItemCardLanguage, CommandParameter = key
+            });
+
+        var label = new AlderTextBlock();
+        label.Bind(AlderTextBlock.TextProperty,
+            CompiledBinding.Create((ProDataDisplayViewModel vm) => vm.ItemCardLanguage, source: model));
+        var trigger = new AlderButton
+        {
+            Size = AlderSize.Small, Variant = ButtonVariant.Outline, Flyout = menu,
+            Content = new StackPanel
+            {
+                Orientation = Orientation.Horizontal, Spacing = 6, VerticalAlignment = VerticalAlignment.Center,
+                Children = { label, new AlderPathIcon
+                {
+                    Data = (Geometry)resources.FindResource("AlderIconChevronRightCircle")!, Width = 14, Height = 14
+                } }
+            }
+        };
+        var language = new AlderItemCard
+        {
+            Title = "Language", Description = "Choose your preferred language", Action = trigger,
+            Icon = new AlderPathIcon { Data = (Geometry)resources.FindResource("AlderIconGlobe")!, Width = 16, Height = 16 }
+        };
+        var preview = new Border { MaxWidth = 456, Padding = new Thickness(2, 10), Child = language };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleWallet" Title="{DynamicResource GalleryText.ProDemoItemCardWallet}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="456" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayWallet}" Description="{DynamicResource GalleryText.ProDisplayWalletHint}">
+            <alder:AlderItemCard.Icon>
+              <alder:AlderPathIcon Data="{StaticResource AlderIconArchive}" Width="16" Height="16" />
+            </alder:AlderItemCard.Icon>
+            <alder:AlderItemCard.Action>
+              <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.ProDisplayManage}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayManage" />
+            </alder:AlderItemCard.Action>
+          </alder:AlderItemCard>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var wallet = new AlderItemCard
+        {
+            Title = "Travel card",
+            Description = "Debit card ending in 7316",
+            Action = new AlderButton { Content = "Manage", Command = model.Report, CommandParameter = "ProDisplayManage" }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDevices" Title="{DynamicResource GalleryText.ProDemoItemCardDevices}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="456" Padding="2,10" HorizontalAlignment="Stretch">
+          <StackPanel Spacing="12" >
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProItemCardDevice}" Description="{DynamicResource GalleryText.ProItemCardDeviceHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+              <alder:AlderItemCard.Action>
+                <alder:AlderChip Size="Small" Variant="Soft" Color="Success" Content="{DynamicResource GalleryText.ProItemCardActiveDevice}" />
+              </alder:AlderItemCard.Action>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProItemCardTablet}" Description="{DynamicResource GalleryText.ProItemCardTabletHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+              <alder:AlderItemCard.Action>
+                <alder:AlderButton Size="Small" Variant="Outline" Content="{DynamicResource GalleryText.ProItemCardRevoke}" Command="{CompiledBinding Report}" CommandParameter="ProItemCardRevoke" />
+              </alder:AlderItemCard.Action>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProItemCardMobile}" Description="{DynamicResource GalleryText.ProItemCardMobileHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+              <alder:AlderItemCard.Action>
+                <alder:AlderButton Size="Small" Variant="Outline" Content="{DynamicResource GalleryText.ProItemCardRevoke}" Command="{CompiledBinding Report}" CommandParameter="ProItemCardRevoke" />
+              </alder:AlderItemCard.Action>
+            </alder:AlderItemCard>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new StackPanel { Spacing = 12 };
+        group.Children.Add(new AlderItemCard { Title = "MacBook Pro", Description = "Last active: 2 minutes ago", Action = new AlderChip { Size = AlderSize.Small, Variant = ChipVariant.Soft, Color = AlderStatusColor.Success, Content = "Active" } });
+        group.Children.Add(new AlderItemCard { Title = "iMac", Description = "Last active: 3 days ago", Action = new AlderButton { Size = AlderSize.Small, Variant = ButtonVariant.Outline, Content = "Revoke", Command = model.Report, CommandParameter = "ProItemCardRevoke" } });
+        group.Children.Add(new AlderItemCard { Title = "iPhone 15 Pro", Description = "Last active: 1 hour ago", Action = new AlderButton { Size = AlderSize.Small, Variant = ButtonVariant.Outline, Content = "Revoke", Command = model.Report, CommandParameter = "ProItemCardRevoke" } });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.ProDemoItemCardVariants}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="456" Padding="2,10" HorizontalAlignment="Stretch">
+          <StackPanel Spacing="12" >
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayDefault}" Description="{DynamicResource GalleryText.ProItemCardDefaultHint}" Variant="Default">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconArchive}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplaySecondary}" Description="{DynamicResource GalleryText.ProItemCardSecondaryHint}" Variant="Secondary">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconArchive}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayTertiary}" Description="{DynamicResource GalleryText.ProItemCardTertiaryHint}" Variant="Tertiary">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconArchive}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayOutline}" Description="{DynamicResource GalleryText.ProItemCardOutlineHint}" Variant="Outline">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconArchive}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayTransparent}" Description="{DynamicResource GalleryText.ProItemCardTransparentHint}" Variant="Transparent">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconArchive}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+            </alder:AlderItemCard>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var cards = new StackPanel { Spacing = 7 };
+        foreach (var variant in Enum.GetValues<ItemCardVariant>())
+            cards.Children.Add(new AlderItemCard { Title = variant.ToString(), Variant = variant });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleWithoutIcon" Title="{DynamicResource GalleryText.ProDemoItemCardWithoutIcon}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="456" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderItemCard Title="{DynamicResource GalleryText.ProItemCardDeleteAccount}" Description="{DynamicResource GalleryText.ProItemCardDeleteHint}">
+            <alder:AlderItemCard.Action>
+              <alder:AlderButton Size="Small" Variant="DangerSoft" Content="{DynamicResource GalleryText.Delete}" Command="{CompiledBinding Report}" CommandParameter="Delete" />
+            </alder:AlderItemCard.Action>
+          </alder:AlderItemCard>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var card = new AlderItemCard
+        {
+            Title = "Delete account",
+            Description = "Permanently remove your account and all data.",
+            Action = new AlderButton { Size = AlderSize.Small, Variant = ButtonVariant.DangerSoft, Content = "Delete", Command = model.Report, CommandParameter = "Delete" }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleTitleOnly" Title="{DynamicResource GalleryText.ProDemoItemCardTitleOnly}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="456" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayAccount}">
+            <alder:AlderItemCard.Icon>
+              <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+            </alder:AlderItemCard.Icon>
+          </alder:AlderItemCard>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var card = new AlderItemCard
+        {
+            Title = "Account security"
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSwitch" Title="{DynamicResource GalleryText.ProDemoItemCardSwitch}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="456" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayNotify}" Description="{DynamicResource GalleryText.ProDisplayNotifyHint}">
+            <alder:AlderItemCard.Icon>
+              <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+            </alder:AlderItemCard.Icon>
+            <alder:AlderItemCard.Action>
+              <alder:AlderSwitch IsChecked="{CompiledBinding Notifications, Mode=TwoWay}" />
+            </alder:AlderItemCard.Action>
+          </alder:AlderItemCard>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var card = new AlderItemCard
+        {
+            Title = "Activity notifications",
+            Description = "Get a message when someone mentions you.",
+            Action = new AlderSwitch { IsChecked = model.Notifications }
+        };
+        ((ToggleSwitch)card.Action).Bind(ToggleButton.IsCheckedProperty, CompiledBinding.Create((ProDataDisplayViewModel vm) => vm.Notifications, source: model, mode: BindingMode.TwoWay));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSelect" Title="{DynamicResource GalleryText.ProDemoItemCardSelect}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="456" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayPermissions}" Description="{DynamicResource GalleryText.ProDisplayPermissionsHint}">
+            <alder:AlderItemCard.Icon>
+              <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+            </alder:AlderItemCard.Icon>
+            <alder:AlderItemCard.Action>
+              <alder:AlderSelect ItemsSource="{CompiledBinding Permissions}" PlaceholderText="{DynamicResource GalleryText.ProDisplayChoose}" Width="145" />
+            </alder:AlderItemCard.Action>
+          </alder:AlderItemCard>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var card = new AlderItemCard
+        {
+            Title = "Permissions",
+            Description = "Choose what people can do in this workspace.",
+            Action = new AlderSelect { ItemsSource = model.Permissions }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleMultiSelect" Title="{DynamicResource GalleryText.ProDemoItemCardMultiSelect}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="456" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayPermissions}" Description="{DynamicResource GalleryText.ProDisplayPermissionsHint}">
+            <alder:AlderItemCard.Icon>
+              <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+            </alder:AlderItemCard.Icon>
+            <alder:AlderItemCard.Action>
+              <alder:AlderSelect ItemsSource="{CompiledBinding Permissions}" PlaceholderText="{DynamicResource GalleryText.ProDisplayChoose}" Width="145" SelectionMode="Multiple" />
+            </alder:AlderItemCard.Action>
+          </alder:AlderItemCard>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var card = new AlderItemCard
+        {
+            Title = "Permissions",
+            Description = "Choose what people can do in this workspace.",
+            Action = new AlderSelect { ItemsSource = model.Permissions, SelectionMode = SelectionMode.Multiple }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleVertical" Title="{DynamicResource GalleryText.ProDemoItemCardVertical}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="456" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayAccount}" Description="{DynamicResource GalleryText.ProDisplayAccountHint}" Orientation="Vertical">
+            <alder:AlderItemCard.Icon>
+              <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+            </alder:AlderItemCard.Icon>
+            <alder:AlderItemCard.Action>
+              <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.ProDisplayManage}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayManage" />
+            </alder:AlderItemCard.Action>
+          </alder:AlderItemCard>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var card = new AlderItemCard
+        {
+            Title = "Account security",
+            Description = "Review connected services and sign-in methods.",
+            Orientation = Orientation.Vertical
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleEmail" Title="{DynamicResource GalleryText.ProDemoItemCardEmail}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="556" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayEmail}" Description="{DynamicResource GalleryText.ProDisplayEmailHint}">
+            <alder:AlderItemCard.Icon>
+              <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+            </alder:AlderItemCard.Icon>
+            <alder:AlderItemCard.Action>
+              <alder:AlderInput Text="{CompiledBinding Email, Mode=TwoWay}" Width="170" />
+            </alder:AlderItemCard.Action>
+          </alder:AlderItemCard>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var card = new AlderItemCard
+        {
+            Title = "Recovery email",
+            Description = "We use this address to help recover your account.",
+            Action = new AlderInput { Text = model.Email, Width = 170 }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SamplePressable" Title="{DynamicResource GalleryText.ProDemoItemCardPressable}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="456" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayBilling}" Description="{DynamicResource GalleryText.ProDisplayBillingHint}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayBilling">
+            <alder:AlderItemCard.Icon>
+              <alder:AlderPathIcon Data="{StaticResource AlderIconArchive}" Width="16" Height="16" />
+            </alder:AlderItemCard.Icon>
+            <alder:AlderItemCard.Action>
+              <alder:AlderPathIcon Data="{StaticResource AlderIconChevronRight}" Width="16" Height="16" />
+            </alder:AlderItemCard.Action>
+          </alder:AlderItemCard>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var card = new AlderItemCard
+        {
+            Title = "Billing preferences",
+            Description = "Manage payment and invoicing options.",
+            Command = model.Report, CommandParameter = "ProDisplayBilling"
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupUsage" Title="{DynamicResource GalleryText.ProDemoItemCardGroupUsage}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="556" Padding="2,10" HorizontalAlignment="Stretch">
+          <StackPanel Spacing="12" >
+            <alder:AlderItemCardGroup Title="{DynamicResource GalleryText.ProDisplaySourceControl}">
+              <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayGitHub}" Description="{DynamicResource GalleryText.ProDisplayGitHubHint}">
+                <alder:AlderItemCard.Icon>
+                  <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+                </alder:AlderItemCard.Icon>
+                <alder:AlderItemCard.Action>
+                  <alder:AlderButton Size="Small" Variant="Outline" Content="{DynamicResource GalleryText.ProDisplayManage}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayManage" />
+                </alder:AlderItemCard.Action>
+              </alder:AlderItemCard>
+              <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayGitLab}" Description="{DynamicResource GalleryText.ProDisplayGitLabHint}">
+                <alder:AlderItemCard.Icon>
+                  <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+                </alder:AlderItemCard.Icon>
+                <alder:AlderItemCard.Action>
+                  <alder:AlderButton Size="Small" Variant="Outline" Content="{DynamicResource GalleryText.ProDisplayManage}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayManage" />
+                </alder:AlderItemCard.Action>
+              </alder:AlderItemCard>
+            </alder:AlderItemCardGroup>
+            <alder:AlderItemCardGroup Title="{DynamicResource GalleryText.ProDisplayIntegrations}">
+              <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplaySlack}" Description="{DynamicResource GalleryText.ProDisplaySlackHint}">
+                <alder:AlderItemCard.Icon>
+                  <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+                </alder:AlderItemCard.Icon>
+                <alder:AlderItemCard.Action>
+                  <alder:AlderButton Size="Small" Variant="Outline" Content="{DynamicResource GalleryText.ProDisplayConnect}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayConnect" />
+                </alder:AlderItemCard.Action>
+              </alder:AlderItemCard>
+            </alder:AlderItemCardGroup>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderItemCardGroup { Title = "Source control" };
+        group.Items.Add(new AlderItemCard { Title = "GitHub", Description = "Connected for project repositories." });
+        group.Items.Add(new AlderItemCard { Title = "GitLab", Description = "Connect a hosted repository." });
+        group.Items.Add(new AlderItemCard { Title = "Slack", Description = "Share workspace updates with the team." });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupAccounts" Title="{DynamicResource GalleryText.ProDemoItemCardGroupAccounts}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="709" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderItemCardGroup Title="{DynamicResource GalleryText.ProDisplayLinkedAccounts}" Description="{DynamicResource GalleryText.ProDisplayLinkedHint}">
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayGitHub}" Description="{DynamicResource GalleryText.ProDisplayGitHubHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+              <alder:AlderItemCard.Action>
+                <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.ProDisplayConnect}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayConnect" />
+              </alder:AlderItemCard.Action>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayGitLab}" Description="{DynamicResource GalleryText.ProDisplayGitLabHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+              <alder:AlderItemCard.Action>
+                <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.ProDisplayConnect}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayConnect" />
+              </alder:AlderItemCard.Action>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplaySlack}" Description="{DynamicResource GalleryText.ProDisplaySlackHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+              <alder:AlderItemCard.Action>
+                <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.ProDisplayConnect}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayConnect" />
+              </alder:AlderItemCard.Action>
+            </alder:AlderItemCard>
+          </alder:AlderItemCardGroup>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderItemCardGroup { Title = "Linked accounts" };
+        group.Items.Add(new AlderItemCard { Title = "GitHub", Description = "Connected for project repositories." });
+        group.Items.Add(new AlderItemCard { Title = "GitLab", Description = "Connect a hosted repository." });
+        group.Items.Add(new AlderItemCard { Title = "Slack", Description = "Share workspace updates with the team." });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupWallet" Title="{DynamicResource GalleryText.ProDemoItemCardGroupWallet}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="504" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderItemCardGroup>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayWallet}" Description="{DynamicResource GalleryText.ProDisplayWalletHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconArchive}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+              <alder:AlderItemCard.Action>
+                <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.ProDisplayManage}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayManage" />
+              </alder:AlderItemCard.Action>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayPersonalWallet}" Description="{DynamicResource GalleryText.ProDisplayPersonalHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconArchive}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+              <alder:AlderItemCard.Action>
+                <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.ProDisplayManage}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayManage" />
+              </alder:AlderItemCard.Action>
+            </alder:AlderItemCard>
+          </alder:AlderItemCardGroup>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderItemCardGroup();
+        group.Items.Add(new AlderItemCard { Title = "Travel card", Description = "Debit card ending in 7316" });
+        group.Items.Add(new AlderItemCard { Title = "Personal card", Description = "Credit card ending in 5082" });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupVariants" Title="{DynamicResource GalleryText.ProDemoItemCardGroupVariants}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="456" Padding="2,10" HorizontalAlignment="Stretch">
+          <StackPanel Spacing="24">
+            <alder:AlderItemCardGroup Title="{DynamicResource GalleryText.ProDisplayDefault}"
+                                     Description="{DynamicResource GalleryText.ProItemCardDefaultHint}" Variant="Default">
+              <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayGitHub}" Description="{DynamicResource GalleryText.ProDisplayGitHubHint}">
+                <alder:AlderItemCard.Icon>
+                  <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+                </alder:AlderItemCard.Icon>
+              </alder:AlderItemCard>
+              <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayGitLab}" Description="{DynamicResource GalleryText.ProDisplayGitLabHint}">
+                <alder:AlderItemCard.Icon>
+                  <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+                </alder:AlderItemCard.Icon>
+              </alder:AlderItemCard>
+            </alder:AlderItemCardGroup>
+            <alder:AlderItemCardGroup Title="{DynamicResource GalleryText.ProDisplaySecondary}"
+                                     Description="{DynamicResource GalleryText.ProItemCardSecondaryHint}" Variant="Secondary">
+              <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayGitHub}" Description="{DynamicResource GalleryText.ProDisplayGitHubHint}">
+                <alder:AlderItemCard.Icon>
+                  <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+                </alder:AlderItemCard.Icon>
+              </alder:AlderItemCard>
+              <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayGitLab}" Description="{DynamicResource GalleryText.ProDisplayGitLabHint}">
+                <alder:AlderItemCard.Icon>
+                  <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+                </alder:AlderItemCard.Icon>
+              </alder:AlderItemCard>
+            </alder:AlderItemCardGroup>
+            <alder:AlderItemCardGroup Title="{DynamicResource GalleryText.ProDisplayTertiary}"
+                                     Description="{DynamicResource GalleryText.ProItemCardTertiaryHint}" Variant="Tertiary">
+              <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayGitHub}" Description="{DynamicResource GalleryText.ProDisplayGitHubHint}">
+                <alder:AlderItemCard.Icon>
+                  <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+                </alder:AlderItemCard.Icon>
+              </alder:AlderItemCard>
+              <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayGitLab}" Description="{DynamicResource GalleryText.ProDisplayGitLabHint}">
+                <alder:AlderItemCard.Icon>
+                  <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+                </alder:AlderItemCard.Icon>
+              </alder:AlderItemCard>
+            </alder:AlderItemCardGroup>
+            <alder:AlderItemCardGroup Title="{DynamicResource GalleryText.ProDisplayOutline}"
+                                     Description="{DynamicResource GalleryText.ProItemCardOutlineHint}" Variant="Outline">
+              <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayGitHub}" Description="{DynamicResource GalleryText.ProDisplayGitHubHint}">
+                <alder:AlderItemCard.Icon>
+                  <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+                </alder:AlderItemCard.Icon>
+              </alder:AlderItemCard>
+              <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayGitLab}" Description="{DynamicResource GalleryText.ProDisplayGitLabHint}">
+                <alder:AlderItemCard.Icon>
+                  <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+                </alder:AlderItemCard.Icon>
+              </alder:AlderItemCard>
+            </alder:AlderItemCardGroup>
+            <alder:AlderItemCardGroup Title="{DynamicResource GalleryText.ProDisplayTransparent}"
+                                     Description="{DynamicResource GalleryText.ProItemCardTransparentHint}" Variant="Transparent">
+              <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayGitHub}" Description="{DynamicResource GalleryText.ProDisplayGitHubHint}">
+                <alder:AlderItemCard.Icon>
+                  <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+                </alder:AlderItemCard.Icon>
+              </alder:AlderItemCard>
+              <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayGitLab}" Description="{DynamicResource GalleryText.ProDisplayGitLabHint}">
+                <alder:AlderItemCard.Icon>
+                  <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+                </alder:AlderItemCard.Icon>
+              </alder:AlderItemCard>
+            </alder:AlderItemCardGroup>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var variants = new StackPanel { Spacing = 24 };
+        var examples = new (ItemCardVariant Variant, string Description)[]
+        {
+            (ItemCardVariant.Default, "Surface background with shadow"),
+            (ItemCardVariant.Secondary, "Secondary surface, no shadow"),
+            (ItemCardVariant.Tertiary, "Tertiary surface, no shadow"),
+            (ItemCardVariant.Outline, "Transparent with border, no shadow"),
+            (ItemCardVariant.Transparent, "No background, no border, no shadow")
+        };
+        foreach (var (variant, description) in examples)
+        {
+            var group = new AlderItemCardGroup { Title = variant.ToString(), Description = description, Variant = variant };
+            var icon = (Geometry)this.FindResource("AlderIconInfo")!;
+            group.Items.Add(new AlderItemCard { Title = "GitHub", Description = "Connected for project repositories.",
+                Icon = new AlderPathIcon { Data = icon, Width = 16, Height = 16 } });
+            group.Items.Add(new AlderItemCard { Title = "GitLab", Description = "Connect a hosted repository.",
+                Icon = new AlderPathIcon { Data = icon, Width = 16, Height = 16 } });
+            variants.Children.Add(group);
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupList" Title="{DynamicResource GalleryText.ProDemoItemCardGroupList}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="504" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderItemCardGroup Title="{DynamicResource GalleryText.ProDisplayAccount}">
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayDevice}" Description="{DynamicResource GalleryText.ProDisplayDeviceHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayTablet}" Description="{DynamicResource GalleryText.ProDisplayTabletHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayMobile}" Description="{DynamicResource GalleryText.ProDisplayMobileHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+            </alder:AlderItemCard>
+          </alder:AlderItemCardGroup>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderItemCardGroup();
+        group.Items.Add(new AlderItemCard { Title = "Studio laptop", Description = "Active now · Desktop" });
+        group.Items.Add(new AlderItemCard { Title = "Design tablet", Description = "Last active yesterday" });
+        group.Items.Add(new AlderItemCard { Title = "Test phone", Description = "Last active on Friday" });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupGrid" Title="{DynamicResource GalleryText.ProDemoItemCardGroupGrid}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="556" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderItemCardGroup Variant="Secondary" Layout="Grid" Columns="2">
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayBilling}" Description="{DynamicResource GalleryText.ProDisplayBillingHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayAccount}" Description="{DynamicResource GalleryText.ProDisplayAccountHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayPermissions}" Description="{DynamicResource GalleryText.ProDisplayPermissionsHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayNotify}" Description="{DynamicResource GalleryText.ProDisplayNotifyHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+            </alder:AlderItemCard>
+          </alder:AlderItemCardGroup>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderItemCardGroup { Layout = ItemCardLayout.Grid, Columns = 2, Variant = ItemCardVariant.Secondary };
+        group.Items.Add(new AlderItemCard { Title = "Billing preferences", Description = "Manage payment and invoicing options." });
+        group.Items.Add(new AlderItemCard { Title = "Account security", Description = "Review connected services and sign-in methods." });
+        group.Items.Add(new AlderItemCard { Title = "Permissions", Description = "Choose what people can do in this workspace." });
+        group.Items.Add(new AlderItemCard { Title = "Activity notifications", Description = "Get a message when someone mentions you." });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupThree" Title="{DynamicResource GalleryText.ProDemoItemCardGroupThree}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="676" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderItemCardGroup Layout="Grid" Columns="3" MinColumnWidth="216">
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayBilling}" Description="{DynamicResource GalleryText.ProDisplayBillingHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayAccount}" Description="{DynamicResource GalleryText.ProDisplayAccountHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayPermissions}" Description="{DynamicResource GalleryText.ProDisplayPermissionsHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+            </alder:AlderItemCard>
+          </alder:AlderItemCardGroup>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderItemCardGroup { Layout = ItemCardLayout.Grid, Columns = 3, MinColumnWidth = 216 };
+        group.Items.Add(new AlderItemCard { Title = "Billing preferences", Description = "Manage payment and invoicing options." });
+        group.Items.Add(new AlderItemCard { Title = "Account security", Description = "Review connected services and sign-in methods." });
+        group.Items.Add(new AlderItemCard { Title = "Permissions", Description = "Choose what people can do in this workspace." });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupHeader" Title="{DynamicResource GalleryText.ProDemoItemCardGroupHeader}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="456" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderItemCardGroup Title="{DynamicResource GalleryText.ProDisplaySourceControl}" Description="{DynamicResource GalleryText.ProDisplayLinkedHint}">
+            <alder:AlderItemCardGroup.Header>
+              <alder:AlderButton Size="Small" Variant="Outline" Content="{DynamicResource GalleryText.ProDisplayConnect}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayConnect" />
+            </alder:AlderItemCardGroup.Header>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayGitHub}" Description="{DynamicResource GalleryText.ProDisplayGitHubHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+              <alder:AlderItemCard.Action>
+                <alder:AlderButton Size="Small" Variant="Outline" Content="{DynamicResource GalleryText.ProDisplayManage}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayManage" />
+              </alder:AlderItemCard.Action>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayGitLab}" Description="{DynamicResource GalleryText.ProDisplayGitLabHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+              <alder:AlderItemCard.Action>
+                <alder:AlderButton Size="Small" Variant="Outline" Content="{DynamicResource GalleryText.ProDisplayManage}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayManage" />
+              </alder:AlderItemCard.Action>
+            </alder:AlderItemCard>
+          </alder:AlderItemCardGroup>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderItemCardGroup { Title = "Source control", Header = new AlderButton { Size = AlderSize.Small, Variant = ButtonVariant.Outline, Content = "Connect" } };
+        group.Items.Add(new AlderItemCard { Title = "GitHub", Description = "Connected for project repositories." });
+        group.Items.Add(new AlderItemCard { Title = "GitLab", Description = "Connect a hosted repository." });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupSections" Title="{DynamicResource GalleryText.ProDemoItemCardGroupSections}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="456" Padding="2,10" HorizontalAlignment="Stretch">
+          <StackPanel Spacing="16" >
+            <alder:AlderItemCardGroup Title="{DynamicResource GalleryText.ProDisplayWallet}">
+              <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayWallet}" Description="{DynamicResource GalleryText.ProDisplayWalletHint}">
+                <alder:AlderItemCard.Icon>
+                  <alder:AlderPathIcon Data="{StaticResource AlderIconArchive}" Width="16" Height="16" />
+                </alder:AlderItemCard.Icon>
+              </alder:AlderItemCard>
+              <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayPersonalWallet}" Description="{DynamicResource GalleryText.ProDisplayPersonalHint}">
+                <alder:AlderItemCard.Icon>
+                  <alder:AlderPathIcon Data="{StaticResource AlderIconArchive}" Width="16" Height="16" />
+                </alder:AlderItemCard.Icon>
+              </alder:AlderItemCard>
+            </alder:AlderItemCardGroup>
+            <alder:AlderItemCardGroup Title="{DynamicResource GalleryText.ProDisplayAccount}">
+              <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayDevice}" Description="{DynamicResource GalleryText.ProDisplayDeviceHint}">
+                <alder:AlderItemCard.Icon>
+                  <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+                </alder:AlderItemCard.Icon>
+              </alder:AlderItemCard>
+              <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayTablet}" Description="{DynamicResource GalleryText.ProDisplayTabletHint}">
+                <alder:AlderItemCard.Icon>
+                  <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+                </alder:AlderItemCard.Icon>
+              </alder:AlderItemCard>
+              <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayMobile}" Description="{DynamicResource GalleryText.ProDisplayMobileHint}">
+                <alder:AlderItemCard.Icon>
+                  <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+                </alder:AlderItemCard.Icon>
+              </alder:AlderItemCard>
+            </alder:AlderItemCardGroup>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderItemCardGroup { Title = "Payments" };
+        group.Items.Add(new AlderItemCard { Title = "Travel card", Description = "Debit card ending in 7316" });
+        group.Items.Add(new AlderItemCard { Title = "Personal card", Description = "Credit card ending in 5082" });
+        var devices = new AlderItemCardGroup { Title = "Devices" };
+        devices.Items.Add(new AlderItemCard { Title = "Studio laptop" });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupPressable" Title="{DynamicResource GalleryText.ProDemoItemCardGroupPressable}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="456" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderItemCardGroup>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayBilling}" Description="{DynamicResource GalleryText.ProDisplayBillingHint}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayBilling">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayAccount}" Description="{DynamicResource GalleryText.ProDisplayAccountHint}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayAccount">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayPermissions}" Description="{DynamicResource GalleryText.ProDisplayPermissionsHint}" Command="{CompiledBinding Report}" CommandParameter="ProDisplayPermissions">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+            </alder:AlderItemCard>
+          </alder:AlderItemCardGroup>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderItemCardGroup();
+        group.Items.Add(new AlderItemCard { Title = "Billing preferences", Description = "Manage payment and invoicing options." });
+        group.Items.Add(new AlderItemCard { Title = "Account security", Description = "Review connected services and sign-in methods." });
+        group.Items.Add(new AlderItemCard { Title = "Permissions", Description = "Choose what people can do in this workspace." });
+        foreach (var item in group.Items.OfType<AlderItemCard>())
+        {
+            item.Command = model.Report;
+            item.CommandParameter = "ProDisplayDetails";
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupNotifications" Title="{DynamicResource GalleryText.ProDemoItemCardGroupNotifications}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="506" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderItemCardGroup>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayNotify}" Description="{DynamicResource GalleryText.ProDisplayNotifyHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+              <alder:AlderItemCard.Action>
+                <alder:AlderSwitch IsChecked="{CompiledBinding Notifications, Mode=TwoWay}" />
+              </alder:AlderItemCard.Action>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayNews}" Description="{DynamicResource GalleryText.ProDisplayNewsHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+              <alder:AlderItemCard.Action>
+                <alder:AlderSwitch IsChecked="{CompiledBinding ProductNews, Mode=TwoWay}" />
+              </alder:AlderItemCard.Action>
+            </alder:AlderItemCard>
+          </alder:AlderItemCardGroup>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderItemCardGroup();
+        group.Items.Add(new AlderItemCard { Title = "Activity notifications", Description = "Get a message when someone mentions you." });
+        group.Items.Add(new AlderItemCard { Title = "Product updates", Description = "A monthly summary of releases and changes." });
+        var toggle = new AlderSwitch();
+        toggle.Bind(ToggleButton.IsCheckedProperty, CompiledBinding.Create((ProDataDisplayViewModel vm) => vm.Notifications, source: model, mode: BindingMode.TwoWay));
+        ((AlderItemCard)group.Items[0]!).Action = toggle;
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupPermissions" Title="{DynamicResource GalleryText.ProDemoItemCardGroupPermissions}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="456" Padding="2,10" HorizontalAlignment="Stretch">
+          <alder:AlderItemCardGroup Title="{DynamicResource GalleryText.ProDisplayPermissions}">
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayPermissions}" Description="{DynamicResource GalleryText.ProDisplayPermissionsHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+              <alder:AlderItemCard.Action>
+                <alder:AlderSelect ItemsSource="{CompiledBinding Permissions}" PlaceholderText="{DynamicResource GalleryText.ProDisplayChoose}" Width="145" />
+              </alder:AlderItemCard.Action>
+            </alder:AlderItemCard>
+            <alder:AlderItemCard Title="{DynamicResource GalleryText.ProDisplayAccount}" Description="{DynamicResource GalleryText.ProDisplayAccountHint}">
+              <alder:AlderItemCard.Icon>
+                <alder:AlderPathIcon Data="{StaticResource AlderIconInfo}" Width="16" Height="16" />
+              </alder:AlderItemCard.Icon>
+              <alder:AlderItemCard.Action>
+                <alder:AlderSelect ItemsSource="{CompiledBinding Permissions}" PlaceholderText="{DynamicResource GalleryText.ProDisplayChoose}" Width="145" SelectionMode="Multiple" />
+              </alder:AlderItemCard.Action>
+            </alder:AlderItemCard>
+          </alder:AlderItemCardGroup>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderItemCardGroup();
+        group.Items.Add(new AlderItemCard { Title = "Permissions", Description = "Choose what people can do in this workspace." });
+        group.Items.Add(new AlderItemCard { Title = "Account security", Description = "Review connected services and sign-in methods." });
+        ((AlderItemCard)group.Items[0]!).Action = new AlderSelect { ItemsSource = model.Permissions };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

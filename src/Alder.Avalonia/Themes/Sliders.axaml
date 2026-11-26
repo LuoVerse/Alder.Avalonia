@@ -1,0 +1,120 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls">
+  <ControlTheme x:Key="AlderSliderTrackButton" TargetType="RepeatButton">
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate><Panel Background="Transparent" /></ControlTemplate>
+    </Setter>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:SliderSurface}" TargetType="alder:SliderSurface">
+    <Setter Property="IsHitTestVisible" Value="False" />
+    <Setter Property="TrackBrush" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="FillBrush" Value="{DynamicResource AlderAccent}" />
+    <Setter Property="StepBrush" Value="{DynamicResource AlderSliderStep}" />
+    <Setter Property="ActiveStepBrush" Value="#40FCFCFC" />
+  </ControlTheme>
+  <ControlTemplate x:Key="AlderSliderKnob">
+    <Border Name="ThumbFace" Background="{TemplateBinding (TemplatedControl.Background)}" CornerRadius="10" Padding="2">
+      <Border Name="Knob" Background="{TemplateBinding (TemplatedControl.Foreground)}" CornerRadius="8"
+              BoxShadow="{DynamicResource AlderFieldShadow}" RenderTransform="scale(1)">
+        <Border.Transitions>
+          <Transitions>
+            <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" Easing="CubicEaseOut" />
+          </Transitions>
+        </Border.Transitions>
+      </Border>
+    </Border>
+  </ControlTemplate>
+  <ControlTheme x:Key="AlderSliderThumb" TargetType="Thumb">
+    <Setter Property="Width" Value="28" /><Setter Property="Height" Value="20" />
+    <Setter Property="Template" Value="{StaticResource AlderSliderKnob}" />
+    <Style Selector="^[Tag=alder-focus] /template/ Border#ThumbFace"><Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" /></Style>
+    <Style Selector="^:pressed /template/ Border#Knob"><Setter Property="RenderTransform" Value="scale(0.9)" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#Knob"><Setter Property="Transitions" Value="{x:Null}" /><Setter Property="RenderTransform" Value="scale(1)" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderSliderTheme" TargetType="alder:AlderSlider">
+    <Setter Property="MinHeight" Value="24" /><Setter Property="MinWidth" Value="24" />
+    <Setter Property="TrackBrush" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="FillBrush" Value="{DynamicResource AlderAccent}" />
+    <Setter Property="KnobBrush" Value="{DynamicResource AlderOnAccent}" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <DockPanel>
+          <alder:SliderMarks Name="Marks" DockPanel.Dock="Bottom" IsHitTestVisible="False"
+                         Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}" Value="{TemplateBinding Value}"
+                         Orientation="{TemplateBinding Orientation}" IsDirectionReversed="{TemplateBinding IsDirectionReversed}"
+                         Marks="{TemplateBinding Marks}" MarkFormat="{TemplateBinding MarkFormat}"
+                         MarkCulture="{TemplateBinding MarkCulture}" />
+          <Grid MinHeight="24" MinWidth="24">
+            <alder:SliderSurface Name="Rail" Orientation="{TemplateBinding Orientation}" Minimum="{TemplateBinding Minimum}"
+                             Maximum="{TemplateBinding Maximum}" Value="{TemplateBinding Value}"
+                             IsDirectionReversed="{TemplateBinding IsDirectionReversed}" TickFrequency="{TemplateBinding TickFrequency}"
+                             TrackBrush="{TemplateBinding TrackBrush}" FillBrush="{TemplateBinding FillBrush}" />
+            <Track Name="PART_Track" Orientation="{TemplateBinding Orientation}" Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}"
+                   IsDirectionReversed="{TemplateBinding IsDirectionReversed}" Value="{TemplateBinding Value, Mode=TwoWay}">
+              <Track.DecreaseButton><alder:AlderRepeatButton Name="PART_DecreaseButton" Theme="{StaticResource AlderSliderTrackButton}" /></Track.DecreaseButton>
+              <Track.IncreaseButton><alder:AlderRepeatButton Name="PART_IncreaseButton" Theme="{StaticResource AlderSliderTrackButton}" /></Track.IncreaseButton>
+              <alder:AlderThumb Name="Thumb" Theme="{StaticResource AlderSliderThumb}"
+                                Background="{TemplateBinding FillBrush}" Foreground="{TemplateBinding KnobBrush}" />
+            </Track>
+          </Grid>
+        </DockPanel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:vertical /template/ alder|SliderMarks#Marks"><Setter Property="DockPanel.Dock" Value="Right" /></Style>
+    <Style Selector="^:vertical /template/ Thumb"><Setter Property="Width" Value="20" /><Setter Property="Height" Value="28" /></Style>
+    <Style Selector="^[TickPlacement=BottomRight] /template/ alder|SliderSurface#Rail, ^[TickPlacement=TopLeft] /template/ alder|SliderSurface#Rail, ^[TickPlacement=Outside] /template/ alder|SliderSurface#Rail">
+      <Setter Property="ShowSteps" Value="True" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ Thumb">
+      <Setter Property="Tag" Value="alder-focus" />
+    </Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderRangeValueThumb" TargetType="alder:AlderSlider">
+    <Setter Property="Template" Value="{StaticResource AlderSliderKnob}" />
+    <Setter Property="MinWidth" Value="0" /><Setter Property="MinHeight" Value="0" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Style Selector="^.alder-dragging /template/ Border#Knob"><Setter Property="RenderTransform" Value="scale(0.9)" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#Knob"><Setter Property="Transitions" Value="{x:Null}" /><Setter Property="RenderTransform" Value="scale(1)" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#ThumbFace"><Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderRangeSlider}" TargetType="alder:AlderRangeSlider">
+    <Setter Property="MinHeight" Value="26" /><Setter Property="MinWidth" Value="26" />
+    <Setter Property="TrackBrush" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="FillBrush" Value="{DynamicResource AlderAccent}" />
+    <Setter Property="KnobBrush" Value="{DynamicResource AlderOnAccent}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <DockPanel>
+          <alder:SliderMarks Name="Marks" DockPanel.Dock="Bottom" IsHitTestVisible="False"
+                         Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}"
+                         Value="{TemplateBinding UpperValue}" LowerValue="{TemplateBinding LowerValue}"
+                         Orientation="{TemplateBinding Orientation}" IsDirectionReversed="{TemplateBinding IsDirectionReversed}"
+                         Marks="{TemplateBinding Marks}" MarkFormat="{TemplateBinding MarkFormat}"
+                         MarkCulture="{TemplateBinding MarkCulture}" />
+          <Grid MinHeight="26" MinWidth="26">
+            <alder:SliderSurface Orientation="{TemplateBinding Orientation}" Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}"
+                             LowerValue="{TemplateBinding LowerValue}" Value="{TemplateBinding UpperValue}"
+                             TickFrequency="{TemplateBinding Step}" ShowSteps="{TemplateBinding ShowSteps}"
+                             IsDirectionReversed="{TemplateBinding IsDirectionReversed}"
+                             TrackBrush="{TemplateBinding TrackBrush}" FillBrush="{TemplateBinding FillBrush}" />
+            <Canvas Name="PART_Surface" Background="Transparent">
+              <alder:AlderSlider Name="PART_Lower" Theme="{StaticResource AlderRangeValueThumb}"
+                                 Background="{TemplateBinding FillBrush}" Foreground="{TemplateBinding KnobBrush}" AutomationProperties.Name="{DynamicResource AlderText.LowerValue}" />
+              <alder:AlderSlider Name="PART_Upper" Theme="{StaticResource AlderRangeValueThumb}"
+                                 Background="{TemplateBinding FillBrush}" Foreground="{TemplateBinding KnobBrush}" AutomationProperties.Name="{DynamicResource AlderText.UpperValue}" />
+            </Canvas>
+          </Grid>
+        </DockPanel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Orientation=Vertical] /template/ alder|SliderMarks#Marks">
+      <Setter Property="DockPanel.Dock" Value="Right" />
+    </Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderSlider}" TargetType="alder:AlderSlider" BasedOn="{StaticResource AlderSliderTheme}" />
+</ResourceDictionary>

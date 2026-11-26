@@ -1,0 +1,327 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.HoloCardExample" x:DataType="vm:HoloCardViewModel">
+  <UserControl.Resources>
+    <LinearGradientBrush x:Key="GlacierGradient" StartPoint="-7.6%,4.3%" EndPoint="107.6%,95.7%">
+      <GradientStop Color="#0EA5E9" Offset="0" /><GradientStop Color="#097DBC" Offset=".30" />
+      <GradientStop Color="#06558A" Offset=".66" /><GradientStop Color="#04305F" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="OrchidGradient" StartPoint="-7.6%,4.3%" EndPoint="107.6%,95.7%">
+      <GradientStop Color="#8B5CF6" Offset="0" /><GradientStop Color="#6C44D0" Offset=".30" />
+      <GradientStop Color="#4E2EA2" Offset=".66" /><GradientStop Color="#321C76" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="FernGradient" StartPoint="-7.6%,4.3%" EndPoint="107.6%,95.7%">
+      <GradientStop Color="#10B981" Offset="0" /><GradientStop Color="#0C8C64" Offset=".30" />
+      <GradientStop Color="#096248" Offset=".66" /><GradientStop Color="#053C2E" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="GraphiteGradient" StartPoint="9.2%,-14.6%" EndPoint="90.8%,114.6%">
+      <GradientStop Color="#30323C" Offset="0" /><GradientStop Color="#22242E" Offset=".45" />
+      <GradientStop Color="#15161F" Offset="1" />
+    </LinearGradientBrush>
+    <DrawingBrush x:Key="LatticePattern" TileMode="Tile" DestinationRect="0,0,24,24">
+      <DrawingBrush.Drawing>
+        <DrawingGroup>
+          <GeometryDrawing Brush="#99000000" Geometry="M0,0 H24 V24 H0 Z" />
+          <GeometryDrawing Brush="#E6FFFFFF" Geometry="M0,0 L12,12 0,24 Z M24,0 L24,24 12,12 Z" />
+        </DrawingGroup>
+      </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <LinearGradientBrush x:Key="BrushedPattern" StartPoint="0,0" EndPoint="3.94,0.69" SpreadMethod="Repeat">
+      <GradientStop Color="#BFFFFFFF" Offset="0" /><GradientStop Color="#4D787878" Offset=".5" />
+      <GradientStop Color="#B3000000" Offset="1" />
+    </LinearGradientBrush>
+  </UserControl.Resources>
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="Usage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <Border Padding="36">
+          <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Center" ClipToBounds="False">
+            <alder:AlderHoloCard HorizontalAlignment="Center" MaxWidth="302">
+              <StackPanel VerticalAlignment="Center" Spacing="8">
+                <alder:AlderPathIcon Data="{StaticResource AlderIconStarOutline}" Width="22" Height="22" Foreground="#CAD0F1" />
+                <alder:AlderTextBlock HorizontalAlignment="Center" Text="{DynamicResource GalleryText.HoloEditions}" FontSize="28" FontWeight="SemiBold" />
+                <alder:AlderTextBlock HorizontalAlignment="Center" Text="{DynamicResource GalleryText.HoloPointerHint}" Foreground="#BCC2DC" FontSize="12" />
+              </StackPanel>
+            </alder:AlderHoloCard>
+          </Viewbox>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var card = new AlderHoloCard
+        {
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Content = new StackPanel
+            {
+                VerticalAlignment = VerticalAlignment.Center, Spacing = 8,
+                Children =
+                {
+                    new AlderTextBlock { Text = "Alder Editions", HorizontalAlignment = HorizontalAlignment.Center, FontSize = 28, FontWeight = FontWeight.SemiBold },
+                    new AlderTextBlock { Text = "Move the pointer across the card", HorizontalAlignment = HorizontalAlignment.Center, FontSize = 12 }
+                }
+            }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="Membership" Title="{DynamicResource GalleryText.HoloMembership}">
+      <g:ExampleCard.Preview>
+        <Border Padding="36">
+          <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Center" ClipToBounds="False">
+            <alder:AlderHoloCard HorizontalAlignment="Center" Padding="28" MaxWidth="302">
+              <Grid RowDefinitions="Auto,*,Auto">
+                <alder:AlderPathIcon Data="{StaticResource AlderIconStarOutline}" Width="22" Height="22" Foreground="#C6CEF3" HorizontalAlignment="Left" />
+                <StackPanel Grid.Row="1" Spacing="6" VerticalAlignment="Center">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoloMemberName}" FontSize="30" FontWeight="SemiBold" TextWrapping="Wrap" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoloMemberEdition}" Foreground="#C9CEE0" FontSize="13" />
+                </StackPanel>
+                <Grid Grid.Row="2" ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                  <StackPanel Spacing="4">
+                    <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoloJoined}" Foreground="#B7BED8" FontSize="11" />
+                    <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoloJoinedDate}" FontSize="13" />
+                  </StackPanel>
+                  <StackPanel Grid.Column="1" Spacing="4">
+                    <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoloMember}" Foreground="#B7BED8" FontSize="11" />
+                    <alder:AlderTextBlock Text="#0716" FontSize="13" HorizontalAlignment="Right" />
+                  </StackPanel>
+                </Grid>
+              </Grid>
+            </alder:AlderHoloCard>
+          </Viewbox>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var face = new Grid { RowDefinitions = new RowDefinitions("Auto,*,Auto") };
+        face.Children.Add(new AlderTextBlock { Text = "Alder Editions", FontSize = 13 });
+        var member = new StackPanel
+        {
+            VerticalAlignment = VerticalAlignment.Center, Spacing = 6,
+            Children =
+            {
+                new AlderTextBlock { Text = "Nora Chen", FontSize = 30, FontWeight = FontWeight.SemiBold },
+                new AlderTextBlock { Text = "Lifetime member" }
+            }
+        };
+        Grid.SetRow(member, 1);
+        face.Children.Add(member);
+        var details = new AlderTextBlock { Text = "May 18, 2024   ·   #0716", FontSize = 13 };
+        Grid.SetRow(details, 2);
+        face.Children.Add(details);
+        var membership = new AlderHoloCard { Padding = new Thickness(28), Content = face };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="Credit" Title="{DynamicResource GalleryText.HoloCredit}">
+      <g:ExampleCard.Preview>
+        <Border Padding="28">
+          <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Center" ClipToBounds="False">
+            <alder:AlderHoloCard Width="380" Height="240" HorizontalAlignment="Center" CornerRadius="16" Padding="26"
+                                Background="{StaticResource GraphiteGradient}">
+              <Grid RowDefinitions="Auto,*,Auto" RowSpacing="10">
+                <StackPanel Spacing="3">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoloEditions}" FontWeight="SemiBold" FontSize="19" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoloCreditTier}" FontSize="11" Foreground="#9B9CA9" />
+                </StackPanel>
+                <StackPanel Grid.Row="1" Spacing="14" VerticalAlignment="Center">
+                  <Border Width="34" Height="25" CornerRadius="5" Background="#B7A877" HorizontalAlignment="Left">
+                    <Border Margin="8,4" CornerRadius="3" BorderBrush="#EFE5AE" BorderThickness="1" />
+                  </Border>
+                  <alder:AlderTextBlock Text="••••   ••••   ••••   7164" FontFamily="monospace" FontSize="16" />
+                </StackPanel>
+                <Grid Grid.Row="2" ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                  <StackPanel Spacing="2">
+                    <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoloCardholder}" Foreground="#9B9CA9" FontSize="11" />
+                    <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoloMemberName}" FontSize="13" />
+                  </StackPanel>
+                  <StackPanel Grid.Column="1" Spacing="2">
+                    <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoloExpires}" Foreground="#9B9CA9" FontSize="11" />
+                    <alder:AlderTextBlock Text="11/30" FontSize="13" HorizontalAlignment="Right" />
+                  </StackPanel>
+                </Grid>
+              </Grid>
+            </alder:AlderHoloCard>
+          </Viewbox>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var card = new AlderHoloCard
+        {
+            Width = 380, Height = 240, CornerRadius = new CornerRadius(16), Padding = new Thickness(26),
+            Background = new LinearGradientBrush
+            {
+                StartPoint = new RelativePoint(.092, -.146, RelativeUnit.Relative),
+                EndPoint = new RelativePoint(.908, 1.146, RelativeUnit.Relative),
+                GradientStops = [new(Color.Parse("#30323C"), 0), new(Color.Parse("#22242E"), .45), new(Color.Parse("#15161F"), 1)]
+            },
+            Content = new StackPanel
+            {
+                Spacing = 10,
+                Children =
+                {
+                    new AlderTextBlock { Text = "Alder Editions", FontSize = 19, FontWeight = FontWeight.SemiBold },
+                    new Border { Width = 34, Height = 25, CornerRadius = new CornerRadius(5), Background = Brush.Parse("#B7A877"), HorizontalAlignment = HorizontalAlignment.Left },
+                    new AlderTextBlock { Text = "••••   ••••   ••••   7164", FontSize = 16 },
+                    new AlderTextBlock { Text = "Nora Chen    11/30", FontSize = 13 }
+                }
+            }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="Gradients" Title="{DynamicResource GalleryText.HoloGradients}">
+      <g:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" Margin="22" ItemSpacing="28" LineSpacing="28">
+          <alder:AlderHoloCard Width="150" Height="225" CornerRadius="16" TextureOpacity="0" Background="{StaticResource GlacierGradient}">
+            <alder:AlderTextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Text="{DynamicResource GalleryText.HoloGlacier}" FontSize="17" FontWeight="SemiBold" />
+          </alder:AlderHoloCard>
+          <alder:AlderHoloCard Width="150" Height="225" CornerRadius="16" TextureOpacity="0" Background="{StaticResource OrchidGradient}">
+            <alder:AlderTextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Text="{DynamicResource GalleryText.HoloOrchid}" FontSize="17" FontWeight="SemiBold" />
+          </alder:AlderHoloCard>
+          <alder:AlderHoloCard Width="150" Height="225" CornerRadius="16" TextureOpacity="0" Background="{StaticResource FernGradient}">
+            <alder:AlderTextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Text="{DynamicResource GalleryText.HoloFern}" FontSize="17" FontWeight="SemiBold" />
+          </alder:AlderHoloCard>
+        </WrapPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var examples = new WrapPanel { Margin = new Thickness(22), ItemSpacing = 28, LineSpacing = 28 };
+        foreach (var (title, start, middleA, middleB, end) in new[]
+        {
+            ("Glacier", "#0EA5E9", "#097DBC", "#06558A", "#04305F"),
+            ("Orchid", "#8B5CF6", "#6C44D0", "#4E2EA2", "#321C76"),
+            ("Fern", "#10B981", "#0C8C64", "#096248", "#053C2E")
+        })
+        {
+            examples.Children.Add(new AlderHoloCard
+            {
+                Width = 150, Height = 225, CornerRadius = new CornerRadius(16), TextureOpacity = 0,
+                Background = new LinearGradientBrush
+                {
+                    StartPoint = new RelativePoint(-.076, .043, RelativeUnit.Relative),
+                    EndPoint = new RelativePoint(1.076, .957, RelativeUnit.Relative),
+                    GradientStops = [new(Color.Parse(start), 0), new(Color.Parse(middleA), .30),
+                        new(Color.Parse(middleB), .66), new(Color.Parse(end), 1)]
+                },
+                Content = new AlderTextBlock { Text = title, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center }
+            });
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="Patterns" Title="{DynamicResource GalleryText.HoloPatterns}">
+      <g:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" Margin="22" ItemSpacing="28" LineSpacing="28">
+          <alder:AlderHoloCard Width="215" Height="320" CornerRadius="18" Pattern="{StaticResource LatticePattern}">
+            <alder:AlderTextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,22"
+                       Text="{DynamicResource GalleryText.HoloLattice}" FontSize="17" FontWeight="SemiBold" />
+          </alder:AlderHoloCard>
+          <alder:AlderHoloCard Width="215" Height="320" CornerRadius="18" Pattern="{StaticResource BrushedPattern}">
+            <alder:AlderTextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,22"
+                       Text="{DynamicResource GalleryText.HoloBrushed}" FontSize="17" FontWeight="SemiBold" />
+          </alder:AlderHoloCard>
+        </WrapPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var pattern = new LinearGradientBrush
+        {
+            StartPoint = new RelativePoint(0, 0, RelativeUnit.Absolute),
+            EndPoint = new RelativePoint(3.94, .69, RelativeUnit.Absolute),
+            SpreadMethod = GradientSpreadMethod.Repeat,
+            GradientStops = [new(Color.Parse("#BFFFFFFF"), 0), new(Color.Parse("#4D787878"), .5), new(Color.Parse("#B3000000"), 1)]
+        };
+        var card = new AlderHoloCard
+        {
+            Width = 215, Height = 320, CornerRadius = new CornerRadius(18), Pattern = pattern,
+            Content = new AlderTextBlock { Text = "Brushed", HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Bottom, Margin = new Thickness(0, 0, 0, 22) }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="ImageOnly" Title="{DynamicResource GalleryText.HoloImageOnly}">
+      <g:ExampleCard.Preview>
+        <alder:AlderItemsControl ItemsSource="{CompiledBinding ImageCards}" HorizontalAlignment="Center" Margin="24" MaxWidth="690" ClipToBounds="False">
+          <alder:AlderItemsControl.ItemsPanel>
+            <ItemsPanelTemplate><WrapPanel ItemSpacing="18" LineSpacing="18" HorizontalAlignment="Center" /></ItemsPanelTemplate>
+          </alder:AlderItemsControl.ItemsPanel>
+          <alder:AlderItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:HoloArtwork">
+              <alder:AlderHoloCard Width="210" Height="294" CornerRadius="14" ImageSource="{CompiledBinding Source}"
+                                   AutomationProperties.Name="{CompiledBinding Name}" ShowInset="False" />
+            </DataTemplate>
+          </alder:AlderItemsControl.ItemTemplate>
+        </alder:AlderItemsControl>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var cards = new AlderItemsControl
+        {
+            ItemsSource = model.ImageCards, ClipToBounds = false, Margin = new Thickness(24),
+            ItemsPanel = new FuncTemplate<Panel?>(() => new WrapPanel { ItemSpacing = 18, LineSpacing = 18 }),
+            ItemTemplate = new FuncDataTemplate<HoloArtwork>((art, _) =>
+            {
+                var card = new AlderHoloCard
+                {
+                    Width = 210, Height = 294, CornerRadius = new CornerRadius(14),
+                    ImageSource = art.Source, ShowInset = false
+                };
+                AutomationProperties.SetName(card, art.Name);
+                return card;
+            })
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="Static" Title="{DynamicResource GalleryText.HoloStatic}">
+      <g:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" Margin="22" ItemSpacing="28" LineSpacing="28">
+          <alder:AlderHoloCard Width="200" Height="300" CornerRadius="16">
+            <alder:AlderTextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Text="{DynamicResource GalleryText.HoloInteractive}" FontSize="17" FontWeight="SemiBold" />
+          </alder:AlderHoloCard>
+          <alder:AlderHoloCard Width="200" Height="300" CornerRadius="16" IsInteractive="False">
+            <alder:AlderTextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Text="{DynamicResource GalleryText.HoloStatic}" FontSize="17" FontWeight="SemiBold" />
+          </alder:AlderHoloCard>
+        </WrapPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var interactive = CreateCard("Interactive", true);
+        var flat = CreateCard("Static", false);
+
+        static AlderHoloCard CreateCard(string title, bool interactive) => new AlderHoloCard
+        {
+            Width = 200, Height = 300, CornerRadius = new CornerRadius(16), IsInteractive = interactive,
+            Content = new AlderTextBlock { Text = title, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="Collection" Title="{DynamicResource GalleryText.HoloCollection}">
+      <g:ExampleCard.Preview>
+        <alder:AlderItemsControl ItemsSource="{CompiledBinding Collection}" HorizontalAlignment="Center" Margin="14" MaxWidth="760" ClipToBounds="False">
+          <alder:AlderItemsControl.ItemsPanel>
+            <ItemsPanelTemplate><WrapPanel ItemSpacing="12" LineSpacing="12" HorizontalAlignment="Center" /></ItemsPanelTemplate>
+          </alder:AlderItemsControl.ItemsPanel>
+          <alder:AlderItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:HoloArtwork">
+              <alder:AlderHoloCard Width="120" Height="168" CornerRadius="10" ImageSource="{CompiledBinding Source}"
+                                   AutomationProperties.Name="{CompiledBinding Name}" ShowInset="False" TextureOpacity="0" ActivateOnHover="True" MaxTilt="8" HoverScale="1.04" ShineOpacity=".55" />
+            </DataTemplate>
+          </alder:AlderItemsControl.ItemTemplate>
+        </alder:AlderItemsControl>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var cards = new AlderItemsControl
+        {
+            ItemsSource = model.Collection, ClipToBounds = false, Margin = new Thickness(14),
+            ItemsPanel = new FuncTemplate<Panel?>(() => new WrapPanel { ItemSpacing = 12, LineSpacing = 12 }),
+            ItemTemplate = new FuncDataTemplate<HoloArtwork>((art, _) =>
+            {
+                var card = new AlderHoloCard
+                {
+                    Width = 120, Height = 168, CornerRadius = new CornerRadius(10),
+                    ImageSource = art.Source, ShowInset = false,
+                    TextureOpacity = 0, ActivateOnHover = true, MaxTilt = 8, HoverScale = 1.04, ShineOpacity = .55
+                };
+                AutomationProperties.SetName(card, art.Name);
+                return card;
+            })
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

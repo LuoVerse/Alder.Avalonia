@@ -1,0 +1,30 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:ti="using:Avalonia.Input.TextInput">
+  <ControlTheme x:Key="AlderSearchClearButtonTheme" TargetType="Button" BasedOn="{StaticResource AlderCloseButtonTheme}">
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Style Selector="^:focus-visible /template/ alder|ButtonFeedback#Face">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderSearchField}" TargetType="alder:AlderSearchField"
+                BasedOn="{StaticResource {x:Type alder:AlderInput}}">
+    <Setter Property="Width" Value="256" />
+    <Setter Property="Padding" Value="12,0,8,0" />
+    <Setter Property="SearchIcon" Value="{StaticResource AlderIconMagnifier}" />
+    <Setter Property="ClearIcon" Value="{StaticResource AlderIconXmark}" />
+    <Setter Property="ClearButtonTheme" Value="{DynamicResource AlderSearchClearButtonTheme}" />
+    <Setter Property="ti:TextInputOptions.ContentType" Value="Search" />
+    <Style Selector="^ /template/ :is(ScrollViewer)#PART_ScrollViewer">
+      <Setter Property="Margin" Value="8,8,4,8" />
+    </Style>
+    <Style Selector="^ /template/ ContentPresenter#FieldSuffix"><Setter Property="Cursor" Value="Arrow" /></Style>
+    <Style Selector="^:focus-within /template/ alder|InputFocusRing#FieldRing">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" />
+    </Style>
+    <Style Selector="^:alder-invalid:focus-within /template/ alder|InputFocusRing#FieldRing, ^:error:focus-within /template/ alder|InputFocusRing#FieldRing">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldInvalidRing}" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

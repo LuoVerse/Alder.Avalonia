@@ -1,0 +1,246 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls" xmlns:cv="using:Avalonia.Data.Converters">
+  <x:String x:Key="AlderText.EmojiOpen">Choose an emoji</x:String>
+  <x:String x:Key="AlderText.EmojiSearch">Search emoji...</x:String>
+  <x:String x:Key="AlderText.EmojiGrid">Emoji grid</x:String>
+  <x:String x:Key="AlderText.EmojiEmpty">No emoji found</x:String>
+  <x:String x:Key="AlderText.EmojiSkinTone">Select skin tone</x:String>
+  <x:String x:Key="AlderText.EmojiToneDefault">Default skin tone</x:String>
+  <x:String x:Key="AlderText.EmojiToneLight">Light skin tone</x:String>
+  <x:String x:Key="AlderText.EmojiToneMediumLight">Medium-light skin tone</x:String>
+  <x:String x:Key="AlderText.EmojiToneMedium">Medium skin tone</x:String>
+  <x:String x:Key="AlderText.EmojiToneMediumDark">Medium-dark skin tone</x:String>
+  <x:String x:Key="AlderText.EmojiToneDark">Dark skin tone</x:String>
+  <x:String x:Key="AlderText.EmojiRecent">Recently used</x:String>
+  <x:String x:Key="AlderText.EmojiSmileys">Smileys &amp; emotion</x:String>
+  <x:String x:Key="AlderText.EmojiPeople">People &amp; body</x:String>
+  <x:String x:Key="AlderText.EmojiAnimals">Animals &amp; nature</x:String>
+  <x:String x:Key="AlderText.EmojiFood">Food &amp; drink</x:String>
+  <x:String x:Key="AlderText.EmojiActivities">Activities</x:String>
+  <x:String x:Key="AlderText.EmojiTravel">Travel &amp; places</x:String>
+  <x:String x:Key="AlderText.EmojiObjects">Objects</x:String>
+  <x:String x:Key="AlderText.EmojiSymbols">Symbols</x:String>
+  <x:String x:Key="AlderText.EmojiFlags">Flags</x:String>
+
+  <SolidColorBrush x:Key="AlderReactionSelectedFill" Color="#1A0485F7" />
+  <SolidColorBrush x:Key="AlderReactionSelectedHover" Color="#260485F7" />
+  <SolidColorBrush x:Key="AlderReactionSelectedBorder" Color="#4D0485F7" />
+  <FontFamily x:Key="AlderEmojiFont">Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, $Default</FontFamily>
+
+  <ControlTheme x:Key="{x:Type alder:AlderEmojiReactionButton}" TargetType="alder:AlderEmojiReactionButton">
+    <Setter Property="Height" Value="24" />
+    <Setter Property="Padding" Value="6,0" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="CornerRadius" Value="999" />
+    <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="AutomationProperties.Name">
+      <MultiBinding StringFormat="{}{0} {1}">
+        <Binding Path="Emoji" RelativeSource="{RelativeSource Self}" />
+        <Binding Path="Count" RelativeSource="{RelativeSource Self}" />
+      </MultiBinding>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Name="Pill" RenderTransform="scale(1)">
+          <Border Name="Face" Padding="{TemplateBinding Padding}" BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="{TemplateBinding CornerRadius}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}">
+            <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+              <alder:AlderTextBlock Name="PART_Emoji" Text="{TemplateBinding Emoji}" FontSize="{TemplateBinding FontSize}"
+                         FontFamily="{StaticResource AlderEmojiFont}" Width="18" TextAlignment="Center"
+                         VerticalAlignment="Center" FlowDirection="LeftToRight" />
+              <Panel ClipToBounds="True" VerticalAlignment="Center">
+                <alder:AlderTextBlock Name="PART_Count" Text="{CompiledBinding Count, RelativeSource={RelativeSource TemplatedParent}, StringFormat={}{0}}"
+                           FontSize="{TemplateBinding FontSize}" FontFeatures="tnum" Foreground="{TemplateBinding Foreground}" />
+                <alder:AlderNumberStepValue Name="PART_CountMotion" IsHitTestVisible="False" />
+              </Panel>
+            </StackPanel>
+          </Border>
+          <alder:InputFocusRing Name="Focus" CornerRadius="{TemplateBinding CornerRadius}"
+                                IsHitTestVisible="False" ClipToBounds="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ Panel#Pill">
+      <Setter Property="Transitions"><Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25" Easing="0.25,0.1,0.25,1" /></Transitions></Setter>
+    </Style>
+    <Style Selector="^ /template/ Border#Face">
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.15" />
+          <BrushTransition Property="BorderBrush" Duration="0:0:0.15" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^[Size=Small]"><Setter Property="Height" Value="22" /><Setter Property="FontSize" Value="12" /></Style>
+    <Style Selector="^[Size=Small] /template/ TextBlock#PART_Emoji"><Setter Property="Width" Value="15" /></Style>
+    <Style Selector="^[Size=Large]">
+      <Setter Property="Height" Value="30" /><Setter Property="FontSize" Value="16" /><Setter Property="Padding" Value="10,0" />
+    </Style>
+    <Style Selector="^[Size=Large] /template/ TextBlock#PART_Emoji"><Setter Property="Width" Value="20" /></Style>
+    <Style Selector="^:checked">
+      <Setter Property="Foreground" Value="{DynamicResource AlderAccent}" />
+      <Setter Property="Background" Value="{StaticResource AlderReactionSelectedFill}" />
+      <Setter Property="BorderBrush" Value="{StaticResource AlderReactionSelectedBorder}" />
+    </Style>
+    <Style Selector="^[IsReadOnly=False]:pointerover:not(:checked):not(:disabled)"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
+    <Style Selector="^[IsReadOnly=False]:checked:pointerover:not(:disabled)"><Setter Property="Background" Value="{StaticResource AlderReactionSelectedHover}" /></Style>
+    <Style Selector="^[IsReadOnly=False]:pressed /template/ Panel#Pill"><Setter Property="RenderTransform" Value="scale(0.97)" /></Style>
+    <Style Selector="^:focus-visible /template/ alder|InputFocusRing#Focus"><Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" /></Style>
+    <Style Selector="^[IsReadOnly=True], ^:disabled"><Setter Property="Cursor" Value="Arrow" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#Face,
+                     ^[(alder|AlderMotion.Reduced)=True] /template/ Panel#Pill"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True]:pressed /template/ Panel#Pill"><Setter Property="RenderTransform" Value="scale(1)" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderEmojiButtonTheme" TargetType="Button" BasedOn="{StaticResource AlderSelectTriggerTheme}">
+    <Setter Property="MinWidth" Value="0" />
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Style Selector="^:pointerover:not(:disabled), ^:focus-visible"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
+    <Style Selector="^:pressed, ^.active, ^.picked"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /><Setter Property="Cursor" Value="Arrow" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderEmojiTriggerTheme" TargetType="Button" BasedOn="{StaticResource AlderSelectTriggerTheme}">
+    <Setter Property="Height" Value="28" />
+    <Setter Property="MinWidth" Value="22" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="CornerRadius" Value="6" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="RenderTransform" Value="scale(1)" />
+    <Setter Property="Transitions"><Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25" Easing="0.25,0.1,0.25,1" /></Transitions></Setter>
+    <Style Selector="^:pressed"><Setter Property="RenderTransform" Value="scale(0.97)" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True]"><Setter Property="Transitions" Value="{x:Null}" /><Setter Property="RenderTransform" Value="scale(1)" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /><Setter Property="Cursor" Value="Arrow" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderEmojiCategoryButtonTheme" TargetType="Button" BasedOn="{StaticResource AlderEmojiButtonTheme}">
+    <Setter Property="Height" Value="28" />
+    <Setter Property="CornerRadius" Value="6" />
+  </ControlTheme>
+  <ControlTheme x:Key="AlderEmojiToneButtonTheme" TargetType="Button" BasedOn="{StaticResource AlderEmojiButtonTheme}">
+    <Setter Property="Width" Value="31" /><Setter Property="Height" Value="30" /><Setter Property="CornerRadius" Value="16" />
+  </ControlTheme>
+  <ControlTheme x:Key="AlderEmojiRowTheme" TargetType="ListBoxItem">
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="IsTabStop" Value="False" />
+    <Setter Property="Height" Value="38" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderEmojiPickerPanel}" TargetType="alder:AlderEmojiPickerPanel">
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="InlineShadow" CornerRadius="16" IsHitTestVisible="False" />
+          <Border CornerRadius="16" ClipToBounds="True">
+            <Grid RowDefinitions="Auto,*,41">
+              <alder:AlderSearchField Name="PART_Search" FullWidth="True" Variant="Secondary"
+                                      Height="36" Margin="8,8,8,6" ShowClearButton="False"
+                                      AutomationProperties.Name="{DynamicResource AlderText.EmojiSearch}"
+                                      PlaceholderText="{DynamicResource AlderText.EmojiSearch}">
+                <alder:AlderSearchField.InnerRightContent>
+                  <alder:AlderButton Name="PART_Tone" Theme="{StaticResource AlderEmojiButtonTheme}" Width="24" Height="24" CornerRadius="6"
+                          AutomationProperties.Name="{DynamicResource AlderText.EmojiSkinTone}">
+                    <ContentPresenter Name="PART_ToneGlyph" FontSize="16" FontFamily="{StaticResource AlderEmojiFont}"
+                                      HorizontalAlignment="Center" />
+                  </alder:AlderButton>
+                </alder:AlderSearchField.InnerRightContent>
+              </alder:AlderSearchField>
+              <Panel Grid.Row="1" Margin="8,4,8,0">
+                <alder:AlderListBox Name="PART_Grid" Background="Transparent" FocusAdorner="{x:Null}"
+                         ItemContainerTheme="{StaticResource AlderEmojiRowTheme}" ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         AutomationProperties.Name="{DynamicResource AlderText.EmojiGrid}">
+                  <ListBox.Template>
+                    <ControlTemplate>
+                      <alder:AlderScrollViewer Name="PART_ScrollViewer" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled"
+                                    IsScrollChainingEnabled="False" Focusable="False">
+                        <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+                      </alder:AlderScrollViewer>
+                    </ControlTemplate>
+                  </ListBox.Template>
+                  <ListBox.ItemsPanel><ItemsPanelTemplate><VirtualizingStackPanel /></ItemsPanelTemplate></ListBox.ItemsPanel>
+                  <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="alder:EmojiPickerRow">
+                      <alder:AlderItemsControl ItemsSource="{CompiledBinding Cells}" HorizontalAlignment="Left" Margin="6,0,0,0">
+                        <alder:AlderItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate></alder:AlderItemsControl.ItemsPanel>
+                        <alder:AlderItemsControl.ItemTemplate>
+                          <DataTemplate x:DataType="alder:EmojiPickerCell">
+                            <Panel Width="{CompiledBinding Width}" Height="38">
+                              <alder:AlderButton Theme="{StaticResource AlderEmojiButtonTheme}" MaxWidth="{CompiledBinding Width}"
+                                      Width="36" Height="36" HorizontalAlignment="Center" IsTabStop="False"
+                                      AutomationProperties.Name="{CompiledBinding Name}" alder:AlderToolTip.Tip="{CompiledBinding Name}"
+                                      Classes.active="{CompiledBinding IsActive}" Classes.picked="{CompiledBinding IsSelected}">
+                                <alder:AlderTextBlock Text="{CompiledBinding Glyph}" FontSize="{CompiledBinding FontSize}"
+                                           FontFamily="{StaticResource AlderEmojiFont}" FlowDirection="LeftToRight" />
+                              </alder:AlderButton>
+                            </Panel>
+                          </DataTemplate>
+                        </alder:AlderItemsControl.ItemTemplate>
+                      </alder:AlderItemsControl>
+                    </DataTemplate>
+                  </ListBox.ItemTemplate>
+                </alder:AlderListBox>
+                <alder:AlderTextBlock Name="Empty" Text="{DynamicResource AlderText.EmojiEmpty}" Foreground="{DynamicResource AlderMuted}"
+                           HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" IsVisible="False"
+                           AutomationProperties.LiveSetting="Polite" />
+              </Panel>
+              <Border Grid.Row="2" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource AlderBorder}" Padding="4,6">
+                <UniformGrid Name="PART_Categories" Rows="1" />
+              </Border>
+            </Grid>
+          </Border>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^.inline /template/ Border#InlineShadow">
+      <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderToolbarShadow}" />
+    </Style>
+    <Style Selector="^.empty /template/ TextBlock#Empty"><Setter Property="IsVisible" Value="True" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderEmojiPicker}" TargetType="alder:AlderEmojiPicker">
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <alder:AlderButton Name="PART_Trigger" Theme="{StaticResource AlderEmojiTriggerTheme}"
+                  AutomationProperties.Name="{DynamicResource AlderText.EmojiOpen}"
+                  IsVisible="{CompiledBinding !IsInline, RelativeSource={RelativeSource TemplatedParent}}">
+            <Panel>
+              <alder:AlderTextBlock Name="Value" FontSize="20" FontFamily="{StaticResource AlderEmojiFont}" VerticalAlignment="Center" HorizontalAlignment="Center"
+                         Text="{CompiledBinding SelectedEmoji, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue=''}"
+                         IsVisible="{CompiledBinding SelectedEmoji, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static cv:StringConverters.IsNotNullOrEmpty}}" />
+              <alder:AlderTextBlock Name="Placeholder" FontSize="20" FontFamily="{StaticResource AlderEmojiFont}"
+                         Text="{TemplateBinding PlaceholderEmoji}" VerticalAlignment="Center"
+                         IsVisible="{CompiledBinding SelectedEmoji, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static cv:StringConverters.IsNullOrEmpty}}" />
+              <ContentPresenter Name="CustomTrigger" Content="{TemplateBinding TriggerContent}" />
+            </Panel>
+          </alder:AlderButton>
+          <ContentPresenter Name="PART_Inline" IsVisible="{TemplateBinding IsInline}" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^.custom-trigger /template/ TextBlock#Value, ^.custom-trigger /template/ TextBlock#Placeholder">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

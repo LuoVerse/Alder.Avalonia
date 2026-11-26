@@ -1,0 +1,196 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.PaginationExample" x:DataType="vm:PaginationViewModel">
+  <Design.DataContext><vm:PaginationViewModel /></Design.DataContext>
+  <UserControl.Styles>
+    <Style Selector="alder|AlderPagination">
+      <Setter Property="Culture" Value="{DynamicResource GalleryCulture}" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderPagination PageCount="3" NavigationAlignment="Center" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var pagination = new AlderPagination
+        {
+            PageCount = 3,
+            NavigationAlignment = HorizontalAlignment.Center,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSizes" Title="{DynamicResource GalleryText.Sizes}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="16" LineSpacing="12">
+          <StackPanel Spacing="4">
+            <alder:AlderTextBlock Classes="detail" HorizontalAlignment="Center" Text="{DynamicResource GalleryText.Small}" />
+            <alder:AlderPagination Size="Small" PageCount="3" NavigationAlignment="Center" />
+          </StackPanel>
+          <StackPanel Spacing="4">
+            <alder:AlderTextBlock Classes="detail" HorizontalAlignment="Center" Text="{DynamicResource GalleryText.Medium}" />
+            <alder:AlderPagination PageCount="3" NavigationAlignment="Center" />
+          </StackPanel>
+          <StackPanel Spacing="4">
+            <alder:AlderTextBlock Classes="detail" HorizontalAlignment="Center" Text="{DynamicResource GalleryText.Large}" />
+            <alder:AlderPagination Size="Large" PageCount="3" NavigationAlignment="Center" />
+          </StackPanel>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var pagination1 = new AlderPagination
+        {
+            Size = AlderSize.Small,
+            PageCount = 3,
+            NavigationAlignment = HorizontalAlignment.Center,
+        };
+
+        var pagination2 = new AlderPagination
+        {
+            PageCount = 3,
+            NavigationAlignment = HorizontalAlignment.Center,
+        };
+
+        var pagination3 = new AlderPagination
+        {
+            Size = AlderSize.Large,
+            PageCount = 3,
+            NavigationAlignment = HorizontalAlignment.Center,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabledState" Title="{DynamicResource GalleryText.DisabledState}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="10">
+          <alder:AlderPagination PageCount="3" IsNextDisabled="True" NavigationAlignment="Center" />
+          <alder:AlderPagination PageCount="12" PageItems="{CompiledBinding FixedPages}" NavigationAlignment="Center" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var pagination1 = new AlderPagination
+        {
+            PageCount = 3,
+            IsNextDisabled = true,
+            NavigationAlignment = HorizontalAlignment.Center,
+        };
+
+        var pagination2 = new AlderPagination
+        {
+            PageCount = 12,
+            NavigationAlignment = HorizontalAlignment.Center,
+        };
+        pagination2.Bind(AlderPagination.PageItemsProperty, CompiledBinding.Create((PaginationViewModel model) => model.FixedPages));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SamplePaginationPreviousNext" Title="{DynamicResource GalleryText.PaginationPreviousNext}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderPagination PageCount="{CompiledBinding InvoicePageCount}" CurrentPage="{CompiledBinding InvoicePage}"
+                          Summary="{CompiledBinding}" ShowPageNumbers="False" PreviousText="{DynamicResource GalleryText.PaginationPrev}">
+          <alder:AlderPagination.SummaryTemplate>
+            <DataTemplate x:DataType="vm:PaginationViewModel">
+              <alder:AlderTextBlock Text="{CompiledBinding InvoiceSummary}" />
+            </DataTemplate>
+          </alder:AlderPagination.SummaryTemplate>
+        </alder:AlderPagination>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var pagination = new AlderPagination { ShowPageNumbers = false, PreviousText = "Prev" };
+        pagination.Bind(AlderPagination.PageCountProperty, CompiledBinding.Create((PaginationViewModel model) => model.InvoicePageCount));
+        pagination.Bind(AlderPagination.CurrentPageProperty, CompiledBinding.Create((PaginationViewModel model) => model.InvoicePage));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="10">
+          <alder:AlderPagination PageCount="{CompiledBinding PageCount}" CurrentPage="{CompiledBinding CurrentPage}"
+                            Summary="{CompiledBinding Summary}" />
+          <WrapPanel ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Size="Small" Variant="Secondary" Command="{CompiledBinding FirstPage}"
+                          Content="{DynamicResource GalleryText.PaginationFirstPage}" />
+            <alder:AlderButton Size="Small" Variant="Secondary" Command="{CompiledBinding LastPage}"
+                          Content="{DynamicResource GalleryText.PaginationLastPage}" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var pagination = new AlderPagination();
+        pagination.Bind(AlderPagination.PageCountProperty, CompiledBinding.Create((PaginationViewModel model) => model.PageCount));
+        pagination.Bind(AlderPagination.CurrentPageProperty, CompiledBinding.Create((PaginationViewModel model) => model.CurrentPage));
+        pagination.Bind(AlderPagination.SummaryProperty, CompiledBinding.Create((PaginationViewModel model) => model.Summary));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SamplePaginationWithEllipsis" Title="{DynamicResource GalleryText.PaginationWithEllipsis}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderPagination PageCount="12" NavigationAlignment="Center" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var pagination = new AlderPagination
+        {
+            PageCount = 12,
+            NavigationAlignment = HorizontalAlignment.Center,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SamplePaginationSummaryStyle" Title="{DynamicResource GalleryText.PaginationSummaryStyle}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderPagination PageCount="{CompiledBinding PageCount}" CurrentPage="{CompiledBinding SummaryPage}"
+                          Summary="{CompiledBinding ResultSummary}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var pagination = new AlderPagination();
+        pagination.Bind(AlderPagination.PageCountProperty, CompiledBinding.Create((PaginationViewModel model) => model.PageCount));
+        pagination.Bind(AlderPagination.CurrentPageProperty, CompiledBinding.Create((PaginationViewModel model) => model.SummaryPage));
+        pagination.Bind(AlderPagination.SummaryProperty, CompiledBinding.Create((PaginationViewModel model) => model.ResultSummary));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SamplePaginationCustomIcons" Title="{DynamicResource GalleryText.PaginationCustomIcons}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderPagination PageCount="3" NavigationAlignment="Center"
+                          PreviousText="{DynamicResource GalleryText.PaginationBack}" NextText="{DynamicResource GalleryText.PaginationForward}"
+                          PreviousIcon="{StaticResource AlderIconArrowLeft}" NextIcon="{StaticResource AlderIconArrowRight}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var pagination = new AlderPagination
+        {
+            PageCount = 3,
+            NavigationAlignment = HorizontalAlignment.Center,
+            PreviousText = "Back",
+            NextText = "Forward",
+            PreviousIcon = (Geometry)this.FindResource("AlderIconArrowLeft")!,
+            NextIcon = (Geometry)this.FindResource("AlderIconArrowRight")!,
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustomStyle" Title="{DynamicResource GalleryText.CustomStyle}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel>
+          <StackPanel.Styles>
+            <Style Selector="alder|AlderPagination.buttonStrip /template/ alder|AlderButton#PART_Previous,
+                             alder|AlderPagination.buttonStrip /template/ alder|AlderButton#PART_Next">
+              <Setter Property="Width" Value="36" />
+              <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+            </Style>
+          </StackPanel.Styles>
+          <alder:AlderPagination Classes="buttonStrip" PageCount="3" CurrentPage="2" NavigationAlignment="Center"
+                            ShowNavigationLabels="False" ActivePageVariant="Primary" Padding="4" CornerRadius="12"
+                            Background="{DynamicResource AlderNeutral}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var pagination = new AlderPagination
+        {
+            PageCount = 3,
+            CurrentPage = 2,
+            NavigationAlignment = HorizontalAlignment.Center,
+            ShowNavigationLabels = false,
+            ActivePageVariant = ButtonVariant.Primary,
+            Padding = new Thickness(4),
+            CornerRadius = new CornerRadius(12),
+            Background = (IBrush)this.FindResource("AlderNeutral")!,
+        };
+        pagination.Classes.Add("buttonStrip");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

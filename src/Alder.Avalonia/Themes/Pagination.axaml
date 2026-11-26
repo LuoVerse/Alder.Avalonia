@@ -1,0 +1,81 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:conv="using:Avalonia.Data.Converters">
+  <ControlTheme x:Key="AlderPaginationButtonTheme" TargetType="alder:AlderButton" BasedOn="{StaticResource {x:Type alder:AlderButton}}">
+    <Style Selector="^ /template/ Border#FocusRing"><Setter Property="Margin" Value="1" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderPagination}" TargetType="alder:AlderPagination">
+    <Setter Property="PreviousIcon" Value="{StaticResource AlderIconChevronLeft}" />
+    <Setter Property="NextIcon" Value="{StaticResource AlderIconChevronRight}" />
+    <Setter Property="PreviousText" Value="{DynamicResource AlderText.PreviousPage}" />
+    <Setter Property="NextText" Value="{DynamicResource AlderText.NextPage}" />
+    <Setter Property="PageNameFormat" Value="{DynamicResource AlderText.PageNumberFormat}" />
+    <Setter Property="CurrentPageNameFormat" Value="{DynamicResource AlderText.CurrentPageNumberFormat}" />
+    <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.Pagination}" />
+    <Setter Property="AutomationProperties.ControlTypeOverride" Value="Group" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <DockPanel LastChildFill="True">
+          <ContentPresenter Name="Summary" Content="{TemplateBinding Summary}" ContentTemplate="{TemplateBinding SummaryTemplate}"
+                            DockPanel.Dock="Top" Margin="0,0,0,16"
+                            Foreground="{DynamicResource AlderMuted}" VerticalAlignment="Center"
+                            IsVisible="{CompiledBinding Summary, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+          <Border Name="NavigationFrame" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}"
+                  HorizontalAlignment="{TemplateBinding NavigationAlignment}" VerticalAlignment="Center"
+                  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="{TemplateBinding CornerRadius}">
+            <WrapPanel Name="Navigation" ItemSpacing="4" LineSpacing="4">
+              <alder:AlderButton Name="PART_Previous" Theme="{StaticResource AlderPaginationButtonTheme}"
+                            Size="{TemplateBinding Size}" Variant="Ghost" MinHeight="0" Height="32"
+                            FontSize="{TemplateBinding FontSize}" Padding="10,0"
+                            AutomationProperties.Name="{TemplateBinding PreviousText}" alder:AlderToolTip.Tip="{TemplateBinding PreviousText}">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <alder:AlderPathIcon Data="{TemplateBinding PreviousIcon}" Width="{TemplateBinding NavigationIconSize}" Height="{TemplateBinding NavigationIconSize}" />
+                  <alder:AlderTextBlock Name="PreviousLabel" Text="{TemplateBinding PreviousText}" IsVisible="{TemplateBinding ShowNavigationLabels}" />
+                </StackPanel>
+              </alder:AlderButton>
+              <WrapPanel Name="PART_Pages" ItemSpacing="4" LineSpacing="4" IsVisible="{TemplateBinding ShowPageNumbers}" />
+              <alder:AlderButton Name="PART_Next" Theme="{StaticResource AlderPaginationButtonTheme}"
+                            Size="{TemplateBinding Size}" Variant="Ghost" MinHeight="0" Height="32"
+                            FontSize="{TemplateBinding FontSize}" Padding="10,0"
+                            AutomationProperties.Name="{TemplateBinding NextText}" alder:AlderToolTip.Tip="{TemplateBinding NextText}">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <alder:AlderTextBlock Name="NextLabel" Text="{TemplateBinding NextText}" IsVisible="{TemplateBinding ShowNavigationLabels}" />
+                  <alder:AlderPathIcon Data="{TemplateBinding NextIcon}" Width="{TemplateBinding NavigationIconSize}" Height="{TemplateBinding NavigationIconSize}" />
+                </StackPanel>
+              </alder:AlderButton>
+            </WrapPanel>
+          </Border>
+        </DockPanel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:wide-summary /template/ ContentPresenter#Summary">
+      <Setter Property="DockPanel.Dock" Value="Left" /><Setter Property="Margin" Value="0,0,16,0" />
+    </Style>
+    <Style Selector="^:wide-summary[NavigationAlignment=Left] /template/ Border#NavigationFrame"><Setter Property="HorizontalAlignment" Value="Right" /></Style>
+    <Style Selector="^[Size=Small]">
+      <Setter Property="FontSize" Value="12" />
+      <Style Selector="^ /template/ alder|AlderButton#PART_Previous, ^ /template/ alder|AlderButton#PART_Next">
+        <Setter Property="Height" Value="28" /><Setter Property="Padding" Value="8,0" />
+      </Style>
+    </Style>
+    <Style Selector="^[Size=Large]">
+      <Setter Property="FontSize" Value="16" />
+      <Style Selector="^ /template/ alder|AlderButton#PART_Previous, ^ /template/ alder|AlderButton#PART_Next">
+        <Setter Property="Height" Value="36" /><Setter Property="Padding" Value="12,0" />
+      </Style>
+    </Style>
+    <Style Selector="^[ShowNavigationLabels=False] /template/ alder|AlderButton#PART_Previous,
+                     ^[ShowNavigationLabels=False] /template/ alder|AlderButton#PART_Next,
+                     ^:compact-navigation /template/ alder|AlderButton#PART_Previous,
+                     ^:compact-navigation /template/ alder|AlderButton#PART_Next">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Width" Value="{Binding Height, RelativeSource={RelativeSource Self}}" />
+    </Style>
+    <Style Selector="^:compact-navigation /template/ TextBlock#PreviousLabel, ^:compact-navigation /template/ TextBlock#NextLabel">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

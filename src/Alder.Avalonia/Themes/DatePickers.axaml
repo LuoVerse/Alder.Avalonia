@@ -1,0 +1,69 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls">
+  <ControlTheme x:Key="AlderDateTriggerTheme" TargetType="Button" BasedOn="{StaticResource AlderCalendarNavigationTheme}">
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="CornerRadius" Value="8" />
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderDatePicker}" TargetType="alder:AlderDatePicker" BasedOn="{StaticResource AlderTemporalFieldTheme}">
+    <Setter Property="MinWidth" Value="184" />
+    <Setter Property="Indicator" Value="{StaticResource AlderIconCalendar}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="FieldSurface" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto" Margin="{TemplateBinding Padding}">
+              <ContentPresenter Name="Prefix" Content="{TemplateBinding Prefix}" VerticalContentAlignment="Center" />
+              <alder:AlderScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
+                <StackPanel Name="PART_Segments" Orientation="Horizontal" VerticalAlignment="Center" />
+              </alder:AlderScrollViewer>
+              <ContentPresenter Name="Suffix" Grid.Column="2" Content="{TemplateBinding Suffix}" VerticalContentAlignment="Center" />
+              <alder:AlderDateTriggerButton Name="PART_CalendarTrigger" Grid.Column="3" Margin="6,0,0,0" Theme="{StaticResource AlderDateTriggerTheme}"
+                      AutomationProperties.Name="{DynamicResource AlderText.OpenCalendar}">
+                <alder:AlderPathIcon Width="16" Height="16" Data="{TemplateBinding Indicator}" />
+              </alder:AlderDateTriggerButton>
+            </Grid>
+          </Border>
+          <alder:InputFocusRing Name="FieldRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[IsReadOnly=True] /template/ :is(Button)#PART_CalendarTrigger"><Setter Property="IsEnabled" Value="False" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderDateRangePicker}" TargetType="alder:AlderDateRangePicker" BasedOn="{StaticResource AlderTemporalInputTheme}">
+    <Setter Property="Indicator" Value="{StaticResource AlderIconCalendar}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="FieldSurface" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto" Margin="{TemplateBinding Padding}">
+              <ContentPresenter Grid.Column="0" Content="{TemplateBinding Prefix}" VerticalContentAlignment="Center" />
+              <alder:AlderScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                  <alder:AlderDateField Name="PART_Start" Classes="range-endpoint" Culture="{TemplateBinding Culture}"
+                                   IsReadOnly="{TemplateBinding IsReadOnly}" IsInvalid="{TemplateBinding IsInvalid}" Minimum="{TemplateBinding Minimum}"
+                                   Maximum="{TemplateBinding Maximum}" IsDateUnavailable="{TemplateBinding IsDateUnavailable}"
+                                   AutomationProperties.Name="{DynamicResource AlderText.StartDate}" />
+                  <alder:AlderTextBlock Text="–" Margin="6,0" VerticalAlignment="Center" Foreground="{DynamicResource AlderMuted}" />
+                  <alder:AlderDateField Name="PART_End" Classes="range-endpoint" Culture="{TemplateBinding Culture}"
+                                   IsReadOnly="{TemplateBinding IsReadOnly}" IsInvalid="{TemplateBinding IsInvalid}" Minimum="{TemplateBinding Minimum}"
+                                   Maximum="{TemplateBinding Maximum}" IsDateUnavailable="{TemplateBinding IsDateUnavailable}"
+                                   AutomationProperties.Name="{DynamicResource AlderText.EndDate}" />
+                </StackPanel>
+              </alder:AlderScrollViewer>
+              <ContentPresenter Grid.Column="2" Content="{TemplateBinding Suffix}" VerticalContentAlignment="Center" />
+              <alder:AlderDateTriggerButton Name="PART_CalendarTrigger" Grid.Column="3" Margin="6,0,0,0" Theme="{StaticResource AlderDateTriggerTheme}"
+                      AutomationProperties.Name="{DynamicResource AlderText.OpenRangeCalendar}">
+                <alder:AlderPathIcon Width="16" Height="16" Data="{TemplateBinding Indicator}" />
+              </alder:AlderDateTriggerButton>
+            </Grid>
+          </Border>
+          <alder:InputFocusRing Name="FieldRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[IsReadOnly=True] /template/ :is(Button)#PART_CalendarTrigger"><Setter Property="IsEnabled" Value="False" /></Style>
+  </ControlTheme>
+</ResourceDictionary>

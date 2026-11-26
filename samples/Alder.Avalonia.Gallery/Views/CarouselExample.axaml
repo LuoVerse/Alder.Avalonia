@@ -1,0 +1,96 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.CarouselExample" x:DataType="vm:CarouselViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="PhotoSlide" x:DataType="vm:CarouselPhoto">
+      <Border Background="#E5E1DB">
+        <alder:AlderImage Source="{Binding Image}" Stretch="Uniform" HorizontalAlignment="Center"
+               AutomationProperties.Name="{Binding Description}">
+          <alder:AlderImage.OpacityMask>
+            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+              <GradientStop Color="Transparent" Offset="0" />
+              <GradientStop Color="White" Offset="0.07" />
+              <GradientStop Color="White" Offset="0.93" />
+              <GradientStop Color="Transparent" Offset="1" />
+            </LinearGradientBrush>
+          </alder:AlderImage.OpacityMask>
+        </alder:AlderImage>
+      </Border>
+    </DataTemplate>
+    <DataTemplate x:Key="PhotoThumbnail" x:DataType="vm:CarouselPhoto">
+      <Border Background="#E5E1DB">
+        <alder:AlderImage Source="{Binding Image}" Stretch="UniformToFill" AutomationProperties.Name="{Binding Description}" />
+      </Border>
+    </DataTemplate>
+    <DataTemplate x:Key="NumberSlide" x:DataType="vm:CarouselTile">
+      <Border Background="{DynamicResource AlderSurface}" BorderBrush="{DynamicResource AlderBorder}"
+              BorderThickness="1" CornerRadius="18" Margin="1,1,1,2" BoxShadow="0 1 2 0 #14000000">
+        <alder:AlderTextBlock Text="{Binding Number}" FontSize="28" FontWeight="SemiBold" Foreground="{DynamicResource AlderSoftInk}"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+      </Border>
+    </DataTemplate>
+  </UserControl.Resources>
+
+  <StackPanel x:Name="Examples" Spacing="20">
+    <gallery:ExampleCard x:Name="ProductExample" Title="{DynamicResource GalleryText.CarouselUsage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderCarousel MaxWidth="400" StageMaxWidth="384" ViewportAspectRatio="1" HorizontalAlignment="Center"
+                             Loop="True" SlideSpacing="0" ShowThumbnails="True"
+                             ItemsSource="{Binding Product}" ItemTemplate="{StaticResource PhotoSlide}"
+                             ThumbnailTemplate="{StaticResource PhotoThumbnail}" Culture="{DynamicResource GalleryCulture}"
+                             AutomationProperties.Name="{DynamicResource GalleryText.CarouselUsage}" />
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="ModalExample" Title="{DynamicResource GalleryText.CarouselModal}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderCarousel MaxWidth="452" StageMaxWidth="376" ViewportAspectRatio="1.3333333333333333" Layout="Modal"
+                             Loop="True" SlideSpacing="0" ShowDots="False" ShowThumbnails="True"
+                             ItemsSource="{Binding Product}" ItemTemplate="{StaticResource PhotoSlide}"
+                             ThumbnailTemplate="{StaticResource PhotoThumbnail}" Culture="{DynamicResource GalleryCulture}"
+                             AutomationProperties.Name="{DynamicResource GalleryText.CarouselModal}" />
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="MultipleExample" Title="{DynamicResource GalleryText.CarouselMultiple}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderCarousel MaxWidth="384" ViewportAspectRatio="3" SlidesPerView="3" SlideSpacing="8" ShowDots="False"
+                             Background="Transparent" BorderThickness="0" ItemsSource="{Binding MultipleSlides}"
+                             ItemTemplate="{StaticResource NumberSlide}" Culture="{DynamicResource GalleryCulture}"
+                             AutomationProperties.Name="{DynamicResource GalleryText.CarouselMultiple}" />
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="LoopExample" Title="{DynamicResource GalleryText.CarouselLoop}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderCarousel MaxWidth="320" ViewportAspectRatio="1" Loop="True" SlideSpacing="0" ShowDots="False"
+                             Background="Transparent" BorderThickness="0" ItemsSource="{Binding Slides}"
+                             ItemTemplate="{StaticResource NumberSlide}" Culture="{DynamicResource GalleryCulture}"
+                             AutomationProperties.Name="{DynamicResource GalleryText.CarouselLoop}" />
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="AutoPlayExample" Title="{DynamicResource GalleryText.CarouselAutoPlay}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderCarousel MaxWidth="320" ViewportAspectRatio="1" Loop="True" SlideSpacing="0" ShowNavigation="False"
+                             IsAutoPlayEnabled="True" AutoPlayInterval="0:0:4"
+                             Background="Transparent" BorderThickness="0" ItemsSource="{Binding Slides}"
+                             ItemTemplate="{StaticResource NumberSlide}" Culture="{DynamicResource GalleryCulture}"
+                             AutomationProperties.Name="{DynamicResource GalleryText.CarouselAutoPlay}" />
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="ApiExample" Title="{DynamicResource GalleryText.CarouselApi}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="320" Spacing="12">
+          <alder:AlderCarousel ViewportAspectRatio="1" SlideSpacing="0" ShowDots="False"
+                               ItemsSource="{Binding Slides}" ItemTemplate="{StaticResource NumberSlide}"
+                               Background="Transparent" BorderThickness="0" SelectedIndex="{Binding ApiIndex, Mode=TwoWay}"
+                               Culture="{DynamicResource GalleryCulture}" AutomationProperties.Name="{DynamicResource GalleryText.CarouselApi}" />
+          <alder:AlderTextBlock Text="{Binding ApiStatus}" Foreground="{DynamicResource AlderMuted}" HorizontalAlignment="Center" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,174 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             xmlns:conv="using:Avalonia.Data.Converters"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             x:Class="Alder.Avalonia.Gallery.Views.DrawerExample" x:DataType="vm:DrawerViewModel">
+  <Design.DataContext><vm:DrawerViewModel /></Design.DataContext>
+  <StackPanel Spacing="24">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton HorizontalAlignment="Center" Variant="Secondary" Command="{CompiledBinding OpenUsageCommand}"
+                           Content="{DynamicResource GalleryText.DrawerUsageTrigger}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var openDrawer = ReactiveCommand.CreateFromTask(async () =>
+        {
+            await Drawer.ShowAsync("This drawer slides in from the right.", new DrawerOptions
+            {
+                Title = "Drawer Title", Placement = DrawerPlacement.Right,
+                ShowHandle = false, ShowCloseButton = false,
+                Buttons = DialogButtons.OKCancel, PrimaryText = "Confirm"
+            });
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDrawer" Title="{DynamicResource GalleryText.DrawerPlacement}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="8" LineSpacing="8" HorizontalAlignment="Center">
+          <alder:AlderButton Command="{CompiledBinding OpenDrawerCommand}" CommandParameter="{x:Static DrawerPlacement.Bottom}" Variant="Secondary"
+                        Content="{DynamicResource GalleryText.DrawerBottom}" />
+          <alder:AlderButton Command="{CompiledBinding OpenDrawerCommand}" CommandParameter="{x:Static DrawerPlacement.Top}" Variant="Secondary"
+                        Content="{DynamicResource GalleryText.DrawerTop}" />
+          <alder:AlderButton Command="{CompiledBinding OpenDrawerCommand}" CommandParameter="{x:Static DrawerPlacement.Left}" Variant="Secondary"
+                        Content="{DynamicResource GalleryText.DrawerLeft}" />
+          <alder:AlderButton Command="{CompiledBinding OpenDrawerCommand}" CommandParameter="{x:Static DrawerPlacement.Right}" Variant="Secondary"
+                        Content="{DynamicResource GalleryText.DrawerRight}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.Feedback>
+        <alder:AlderTextBlock Text="{CompiledBinding Feedback}" TextWrapping="Wrap"
+                   AutomationProperties.LiveSetting="Polite" Foreground="{DynamicResource AlderMuted}"
+                   IsVisible="{CompiledBinding Feedback, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+      </gallery:ExampleCard.Feedback>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var result = await Drawer.ShowAsync("Changes apply to this workspace.", new DrawerOptions
+        {
+            Title = "Workspace settings",
+            Placement = DrawerPlacement.Right,
+            Backdrop = DialogBackdrop.Blur,
+            Buttons = DialogButtons.OKCancel,
+            PrimaryText = "Apply",
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlledDrawer" Title="{DynamicResource GalleryText.DrawerControlledTitle}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderItemsControl MaxWidth="448" ItemsSource="{CompiledBinding ControlledDrawers}" ClipToBounds="False">
+          <alder:AlderItemsControl.ItemsPanel>
+            <ItemsPanelTemplate><StackPanel Spacing="32" /></ItemsPanelTemplate>
+          </alder:AlderItemsControl.ItemsPanel>
+          <alder:AlderItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:ControlledDrawerViewModel">
+              <StackPanel Spacing="12">
+                <alder:AlderTextBlock Text="{CompiledBinding Heading}" FontSize="18" LineHeight="28" FontWeight="SemiBold"
+                                      AutomationProperties.HeadingLevel="3" TextWrapping="Wrap" />
+                <alder:AlderTextBlock Text="{CompiledBinding Hint}" FontSize="14" LineHeight="23" TextWrapping="Wrap"
+                                      Foreground="{DynamicResource AlderMuted}" />
+                <Border Padding="16" CornerRadius="16" Background="{DynamicResource AlderSurface}"
+                        BoxShadow="0 1 2 0 #0D000000" ClipToBounds="False">
+                  <StackPanel Spacing="12">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                      <alder:AlderTextBlock Text="{DynamicResource GalleryText.DrawerControlledStatus}" FontSize="12" LineHeight="16"
+                                            Foreground="{DynamicResource AlderMuted}" />
+                      <alder:AlderTextBlock Text="{CompiledBinding StateText}" FontSize="12" LineHeight="16" FontWeight="Medium"
+                                            FontFamily="{DynamicResource AlderTypographyMonoFont}" AutomationProperties.LiveSetting="Polite" />
+                    </StackPanel>
+                    <WrapPanel ItemSpacing="8" LineSpacing="8">
+                      <alder:AlderButton Size="Small" Variant="Secondary" Command="{CompiledBinding OpenCommand}"
+                                         Content="{DynamicResource GalleryText.DrawerUsageTrigger}" />
+                      <alder:AlderButton Size="Small" Variant="Tertiary" Command="{CompiledBinding ToggleCommand}"
+                                         Content="{DynamicResource GalleryText.DrawerControlledToggle}" />
+                    </WrapPanel>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+            </DataTemplate>
+          </alder:AlderItemsControl.ItemTemplate>
+        </alder:AlderItemsControl>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new DrawerViewModel();
+        var preview = new AlderItemsControl
+        {
+            MaxWidth = 448,
+            ItemsSource = model.ControlledDrawers,
+            ItemsPanel = new FuncTemplate<Panel?>(() => new StackPanel { Spacing = 32 }),
+            ItemTemplate = new FuncDataTemplate<ControlledDrawerViewModel>((drawer, _) =>
+            {
+                var state = new AlderTextBlock { DataContext = drawer, FontSize = 12, LineHeight = 16, FontWeight = FontWeight.Medium };
+                state[!AlderTextBlock.FontFamilyProperty] = new DynamicResourceExtension("AlderTypographyMonoFont");
+                state.Bind(AlderTextBlock.TextProperty,
+                    CompiledBinding.Create((ControlledDrawerViewModel vm) => vm.StateText));
+                AutomationProperties.SetLiveSetting(state, AutomationLiveSetting.Polite);
+                var status = new AlderTextBlock { Text = "Status:", FontSize = 12, LineHeight = 16 };
+                status[!AlderTextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+                var hint = new AlderTextBlock { Text = drawer?.Hint, FontSize = 14, LineHeight = 23, TextWrapping = TextWrapping.Wrap };
+                hint[!AlderTextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+                var surface = new Border
+                {
+                    Padding = new Thickness(16), CornerRadius = new CornerRadius(16),
+                    BoxShadow = BoxShadows.Parse("0 1 2 0 #0D000000"),
+                    Child = new StackPanel
+                    {
+                        Spacing = 12, Children =
+                        {
+                            new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4, Children = { status, state } },
+                            new WrapPanel
+                            {
+                                ItemSpacing = 8, LineSpacing = 8, Children =
+                                {
+                                    new AlderButton { Content = "Open Drawer", Size = AlderSize.Small, Variant = ButtonVariant.Secondary, Command = drawer?.OpenCommand },
+                                    new AlderButton { Content = "Toggle", Size = AlderSize.Small, Variant = ButtonVariant.Tertiary, Command = drawer?.ToggleCommand }
+                                }
+                            }
+                        }
+                    }
+                };
+                surface[!Border.BackgroundProperty] = new DynamicResourceExtension("AlderSurface");
+                return new StackPanel
+                {
+                    Spacing = 12, Children =
+                    {
+                        new AlderTextBlock { Text = drawer?.Heading, FontSize = 18, LineHeight = 28, FontWeight = FontWeight.SemiBold, TextWrapping = TextWrapping.Wrap },
+                        hint, surface
+                    }
+                };
+            })
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDrawerBackdrop" Title="{DynamicResource GalleryText.OverlayBackdrops}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogBackdrop.Opaque}" Content="{DynamicResource GalleryText.OverlayBackdropOpaque}" />
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogBackdrop.Blur}" Content="{DynamicResource GalleryText.OverlayBackdropBlur}" />
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogBackdrop.Transparent}" Content="{DynamicResource GalleryText.OverlayBackdropTransparent}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        await Drawer.ShowAsync(content, new DrawerOptions { Backdrop = DialogBackdrop.Blur });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDrawerContent" Title="{DynamicResource GalleryText.OverlayContentStyles}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="Locked" Content="{DynamicResource GalleryText.OverlayLocked}" />
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="Scrollable" Content="{DynamicResource GalleryText.OverlayScrollable}" />
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="Form" Content="{DynamicResource GalleryText.OverlayForm}" />
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="Navigation" Content="{DynamicResource GalleryText.OverlayNavigation}" />
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="CustomClose" Content="{DynamicResource GalleryText.OverlayCustomClose}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var editor = new ProjectEditorViewModel(ProjectName);
+        var result = await Drawer.ShowAsync<ProjectEditorView>(editor, new DrawerOptions
+        {
+            Title = "Edit project", Placement = DrawerPlacement.Right,
+            CanLightDismiss = false, CanEscapeDismiss = false,
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

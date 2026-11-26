@@ -1,0 +1,146 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.SpinnerExample" x:DataType="vm:FeedbackViewModel">
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleBasic" Title="{DynamicResource GalleryText.FeedbackBasic}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="14" MaxWidth="360">
+          <alder:AlderSpinner Color="{CompiledBinding PreviewColor}" Size="{CompiledBinding PreviewSpinnerSize}" HorizontalAlignment="Center" />
+          <WrapPanel ItemSpacing="8" LineSpacing="8" HorizontalAlignment="Center">
+            <alder:AlderSelect MinWidth="108" Variant="Secondary"
+                               AutomationProperties.Name="{DynamicResource GalleryText.FeedbackColors}"
+                               SelectedItem="{CompiledBinding PreviewColor, Mode=TwoWay}"
+                               ItemsSource="{CompiledBinding PreviewColors}" TextSelector="{CompiledBinding PreviewColorCaption}" />
+            <alder:AlderSelect MinWidth="108" Variant="Secondary"
+                               AutomationProperties.Name="{DynamicResource GalleryText.Sizes}"
+                               SelectedItem="{CompiledBinding PreviewSpinnerSize, Mode=TwoWay}"
+                               ItemsSource="{CompiledBinding PreviewSpinnerSizes}" TextSelector="{CompiledBinding PreviewSizeCaption}" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var indicator = new AlderSpinner();
+        indicator.Bind(AlderSpinner.ColorProperty, CompiledBinding.Create((FeedbackViewModel model) => model.PreviewColor));
+        indicator.Bind(AlderSpinner.SizeProperty, CompiledBinding.Create((FeedbackViewModel model) => model.PreviewSpinnerSize));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSizes" Title="{DynamicResource GalleryText.Sizes}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="16" LineSpacing="16" HorizontalAlignment="Center">
+          <StackPanel Spacing="8">
+            <Border Height="40">
+              <alder:AlderSpinner Color="Accent" Size="Small" AutomationProperties.Name="{DynamicResource GalleryText.Small}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <alder:AlderTextBlock HorizontalAlignment="Center" Text="{DynamicResource GalleryText.Small}" />
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <Border Height="40">
+              <alder:AlderSpinner Color="Accent" Size="Medium" AutomationProperties.Name="{DynamicResource GalleryText.Medium}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <alder:AlderTextBlock HorizontalAlignment="Center" Text="{DynamicResource GalleryText.Medium}" />
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <Border Height="40">
+              <alder:AlderSpinner Color="Accent" Size="Large" AutomationProperties.Name="{DynamicResource GalleryText.Large}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <alder:AlderTextBlock HorizontalAlignment="Center" Text="{DynamicResource GalleryText.Large}" />
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <Border Height="40">
+              <alder:AlderSpinner Color="Accent" Size="ExtraLarge" AutomationProperties.Name="{DynamicResource GalleryText.FeedbackExtraLarge}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <alder:AlderTextBlock HorizontalAlignment="Center" Text="{DynamicResource GalleryText.FeedbackExtraLarge}" />
+          </StackPanel>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var small = new AlderSpinner { Color = FeedbackColor.Accent, Size = SpinnerSize.Small };
+        var medium = new AlderSpinner { Color = FeedbackColor.Accent, Size = SpinnerSize.Medium };
+        var large = new AlderSpinner { Color = FeedbackColor.Accent, Size = SpinnerSize.Large };
+        var extraLarge = new AlderSpinner { Color = FeedbackColor.Accent, Size = SpinnerSize.ExtraLarge };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleColors" Title="{DynamicResource GalleryText.FeedbackColors}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="16" LineSpacing="16" HorizontalAlignment="Center">
+          <StackPanel Spacing="8">
+            <Border Height="24">
+              <alder:AlderSpinner Color="Default" AutomationProperties.Name="{DynamicResource GalleryText.FeedbackCurrent}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <alder:AlderTextBlock HorizontalAlignment="Center" Text="{DynamicResource GalleryText.FeedbackCurrent}" />
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <Border Height="24">
+              <alder:AlderSpinner Color="Accent" AutomationProperties.Name="{DynamicResource GalleryText.FeedbackAccent}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <alder:AlderTextBlock HorizontalAlignment="Center" Text="{DynamicResource GalleryText.FeedbackAccent}" />
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <Border Height="24">
+              <alder:AlderSpinner Color="Success" AutomationProperties.Name="{DynamicResource GalleryText.FeedbackSuccess}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <alder:AlderTextBlock HorizontalAlignment="Center" Text="{DynamicResource GalleryText.FeedbackSuccess}" />
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <Border Height="24">
+              <alder:AlderSpinner Color="Warning" AutomationProperties.Name="{DynamicResource GalleryText.FeedbackWarning}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <alder:AlderTextBlock HorizontalAlignment="Center" Text="{DynamicResource GalleryText.FeedbackWarning}" />
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <Border Height="24">
+              <alder:AlderSpinner Color="Danger" AutomationProperties.Name="{DynamicResource GalleryText.FeedbackDanger}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <alder:AlderTextBlock HorizontalAlignment="Center" Text="{DynamicResource GalleryText.FeedbackDanger}" />
+          </StackPanel>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var currentSpinner = new AlderSpinner { Color = FeedbackColor.Default };
+        var accentSpinner = new AlderSpinner { Color = FeedbackColor.Accent };
+        var successSpinner = new AlderSpinner { Color = FeedbackColor.Success };
+        var warningSpinner = new AlderSpinner { Color = FeedbackColor.Warning };
+        var dangerSpinner = new AlderSpinner { Color = FeedbackColor.Danger };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSpeed" Title="{DynamicResource GalleryText.FeedbackSpeed}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="12" LineSpacing="12" HorizontalAlignment="Center">
+          <StackPanel Width="80" Spacing="8">
+            <alder:AlderSpinner HorizontalAlignment="Center" Color="Accent" SpinDuration="0:0:1.5" />
+            <alder:AlderTextBlock HorizontalAlignment="Center" Text="{DynamicResource GalleryText.FeedbackSlow}" />
+          </StackPanel>
+          <StackPanel Width="80" Spacing="8">
+            <alder:AlderSpinner HorizontalAlignment="Center" Color="Accent" SpinDuration="0:0:0.75" />
+            <alder:AlderTextBlock HorizontalAlignment="Center" Text="{DynamicResource GalleryText.FeedbackDefault}" />
+          </StackPanel>
+          <StackPanel Width="80" Spacing="8">
+            <alder:AlderSpinner HorizontalAlignment="Center" Color="Accent" SpinDuration="0:0:0.4" />
+            <alder:AlderTextBlock HorizontalAlignment="Center" Text="{DynamicResource GalleryText.FeedbackFast}" />
+          </StackPanel>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var slow = new AlderSpinner { Color = FeedbackColor.Accent, SpinDuration = TimeSpan.FromSeconds(1.5) };
+        var normal = new AlderSpinner { Color = FeedbackColor.Accent };
+        var fast = new AlderSpinner { Color = FeedbackColor.Accent, SpinDuration = TimeSpan.FromSeconds(.4) };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustom" Title="{DynamicResource GalleryText.CustomStyles}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="16" LineSpacing="12" HorizontalAlignment="Center">
+          <alder:AlderSpinner Size="Small" Color="Accent" VerticalAlignment="Center" />
+          <alder:AlderSpinner VerticalAlignment="Center" Foreground="{DynamicResource AlderMuted}" />
+          <alder:AlderSpinner Size="Large" Color="Success" VerticalAlignment="Center" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var accent = new AlderSpinner { Size = SpinnerSize.Small, Color = FeedbackColor.Accent };
+        var muted = new AlderSpinner { Color = FeedbackColor.Default };
+        muted[!TemplatedControl.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        var success = new AlderSpinner { Size = SpinnerSize.Large, Color = FeedbackColor.Success };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

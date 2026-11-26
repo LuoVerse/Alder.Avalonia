@@ -1,0 +1,36 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.ChoiceExample" x:DataType="vm:ChoiceViewModel">
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleVisibility" Title="{DynamicResource GalleryText.Visibility}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderRadioGroup Orientation="Horizontal" SelectedKeys="{Binding Audience}">
+          <alder:AlderRadioButton alder:AlderChoiceGroup.Key="team" Classes="card" Content="{DynamicResource GalleryText.TeamMembers}" Theme="{StaticResource AlderRadioButtonTheme}" />
+          <alder:AlderRadioButton alder:AlderChoiceGroup.Key="public" Classes="card" Content="{DynamicResource GalleryText.Everyone}" Theme="{StaticResource AlderRadioButtonTheme}" />
+        </alder:AlderRadioGroup>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var radioGroup = new AlderRadioGroup { Orientation = Orientation.Horizontal };
+        radioGroup.Bind(AlderRadioGroup.SelectedKeysProperty, CompiledBinding.Create((ChoiceViewModel model) => model.Audience));
+
+        var radioButton1 = new AlderRadioButton
+        {
+            Content = "Team members",
+            Theme = (ControlTheme)this.FindResource("AlderRadioButtonTheme")!,
+        };
+        AlderChoiceGroup.SetKey(radioButton1, "team");
+        radioButton1.Classes.Add("card");
+        radioGroup.Children.Add(radioButton1);
+
+        var radioButton2 = new AlderRadioButton
+        {
+            Content = "Everyone",
+            Theme = (ControlTheme)this.FindResource("AlderRadioButtonTheme")!,
+        };
+        AlderChoiceGroup.SetKey(radioButton2, "public");
+        radioButton2.Classes.Add("card");
+        radioGroup.Children.Add(radioButton2);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

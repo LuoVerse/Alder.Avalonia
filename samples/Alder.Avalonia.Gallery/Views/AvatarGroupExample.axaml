@@ -1,0 +1,289 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.AvatarGroupExample" x:DataType="vm:AvatarViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleGroupUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="300" TextElement.FontFamily="fonts:Inter#Inter">
+          <alder:AlderAvatarGroup HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderAvatar Source="avares://Alder.Avalonia.Gallery/Assets/Card/blue.jpg" Fallback="JD" Alt="John Doe" />
+            <alder:AlderAvatar Source="avares://Alder.Avalonia.Gallery/Assets/Avatar/green.jpg" Fallback="KW" Alt="Kate Wilson" />
+            <alder:AlderAvatar Source="avares://Alder.Avalonia.Gallery/Assets/Avatar/purple.jpg" Fallback="EC" Alt="Emily Chen" />
+            <alder:AlderAvatar Source="avares://Alder.Avalonia.Gallery/Assets/Avatar/orange.jpg" Fallback="MB" Alt="Michael Brown" />
+          </alder:AlderAvatarGroup>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderAvatarGroup();
+        foreach (var person in viewModel.StackPeople)
+        {
+            group.Items.Add(new AlderAvatar
+            {
+                Source = person.Photo,
+                Fallback = person.Initials,
+                Alt = person.Name
+            });
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupMax" Title="{DynamicResource GalleryText.AvatarMax}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <alder:AlderAvatarGroup ItemsSource="{CompiledBinding People}" HorizontalAlignment="Center" VerticalAlignment="Center" Max="3">
+            <alder:AlderAvatarGroup.ItemTemplate>
+              <DataTemplate x:DataType="vm:AvatarExamplePerson">
+                <alder:AlderAvatar Source="{CompiledBinding Photo}" Fallback="{CompiledBinding Initials}" Alt="{CompiledBinding Name}" />
+              </DataTemplate>
+            </alder:AlderAvatarGroup.ItemTemplate>
+          </alder:AlderAvatarGroup>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderAvatarGroup();
+        group.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AvatarViewModel model) => model.People));
+        group.ItemTemplate = new FuncDataTemplate<AvatarExamplePerson>((person, _) => new AlderAvatar
+        {
+            Source = person.Photo,
+            Fallback = person.Initials,
+            Alt = person.Name
+        });
+        group.Max = 3;
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupCount" Title="{DynamicResource GalleryText.AvatarWithCount}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <alder:AlderAvatarGroup ItemsSource="{CompiledBinding People}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                             Size="Small" Max="3" CountContent="+9">
+            <alder:AlderAvatarGroup.ItemTemplate>
+              <DataTemplate x:DataType="vm:AvatarExamplePerson">
+                <alder:AlderAvatar Source="{CompiledBinding Photo}" Fallback="{CompiledBinding Initials}" Alt="{CompiledBinding Name}" />
+              </DataTemplate>
+            </alder:AlderAvatarGroup.ItemTemplate>
+          </alder:AlderAvatarGroup>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderAvatarGroup();
+        group.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AvatarViewModel model) => model.People));
+        group.ItemTemplate = new FuncDataTemplate<AvatarExamplePerson>((person, _) => new AlderAvatar
+        {
+            Source = person.Photo,
+            Fallback = person.Initials,
+            Alt = person.Name
+        });
+        group.Max = 3;
+        group.Size = AlderSize.Small;
+        int total = 12;
+        group.CountContent = $"+{total - group.Max}";
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupSizes" Title="{DynamicResource GalleryText.Sizes}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="220" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel Spacing="24" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel.Resources>
+              <DataTemplate x:Key="Portrait" x:DataType="vm:AvatarExamplePerson">
+                <alder:AlderAvatar Source="{CompiledBinding Photo}" Fallback="{CompiledBinding Initials}" Alt="{CompiledBinding Name}" />
+              </DataTemplate>
+            </StackPanel.Resources>
+            <StackPanel.Styles>
+              <Style Selector="TextBlock.size-label">
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="LineHeight" Value="20" />
+              </Style>
+            </StackPanel.Styles>
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Classes="size-label" Text="{DynamicResource GalleryText.Small}" />
+              <alder:AlderAvatarGroup ItemsSource="{CompiledBinding StackPeople}" ItemTemplate="{StaticResource Portrait}"
+                                 HorizontalAlignment="Center" Size="Small" />
+            </StackPanel>
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Classes="size-label" Text="{DynamicResource GalleryText.AvatarMediumDefault}" />
+              <alder:AlderAvatarGroup ItemsSource="{CompiledBinding StackPeople}" ItemTemplate="{StaticResource Portrait}"
+                                 HorizontalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Classes="size-label" Text="{DynamicResource GalleryText.Large}" />
+              <alder:AlderAvatarGroup ItemsSource="{CompiledBinding StackPeople}" ItemTemplate="{StaticResource Portrait}"
+                                 HorizontalAlignment="Center" Size="Large" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var portrait = new FuncDataTemplate<AvatarExamplePerson>((person, _) => new AlderAvatar
+        {
+            Source = person.Photo,
+            Fallback = person.Initials,
+            Alt = person.Name
+        });
+        AlderAvatarGroup CreateGroup(AlderSize size)
+        {
+            var group = new AlderAvatarGroup { Size = size, ItemTemplate = portrait };
+            group.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AvatarViewModel model) => model.StackPeople));
+            return group;
+        }
+
+        var small = CreateGroup(AlderSize.Small);
+        var medium = CreateGroup(AlderSize.Medium);
+        var large = CreateGroup(AlderSize.Large);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupGrid" Title="{DynamicResource GalleryText.Grid}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <alder:AlderAvatarGroup ItemsSource="{CompiledBinding People}" HorizontalAlignment="Center" VerticalAlignment="Center" IsGrid="True">
+            <alder:AlderAvatarGroup.ItemTemplate>
+              <DataTemplate x:DataType="vm:AvatarExamplePerson">
+                <alder:AlderAvatar Source="{CompiledBinding Photo}" Fallback="{CompiledBinding Initials}" Alt="{CompiledBinding Name}" />
+              </DataTemplate>
+            </alder:AlderAvatarGroup.ItemTemplate>
+          </alder:AlderAvatarGroup>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderAvatarGroup();
+        group.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AvatarViewModel model) => model.People));
+        group.ItemTemplate = new FuncDataTemplate<AvatarExamplePerson>((person, _) => new AlderAvatar
+        {
+            Source = person.Photo,
+            Fallback = person.Initials,
+            Alt = person.Name
+        });
+        group.IsGrid = true;
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupOverlap" Title="{DynamicResource GalleryText.AvatarOverlap}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="220" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel Spacing="24" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel.Resources>
+              <ResourceDictionary>
+                <DataTemplate x:Key="Portrait" x:DataType="vm:AvatarExamplePerson">
+                  <alder:AlderAvatar Source="{CompiledBinding Photo}" Fallback="{CompiledBinding Initials}" Alt="{CompiledBinding Name}" />
+                </DataTemplate>
+                <ResourceDictionary.ThemeDictionaries>
+                  <ResourceDictionary x:Key="Light">
+                    <DrawingBrush x:Key="OverlapBackdrop" TileMode="Tile" DestinationRect="0,0,24,24">
+                      <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                          <GeometryDrawing Brush="#FFF5F3" Geometry="M0 0H24V24H0Z" />
+                          <GeometryDrawing Brush="#FFE1DF" Geometry="M0 10L10 0H11.4L0 11.4Z M10 24L24 10V11.4L11.4 24Z" />
+                          <GeometryDrawing Brush="#FFC2C2" Geometry="M0 22L22 0H23.4L0 23.4Z M22 24L24 22V23.4L23.4 24Z" />
+                        </DrawingGroup>
+                      </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                  </ResourceDictionary>
+                  <ResourceDictionary x:Key="Dark">
+                    <DrawingBrush x:Key="OverlapBackdrop" TileMode="Tile" DestinationRect="0,0,24,24">
+                      <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                          <GeometryDrawing Brush="#231B1E" Geometry="M0 0H24V24H0Z" />
+                          <GeometryDrawing Brush="#311D20" Geometry="M0 10L10 0H11.4L0 11.4Z M10 24L24 10V11.4L11.4 24Z" />
+                          <GeometryDrawing Brush="#4A2225" Geometry="M0 22L22 0H23.4L0 23.4Z M22 24L24 22V23.4L23.4 24Z" />
+                        </DrawingGroup>
+                      </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                  </ResourceDictionary>
+                </ResourceDictionary.ThemeDictionaries>
+              </ResourceDictionary>
+            </StackPanel.Resources>
+            <StackPanel.Styles>
+              <Style Selector="TextBlock.overlap-label">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="LineHeight" Value="20" />
+                <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+              </Style>
+              <Style Selector="Border.overlap-backdrop">
+                <Setter Property="Background" Value="{DynamicResource OverlapBackdrop}" />
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="Padding" Value="24" />
+              </Style>
+            </StackPanel.Styles>
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Classes="overlap-label" Text="{DynamicResource GalleryText.AvatarClip}" />
+              <Border Classes="overlap-backdrop">
+                <alder:AlderAvatarGroup ItemsSource="{CompiledBinding OverlapPeople}" ItemTemplate="{StaticResource Portrait}"
+                                   Size="Large" Overlap="Clip" CountContent="+2" />
+              </Border>
+            </StackPanel>
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Classes="overlap-label" Text="{DynamicResource GalleryText.AvatarRing}" />
+              <Border Classes="overlap-backdrop">
+                <alder:AlderAvatarGroup ItemsSource="{CompiledBinding OverlapPeople}" ItemTemplate="{StaticResource Portrait}"
+                                   Size="Large" Overlap="Ring" CountContent="+2" />
+              </Border>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var portrait = new FuncDataTemplate<AvatarExamplePerson>((person, _) => new AlderAvatar
+        {
+            Source = person.Photo,
+            Fallback = person.Initials,
+            Alt = person.Name
+        });
+
+        AlderAvatarGroup CreateGroup(AvatarOverlap overlap)
+        {
+            var group = new AlderAvatarGroup
+            {
+                Size = AlderSize.Large,
+                Overlap = overlap,
+                ItemTemplate = portrait,
+                CountContent = "+2"
+            };
+            group.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((AvatarViewModel model) => model.OverlapPeople));
+            return group;
+        }
+
+        var clip = CreateGroup(AvatarOverlap.Clip);
+        var ring = CreateGroup(AvatarOverlap.Ring);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroupCustomStyles" Title="{DynamicResource GalleryText.CustomStyles}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <Border HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="24" Padding="4,4,12,4"
+                  BorderThickness="1" BorderBrush="{DynamicResource AlderBorder}"
+                  Background="{DynamicResource AlderSurface}" BoxShadow="0 1 3 0 #16000000">
+            <Grid ColumnDefinitions="Auto,Auto" ColumnSpacing="10">
+              <alder:AlderAvatarGroup Size="Small" OverlapAmount="11.2" CountContent="+3"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.AvatarAssignees}">
+                <alder:AlderAvatar Source="avares://Alder.Avalonia.Gallery/Assets/Card/blue.jpg" Fallback="JD" Alt="John Doe" />
+                <alder:AlderAvatar Source="avares://Alder.Avalonia.Gallery/Assets/Avatar/green.jpg" Fallback="KW" Alt="Kate Wilson" />
+                <alder:AlderAvatar Source="avares://Alder.Avalonia.Gallery/Assets/Avatar/purple.jpg" Fallback="EC" Alt="Emily Chen" />
+                <alder:AlderAvatar>
+                  <alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconAvatarPerson}" />
+                </alder:AlderAvatar>
+              </alder:AlderAvatarGroup>
+              <alder:AlderTextBlock Grid.Column="1" Text="{DynamicResource GalleryText.AvatarAssignees}" FontSize="14" FontWeight="Medium"
+                         Foreground="{DynamicResource AlderInk}" VerticalAlignment="Center" />
+            </Grid>
+          </Border>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderAvatarGroup { Size = AlderSize.Small, OverlapAmount = 11.2, CountContent = "+3" };
+        group[!AutomationProperties.NameProperty] = new DynamicResourceExtension("GalleryText.AvatarAssignees");
+        foreach (var person in viewModel.People.Take(3))
+        {
+            group.Items.Add(new AlderAvatar
+            {
+                Source = person.Photo,
+                Fallback = person.Initials,
+                Alt = person.Name
+            });
+        }
+
+        var icon = new AlderPathIcon { Width = 16, Height = 16 };
+        icon[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconAvatarPerson");
+        group.Items.Add(new AlderAvatar { Fallback = icon });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

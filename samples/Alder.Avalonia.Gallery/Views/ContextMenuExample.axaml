@@ -1,0 +1,290 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.ContextMenuExample" x:DataType="vm:ContextMenuViewModel">
+  <UserControl.Resources>
+    <ControlTheme x:Key="ContextMenuTargetTheme" TargetType="ContentControl">
+      <Setter Property="Focusable" Value="True" />
+      <Setter Property="FocusAdorner" Value="{x:Null}" />
+      <Setter Property="MinHeight" Value="192" />
+      <Setter Property="MaxWidth" Value="320" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Grid Name="TargetSurface" Background="Transparent">
+            <Rectangle Name="Outline" RadiusX="12" RadiusY="12" Stroke="{DynamicResource AlderBorder}"
+                       StrokeThickness="1" StrokeDashArray="4,4" IsHitTestVisible="False" />
+            <ContentPresenter Content="{TemplateBinding Content}" Margin="16" IsHitTestVisible="False"
+                              HorizontalAlignment="Center" VerticalAlignment="Center" TextBlock.TextWrapping="Wrap" />
+          </Grid>
+        </ControlTemplate>
+      </Setter>
+      <Style Selector="^:focus-visible /template/ Rectangle#Outline">
+        <Setter Property="Stroke" Value="{DynamicResource AlderAccent}" />
+      </Style>
+      <Style Selector="^.mouse-hold /template/ Grid#TargetSurface">
+        <Setter Property="InputElement.IsHoldWithMouseEnabled" Value="True" />
+      </Style>
+    </ControlTheme>
+  </UserControl.Resources>
+  <StackPanel Spacing="24">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderContentControl Theme="{StaticResource ContextMenuTargetTheme}" Content="{DynamicResource GalleryText.ContextMenuTrigger}"
+                        AutomationProperties.Name="{DynamicResource GalleryText.ContextMenuTrigger}">
+          <alder:AlderContentControl.ContextMenu>
+            <alder:AlderContextMenu>
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.PaginationBack}" InputGesture="{CompiledBinding BackGesture}"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.PaginationForward}" InputGesture="{CompiledBinding ForwardGesture}" IsEnabled="False"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuReload}" InputGesture="{CompiledBinding ReloadGesture}"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              <alder:AlderSeparator />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuViewSource}"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuInspect}"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+            </alder:AlderContextMenu>
+          </alder:AlderContentControl.ContextMenu>
+        </alder:AlderContentControl>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var menu = new AlderContextMenu
+        {
+            Items =
+            {
+                new AlderMenuItem { Header = back, InputGesture = backGesture, Command = navigateBack },
+                new AlderMenuItem { Header = forward, IsEnabled = false },
+                new AlderMenuItem { Header = reload, Command = reloadPage },
+                new AlderSeparator(),
+                new AlderMenuItem { Header = inspect, Command = inspectPage }
+            }
+        };
+        trigger.ContextMenu = menu;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderTextBlock HorizontalAlignment="Center" Foreground="{DynamicResource AlderMuted}"
+                     Text="{CompiledBinding MenuStatus}" />
+          <alder:AlderContentControl Theme="{StaticResource ContextMenuTargetTheme}" Content="{DynamicResource GalleryText.ContextMenuControlledTrigger}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ContextMenuControlledTrigger}" x:Name="ControlledTarget">
+            <alder:AlderContentControl.ContextMenu>
+              <alder:AlderContextMenu PlacementTarget="{CompiledBinding #ControlledTarget}" IsMenuOpen="{CompiledBinding MenuOpen, Mode=TwoWay}">
+                <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuAction1}"
+                          Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+                <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuAction2}"
+                          Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+                <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuAction3}"
+                          Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              </alder:AlderContextMenu>
+            </alder:AlderContentControl.ContextMenu>
+          </alder:AlderContentControl>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var menu = new AlderContextMenu
+        {
+            PlacementTarget = trigger,
+            Items = { new AlderMenuItem { Header = action, Command = runAction } }
+        };
+        trigger.ContextMenu = menu;
+        menu.Opened += (_, _) => UpdateStatus(menu.IsMenuOpen);
+        menu.Closed += (_, _) => UpdateStatus(menu.IsMenuOpen);
+        menu.IsMenuOpen = true;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderContentControl Theme="{StaticResource ContextMenuTargetTheme}" Content="{DynamicResource GalleryText.ContextMenuDisabledTrigger}"
+                        AutomationProperties.Name="{DynamicResource GalleryText.ContextMenuDisabledTrigger}">
+          <alder:AlderContentControl.ContextMenu>
+            <alder:AlderContextMenu IsEnabled="False">
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuAction1}" />
+            </alder:AlderContextMenu>
+          </alder:AlderContentControl.ContextMenu>
+        </alder:AlderContentControl>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        trigger.ContextMenu = new AlderContextMenu
+        {
+            IsEnabled = false,
+            Items = { new AlderMenuItem { Header = action } }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleLongPress" Title="{DynamicResource GalleryText.ContextMenuLongPress}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderContentControl Theme="{StaticResource ContextMenuTargetTheme}" Content="{DynamicResource GalleryText.ContextMenuHoldTrigger}"
+                        AutomationProperties.Name="{DynamicResource GalleryText.ContextMenuHoldTrigger}"
+                        Classes="mouse-hold">
+          <alder:AlderContentControl.ContextMenu>
+            <alder:AlderContextMenu>
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuSelect}"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.SelectAll}"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              <alder:AlderSeparator />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.Cut}"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.Copy}"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuPaste}"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+            </alder:AlderContextMenu>
+          </alder:AlderContentControl.ContextMenu>
+        </alder:AlderContentControl>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        InputElement.SetIsHoldingEnabled(trigger, true);
+        InputElement.SetIsHoldWithMouseEnabled(trigger, true);
+        trigger.ContextMenu = new AlderContextMenu
+        {
+            Items = { new AlderMenuItem { Header = selectAll, Command = selectAllCommand } }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSections" Title="{DynamicResource GalleryText.ContextMenuSections}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderContentControl Theme="{StaticResource ContextMenuTargetTheme}" Content="{DynamicResource GalleryText.ContextMenuTrigger}"
+                        AutomationProperties.Name="{DynamicResource GalleryText.ContextMenuTrigger}">
+          <alder:AlderContentControl.ContextMenu>
+            <alder:AlderContextMenu>
+              <alder:AlderContextMenuHeading Text="{DynamicResource GalleryText.ContextMenuEdit}" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.Cut}" InputGesture="{CompiledBinding CutGesture}"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconCut}" /></MenuItem.Icon>
+              </alder:AlderMenuItem>
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.Copy}" InputGesture="{CompiledBinding CopyGesture}"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconCopy}" /></MenuItem.Icon>
+              </alder:AlderMenuItem>
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuPaste}" InputGesture="{CompiledBinding PasteGesture}"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconPaperclip}" /></MenuItem.Icon>
+              </alder:AlderMenuItem>
+              <alder:AlderSeparator />
+              <alder:AlderContextMenuHeading Text="{DynamicResource GalleryText.ContextMenuManage}" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuRename}"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconPencil}" /></MenuItem.Icon>
+              </alder:AlderMenuItem>
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuCopyLink}"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconCopy}" /></MenuItem.Icon>
+              </alder:AlderMenuItem>
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.Delete}" Classes="danger"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}">
+                <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconTrash}" /></MenuItem.Icon>
+              </alder:AlderMenuItem>
+            </alder:AlderContextMenu>
+          </alder:AlderContentControl.ContextMenu>
+        </alder:AlderContentControl>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var remove = new AlderMenuItem { Header = delete, Command = deleteItem };
+        remove.Classes.Add("danger");
+        trigger.ContextMenu = new AlderContextMenu
+        {
+            Items =
+            {
+                new AlderContextMenuHeading { Text = edit },
+                new AlderMenuItem { Header = copy, Command = copyItem },
+                new AlderSeparator(),
+                new AlderContextMenuHeading { Text = manage },
+                remove
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSelection" Title="{DynamicResource GalleryText.ContextMenuSelection}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderContentControl Theme="{StaticResource ContextMenuTargetTheme}" Content="{DynamicResource GalleryText.ContextMenuChangeView}"
+                        AutomationProperties.Name="{DynamicResource GalleryText.ContextMenuChangeView}">
+          <alder:AlderContentControl.ContextMenu>
+            <alder:AlderContextMenu>
+              <alder:AlderContextMenuHeading Text="{DynamicResource GalleryText.ContextMenuView}" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuGrid}" ToggleType="Radio" GroupName="ViewMode" IsChecked="True"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuList}" ToggleType="Radio" GroupName="ViewMode"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuColumns}" ToggleType="Radio" GroupName="ViewMode"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+            </alder:AlderContextMenu>
+          </alder:AlderContentControl.ContextMenu>
+        </alder:AlderContentControl>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        trigger.ContextMenu = new AlderContextMenu
+        {
+            Items =
+            {
+                new AlderContextMenuHeading { Text = view },
+                new AlderMenuItem { Header = grid, ToggleType = MenuItemToggleType.Radio, GroupName = "ViewMode", IsChecked = true },
+                new AlderMenuItem { Header = list, ToggleType = MenuItemToggleType.Radio, GroupName = "ViewMode" }
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSubmenus" Title="{DynamicResource GalleryText.ContextMenuSubmenus}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderContentControl Theme="{StaticResource ContextMenuTargetTheme}" Content="{DynamicResource GalleryText.ContextMenuTrigger}"
+                        AutomationProperties.Name="{DynamicResource GalleryText.ContextMenuTrigger}">
+          <alder:AlderContentControl.ContextMenu>
+            <alder:AlderContextMenu>
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.PaginationBack}" InputGesture="{CompiledBinding BackGesture}"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.PaginationForward}" InputGesture="{CompiledBinding ForwardGesture}" IsEnabled="False"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuReload}" InputGesture="{CompiledBinding ReloadGesture}"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuMoreTools}">
+                <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuSavePage}" InputGesture="{CompiledBinding SaveGesture}"
+                          Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+                <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuCreateShortcut}"
+                          Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+                <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuNameWindow}"
+                          Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+                <alder:AlderSeparator />
+                <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuDeveloperTools}"
+                          Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              </alder:AlderMenuItem>
+              <alder:AlderSeparator />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuShowBookmarks}" InputGesture="{CompiledBinding BookmarksGesture}" ToggleType="CheckBox" IsChecked="True" StaysOpenOnClick="True"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuShowFullUrls}" ToggleType="CheckBox" StaysOpenOnClick="True"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              <alder:AlderSeparator />
+              <alder:AlderContextMenuHeading Text="{DynamicResource GalleryText.ContextMenuProfiles}" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuProfileAlex}" ToggleType="Radio" GroupName="Profile" IsChecked="True"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuProfileMorgan}" ToggleType="Radio" GroupName="Profile"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuProfileSam}" ToggleType="Radio" GroupName="Profile"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.ContextMenuProfileTaylor}" ToggleType="Radio" GroupName="Profile"
+                        Command="{CompiledBinding ShowMenuActionCommand}" CommandParameter="{CompiledBinding $self.Header}" />
+            </alder:AlderContextMenu>
+          </alder:AlderContentControl.ContextMenu>
+        </alder:AlderContentControl>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var tools = new AlderMenuItem
+        {
+            Header = moreTools,
+            Items = { new AlderMenuItem { Header = developerTools, Command = openDeveloperTools } }
+        };
+        var bookmarks = new AlderMenuItem
+        {
+            Header = showBookmarks, ToggleType = MenuItemToggleType.CheckBox,
+            IsChecked = true, StaysOpenOnClick = true
+        };
+        trigger.ContextMenu = new AlderContextMenu { Items = { tools, bookmarks } };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

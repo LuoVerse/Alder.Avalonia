@@ -1,0 +1,99 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" x:Class="Alder.Avalonia.Gallery.Views.ColorSwatchPickerExample"
+             x:DataType="vm:ColorsViewModel" FontFamily="fonts:Inter#Inter">
+  <Design.DataContext><vm:ColorsViewModel /></Design.DataContext>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderColorSwatchPicker ItemsSource="{Binding Presets}" SelectedItem="{Binding Preset, Mode=TwoWay}"
+                                 HorizontalAlignment="Center" AutomationProperties.Name="{DynamicResource GalleryText.ColorPresets}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var palette = new AlderColorSwatchPicker();
+        palette.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ColorsViewModel model) => model.Presets));
+        palette.Bind(SelectingItemsControl.SelectedItemProperty, CompiledBinding.Create((ColorsViewModel model) => model.Preset, mode: BindingMode.TwoWay));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleColorSwatchOptions" Title="{DynamicResource GalleryText.ColorSwatchOptions}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderColorSwatchPicker SelectedIndex="0" Size="Large" Shape="Square" Layout="Stack" AutomationProperties.Name="{DynamicResource GalleryText.ColorPresets}">
+          <alder:AlderColorSwatchPickerItem Color="#0485F7" ColorName="{DynamicResource GalleryText.ColorBlue}" />
+          <alder:AlderColorSwatchPickerItem Color="#14B8A6" ColorName="{DynamicResource GalleryText.ColorTeal}" />
+          <alder:AlderColorSwatchPickerItem Color="#F59E0B" IsEnabled="False" ColorName="{DynamicResource GalleryText.ColorAmber}" />
+          <alder:AlderColorSwatchPickerItem Color="Transparent" ColorName="{DynamicResource GalleryText.ColorTransparent}" />
+        </alder:AlderColorSwatchPicker>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var palette = new AlderColorSwatchPicker
+        {
+            Size = ColorSwatchSize.Large,
+            Shape = ColorSwatchShape.Square,
+            Layout = ColorSwatchPickerLayout.Stack,
+            Items =
+            {
+                new AlderColorSwatchPickerItem { Color = Color.Parse("#0485F7"), ColorName = "Blue" },
+                new AlderColorSwatchPickerItem { Color = Color.Parse("#F59E0B"), ColorName = "Amber", IsEnabled = false }
+            },
+            SelectedIndex = 0
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:ColorsViewModel /></Border.DataContext>
+          <alder:AlderColorSwatchPicker SelectedItem="{CompiledBinding Preset, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" ItemsSource="{CompiledBinding Presets}" IsEnabled="False" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new ColorsViewModel();
+        var control = new AlderColorSwatchPicker { DataContext = model, ItemsSource = model.Presets, IsEnabled = false };
+        control.Bind(AlderColorSwatchPicker.SelectedItemProperty, CompiledBinding.Create((ColorsViewModel vm) => vm.Preset, mode: BindingMode.TwoWay));
+        var preview = control;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleStack" Title="{DynamicResource GalleryText.ColorSwatchOptions}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:ColorsViewModel /></Border.DataContext>
+          <alder:AlderColorSwatchPicker SelectedItem="{CompiledBinding Preset, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" ItemsSource="{CompiledBinding Presets}" Layout="Stack" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new ColorsViewModel();
+        var control = new AlderColorSwatchPicker { DataContext = model, ItemsSource = model.Presets, Layout = ColorSwatchPickerLayout.Stack };
+        control.Bind(AlderColorSwatchPicker.SelectedItemProperty, CompiledBinding.Create((ColorsViewModel vm) => vm.Preset, mode: BindingMode.TwoWay));
+        var preview = control;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSizes" Title="{DynamicResource GalleryText.Sizes}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:ColorsViewModel /></Border.DataContext>
+          <alder:AlderColorSwatchPicker SelectedItem="{CompiledBinding Preset, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" ItemsSource="{CompiledBinding Presets}" Size="Large" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new ColorsViewModel();
+        var control = new AlderColorSwatchPicker { DataContext = model, ItemsSource = model.Presets, Size = ColorSwatchSize.Large };
+        control.Bind(AlderColorSwatchPicker.SelectedItemProperty, CompiledBinding.Create((ColorsViewModel vm) => vm.Preset, mode: BindingMode.TwoWay));
+        var preview = control;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:ColorsViewModel /></Border.DataContext>
+          <alder:AlderColorSwatchPicker SelectedItem="{CompiledBinding Preset, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" ItemsSource="{CompiledBinding Presets}" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new ColorsViewModel();
+        var control = new AlderColorSwatchPicker { DataContext = model, ItemsSource = model.Presets };
+        control.Bind(AlderColorSwatchPicker.SelectedItemProperty, CompiledBinding.Create((ColorsViewModel vm) => vm.Preset, mode: BindingMode.TwoWay));
+        var preview = control;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

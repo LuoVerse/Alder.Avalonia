@@ -1,0 +1,340 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:keys="using:Avalonia.Controls.Converters"
+                    xmlns:media="using:Avalonia.Media"
+                    xmlns:conv="using:Avalonia.Data.Converters">
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderSidebarGuide" Color="#1A18181B" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderSidebarGuide" Color="#1AFCFCFC" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+  <x:String x:Key="AlderText.SidebarToggle">Toggle sidebar</x:String>
+  <x:String x:Key="AlderText.SidebarSearchNavigation">Search navigation…</x:String>
+  <x:String x:Key="AlderText.SidebarSearchEmpty">No matching navigation items</x:String>
+  <x:Double x:Key="AlderSidebarRailRowSize">36</x:Double>
+  <keys:PlatformKeyGestureConverter x:Key="AlderSidebarKeyGestureConverter" />
+
+  <ControlTheme x:Key="AlderSidebarSearchButtonTheme" TargetType="alder:AlderButton"
+                BasedOn="{StaticResource {x:Type alder:AlderButton}}">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <alder:ButtonFeedback Name="Face" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
+                              BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+          <Grid>
+            <alder:ButtonTint Name="Tint" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" Margin="{TemplateBinding Padding}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalContentAlignment="Center" />
+            <Border Name="FocusRing" Margin="-3" CornerRadius="{TemplateBinding CornerRadius}" BorderThickness="2"
+                    BorderBrush="{DynamicResource AlderAccent}" IsVisible="False" IsHitTestVisible="False" />
+          </Grid>
+        </alder:ButtonFeedback>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderSidebarRailTheme" TargetType="Button">
+    <Setter Property="Width" Value="6" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Cursor" Value="SizeWestEast" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}">
+          <Border Name="Edge" Width="1" IsVisible="False" HorizontalAlignment="Center"
+                  Background="{DynamicResource AlderMuted}" IsHitTestVisible="False" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:focus-visible /template/ Border#Edge">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderSidebar}" TargetType="alder:AlderSidebar">
+    <Setter Property="Width" Value="240" />
+    <Setter Property="Background" Value="{DynamicResource AlderAppLayoutBackground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="SearchPlaceholder" Value="{DynamicResource AlderText.SidebarSearchNavigation}" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Top" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="Surface" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
+                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+          <Grid>
+            <Grid RowDefinitions="Auto,Auto,*,Auto">
+              <Border Name="PART_Header" Padding="16,16,16,8" MinHeight="64"
+                      IsVisible="{TemplateBinding Header, Converter={x:Static conv:ObjectConverters.IsNotNull}}">
+                <DockPanel Name="HeaderLayout" VerticalAlignment="Center">
+                  <ContentPresenter Name="PART_HeaderIcon" DockPanel.Dock="Left" Content="{TemplateBinding HeaderIcon}"
+                                    ContentTemplate="{TemplateBinding HeaderIconTemplate}" VerticalContentAlignment="Center"
+                                    IsVisible="{TemplateBinding HeaderIcon, Converter={x:Static conv:ObjectConverters.IsNotNull}}">
+                    <ContentPresenter.DataTemplates>
+                      <DataTemplate DataType="media:Geometry" x:DataType="media:Geometry">
+                        <alder:AlderPathIcon Width="20" Height="20" Data="{CompiledBinding}" />
+                      </DataTemplate>
+                    </ContentPresenter.DataTemplates>
+                  </ContentPresenter>
+                  <ContentPresenter Name="PART_HeaderPresenter" Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                    VerticalContentAlignment="Center"
+                                    IsVisible="{TemplateBinding Header, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+                </DockPanel>
+              </Border>
+              <alder:AlderButton Name="PART_Search" Grid.Row="1" Theme="{StaticResource AlderSidebarSearchButtonTheme}"
+                                 Size="Small" Variant="Outline" FontSize="13" Height="32" CornerRadius="10" Margin="12,0,12,8"
+                                 HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                 IsVisible="{TemplateBinding IsSearchEnabled}"
+                                 AutomationProperties.Name="{TemplateBinding SearchPlaceholder}"
+                                 alder:AlderToolTip.Tip="{TemplateBinding SearchPlaceholder}">
+                <DockPanel>
+                  <alder:AlderPathIcon Name="SearchIcon" DockPanel.Dock="Left" Data="{StaticResource AlderIconMagnifier}"
+                            Width="16" Height="16" Foreground="{DynamicResource AlderMuted}" />
+                  <alder:AlderTextBlock Name="SearchShortcut" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="8,0,0,0"
+                             FontSize="11" FontWeight="Normal" Foreground="{DynamicResource AlderMuted}"
+                             IsVisible="{TemplateBinding SearchGesture, Converter={x:Static conv:ObjectConverters.IsNotNull}}"
+                             Text="{TemplateBinding SearchGesture, Converter={StaticResource AlderSidebarKeyGestureConverter}}" />
+                  <alder:AlderTextBlock Name="SearchLabel" Text="{TemplateBinding SearchPlaceholder}" FontWeight="Normal" Margin="8,0,0,0"
+                             Foreground="{DynamicResource AlderMuted}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                </DockPanel>
+              </alder:AlderButton>
+              <alder:AlderScrollShadow Grid.Row="2" HideScrollBar="True" ShadowSize="24" Focusable="False"
+                                       Background="Transparent" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Padding="12,0" />
+              </alder:AlderScrollShadow>
+              <ContentPresenter Name="PART_Footer" Grid.Row="3" Content="{TemplateBinding Footer}" ContentTemplate="{TemplateBinding FooterTemplate}"
+                                Padding="12,8,12,16"
+                                IsVisible="{TemplateBinding Footer, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+            </Grid>
+            <Border Name="SidebarEdge" HorizontalAlignment="Right" Width="1" IsHitTestVisible="False"
+                    Background="{DynamicResource AlderAppLayoutSidebarEdge}" />
+            <alder:AlderButton Name="PART_Rail" Theme="{StaticResource AlderSidebarRailTheme}" HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch" ZIndex="1" IsVisible="False"
+                    AutomationProperties.Name="{DynamicResource AlderText.SidebarToggle}" />
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:end /template/ :is(Button)#PART_Rail, ^:end /template/ Border#SidebarEdge">
+      <Setter Property="HorizontalAlignment" Value="Left" />
+    </Style>
+    <Style Selector="^[Variant=Inset] /template/ Border#SidebarEdge, ^[Variant=Floating] /template/ Border#SidebarEdge,
+                     ^:hosted /template/ Border#SidebarEdge">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^[Variant=Inset]">
+      <Setter Property="Background" Value="Transparent" /><Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style Selector="^[Variant=Floating]">
+      <Setter Property="Background" Value="{DynamicResource AlderSurface}" /><Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="16" /><Setter Property="Margin" Value="8" />
+      <Style Selector="^ /template/ Border#Surface"><Setter Property="BoxShadow" Value="{StaticResource AlderAppLayoutFloatingShadow}" /></Style>
+    </Style>
+    <Style Selector="^[(alder|AlderSidebar.CompactRows)=True] /template/ Border#PART_Header">
+      <Setter Property="Padding" Value="12,12,12,6" /><Setter Property="MinHeight" Value="52" />
+    </Style>
+    <Style Selector="^[(alder|AlderSidebar.CompactRows)=True] /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Padding" Value="10,0" />
+    </Style>
+    <Style Selector="^:has-header-icon /template/ Border#PART_Header">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^:has-header-icon /template/ ContentPresenter#PART_HeaderPresenter">
+      <Setter Property="Margin" Value="8,0,0,0" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="^:has-header-icon[(alder|AlderSidebar.Rail)=True] /template/ ContentPresenter#PART_HeaderPresenter">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^[(alder|AlderSidebar.Rail)=True]">
+      <Setter Property="Width" Value="48" />
+      <Style Selector="^ /template/ Border#PART_Header">
+        <Setter Property="Padding" Value="0,16,0,8" />
+      </Style>
+      <Style Selector="^ /template/ DockPanel#HeaderLayout">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+      </Style>
+      <Style Selector="^ /template/ ContentPresenter#PART_Footer">
+        <Setter Property="Padding" Value="0,8,0,16" /><Setter Property="HorizontalContentAlignment" Value="Center" />
+      </Style>
+      <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Padding" Value="0" /></Style>
+      <Style Selector="^ /template/ alder|AlderButton#PART_Search">
+        <Setter Property="Margin" Value="0,0,0,8" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="IsIconOnly" Value="True" />
+      </Style>
+      <Style Selector="^ /template/ TextBlock#SearchLabel, ^ /template/ TextBlock#SearchShortcut">
+        <Setter Property="IsVisible" Value="False" />
+      </Style>
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=False]:not(:hosted)">
+      <Setter Property="Transitions">
+        <Transitions><DoubleTransition Property="Width" Duration="0:0:0.2" Easing="0.25,0.1,0.25,1" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^:hosted">
+      <Setter Property="Width" Value="NaN" /><Setter Property="Margin" Value="0" />
+      <Setter Property="Background" Value="Transparent" /><Setter Property="BorderThickness" Value="0" />
+      <Setter Property="CornerRadius" Value="0" />
+      <Style Selector="^ /template/ Border#Surface"><Setter Property="BoxShadow" Value="none" /></Style>
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderSidebarGroup}" TargetType="alder:AlderSidebarGroup">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel Spacing="4">
+          <ContentPresenter Name="GroupLabel" Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}"
+                            Margin="8,6,8,0" Foreground="{DynamicResource AlderMuted}" FontSize="12"
+                            IsVisible="{TemplateBinding Header, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+          <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[(alder|AlderSidebar.Rail)=True] /template/ ContentPresenter#GroupLabel">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderSidebarRowButtonTheme" TargetType="Button">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Padding" Value="8,6" />
+    <Setter Property="MinHeight" Value="36" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                          Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
+                          Padding="{TemplateBinding Padding}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                          VerticalContentAlignment="Center" />
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderSidebarItem}" TargetType="alder:AlderSidebarItem">
+    <Setter Property="Focusable" Value="True" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Margin" Value="0,1" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="RailToolTip" Value="{Binding Header, RelativeSource={RelativeSource Self}}" />
+    <Setter Property="ItemsPanel"><ItemsPanelTemplate><alder:AlderNavigationPanel /></ItemsPanelTemplate></Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel>
+          <Border Name="RowSurface" Background="Transparent" CornerRadius="{TemplateBinding CornerRadius}">
+            <Grid ColumnDefinitions="*,Auto">
+              <alder:AlderButton Name="PART_Row" Theme="{StaticResource AlderSidebarRowButtonTheme}" CornerRadius="{TemplateBinding CornerRadius}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="SpringScale" ScaleTarget="{Binding #RowSurface}" />
+                </alder:AlderButton.Feedback>
+                <Grid Name="RowContent" ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
+                  <Panel Width="20" Height="20" VerticalAlignment="Center"
+                         IsVisible="{TemplateBinding Icon, Converter={x:Static conv:ObjectConverters.IsNotNull}}">
+                    <alder:AlderPathIcon Name="RowIcon" Width="16" Height="16" Data="{TemplateBinding Icon}" Foreground="{DynamicResource AlderMuted}"
+                              HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Panel>
+                  <ContentPresenter Name="Label" Grid.Column="1" Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                    VerticalAlignment="Center" TextBlock.TextTrimming="CharacterEllipsis" />
+                  <ContentPresenter Name="Badge" Grid.Column="2" Content="{TemplateBinding Badge}" ContentTemplate="{TemplateBinding BadgeTemplate}" VerticalAlignment="Center"
+                                    Foreground="{DynamicResource AlderMuted}" FontSize="11"
+                                    IsVisible="{TemplateBinding Badge, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+                  <alder:AlderPathIcon Name="Chevron" Grid.Column="3" Width="12" Height="12" Data="{StaticResource AlderIconChevronRight}" IsVisible="False"
+                            Foreground="{DynamicResource AlderMuted}" IsHitTestVisible="False" />
+                </Grid>
+              </alder:AlderButton>
+              <ContentPresenter Name="Actions" Grid.Column="1" Content="{TemplateBinding Actions}" VerticalAlignment="Center"
+                                Opacity="0" IsHitTestVisible="False" IsEnabled="False"
+                                IsVisible="{TemplateBinding Actions, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+              <Border Name="FocusRing" Grid.ColumnSpan="2" Margin="-4" IsVisible="False" IsHitTestVisible="False"
+                      BorderThickness="2" BorderBrush="{DynamicResource AlderAccent}" CornerRadius="{TemplateBinding CornerRadius}">
+                <Border BorderBrush="{DynamicResource AlderAppLayoutBackground}" BorderThickness="2"
+                        CornerRadius="{TemplateBinding CornerRadius}" />
+              </Border>
+            </Grid>
+          </Border>
+          <alder:AlderAccordionPanel Name="Submenu" ClipToBounds="True" IsEnabled="False" IsHitTestVisible="False">
+            <Grid Margin="0,1,0,0">
+              <Border Name="Guide" Width="1" Margin="8,0,0,2" HorizontalAlignment="Left" Background="{DynamicResource AlderSidebarGuide}" />
+              <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" Margin="16,0,0,0" />
+            </Grid>
+          </alder:AlderAccordionPanel>
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:selected /template/ Border#RowSurface">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+    <Style Selector="^ /template/ :is(Button)#PART_Row:pointerover"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
+    <Style Selector="^:selected"><Setter Property="FontWeight" Value="Medium" /></Style>
+    <Style Selector="^:selected /template/ PathIcon#RowIcon">
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ Border#FocusRing"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^:not(:empty) /template/ PathIcon#Chevron"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^[IsExpanded=True] /template/ PathIcon#Chevron"><Setter Property="RenderTransform" Value="rotate(90deg)" /></Style>
+    <Style Selector="^[IsExpanded=True][(alder|AlderSidebar.Rail)=False] /template/ alder|AlderAccordionPanel#Submenu">
+      <Setter Property="Progress" Value="1" /><Setter Property="IsEnabled" Value="True" /><Setter Property="IsHitTestVisible" Value="True" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=False] /template/ alder|AlderAccordionPanel#Submenu">
+      <Setter Property="Transitions">
+        <Transitions><DoubleTransition Property="Progress" Duration="0:0:0.2" Easing="0.25,0.1,0.25,1" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=False] /template/ PathIcon#Chevron">
+      <Setter Property="Transitions">
+        <Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^[(alder|AlderSidebarMenu.GuideLines)=Hidden] /template/ Border#Guide,
+                     ^[(alder|AlderSidebarMenu.GuideLines)=Hover]:not(:pointerover) /template/ Border#Guide">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^:pointerover /template/ ContentPresenter#Actions, ^:focus-within /template/ ContentPresenter#Actions,
+                     ^:selected /template/ ContentPresenter#Actions">
+      <Setter Property="Opacity" Value="1" /><Setter Property="IsEnabled" Value="True" /><Setter Property="IsHitTestVisible" Value="True" />
+    </Style>
+    <Style Selector="^[(alder|AlderSidebar.CompactRows)=True] /template/ :is(Button)#PART_Row">
+      <Setter Property="MinHeight" Value="30" /><Setter Property="Padding" Value="8,4" />
+    </Style>
+    <Style Selector="^[(alder|AlderSidebar.Rail)=True]">
+      <Style Selector="^ /template/ Border#RowSurface">
+        <Setter Property="Width" Value="{DynamicResource AlderSidebarRailRowSize}" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+      </Style>
+      <Style Selector="^ /template/ Grid#RowContent"><Setter Property="ColumnSpacing" Value="0" /></Style>
+      <Style Selector="^ /template/ PathIcon#Chevron, ^ /template/ ContentPresenter#Badge, ^ /template/ ContentPresenter#Actions">
+        <Setter Property="IsVisible" Value="False" />
+      </Style>
+      <Style Selector="^:has-icon /template/ ContentPresenter#Label"><Setter Property="IsVisible" Value="False" /></Style>
+      <Style Selector="^ /template/ :is(Button)#PART_Row">
+        <Setter Property="HorizontalContentAlignment" Value="Center" /><Setter Property="Padding" Value="0" />
+        <Setter Property="MinHeight" Value="{DynamicResource AlderSidebarRailRowSize}" />
+        <Setter Property="alder:AlderToolTip.Tip" Value="{TemplateBinding RailToolTip}" />
+      </Style>
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderSidebarMenu}" TargetType="alder:AlderSidebarMenu">
+    <Setter Property="ItemsPanel"><ItemsPanelTemplate><alder:AlderNavigationPanel /></ItemsPanelTemplate></Setter>
+    <Setter Property="ItemContainerTheme" Value="{StaticResource {x:Type alder:AlderSidebarItem}}" />
+    <Setter Property="KeyboardNavigation.TabNavigation" Value="Once" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+</ResourceDictionary>

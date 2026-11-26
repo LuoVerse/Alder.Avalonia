@@ -1,0 +1,228 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.SliderExample" x:DataType="vm:SliderViewModel">
+  <UserControl.Styles>
+    <Style Selector="TextBlock.sliderLabel">
+      <Setter Property="FontWeight" Value="Medium" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleVolume" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <Grid MaxWidth="320" RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="4">
+          <alder:AlderTextBlock Classes="sliderLabel" Text="{DynamicResource GalleryText.Volume}" />
+          <alder:AlderTextBlock Grid.Column="1" Classes="sliderLabel" Text="{CompiledBinding VolumeLabel}" />
+          <alder:AlderSlider Grid.Row="1" Grid.ColumnSpan="2" AutomationProperties.Name="{DynamicResource GalleryText.Volume}"
+                  Value="{CompiledBinding Volume, Mode=TwoWay}" Theme="{StaticResource AlderSliderTheme}"
+                  Minimum="0" Maximum="100" SmallChange="1" LargeChange="10" TickFrequency="1" IsSnapToTickEnabled="True" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var slider = new AlderSlider { Minimum = 0, Maximum = 100, TickFrequency = 1, IsSnapToTickEnabled = true };
+        slider.Theme = (ControlTheme)this.FindResource("AlderSliderTheme")!;
+        slider.Bind(Slider.ValueProperty, CompiledBinding.Create((SliderViewModel model) => model.Volume, mode: BindingMode.TwoWay));
+        slider[!AutomationProperties.NameProperty] = new DynamicResourceExtension("GalleryText.Volume");
+        var label = new AlderTextBlock { FontWeight = FontWeight.Medium };
+        label[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.Volume");
+        var value = new AlderTextBlock { FontWeight = FontWeight.Medium };
+        value.Bind(TextBlock.TextProperty, CompiledBinding.Create((SliderViewModel model) => model.VolumeLabel));
+        Grid.SetColumn(value, 1);
+        Grid.SetRow(slider, 1);
+        Grid.SetColumnSpan(slider, 2);
+        var preview = new Grid { MaxWidth = 320, RowDefinitions = new RowDefinitions("Auto,Auto"),
+            ColumnDefinitions = new ColumnDefinitions("*,Auto"), RowSpacing = 4, Children = { label, value, slider } };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSteps" Title="{DynamicResource GalleryText.SliderSteps}">
+      <gallery:ExampleCard.Preview>
+        <Grid MaxWidth="320" RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="4">
+          <alder:AlderTextBlock Classes="sliderLabel" Text="{DynamicResource GalleryText.Volume}" />
+          <alder:AlderTextBlock Grid.Column="1" Classes="sliderLabel" Text="{CompiledBinding SteppedLabel}" />
+          <alder:AlderSlider Grid.Row="1" Grid.ColumnSpan="2" AutomationProperties.Name="{DynamicResource GalleryText.Volume}"
+                  Value="{CompiledBinding Stepped, Mode=TwoWay}" Theme="{StaticResource AlderSliderTheme}"
+                  Minimum="0" Maximum="100" SmallChange="10" TickFrequency="10" TickPlacement="BottomRight" IsSnapToTickEnabled="True" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var slider = new AlderSlider
+        {
+            Theme = (ControlTheme)this.FindResource("AlderSliderTheme")!,
+            TickFrequency = 10, TickPlacement = TickPlacement.BottomRight, IsSnapToTickEnabled = true
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleMarks" Title="{DynamicResource GalleryText.SliderMarks}">
+      <gallery:ExampleCard.Preview>
+        <Grid MaxWidth="320" RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="4">
+          <alder:AlderTextBlock Classes="sliderLabel" Text="{DynamicResource GalleryText.Volume}" />
+          <alder:AlderTextBlock Grid.Column="1" Classes="sliderLabel" Text="{CompiledBinding VolumeLabel}" />
+          <alder:AlderSlider Grid.Row="1" Grid.ColumnSpan="2" AutomationProperties.Name="{DynamicResource GalleryText.Volume}"
+                  Value="{CompiledBinding Volume, Mode=TwoWay}" Theme="{StaticResource AlderSliderTheme}"
+                  Marks="{CompiledBinding VolumeMarks}" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        slider.Marks = new SliderMarkCollection
+        {
+            new() { Value = 0, Label = "Off" },
+            new() { Value = 20, Label = "Quiet" },
+            new() { Value = 65, Label = "Loud" },
+            new() { Value = 100, Label = "Max" }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleStepsAndMarks" Title="{DynamicResource GalleryText.StepsAndMarks}">
+      <gallery:ExampleCard.Preview>
+        <Grid MaxWidth="320" RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="4">
+          <alder:AlderTextBlock Classes="sliderLabel" Text="{DynamicResource GalleryText.Volume}" />
+          <alder:AlderTextBlock Grid.Column="1" Classes="sliderLabel" Text="{CompiledBinding FractionLabel}" />
+          <alder:AlderSlider Grid.Row="1" Grid.ColumnSpan="2" AutomationProperties.Name="{DynamicResource GalleryText.Volume}"
+                  Value="{CompiledBinding Fraction, Mode=TwoWay}" Theme="{StaticResource AlderSliderTheme}"
+                  Minimum="0" Maximum="1" SmallChange="0.1" LargeChange="0.2" TickFrequency="0.1" TickPlacement="BottomRight"
+                  IsSnapToTickEnabled="True" MarkCulture="{CompiledBinding MarkCulture}">
+            <alder:AlderSlider.Marks>
+              <alder:SliderMarkCollection>
+                <alder:SliderMark Value="0" />
+                <alder:SliderMark Value="0.5" />
+                <alder:SliderMark Value="1" />
+              </alder:SliderMarkCollection>
+            </alder:AlderSlider.Marks>
+          </alder:AlderSlider>
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        slider.Maximum = 1;
+        slider.TickFrequency = .1;
+        slider.TickPlacement = TickPlacement.BottomRight;
+        slider.IsSnapToTickEnabled = true;
+        slider.Marks = new SliderMarkCollection
+        {
+            new() { Value = 0 }, new() { Value = .5 }, new() { Value = 1 }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SamplePriceRange" Title="{DynamicResource GalleryText.PriceRange}">
+      <gallery:ExampleCard.Preview>
+        <Grid MaxWidth="320" RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="4">
+          <alder:AlderTextBlock Classes="sliderLabel" Text="{DynamicResource GalleryText.PriceRange}" />
+          <StackPanel Grid.Column="1" Orientation="Horizontal">
+            <alder:AlderTextBlock Classes="sliderLabel" Text="{CompiledBinding StartLabel}" />
+            <alder:AlderTextBlock Classes="sliderLabel" Text=" – " />
+            <alder:AlderTextBlock Classes="sliderLabel" Text="{CompiledBinding EndLabel}" />
+          </StackPanel>
+          <alder:AlderRangeSlider Grid.Row="1" Grid.ColumnSpan="2" AutomationProperties.Name="{DynamicResource GalleryText.PriceRange}"
+                             Minimum="0" Maximum="100" Step="5" LowerValue="{CompiledBinding Start, Mode=TwoWay}"
+                             UpperValue="{CompiledBinding End, Mode=TwoWay}" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var range = new AlderRangeSlider { Minimum = 0, Maximum = 100, Step = 5 };
+        range.Bind(AlderRangeSlider.LowerValueProperty, CompiledBinding.Create((SliderViewModel model) => model.Start, mode: BindingMode.TwoWay));
+        range.Bind(AlderRangeSlider.UpperValueProperty, CompiledBinding.Create((SliderViewModel model) => model.End, mode: BindingMode.TwoWay));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleRangeMarks" Title="{DynamicResource GalleryText.SliderRangeMarks}">
+      <gallery:ExampleCard.Preview>
+        <Grid MaxWidth="320" RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="4">
+          <alder:AlderTextBlock Classes="sliderLabel" Text="{DynamicResource GalleryText.PriceRange}" />
+          <StackPanel Grid.Column="1" Orientation="Horizontal">
+            <alder:AlderTextBlock Classes="sliderLabel" Text="{CompiledBinding StartLabel}" />
+            <alder:AlderTextBlock Classes="sliderLabel" Text=" – " />
+            <alder:AlderTextBlock Classes="sliderLabel" Text="{CompiledBinding EndLabel}" />
+          </StackPanel>
+          <alder:AlderRangeSlider Grid.Row="1" Grid.ColumnSpan="2" AutomationProperties.Name="{DynamicResource GalleryText.PriceRange}"
+                             Minimum="0" Maximum="100" Step="5" LowerValue="{CompiledBinding Start, Mode=TwoWay}"
+                             UpperValue="{CompiledBinding End, Mode=TwoWay}"
+                             ShowSteps="True" MarkCulture="{CompiledBinding MarkCulture}">
+            <alder:AlderRangeSlider.Marks>
+              <alder:SliderMarkCollection>
+                <alder:SliderMark Value="0" />
+                <alder:SliderMark Value="20" />
+                <alder:SliderMark Value="50" />
+                <alder:SliderMark Value="75" />
+                <alder:SliderMark Value="100" />
+              </alder:SliderMarkCollection>
+            </alder:AlderRangeSlider.Marks>
+          </alder:AlderRangeSlider>
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var range = new AlderRangeSlider { Step = 5, LowerValue = 20, UpperValue = 75, ShowSteps = true };
+        range.Marks = new SliderMarkCollection
+        {
+            new() { Value = 20 }, new() { Value = 50 }, new() { Value = 75 }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleBrightness" Title="{DynamicResource GalleryText.SliderVerticalMarks}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8" HorizontalAlignment="Center">
+          <alder:AlderTextBlock Classes="sliderLabel" HorizontalAlignment="Center" Text="{CompiledBinding VerticalLabel}" />
+          <alder:AlderSlider Width="64" Height="190" HorizontalAlignment="Center" Orientation="Vertical"
+                  AutomationProperties.Name="{DynamicResource GalleryText.Brightness}" Theme="{StaticResource AlderSliderTheme}"
+                  Minimum="0" Maximum="100" Value="{CompiledBinding Vertical, Mode=TwoWay}"
+                  SmallChange="10" TickFrequency="10" TickPlacement="BottomRight" IsSnapToTickEnabled="True"
+                  MarkCulture="{CompiledBinding MarkCulture}">
+            <alder:AlderSlider.Marks>
+              <alder:SliderMarkCollection>
+                <alder:SliderMark Value="0" />
+                <alder:SliderMark Value="50" />
+                <alder:SliderMark Value="100" />
+              </alder:SliderMarkCollection>
+            </alder:AlderSlider.Marks>
+          </alder:AlderSlider>
+          <alder:AlderTextBlock Classes="sliderLabel" HorizontalAlignment="Center" Text="{DynamicResource GalleryText.Brightness}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        slider.Orientation = Orientation.Vertical;
+        slider.Height = 190;
+        slider.TickFrequency = 10;
+        slider.TickPlacement = TickPlacement.BottomRight;
+        slider.Marks = new SliderMarkCollection { new() { Value = 50 } };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.SliderControlled}">
+      <gallery:ExampleCard.Preview>
+        <Grid MaxWidth="320" RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="4">
+          <alder:AlderTextBlock Classes="sliderLabel" Text="{DynamicResource GalleryText.SliderBudget}" />
+          <alder:AlderTextBlock Grid.Column="1" Classes="sliderLabel" Text="{CompiledBinding PriceLabel}" />
+          <alder:AlderSlider Grid.Row="1" Grid.ColumnSpan="2" AutomationProperties.Name="{DynamicResource GalleryText.SliderBudget}"
+                  Value="{CompiledBinding Volume, Mode=TwoWay}" Theme="{StaticResource AlderSliderTheme}"
+                  Minimum="0" Maximum="100" SmallChange="1" TickFrequency="1" IsSnapToTickEnabled="True"
+                  TrackBrush="{DynamicResource AlderSoft}"
+                  FillBrush="{DynamicResource AlderDialogSuccessInk}"
+                  KnobBrush="{DynamicResource AlderSurface}" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        slider.Bind(Slider.ValueProperty, CompiledBinding.Create((SliderViewModel model) => model.Volume, mode: BindingMode.TwoWay));
+        slider.TrackBrush = trackBrush;
+        slider.FillBrush = fillBrush;
+        // ViewModel
+        public string PriceLabel => Volume.ToString("C2", DisplayCulture);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <gallery:ExampleCard.Preview>
+        <Grid MaxWidth="320" RowDefinitions="Auto,Auto" RowSpacing="4" VerticalAlignment="Top">
+          <alder:AlderSlider Grid.Row="1" IsEnabled="False" Minimum="0" Maximum="100" Value="45"
+                  AutomationProperties.Name="{DynamicResource GalleryText.DisabledVolume}" Theme="{StaticResource AlderSliderTheme}" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var slider = new AlderSlider
+        {
+            IsEnabled = false,
+            Minimum = 0,
+            Maximum = 100,
+            Value = 45,
+            Theme = (ControlTheme)this.FindResource("AlderSliderTheme")!,
+        };
+        AutomationProperties.SetName(slider, "Disabled volume");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,69 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             xmlns:conv="using:Avalonia.Data.Converters"
+             x:Class="Alder.Avalonia.Gallery.Views.MapScenarioPanel" x:DataType="vm:MapScene">
+  <UserControl.Resources>
+    <DataTemplate x:Key="LegendRow" x:DataType="vm:MapSceneRow">
+      <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="6">
+        <Border Width="6" Height="6" CornerRadius="3" Background="{CompiledBinding Tint}" VerticalAlignment="Center" />
+        <alder:AlderTextBlock Grid.Column="1" Text="{CompiledBinding Title}" FontSize="11" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+        <alder:AlderTextBlock Grid.Column="2" Text="{CompiledBinding Value}" FontSize="11" FontWeight="Medium" VerticalAlignment="Center" />
+      </Grid>
+    </DataTemplate>
+  </UserControl.Resources>
+  <Border Background="{DynamicResource AlderSurface}" BoxShadow="{DynamicResource AlderToolbarShadow}"
+          Padding="13" CornerRadius="16" Width="208">
+    <StackPanel Spacing="9">
+      <StackPanel Spacing="2">
+        <alder:AlderTextBlock Text="{CompiledBinding Title}" FontSize="14" FontWeight="SemiBold" TextWrapping="Wrap" />
+        <alder:AlderTextBlock Text="{CompiledBinding Subtitle}" Foreground="{DynamicResource AlderMuted}" FontSize="12" TextWrapping="Wrap" />
+      </StackPanel>
+      <alder:AlderItemsControl ItemsSource="{CompiledBinding Metrics}" IsVisible="{CompiledBinding HasMetrics}">
+        <alder:AlderItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="3" /></ItemsPanelTemplate></alder:AlderItemsControl.ItemsPanel>
+        <alder:AlderItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:MapSceneMetric">
+            <StackPanel Spacing="2" Margin="0,0,4,0">
+              <alder:AlderTextBlock Text="{CompiledBinding Value}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+              <alder:AlderTextBlock Text="{CompiledBinding Label}" FontSize="11" Foreground="{DynamicResource AlderMuted}" TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+          </DataTemplate>
+        </alder:AlderItemsControl.ItemTemplate>
+      </alder:AlderItemsControl>
+      <alder:AlderItemsControl ItemsSource="{CompiledBinding Rows}" IsVisible="{CompiledBinding HasRows}">
+        <alder:AlderItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Spacing="2" /></ItemsPanelTemplate></alder:AlderItemsControl.ItemsPanel>
+        <alder:AlderItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:MapSceneRow">
+            <Grid>
+              <ContentPresenter Margin="4,3" Content="{CompiledBinding}" ContentTemplate="{StaticResource LegendRow}"
+                                IsVisible="{CompiledBinding Command, Converter={x:Static conv:ObjectConverters.IsNull}}" />
+              <alder:AlderButton HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                 Padding="5,3" MinHeight="24" Height="24" Size="Small" Variant="Ghost"
+                                 Command="{CompiledBinding Command}" Content="{CompiledBinding}" ContentTemplate="{StaticResource LegendRow}"
+                                 IsVisible="{CompiledBinding Command, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+            </Grid>
+          </DataTemplate>
+        </alder:AlderItemsControl.ItemTemplate>
+      </alder:AlderItemsControl>
+      <StackPanel Spacing="3" IsVisible="{CompiledBinding HasHeatLegend}">
+        <Border Height="5" CornerRadius="3">
+          <Border.Background>
+            <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+              <GradientStop Color="#599EF1" Offset="0" /><GradientStop Color="#FFCF71" Offset=".48" /><GradientStop Color="#E75542" Offset="1" />
+            </LinearGradientBrush>
+          </Border.Background>
+        </Border>
+        <Grid ColumnDefinitions="*,*">
+          <alder:AlderTextBlock FontSize="10" Foreground="{DynamicResource AlderMuted}" Text="{DynamicResource GalleryText.ProMapHeatLow}" />
+          <alder:AlderTextBlock Grid.Column="1" HorizontalAlignment="Right" FontSize="10" Foreground="{DynamicResource AlderMuted}"
+                     Text="{DynamicResource GalleryText.ProMapHeatHigh}" />
+        </Grid>
+      </StackPanel>
+      <Grid ColumnDefinitions="*,Auto" IsVisible="{CompiledBinding HasArrival}">
+        <alder:AlderTextBlock FontSize="11" Text="{DynamicResource GalleryText.ProMapArrivalLabel}" />
+        <alder:AlderTextBlock Grid.Column="1" FontSize="11" FontWeight="SemiBold" Text="{CompiledBinding Arrival}" />
+      </Grid>
+      <alder:AlderButton HorizontalAlignment="Stretch" IsVisible="{CompiledBinding CanAdvance}" Size="Small"
+                         Variant="Secondary" Content="{DynamicResource GalleryText.ProMapNext}" Command="{CompiledBinding Advance}" />
+    </StackPanel>
+  </Border>
+</UserControl>

@@ -1,0 +1,464 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="using:Alder.Avalonia.Gallery.Views" xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.AppLayoutExample" x:DataType="vm:AppLayoutViewModel"
+             FontFamily="fonts:Inter#Inter">
+  <Design.DataContext><vm:AppLayoutViewModel /></Design.DataContext>
+  <UserControl.Resources>
+    <ControlTheme x:Key="GalleryAppLayoutScenarioTheme" TargetType="alder:AlderAppLayout"
+                  BasedOn="{StaticResource {x:Type alder:AlderAppLayout}}">
+      <Setter Property="CornerRadius" Value="14" />
+      <Setter Property="Height" Value="560" />
+      <Setter Property="Width" Value="1080" />
+      <Setter Property="ShowOverlayCloseButtons" Value="False" />
+      <Setter Property="SidebarTemplate" Value="{StaticResource NavigationPreviewSidebar}" />
+      <Setter Property="NavbarTemplate" Value="{StaticResource NavigationPreviewNavbar}" />
+      <Setter Property="ContentTemplate" Value="{StaticResource NavigationPreviewTitleAndSummary}" />
+    </ControlTheme>
+
+    <DataTemplate x:Key="LayoutKpi" x:DataType="vm:LayoutMetric">
+      <Border Padding="16" MinHeight="112" CornerRadius="14" Background="{DynamicResource AlderSurface}"
+              BoxShadow="{DynamicResource AlderFieldShadow}">
+        <StackPanel Spacing="10">
+          <alder:AlderTextBlock Text="{Binding Label}" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="5">
+            <alder:AlderTextBlock Text="{Binding Value}" FontSize="23" FontWeight="SemiBold" VerticalAlignment="Center" />
+            <alder:AlderChip Grid.Column="1" Size="Small" Variant="Soft" Color="Success" Content="{Binding Change}" />
+          </Grid>
+        </StackPanel>
+      </Border>
+    </DataTemplate>
+    <DataTemplate x:Key="LayoutDashboardContent" x:DataType="vm:NavigationPreview">
+      <StackPanel Spacing="18">
+        <alder:AlderTextBlock Classes="routeHeading" Text="{Binding Title}" IsVisible="{Binding !IsInitialSelection}" />
+        <alder:AlderItemsControl ItemsSource="{x:Static vm:LayoutSamples.Metrics}" ItemTemplate="{StaticResource LayoutKpi}">
+          <alder:AlderItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="3" ColumnSpacing="12" /></ItemsPanelTemplate></alder:AlderItemsControl.ItemsPanel>
+        </alder:AlderItemsControl>
+        <Border Padding="18" CornerRadius="14" Background="{DynamicResource AlderSurface}" BoxShadow="{DynamicResource AlderFieldShadow}">
+          <StackPanel Spacing="12">
+            <Grid ColumnDefinitions="*,Auto">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavDemoLatestEpisodes}" FontWeight="SemiBold" VerticalAlignment="Center" />
+              <alder:AlderButton Grid.Column="1" Variant="Secondary" Size="Small" Content="{DynamicResource GalleryText.NavDemoViewAll}"
+                                 Click="OnEpisodes" />
+            </Grid>
+            <alder:AlderItemsControl ItemsSource="{x:Static vm:LayoutSamples.Episodes}">
+              <alder:AlderItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:LayoutEpisode">
+                  <Border BorderBrush="{DynamicResource AlderBorder}" BorderThickness="0,0,0,1" Padding="0,8">
+                    <Grid ColumnDefinitions="32,*,Auto,Auto" ColumnSpacing="10">
+                      <Border Width="30" Height="30" CornerRadius="8" Background="{DynamicResource AlderNeutral}">
+                        <alder:AlderPathIcon Data="{StaticResource AlderIconMicrophone}" Width="14" Height="14" />
+                      </Border>
+                      <StackPanel Grid.Column="1" Spacing="3">
+                        <alder:AlderTextBlock Text="{Binding Title}" FontWeight="Medium" TextTrimming="CharacterEllipsis" />
+                        <alder:AlderTextBlock Text="{Binding Guest}" Foreground="{DynamicResource AlderMuted}" FontSize="12" TextTrimming="CharacterEllipsis" />
+                      </StackPanel>
+                      <alder:AlderTextBlock Grid.Column="2" Text="{Binding Plays}" VerticalAlignment="Center" />
+                      <alder:AlderTextBlock Grid.Column="3" Text="{Binding Date}" Foreground="{DynamicResource AlderMuted}" FontSize="12" VerticalAlignment="Center" />
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </alder:AlderItemsControl.ItemTemplate>
+            </alder:AlderItemsControl>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="LayoutDocsContent" x:DataType="vm:NavigationPreview">
+      <StackPanel Spacing="14" HorizontalAlignment="Left" MaxWidth="680">
+        <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavDemoGettingStarted}" Foreground="{DynamicResource AlderMuted}" FontSize="12" />
+        <alder:AlderTextBlock Text="{Binding Title}" FontSize="26" FontWeight="Bold" TextWrapping="Wrap" />
+        <alder:AlderTextBlock Text="{Binding Summary}" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" LineHeight="23" />
+        <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavDemoFeatures}" FontSize="18" FontWeight="SemiBold" />
+        <alder:AlderItemsControl ItemsSource="{x:Static vm:LayoutSamples.Features}">
+          <alder:AlderItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:LayoutText">
+              <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,4">
+                <alder:AlderPathIcon Data="{StaticResource AlderIconStatusDot}" Width="6" Height="6" Foreground="{DynamicResource AlderMuted}" />
+                <alder:AlderTextBlock Text="{Binding Label}" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+              </StackPanel>
+            </DataTemplate>
+          </alder:AlderItemsControl.ItemTemplate>
+        </alder:AlderItemsControl>
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="LayoutBreadcrumbsNavbar" x:DataType="vm:NavigationPreview">
+      <Grid ColumnDefinitions="*,Auto">
+        <alder:AlderScrollViewer VerticalAlignment="Center" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
+          <alder:AlderBreadcrumbs>
+            <alder:AlderBreadcrumbs.ItemsPanel>
+              <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="6" /></ItemsPanelTemplate>
+            </alder:AlderBreadcrumbs.ItemsPanel>
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.NavDemoHome}" />
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.NavDemoProjects}" />
+            <alder:AlderBreadcrumbItem Content="{DynamicResource GalleryText.NavDemoDesignSystem}" />
+            <alder:AlderBreadcrumbItem Content="{Binding Title}" />
+          </alder:AlderBreadcrumbs>
+        </alder:AlderScrollViewer>
+        <views:NavigationPreviewAccount Grid.Column="1" VerticalAlignment="Center" />
+      </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="LayoutScrollContent" x:DataType="vm:NavigationPreview">
+      <StackPanel Spacing="20">
+        <alder:AlderTextBlock Classes="routeHeading" Text="{Binding Title}" IsVisible="{Binding !IsInitialSelection}" />
+        <Border Background="{DynamicResource AlderSurface}" BorderThickness="1" BorderBrush="{DynamicResource AlderBorder}" CornerRadius="12" Padding="12">
+          <StackPanel Spacing="6">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavDemoJumpTo}" FontSize="11" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderItemsControl ItemsSource="{x:Static vm:LayoutSamples.ScrollGroups}">
+              <alder:AlderItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel ItemSpacing="5" LineSpacing="5" /></ItemsPanelTemplate></alder:AlderItemsControl.ItemsPanel>
+              <alder:AlderItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:LayoutText">
+                  <alder:AlderButton Content="{Binding Label}" Variant="Secondary" Size="Small" Click="OnJumpToSection" />
+                </DataTemplate>
+              </alder:AlderItemsControl.ItemTemplate>
+            </alder:AlderItemsControl>
+          </StackPanel>
+        </Border>
+        <alder:AlderItemsControl ItemsSource="{x:Static vm:LayoutSamples.ScrollGroups}">
+          <alder:AlderItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Spacing="16" /></ItemsPanelTemplate></alder:AlderItemsControl.ItemsPanel>
+          <alder:AlderItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:LayoutText">
+              <StackPanel Classes="layout-scroll-section" Spacing="8">
+                <alder:AlderTextBlock Text="{Binding Label}" FontWeight="SemiBold" FontSize="20" />
+                <alder:AlderItemsControl ItemsSource="{Binding Rows}">
+                  <alder:AlderItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                      <Border Margin="0,3" Padding="14,12" BorderThickness="1" BorderBrush="{DynamicResource AlderBorder}" CornerRadius="12">
+                        <StackPanel Spacing="3">
+                          <alder:AlderTextBlock Text="{Binding}" FontWeight="Medium" />
+                          <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavDemoLayoutScrollSummary}" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                        </StackPanel>
+                      </Border>
+                    </DataTemplate>
+                  </alder:AlderItemsControl.ItemTemplate>
+                </alder:AlderItemsControl>
+              </StackPanel>
+            </DataTemplate>
+          </alder:AlderItemsControl.ItemTemplate>
+        </alder:AlderItemsControl>
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="LayoutScrollFooter" x:DataType="vm:NavigationPreview">
+      <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavDemoContentScrollFooter}" Margin="16,8" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+    </DataTemplate>
+    <DataTemplate x:Key="LayoutToolbarContent" x:DataType="vm:NavigationPreview">
+      <alder:AlderSegment Size="Small" Margin="16,6" SelectedKey="{Binding ToolbarKey, Mode=TwoWay}">
+        <alder:AlderSegmentItem Key="list" Content="{DynamicResource GalleryText.NavDemoList}" />
+        <alder:AlderSegmentItem Key="board" Content="{DynamicResource GalleryText.NavDemoBoard}" />
+        <alder:AlderSegmentItem Key="calendar" Content="{DynamicResource GalleryText.NavDemoCalendar}" />
+      </alder:AlderSegment>
+    </DataTemplate>
+    <DataTemplate x:Key="LayoutToolbarPage" x:DataType="vm:NavigationPreview">
+      <StackPanel Spacing="12">
+        <alder:AlderTextBlock Classes="routeHeading" Text="{Binding Title}" IsVisible="{Binding !IsInitialSelection}" />
+        <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavDemoToolbarFooter}" FontSize="22" FontWeight="SemiBold" />
+        <alder:AlderTextBlock Text="{Binding Summary}" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+        <alder:AlderItemsControl ItemsSource="{x:Static vm:LayoutSamples.ToolbarRows}">
+          <alder:AlderItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:LayoutText">
+              <Border Margin="0,3" Padding="14,12" BorderThickness="1" BorderBrush="{DynamicResource AlderBorder}" CornerRadius="10">
+                <StackPanel Spacing="3">
+                  <alder:AlderTextBlock Text="{Binding Label}" FontWeight="Medium" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavDemoScrollToKeepToolbar}" Foreground="{DynamicResource AlderMuted}" />
+                </StackPanel>
+              </Border>
+            </DataTemplate>
+          </alder:AlderItemsControl.ItemTemplate>
+        </alder:AlderItemsControl>
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="LayoutToolbarFooter" x:DataType="vm:NavigationPreview">
+      <Grid Margin="16,8" ColumnDefinitions="*,Auto">
+        <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavDemoStickyFooter}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+        <alder:AlderTextBlock Grid.Column="1" Text="v3.0" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+      </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="LayoutConversationContent" x:DataType="vm:NavigationPreview">
+      <StackPanel Spacing="14">
+        <alder:AlderTextBlock Classes="routeHeading" Text="{Binding Title}" IsVisible="{Binding !IsInitialSelection}" />
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <alder:AlderAvatar Variant="Soft" Size="Small" Fallback="DF" />
+          <StackPanel Spacing="3">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavDemoDanFox}" FontWeight="SemiBold" />
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavDemoConversationTime}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+          </StackPanel>
+        </StackPanel>
+        <alder:AlderItemsControl ItemsSource="{x:Static vm:LayoutSamples.Messages}">
+          <alder:AlderItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Spacing="14" /></ItemsPanelTemplate></alder:AlderItemsControl.ItemsPanel>
+          <alder:AlderItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:LayoutMessage">
+              <Border Classes.reply="{Binding IsReply}" Padding="13,10" CornerRadius="13" MaxWidth="420"
+                      Background="{DynamicResource AlderSurface}" HorizontalAlignment="Left">
+                <alder:AlderTextBlock Text="{Binding Body}" TextWrapping="Wrap" LineHeight="20" />
+              </Border>
+            </DataTemplate>
+          </alder:AlderItemsControl.ItemTemplate>
+        </alder:AlderItemsControl>
+        <alder:AlderChip IsVisible="{Binding ConversationClosed}" Size="Small" Color="Success" Content="{DynamicResource GalleryText.NavDemoCompleted}" HorizontalAlignment="Left" />
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="LayoutConversationAside" x:DataType="vm:NavigationPreview">
+      <StackPanel Margin="18" Spacing="12">
+        <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavDemoConversationDetails}" FontWeight="SemiBold" />
+        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="9">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavDemoAssignee}" Foreground="{DynamicResource AlderMuted}" />
+          <alder:AlderTextBlock Grid.Column="1" Text="{DynamicResource GalleryText.NavDemoJohnSteele}" />
+          <alder:AlderTextBlock Grid.Row="1" Text="{DynamicResource GalleryText.NavDemoTeam}" Foreground="{DynamicResource AlderMuted}" />
+          <alder:AlderTextBlock Grid.Row="1" Grid.Column="1" Text="{DynamicResource GalleryText.NavDemoDevelopers}" />
+          <alder:AlderTextBlock Grid.Row="2" Text="{DynamicResource GalleryText.NavDemoPriority}" Foreground="{DynamicResource AlderMuted}" />
+          <alder:AlderTextBlock Grid.Row="2" Grid.Column="1" Text="{DynamicResource GalleryText.NavDemoNormal}" />
+          <alder:AlderTextBlock Grid.Row="3" Text="{DynamicResource GalleryText.NavDemoStatus}" Foreground="{DynamicResource AlderMuted}" />
+          <alder:AlderChip Grid.Row="3" Grid.Column="1" IsVisible="{Binding !ConversationClosed}" Size="Small" Color="Success"
+                           Content="{DynamicResource GalleryText.NavDemoOpen}" HorizontalAlignment="Right" />
+          <alder:AlderChip Grid.Row="3" Grid.Column="1" IsVisible="{Binding ConversationClosed}" Size="Small"
+                           Content="{DynamicResource GalleryText.NavDemoCompleted}" HorizontalAlignment="Right" />
+          <alder:AlderTextBlock Grid.Row="4" Text="{DynamicResource GalleryText.NavDemoTags}" Foreground="{DynamicResource AlderMuted}" />
+          <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" Spacing="5">
+            <alder:AlderChip Size="Small" Content="{DynamicResource GalleryText.NavDemoBilling}" />
+            <alder:AlderChip Size="Small" Color="Accent" Content="{DynamicResource GalleryText.NavDemoPriority}" />
+          </StackPanel>
+        </Grid>
+        <alder:AlderDisclosure Header="{DynamicResource GalleryText.NavDemoUserDetails}" IsExpanded="True">
+          <StackPanel Margin="8" Spacing="5">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavDemoDanFox}" />
+            <alder:AlderTextBlock Text="dan.fox@example.com" Foreground="{DynamicResource AlderMuted}" />
+          </StackPanel>
+        </alder:AlderDisclosure>
+        <alder:AlderDisclosure Header="{DynamicResource GalleryText.NavDemoRecentConversations}">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavDemoConversationTime}" Margin="8" />
+        </alder:AlderDisclosure>
+        <alder:AlderButton Content="{DynamicResource GalleryText.NavDemoCloseConversation}" IsVisible="{Binding !ConversationClosed}"
+                           HorizontalAlignment="Stretch" Command="{Binding ToggleConversation}" />
+        <alder:AlderButton Content="{DynamicResource GalleryText.NavDemoReopenConversation}" IsVisible="{Binding ConversationClosed}"
+                           HorizontalAlignment="Stretch" Command="{Binding ToggleConversation}" />
+        <alder:AlderToggleButton Content="{DynamicResource GalleryText.NavDemoSnooze}" Variant="Ghost" HorizontalAlignment="Stretch"
+                                 IsChecked="{Binding ConversationSnoozed, Mode=TwoWay}" />
+        <alder:AlderButton Size="Small" Variant="Secondary" HorizontalAlignment="Right"
+                           Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetConversation}" />
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="LayoutResizablePanel" x:DataType="vm:NavigationPreview">
+      <StackPanel Margin="18" Spacing="12">
+        <alder:AlderTextBlock Text="{DynamicResource GalleryText.AppLayoutDetails}" FontWeight="SemiBold" />
+        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="8">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.NavDemoStatus}" Foreground="{DynamicResource AlderMuted}" />
+          <alder:AlderChip Grid.Column="1" Color="Success" Size="Small" Content="{DynamicResource GalleryText.NavDemoOpen}" />
+          <alder:AlderTextBlock Grid.Row="1" Text="{DynamicResource GalleryText.NavDemoPriority}" Foreground="{DynamicResource AlderMuted}" />
+          <alder:AlderTextBlock Grid.Row="1" Grid.Column="1" Text="{DynamicResource GalleryText.NavDemoNormal}" />
+        </Grid>
+      </StackPanel>
+    </DataTemplate>
+  </UserControl.Resources>
+  <UserControl.Styles>
+    <!-- These small preview menus keep offscreen items available to navigation search. -->
+    <Style Selector="views|NavigationPreviewSidebar alder|AlderSidebarMenu, views|NavigationPreviewSidebar alder|AlderSidebarItem">
+      <Setter Property="ItemsPanel">
+        <ItemsPanelTemplate><StackPanel /></ItemsPanelTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="TextBlock.routeHeading">
+      <Setter Property="FontSize" Value="22" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style Selector="Border.reply">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+      <Setter Property="HorizontalAlignment" Value="Right" />
+    </Style>
+  </UserControl.Styles>
+
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleBinding" Title="{DynamicResource GalleryText.NavigationBindingMvvm}">
+      <gallery:ExampleCard.Preview>
+        <views:AppLayoutBindingExample x:Name="BindingExample" />
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleInline" Title="{DynamicResource GalleryText.NavigationBindingInline}">
+      <gallery:ExampleCard.Preview>
+        <views:AppLayoutInlineExample x:Name="InlineExample" />
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleUsage" Title="{DynamicResource GalleryText.AppLayoutUsage}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="10" DataContext="{Binding Usage}">
+          <alder:AlderToggleButton x:DataType="vm:NavigationPreview" Content="{DynamicResource GalleryText.NavDemoMobileViewport}"
+                                   HorizontalAlignment="Right" Size="Small" Variant="Ghost"
+                                   IsChecked="{Binding IsNarrow, Mode=TwoWay}" />
+          <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left">
+            <alder:AlderAppLayout x:Name="Workspace" x:DataType="vm:NavigationPreview"
+                      Theme="{StaticResource GalleryAppLayoutScenarioTheme}"
+                      Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                      Width="{Binding PreviewWidth}" />
+          </Viewbox>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleInsetDashboard" Title="{DynamicResource GalleryText.AppLayoutInsetDashboardExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding InsetDashboard}">
+          <alder:AlderAppLayout x:Name="LayoutInsetDashboard" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GalleryAppLayoutScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                    SidebarVariant="Inset" SidebarCollapse="OffCanvas" ContentTemplate="{StaticResource LayoutDashboardContent}" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleDocs" Title="{DynamicResource GalleryText.AppLayoutDocsExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding Docs}">
+          <ThemeVariantScope x:DataType="vm:NavigationPreview" RequestedThemeVariant="{Binding Theme}">
+            <alder:AlderAppLayout x:Name="LayoutDocs" x:DataType="vm:NavigationPreview"
+                      Theme="{StaticResource GalleryAppLayoutScenarioTheme}"
+                      Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                      ContentTemplate="{StaticResource LayoutDocsContent}" />
+          </ThemeVariantScope>
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleCollapsible" Title="{DynamicResource GalleryText.AppLayoutCollapsibleExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding Collapsible}">
+          <alder:AlderAppLayout x:Name="LayoutCollapsible" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GalleryAppLayoutScenarioTheme}"
+                    SidebarCollapse="Icon"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleOffCanvas" Title="{DynamicResource GalleryText.AppLayoutOffCanvasExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding OffCanvas}">
+          <alder:AlderAppLayout x:Name="LayoutOffCanvas" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GalleryAppLayoutScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                    SidebarCollapse="OffCanvas" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleInset" Title="{DynamicResource GalleryText.AppLayoutInsetExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding Inset}">
+          <alder:AlderAppLayout x:Name="LayoutInset" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GalleryAppLayoutScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                    SidebarVariant="Inset" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleFloating" Title="{DynamicResource GalleryText.AppLayoutFloatingExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding Floating}">
+          <alder:AlderAppLayout x:Name="LayoutFloating" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GalleryAppLayoutScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                    SidebarVariant="Floating" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleScroll" Title="{DynamicResource GalleryText.AppLayoutScrollExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding Scroll}">
+          <alder:AlderAppLayout x:Name="LayoutScroll" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GalleryAppLayoutScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                    ScrollMode="Content" ContentTemplate="{StaticResource LayoutScrollContent}" Footer="{Binding}" FooterTemplate="{StaticResource LayoutScrollFooter}" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleAside" Title="{DynamicResource GalleryText.AppLayoutAsideExample}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="10" DataContext="{Binding Aside}">
+          <alder:AlderToggleButton x:DataType="vm:NavigationPreview" Content="{DynamicResource GalleryText.NavDemoMobileViewport}"
+                                   HorizontalAlignment="Right" Size="Small" Variant="Ghost"
+                                   IsChecked="{Binding IsNarrow, Mode=TwoWay}" />
+          <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left">
+            <alder:AlderAppLayout x:Name="LayoutAside" x:DataType="vm:NavigationPreview"
+                      Theme="{StaticResource GalleryAppLayoutScenarioTheme}"
+                      Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                      Width="{Binding PreviewWidth}"
+                      CompactAside="Overlay" AsideToggleGesture="{x:Static vm:LayoutSamples.AsideShortcut}" AsideWidth="312" Aside="{Binding}" AsideTemplate="{StaticResource LayoutConversationAside}"
+                                ContentTemplate="{StaticResource LayoutConversationContent}" />
+          </Viewbox>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleBreadcrumbs" Title="{DynamicResource GalleryText.AppLayoutBreadcrumbsExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding Breadcrumbs}">
+          <alder:AlderAppLayout x:Name="LayoutBreadcrumbs" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GalleryAppLayoutScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                    NavbarTemplate="{StaticResource LayoutBreadcrumbsNavbar}" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleToolbar" Title="{DynamicResource GalleryText.AppLayoutToolbarExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding Toolbar}">
+          <alder:AlderAppLayout x:Name="LayoutToolbar" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GalleryAppLayoutScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                    ScrollMode="Content" Toolbar="{Binding}" ToolbarTemplate="{StaticResource LayoutToolbarContent}"
+                                ContentTemplate="{StaticResource LayoutToolbarPage}" Footer="{Binding}" FooterTemplate="{StaticResource LayoutToolbarFooter}" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleComplex" Title="{DynamicResource GalleryText.AppLayoutComplexExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding Complex}">
+          <alder:AlderAppLayout x:Name="LayoutComplex" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GalleryAppLayoutScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                    SidebarCollapse="OffCanvas" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleResizableSidebar" Title="{DynamicResource GalleryText.AppLayoutResizableSidebarExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding ResizableSidebar}">
+          <alder:AlderAppLayout x:Name="LayoutResizableSidebar" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GalleryAppLayoutScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                    SidebarCollapse="OffCanvas" IsSidebarResizable="True" SidebarWidth="{Binding SidebarWidth, Mode=TwoWay}" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleResizableAside" Title="{DynamicResource GalleryText.AppLayoutResizableAside}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="10" DataContext="{Binding ResizableAside}">
+          <alder:AlderToggleButton x:DataType="vm:NavigationPreview" Content="{DynamicResource GalleryText.NavDemoMobileViewport}"
+                                   HorizontalAlignment="Right" Size="Small" Variant="Ghost"
+                                   IsChecked="{Binding IsNarrow, Mode=TwoWay}" />
+          <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left">
+            <alder:AlderAppLayout x:Name="ResizableAside" x:DataType="vm:NavigationPreview"
+                      Theme="{StaticResource GalleryAppLayoutScenarioTheme}"
+                      Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                      Width="{Binding PreviewWidth}"
+                      SidebarCollapse="OffCanvas" CompactAside="Overlay" AsideToggleGesture="{x:Static vm:LayoutSamples.AsideShortcut}" IsSidebarResizable="True" IsAsideResizable="True"
+                                SidebarWidth="{Binding SidebarWidth, Mode=TwoWay}" AsideWidth="{Binding AsideWidth, Mode=TwoWay}"
+                                Aside="{Binding}" AsideTemplate="{StaticResource LayoutResizablePanel}" />
+          </Viewbox>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,234 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:local="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.NotificationExample"
+             x:DataType="local:NotificationViewModel">
+  <UserControl.Resources>
+    <SolidColorBrush x:Key="SwitchPowerTrack" Color="#CC00C950" />
+    <SolidColorBrush x:Key="SwitchMicrophoneTrack" Color="#CCFB2C36" />
+    <SolidColorBrush x:Key="SwitchNotificationTrack" Color="#CCAD46FF" />
+    <SolidColorBrush x:Key="SwitchVolumeTrack" Color="#CC2B7FFF" />
+  </UserControl.Resources>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleMentions" Title="{DynamicResource GalleryText.Mentions}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="sampleSurface">
+          <StackPanel Spacing="18" Margin="24,16" MaxWidth="424" VerticalAlignment="Center">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="20">
+              <StackPanel Spacing="4" VerticalAlignment="Center">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.Mentions}" Classes="setting" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.NotifyMeWhenSomeoneMentionsMeInAComment}" Classes="detail" Foreground="{DynamicResource AlderMuted}" />
+              </StackPanel>
+              <alder:AlderSwitch Theme="{StaticResource AlderSwitchTheme}" Grid.Column="1" AutomationProperties.Name="{DynamicResource GalleryText.Mentions}"
+                            IsChecked="{CompiledBinding MentionsEnabled, Mode=TwoWay}" />
+            </Grid>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var toggleSwitch = new AlderSwitch { Theme = (ControlTheme)this.FindResource("AlderSwitchTheme")! };
+        AutomationProperties.SetName(toggleSwitch, "Mentions");
+        toggleSwitch.Bind(ToggleSwitch.IsCheckedProperty, CompiledBinding.Create((NotificationViewModel model) => model.MentionsEnabled, mode: BindingMode.TwoWay));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleWeeklyDigest" Title="{DynamicResource GalleryText.WeeklyDigest}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="sampleSurface">
+          <StackPanel Spacing="18" Margin="24,16" MaxWidth="424" VerticalAlignment="Center">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="20">
+              <StackPanel Spacing="4" VerticalAlignment="Center">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.WeeklyDigest}" Classes="setting" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.EmailMeASummaryOfActivityEachWeek}" Classes="detail" Foreground="{DynamicResource AlderMuted}" />
+              </StackPanel>
+              <alder:AlderSwitch Theme="{StaticResource AlderSwitchTheme}" Grid.Column="1" AutomationProperties.Name="{DynamicResource GalleryText.WeeklyDigest}"
+                            IsChecked="{CompiledBinding DigestEnabled, Mode=TwoWay}" />
+            </Grid>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var toggleSwitch = new AlderSwitch { Theme = (ControlTheme)this.FindResource("AlderSwitchTheme")! };
+        AutomationProperties.SetName(toggleSwitch, "Weekly digest");
+        toggleSwitch.Bind(ToggleSwitch.IsCheckedProperty, CompiledBinding.Create((NotificationViewModel model) => model.DigestEnabled, mode: BindingMode.TwoWay));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSwitchSizes" Title="{DynamicResource GalleryText.SwitchSizes}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="18" LineSpacing="10">
+          <alder:AlderSwitch Theme="{StaticResource AlderSwitchTheme}" Size="Small" Content="{DynamicResource GalleryText.Small}" />
+          <alder:AlderSwitch Theme="{StaticResource AlderSwitchTheme}" IsChecked="True" Content="{DynamicResource GalleryText.Medium}" />
+          <alder:AlderSwitch Theme="{StaticResource AlderSwitchTheme}" Size="Large" Content="{DynamicResource GalleryText.Large}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var toggle = new AlderSwitch { Content = "Small", Theme = switchTheme };
+        toggle.Size = AlderSize.Small;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSwitchIcons" Title="{DynamicResource GalleryText.SwitchIcons}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="12" LineSpacing="10">
+          <alder:AlderSwitch Theme="{StaticResource AlderSwitchTheme}" IsChecked="True" Size="Large"
+                        AutomationProperties.Name="{DynamicResource GalleryText.SwitchPower}"
+                        OffIcon="{StaticResource AlderIconPower}"
+                        OnIcon="{StaticResource AlderIconCheck}"
+                        CheckedTrackBrush="{StaticResource SwitchPowerTrack}"
+                        CheckedHoverBrush="{StaticResource SwitchPowerTrack}" />
+          <alder:AlderSwitch Theme="{StaticResource AlderSwitchTheme}" IsChecked="True" Size="Large"
+                        AutomationProperties.Name="{DynamicResource GalleryText.SwitchDisplayMode}"
+                        OffIcon="{StaticResource AlderIconMoon}"
+                        OnIcon="{StaticResource AlderIconSun}" />
+          <alder:AlderSwitch Theme="{StaticResource AlderSwitchTheme}" IsChecked="True" Size="Large"
+                        AutomationProperties.Name="{DynamicResource GalleryText.SwitchMicrophone}"
+                        OffIcon="{StaticResource AlderIconMicrophone}"
+                        OnIcon="{StaticResource AlderIconMicrophoneOff}"
+                        CheckedTrackBrush="{StaticResource SwitchMicrophoneTrack}"
+                        CheckedHoverBrush="{StaticResource SwitchMicrophoneTrack}" />
+          <alder:AlderSwitch Theme="{StaticResource AlderSwitchTheme}" IsChecked="True" Size="Large"
+                        AutomationProperties.Name="{DynamicResource GalleryText.SwitchEmailAlerts}"
+                        OffIcon="{StaticResource AlderIconBellOff}"
+                        OnIcon="{StaticResource AlderIconBell}"
+                        CheckedTrackBrush="{StaticResource SwitchNotificationTrack}"
+                        CheckedHoverBrush="{StaticResource SwitchNotificationTrack}" />
+          <alder:AlderSwitch Theme="{StaticResource AlderSwitchTheme}" IsChecked="True" Size="Large"
+                        AutomationProperties.Name="{DynamicResource GalleryText.Volume}"
+                        OffIcon="{StaticResource AlderIconVolume}"
+                        OnIcon="{StaticResource AlderIconVolumeOff}"
+                        CheckedTrackBrush="{StaticResource SwitchVolumeTrack}"
+                        CheckedHoverBrush="{StaticResource SwitchVolumeTrack}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        toggle.Size = AlderSize.Large;
+        toggle.OffIcon = (Geometry)this.FindResource("AlderIconPower")!;
+        toggle.OnIcon = (Geometry)this.FindResource("AlderIconCheck")!;
+        var track = new SolidColorBrush(Color.Parse("#CC00C950"));
+        toggle.CheckedTrackBrush = track;
+        toggle.CheckedHoverBrush = track;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSwitchDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="18" LineSpacing="10">
+          <alder:AlderSwitch Theme="{StaticResource AlderSwitchTheme}" IsEnabled="False"
+                        Content="{DynamicResource GalleryText.SwitchDisabledOff}" />
+          <alder:AlderSwitch Theme="{StaticResource AlderSwitchTheme}" IsEnabled="False" IsChecked="True"
+                        Content="{DynamicResource GalleryText.SwitchDisabledOn}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var toggle = new AlderSwitch { IsEnabled = false, IsChecked = true, Theme = switchTheme };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSwitchNoLabel" Title="{DynamicResource GalleryText.SwitchNoLabel}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="12" LineSpacing="8">
+          <alder:AlderSwitch Theme="{StaticResource AlderSwitchTheme}" AutomationProperties.Name="{DynamicResource GalleryText.SwitchEmailAlerts}" />
+          <alder:AlderSwitch Theme="{StaticResource AlderSwitchTheme}" IsChecked="True" AutomationProperties.Name="{DynamicResource GalleryText.SwitchActivity}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var toggle = new AlderSwitch { Theme = switchTheme, IsChecked = true };
+        AutomationProperties.SetName(toggle, "Activity updates");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSwitchLabelPlacement" Title="{DynamicResource GalleryText.SwitchLabelPlacement}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="14" HorizontalAlignment="Center">
+          <alder:AlderSwitch Theme="{StaticResource AlderSwitchTheme}" Content="{DynamicResource GalleryText.SwitchLabelAfter}" IsChecked="True"
+                        Description="{DynamicResource GalleryText.SwitchLabelHelp}" />
+          <alder:AlderSwitch Theme="{StaticResource AlderSwitchTheme}" Content="{DynamicResource GalleryText.SwitchLabelBefore}"
+                        LabelPlacement="Before" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        toggle.LabelPlacement = SwitchLabelPlacement.Before;
+        toggle.Description = "Turn this setting on or off.";
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSwitchStateLabel" Title="{DynamicResource GalleryText.SwitchControlled}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8" HorizontalAlignment="Center">
+          <alder:AlderSwitch Theme="{StaticResource AlderSwitchTheme}" ShowStateLabel="True"
+                        OnContent="{DynamicResource GalleryText.SwitchStateOn}" OffContent="{DynamicResource GalleryText.SwitchStateOff}"
+                        IsChecked="{CompiledBinding MentionsEnabled, Mode=TwoWay}"
+                        AutomationProperties.Name="{DynamicResource GalleryText.Mentions}" />
+          <alder:AlderCheckBox Content="{DynamicResource GalleryText.Mentions}" IsChecked="{CompiledBinding MentionsEnabled, Mode=TwoWay}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        toggle.OnContent = "On";
+        toggle.OffContent = "Off";
+        toggle.ShowStateLabel = true;
+        toggle.Bind(ToggleSwitch.IsCheckedProperty,
+            CompiledBinding.Create((NotificationViewModel model) => model.MentionsEnabled, mode: BindingMode.TwoWay));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSwitchGroup" Title="{DynamicResource GalleryText.SwitchGroupHeading}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderSwitchGroup x:Name="VerticalSwitchGroup" MaxWidth="300" HorizontalAlignment="Center"
+                           Header="{DynamicResource GalleryText.SwitchPreferences}"
+                           Description="{DynamicResource GalleryText.SwitchPreferencesHelp}">
+          <alder:AlderSwitch Content="{DynamicResource GalleryText.SwitchEmailAlerts}" IsChecked="{CompiledBinding EmailAlerts, Mode=TwoWay}" />
+          <alder:AlderSwitch Content="{DynamicResource GalleryText.SwitchActivity}" IsChecked="{CompiledBinding ActivityUpdates, Mode=TwoWay}" />
+        </alder:AlderSwitchGroup>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderSwitchGroup { Header = "Notification preferences", Orientation = Orientation.Vertical };
+        group.Items.Add(new AlderSwitch { Content = "Email alerts" });
+        group.Items.Add(new AlderSwitch { Content = "Activity updates" });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSwitchHorizontal" Title="{DynamicResource GalleryText.SwitchGroupHorizontal}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderSwitchGroup Orientation="Horizontal" HorizontalAlignment="Center"
+                           Header="{DynamicResource GalleryText.SwitchPreferences}">
+          <alder:AlderSwitch Content="{DynamicResource GalleryText.SwitchEmailAlerts}" IsChecked="{CompiledBinding EmailAlerts, Mode=TwoWay}" />
+          <alder:AlderSwitch Content="{DynamicResource GalleryText.SwitchActivity}" IsChecked="{CompiledBinding ActivityUpdates, Mode=TwoWay}" />
+          <alder:AlderSwitch Content="{DynamicResource GalleryText.WeeklyDigest}" IsChecked="{CompiledBinding WeeklyReport, Mode=TwoWay}" />
+        </alder:AlderSwitchGroup>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        group.Orientation = Orientation.Horizontal;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSwitchForm" Title="{DynamicResource GalleryText.SwitchForm}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel HorizontalAlignment="Center" Spacing="10">
+          <alder:AlderSwitchGroup Header="{DynamicResource GalleryText.SwitchPreferences}">
+            <alder:AlderSwitch Content="{DynamicResource GalleryText.SwitchEmailAlerts}" IsChecked="{CompiledBinding EmailAlerts, Mode=TwoWay}" />
+            <alder:AlderSwitch Content="{DynamicResource GalleryText.SwitchActivity}" IsChecked="{CompiledBinding ActivityUpdates, Mode=TwoWay}" />
+            <alder:AlderSwitch Content="{DynamicResource GalleryText.WeeklyDigest}" IsChecked="{CompiledBinding WeeklyReport, Mode=TwoWay}" />
+          </alder:AlderSwitchGroup>
+          <alder:AlderButton Command="{CompiledBinding Save}" Content="{DynamicResource GalleryText.DialogSave}" HorizontalAlignment="Left" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.Feedback>
+        <alder:AlderTextBlock Text="{CompiledBinding Feedback}" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}"
+                   AutomationProperties.LiveSetting="Polite" />
+      </gallery:ExampleCard.Feedback>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        Save = ReactiveCommand.Create(() =>
+        {
+            int enabled = (EmailAlerts ? 1 : 0) + (ActivityUpdates ? 1 : 0) + (WeeklyReport ? 1 : 0);
+            result = new GalleryMessage("SwitchSaved", enabled);
+            this.RaisePropertyChanged(nameof(Feedback));
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSwitchCustom" Title="{DynamicResource GalleryText.OverlayCustomization}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderSwitch Theme="{StaticResource AlderSwitchTheme}" HorizontalAlignment="Center" IsChecked="True"
+                      Content="{DynamicResource GalleryText.SwitchAutoSave}"
+                      Description="{DynamicResource GalleryText.SwitchAutoSaveHelp}"
+                      CheckedTrackBrush="{DynamicResource AlderDialogSuccessInk}"
+                      CheckedHoverBrush="{DynamicResource AlderDialogSuccessInk}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        toggle.CheckedTrackBrush = successBrush;
+        toggle.CheckedHoverBrush = successBrush;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

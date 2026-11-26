@@ -1,0 +1,247 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.RatingExample" x:DataType="vm:RatingViewModel">
+  <UserControl.Resources >
+    <DataTemplate x:Key="RatingTemplate" x:DataType="alder:RatingItemState">
+      <alder:AlderPathIcon Classes="rating-render" Classes.active="{CompiledBinding IsActive}" Width="20" Height="20" />
+    </DataTemplate>
+  </UserControl.Resources>
+  <UserControl.Styles >
+    <Style Selector="TextBlock.feedback-muted">
+      <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="LineHeight" Value="16" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style Selector="alder|AlderNumberValue.rating-value">
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="MinHeight" Value="20" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    </Style>
+    <Style Selector="TextBlock.rating-caption">
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="LineHeight" Value="20" />
+    </Style>
+    <Style Selector="alder|AlderNumberValue.rating-score">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="Width" Value="28" />
+      <Setter Property="MinHeight" Value="16" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+      <Style Selector="^ /template/ StackPanel"><Setter Property="HorizontalAlignment" Value="Right" /></Style>
+    </Style>
+    <Style Selector="PathIcon.rating-render">
+      <Setter Property="Data" Value="{DynamicResource AlderIconStarOutline}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Foreground" Duration="0:0:0.1" Easing="0,0,0.58,1" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="PathIcon.rating-render.active">
+      <Setter Property="Data" Value="{DynamicResource AlderRatingStar}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderRatingActive}" />
+    </Style>
+    <Style Selector="PathIcon.rating-render[(alder|AlderMotion.Reduced)=True]">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20" x:Name="Examples">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.RatingQuality}" FontSize="14" LineHeight="20" Width="152" VerticalAlignment="Center"/>
+              <StackPanel Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+                <alder:AlderRating Value="4.5" Size="Small" IsReadOnly="True"/>
+                <alder:AlderNumberValue Value="4.5" Culture="{CompiledBinding Culture}" Classes="rating-score" TabularNumbers="False"/>
+              </StackPanel>
+            </StackPanel>
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.RatingValueMoney}" FontSize="14" LineHeight="20" Width="152" VerticalAlignment="Center"/>
+              <StackPanel Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+                <alder:AlderRating Value="3.7" Size="Small" IsReadOnly="True"/>
+                <alder:AlderNumberValue Value="3.7" Culture="{CompiledBinding Culture}" Classes="rating-score" TabularNumbers="False"/>
+              </StackPanel>
+            </StackPanel>
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.RatingDesign}" FontSize="14" LineHeight="20" Width="152" VerticalAlignment="Center"/>
+              <StackPanel Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+                <alder:AlderRating Value="5" Size="Small" IsReadOnly="True"/>
+                <alder:AlderNumberValue Value="5" Culture="{CompiledBinding Culture}" Classes="rating-score" TabularNumbers="False"/>
+              </StackPanel>
+            </StackPanel>
+            <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.RatingDurability}" FontSize="14" LineHeight="20" Width="152" VerticalAlignment="Center"/>
+              <StackPanel Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+                <alder:AlderRating Value="2.3" Size="Small" IsReadOnly="True"/>
+                <alder:AlderNumberValue Value="2.3" Culture="{CompiledBinding Culture}" Classes="rating-score" TabularNumbers="False"/>
+              </StackPanel>
+            </StackPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleFractional" Title="{DynamicResource GalleryText.RatingFractional}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel Spacing="12" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderRating Value="1.5" Size="Medium" IsReadOnly="True"/>
+              <alder:AlderNumberValue Value="1.5" Culture="{CompiledBinding Culture}" Classes="rating-value" TabularNumbers="False"/>
+            </StackPanel>
+            <StackPanel Spacing="12" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderRating Value="2.3" Size="Medium" IsReadOnly="True"/>
+              <alder:AlderNumberValue Value="2.3" Culture="{CompiledBinding Culture}" Classes="rating-value" TabularNumbers="False"/>
+            </StackPanel>
+            <StackPanel Spacing="12" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderRating Value="3.7" Size="Medium" IsReadOnly="True"/>
+              <alder:AlderNumberValue Value="3.7" Culture="{CompiledBinding Culture}" Classes="rating-value" TabularNumbers="False"/>
+            </StackPanel>
+            <StackPanel Spacing="12" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderRating Value="4.2" Size="Medium" IsReadOnly="True"/>
+              <alder:AlderNumberValue Value="4.2" Culture="{CompiledBinding Culture}" Classes="rating-value" TabularNumbers="False"/>
+            </StackPanel>
+            <StackPanel Spacing="12" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderRating Value="4.8" Size="Medium" IsReadOnly="True"/>
+              <alder:AlderNumberValue Value="4.8" Culture="{CompiledBinding Culture}" Classes="rating-value" TabularNumbers="False"/>
+            </StackPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleBasic" Title="{DynamicResource GalleryText.RatingBasic}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <alder:AlderRating Value="3" HorizontalAlignment="Center"/>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleLabel" Title="{DynamicResource GalleryText.RatingWithLabel}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <alder:AlderRating Value="0" Label="{DynamicResource GalleryText.RatingQuestion}" HorizontalAlignment="Center"/>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSizes" Title="{DynamicResource GalleryText.RatingSizes}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <WrapPanel ItemSpacing="32" LineSpacing="24" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Center">
+              <alder:AlderTextBlock Text="sm" Classes="feedback-muted" HorizontalAlignment="Center"/>
+              <alder:AlderRating Value="3" Size="Small"/>
+            </StackPanel>
+            <StackPanel Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Center">
+              <alder:AlderTextBlock Text="md" Classes="feedback-muted" HorizontalAlignment="Center"/>
+              <alder:AlderRating Value="3" Size="Medium"/>
+            </StackPanel>
+            <StackPanel Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Center">
+              <alder:AlderTextBlock Text="lg" Classes="feedback-muted" HorizontalAlignment="Center"/>
+              <alder:AlderRating Value="3" Size="Large"/>
+            </StackPanel>
+          </WrapPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleColor" Title="{DynamicResource GalleryText.RatingCustomColor}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel Spacing="4" VerticalAlignment="Center" HorizontalAlignment="Left">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.RatingAccent}" Classes="feedback-muted"/>
+              <alder:AlderRating Value="4" ActiveBrush="{DynamicResource AlderAccent}"/>
+            </StackPanel>
+            <StackPanel Spacing="4" VerticalAlignment="Center" HorizontalAlignment="Left">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.RatingDanger}" Classes="feedback-muted"/>
+              <alder:AlderRating Value="4" ActiveBrush="{DynamicResource AlderDanger}"/>
+            </StackPanel>
+            <StackPanel Spacing="4" VerticalAlignment="Center" HorizontalAlignment="Left">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.RatingSuccess}" Classes="feedback-muted"/>
+              <alder:AlderRating Value="4" ActiveBrush="{DynamicResource AlderStatusSuccess}"/>
+            </StackPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleReadOnly" Title="{DynamicResource GalleryText.RatingReadOnly}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel Spacing="12" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderRating Value="1.5" Size="Medium" IsReadOnly="True"/>
+              <alder:AlderNumberValue Value="1.5" Culture="{CompiledBinding Culture}" Classes="rating-value" TabularNumbers="False"/>
+            </StackPanel>
+            <StackPanel Spacing="12" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderRating Value="2.3" Size="Medium" IsReadOnly="True"/>
+              <alder:AlderNumberValue Value="2.3" Culture="{CompiledBinding Culture}" Classes="rating-value" TabularNumbers="False"/>
+            </StackPanel>
+            <StackPanel Spacing="12" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderRating Value="3.7" Size="Medium" IsReadOnly="True"/>
+              <alder:AlderNumberValue Value="3.7" Culture="{CompiledBinding Culture}" Classes="rating-value" TabularNumbers="False"/>
+            </StackPanel>
+            <StackPanel Spacing="12" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderRating Value="4.2" Size="Medium" IsReadOnly="True"/>
+              <alder:AlderNumberValue Value="4.2" Culture="{CompiledBinding Culture}" Classes="rating-value" TabularNumbers="False"/>
+            </StackPanel>
+            <StackPanel Spacing="12" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Horizontal">
+              <alder:AlderRating Value="4.8" Size="Medium" IsReadOnly="True"/>
+              <alder:AlderNumberValue Value="4.8" Culture="{CompiledBinding Culture}" Classes="rating-value" TabularNumbers="False"/>
+            </StackPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.RatingDisabled}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <alder:AlderRating Value="3" IsEnabled="False" HorizontalAlignment="Center"/>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.RatingControlled}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="12" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <alder:AlderRating Value="{CompiledBinding Selected}" HorizontalAlignment="Center"/>
+            <alder:AlderTextBlock Text="{CompiledBinding SelectedCaption}" Classes="feedback-muted rating-caption" HorizontalAlignment="Center"/>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleHeart" Title="{DynamicResource GalleryText.RatingHeart}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <alder:AlderRating Value="3" Icon="{DynamicResource AlderIconHeartFill}" HorizontalAlignment="Center"/>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleItems" Title="{DynamicResource GalleryText.RatingItems}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <alder:AlderRating Value="3" ActiveBrush="{DynamicResource AlderDanger}" HorizontalAlignment="Center">
+            <alder:AlderRating.Items>
+              <alder:AlderRatingItem Value="1" Icon="{StaticResource AlderIconHeartFill}"/>
+              <alder:AlderRatingItem Value="2" Icon="{StaticResource AlderIconHeartFill}"/>
+              <alder:AlderRatingItem Value="3" Icon="{StaticResource AlderIconHeartFill}"/>
+              <alder:AlderRatingItem Value="4" Icon="{StaticResource AlderIconHeartFill}"/>
+              <alder:AlderRatingItem Value="5" Icon="{StaticResource AlderIconHeartFill}"/>
+            </alder:AlderRating.Items>
+          </alder:AlderRating>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleTemplate" Title="{DynamicResource GalleryText.RatingRender}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="12" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <alder:AlderRating Value="{CompiledBinding Custom}" ItemTemplate="{StaticResource RatingTemplate}" HorizontalAlignment="Center"/>
+            <alder:AlderTextBlock Text="{CompiledBinding CustomCaption}" Classes="feedback-muted rating-caption" HorizontalAlignment="Center"/>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

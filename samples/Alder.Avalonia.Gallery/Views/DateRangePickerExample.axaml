@@ -1,0 +1,218 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.DateRangePickerExample" x:DataType="vm:DateRangePickerViewModel" FontFamily="fonts:Inter#Inter">
+  <Design.DataContext>
+    <vm:DateRangePickerViewModel />
+  </Design.DataContext>
+  <UserControl.Styles><Style Selector=":is(Label)"><Setter Property="Theme" Value="{StaticResource AlderLabelTheme}" /></Style></UserControl.Styles>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:DateRangePickerViewModel /></Border.DataContext>
+          <StackPanel MaxWidth="320" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderLabel x:Name="UsageLabel" Content="{DynamicResource GalleryText.TravelDates}" Target="{CompiledBinding #UsageField}" />
+            <alder:AlderDateRangePicker x:Name="UsageField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
+                                  AutomationProperties.LabeledBy="{CompiledBinding #UsageLabel}"  />
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new DateRangePickerViewModel();
+        var field = new AlderDateRangePicker { DataContext = model, FullWidth = true };
+        field[!AlderDateRangePicker.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
+        var label = new AlderLabel { Target = field };
+        label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.TravelDates");
+        label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
+        AutomationProperties.SetLabeledBy(field, label);
+        var preview = new StackPanel { DataContext = model, MaxWidth = 320, Spacing = 4, Children = { label, field } };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:DateRangePickerViewModel /></Border.DataContext>
+          <StackPanel MaxWidth="320" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderLabel x:Name="ControlledLabel" Content="{DynamicResource GalleryText.TravelDates}" Target="{CompiledBinding #ControlledField}" />
+            <alder:AlderDateRangePicker x:Name="ControlledField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
+                                  AutomationProperties.LabeledBy="{CompiledBinding #ControlledLabel}"
+                                  Value="{CompiledBinding Dates, Mode=TwoWay}" />
+            <alder:AlderTextBlock Text="{CompiledBinding Summary}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new DateRangePickerViewModel();
+        var field = new AlderDateRangePicker { DataContext = model, FullWidth = true };
+        field[!AlderDateRangePicker.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
+        var label = new AlderLabel { Target = field };
+        label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.TravelDates");
+        label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
+        AutomationProperties.SetLabeledBy(field, label);
+        var preview = new StackPanel { DataContext = model, MaxWidth = 320, Spacing = 4, Children = { label, field } };
+        field.Bind(AlderDateRangePicker.ValueProperty, CompiledBinding.Create((DateRangePickerViewModel vm) => vm.Dates, mode: BindingMode.TwoWay));
+        var detail = new AlderTextBlock { FontSize = 12, TextWrapping = TextWrapping.Wrap };
+        detail.Bind(TextBlock.TextProperty, CompiledBinding.Create((DateRangePickerViewModel vm) => vm.Summary));
+        detail[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        preview.Children.Add(detail);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleInvalid" Title="{DynamicResource GalleryText.TemporalInvalid}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:DateRangePickerViewModel /></Border.DataContext>
+          <StackPanel MaxWidth="320" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderLabel x:Name="InvalidLabel" Content="{DynamicResource GalleryText.TravelDates}" Target="{CompiledBinding #InvalidField}" />
+            <alder:AlderDateRangePicker x:Name="InvalidField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
+                                  AutomationProperties.LabeledBy="{CompiledBinding #InvalidLabel}" IsInvalid="True" />
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.TemporalRangeError}" FontSize="12" Foreground="{DynamicResource AlderDangerInk}" TextWrapping="Wrap" />
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new DateRangePickerViewModel();
+        var field = new AlderDateRangePicker { DataContext = model, FullWidth = true, IsInvalid = true };
+        field[!AlderDateRangePicker.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
+        var label = new AlderLabel { Target = field };
+        label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.TravelDates");
+        label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
+        AutomationProperties.SetLabeledBy(field, label);
+        var preview = new StackPanel { DataContext = model, MaxWidth = 320, Spacing = 4, Children = { label, field } };
+        var detail = new AlderTextBlock { FontSize = 12, TextWrapping = TextWrapping.Wrap };
+        detail[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.TemporalRangeError");
+        detail[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderDangerInk");
+        preview.Children.Add(detail);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleIndicator" Title="{DynamicResource GalleryText.TemporalIndicator}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:DateRangePickerViewModel /></Border.DataContext>
+          <StackPanel MaxWidth="320" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderLabel x:Name="IndicatorLabel" Content="{DynamicResource GalleryText.TravelDates}" Target="{CompiledBinding #IndicatorField}" />
+            <alder:AlderDateRangePicker x:Name="IndicatorField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
+                                  AutomationProperties.LabeledBy="{CompiledBinding #IndicatorLabel}" Indicator="{DynamicResource AlderIconClock}" />
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new DateRangePickerViewModel();
+        var field = new AlderDateRangePicker { DataContext = model, FullWidth = true };
+        field[!AlderDateRangePicker.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
+        var label = new AlderLabel { Target = field };
+        label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.TravelDates");
+        label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
+        AutomationProperties.SetLabeledBy(field, label);
+        var preview = new StackPanel { DataContext = model, MaxWidth = 320, Spacing = 4, Children = { label, field } };
+        field[!AlderDateRangePicker.IndicatorProperty] = new DynamicResourceExtension("AlderIconClock");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:DateRangePickerViewModel /></Border.DataContext>
+          <StackPanel MaxWidth="320" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderLabel x:Name="DisabledLabel" Content="{DynamicResource GalleryText.TravelDates}" Target="{CompiledBinding #DisabledField}" />
+            <alder:AlderDateRangePicker x:Name="DisabledField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
+                                  AutomationProperties.LabeledBy="{CompiledBinding #DisabledLabel}" IsEnabled="False"
+                                  Value="{CompiledBinding Example, Mode=TwoWay}" />
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new DateRangePickerViewModel();
+        var field = new AlderDateRangePicker { DataContext = model, FullWidth = true, IsEnabled = false };
+        field[!AlderDateRangePicker.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
+        var label = new AlderLabel { Target = field };
+        label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.TravelDates");
+        label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
+        AutomationProperties.SetLabeledBy(field, label);
+        var preview = new StackPanel { DataContext = model, MaxWidth = 320, Spacing = 4, Children = { label, field } };
+        field.Bind(AlderDateRangePicker.ValueProperty, CompiledBinding.Create((DateRangePickerViewModel vm) => vm.Example, mode: BindingMode.TwoWay));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleTravelDates" Title="{DynamicResource GalleryText.TravelDates}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="432" HorizontalAlignment="Left">
+          <StackPanel Spacing="4">
+            <alder:AlderLabel x:Name="TravelLabel" Content="{DynamicResource GalleryText.TravelDates}" Target="{Binding #TravelDates}" />
+            <alder:AlderDateRangePicker x:Name="TravelDates" Culture="{DynamicResource GalleryCulture}" FullWidth="True" Value="{Binding Dates, Mode=TwoWay}"
+                                   IsRequired="True" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" VisibleMonths="2"
+                                   AutomationProperties.LabeledBy="{Binding #TravelLabel}" />
+            <alder:AlderTextBlock Text="{Binding Summary}" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderTextBlock IsVisible="{Binding #TravelDates.HasInvalidInput}" Text="{DynamicResource GalleryText.ChooseAnEndDateOnOrAfterTheStart}"
+                       Foreground="{DynamicResource AlderDangerInk}" TextWrapping="Wrap" />
+            <WrapPanel ItemSpacing="8" LineSpacing="8">
+              <alder:AlderButton Content="{DynamicResource GalleryText.ClearDates}" Command="{CompiledBinding Clear}" Variant="Ghost" Size="Small" HorizontalAlignment="Left" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding Reset}" Variant="Secondary" Size="Small" />
+            </WrapPanel>
+          </StackPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var dateRangePicker = new AlderDateRangePicker
+        {
+            Culture = CultureInfo.CurrentCulture,
+            FullWidth = true,
+            IsRequired = true,
+            VisibleMonths = 2,
+        };
+        dateRangePicker.Bind(AlderDateRangePicker.ValueProperty, CompiledBinding.Create((DateRangePickerViewModel model) => model.Dates, mode: BindingMode.TwoWay));
+        dateRangePicker.Bind(AlderDateRangePicker.MinimumProperty, CompiledBinding.Create((DateRangePickerViewModel model) => model.Minimum));
+        dateRangePicker.Bind(AlderDateRangePicker.MaximumProperty, CompiledBinding.Create((DateRangePickerViewModel model) => model.Maximum));
+
+        var model = (DateRangePickerViewModel)DataContext!;
+        var clear = new AlderButton { Content = "Clear dates", Size = AlderSize.Small, Variant = ButtonVariant.Ghost };
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary };
+        clear.Click += (_, _) => model.Clear();
+        reset.Click += (_, _) => model.Reset();
+        var actions = new WrapPanel { ItemSpacing = 8, LineSpacing = 8, Children = { clear, reset } };
+        var preview = new StackPanel { Spacing = 8, Children = { dateRangePicker, actions } };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleReportingPeriod" Title="{DynamicResource GalleryText.ReportingPeriod}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="432" HorizontalAlignment="Left">
+          <Border Padding="12" CornerRadius="16" Background="{DynamicResource AlderSurface}">
+            <StackPanel Spacing="4">
+              <alder:AlderLabel x:Name="ReportLabel" Content="{DynamicResource GalleryText.ReportingPeriod}" Target="{Binding #ReportDates}" />
+              <alder:AlderDateRangePicker x:Name="ReportDates" Culture="{Binding GermanCulture}" Value="{Binding Example, Mode=OneWay}"
+                                     Variant="Secondary" FullWidth="True" Indicator="{StaticResource AlderIconChevronDown}"
+                                     AutomationProperties.LabeledBy="{Binding #ReportLabel}" />
+            </StackPanel>
+          </Border>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var dateRangePicker = new AlderDateRangePicker
+        {
+            Variant = InputVariant.Secondary,
+            FullWidth = true,
+            Indicator = (Geometry)this.FindResource("AlderIconChevronDown")!,
+        };
+        dateRangePicker.Bind(AlderDateRangePicker.CultureProperty, CompiledBinding.Create((DateRangePickerViewModel model) => model.GermanCulture));
+        dateRangePicker.Bind(AlderDateRangePicker.ValueProperty, CompiledBinding.Create((DateRangePickerViewModel model) => model.Example, mode: BindingMode.OneWay));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleReadOnly" Title="{DynamicResource GalleryText.ReadOnly}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="432" HorizontalAlignment="Left">
+          <StackPanel Spacing="4">
+            <alder:AlderLabel x:Name="ReadOnlyLabel" Content="{DynamicResource GalleryText.ArchivedDates}" Target="{Binding #ReadOnlyDates}" />
+            <alder:AlderDateRangePicker x:Name="ReadOnlyDates" Culture="{DynamicResource GalleryCulture}" Value="{Binding Example, Mode=OneWay}"
+                                   IsReadOnly="True" AutomationProperties.LabeledBy="{Binding #ReadOnlyLabel}" />
+          </StackPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var dateRangePicker = new AlderDateRangePicker
+        {
+            Culture = CultureInfo.CurrentCulture,
+            IsReadOnly = true,
+        };
+        dateRangePicker.Bind(AlderDateRangePicker.ValueProperty, CompiledBinding.Create((DateRangePickerViewModel model) => model.Example, mode: BindingMode.OneWay));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,835 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.PressableFeedbackExample" x:DataType="vm:PressableFeedbackViewModel">
+  <UserControl.Resources>
+    <StreamGeometry x:Key="GalleryFeedbackCart">F1 M0.5 1.5 H3.3 L4.2 4 H15.5 L13.8 9.8 H5 L5.55 11 H13.9 V12.3 H4.7 L2.35 2.8 H0.5 Z M5.8 14 A1.25 1.25 0 1 0 8.3 14 A1.25 1.25 0 1 0 5.8 14 Z M10.8 14 A1.25 1.25 0 1 0 13.3 14 A1.25 1.25 0 1 0 10.8 14 Z</StreamGeometry>
+    <StreamGeometry x:Key="GalleryFeedbackSend">F1 M0.9 6.7 L14.2 1 A.7.7 0 0 1 15.15 1.9 L11.1 15 A.7.7 0 0 1 9.8 15.15 L7.2 10.5 L11.8 4.3 L5.65 9.15 L.9 8 A.7.7 0 0 1 .9 6.7 Z</StreamGeometry>
+  </UserControl.Resources>
+  <UserControl.Styles>
+    <Style Selector="TextBlock.feedback-muted">
+      <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="LineHeight" Value="16" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style Selector="alder|AlderButton.community-right">
+      <Setter Property="Grid.Column" Value="1" />
+    </Style>
+    <ContainerQuery Name="FeedbackPreview" Query="max-width:767">
+      <Style Selector="alder|AlderButton[Size=Medium]">
+        <Setter Property="MinHeight" Value="40" />
+      </Style>
+      <Style Selector="alder|AlderButton[Size=Medium][IsIconOnly=True]">
+        <Setter Property="Width" Value="40" />
+      </Style>
+    </ContainerQuery>
+  </UserControl.Styles>
+  <StackPanel Spacing="20" x:Name="Examples" Container.Name="FeedbackPreview" Container.Sizing="Width">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="24" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackPrimary}" Variant="Primary">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSecondary}" Variant="Secondary">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackTertiary}" Variant="Tertiary">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackOutline}" Variant="Outline">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackGhost}" Variant="Ghost">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackDanger}" Variant="Danger">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSearch}" Variant="Primary" Icon="{DynamicResource AlderIconMagnifier}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackAddMember}" Variant="Secondary" Icon="{DynamicResource AlderIconPlus}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackEmail}" Variant="Tertiary" Icon="{DynamicResource AlderIconEnvelope}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackDelete}" Variant="Danger" Icon="{DynamicResource AlderIconTrash}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Variant="Tertiary" Icon="{DynamicResource AlderIconEllipsis}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackMore}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Variant="Secondary" Icon="{DynamicResource AlderIconGear}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackSettings}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Variant="Danger" Icon="{DynamicResource AlderIconTrash}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackDelete}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleCards" Title="{DynamicResource GalleryText.PressableFeedbackCards}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="680">
+          <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Stretch" MaxWidth="500">
+            <alder:AlderButton Variant="Ghost" Padding="0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" CornerRadius="24" Background="{DynamicResource AlderSurface}" Command="{CompiledBinding Notify}" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackNotify}">
+              <alder:AlderButton.Feedback>
+                <alder:AlderPressableFeedback Effects="Ripple" />
+              </alder:AlderButton.Feedback>
+              <Border CornerRadius="24" ClipToBounds="True">
+                <Grid Width="{CompiledBinding $parent[alder:AlderButton].Bounds.Width}" Height="214">
+                  <alder:AlderImage Stretch="UniformToFill" Source="avares://Alder.Avalonia.Gallery/Assets/Card/neo1.jpeg"/>
+                  <StackPanel Spacing="4" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="12">
+                    <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackNeo}" FontWeight="SemiBold" FontSize="12"/>
+                    <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackHomeRobot}" FontSize="14"/>
+                  </StackPanel>
+                  <Border Background="{DynamicResource AlderSurface}" Padding="12,8" VerticalAlignment="Bottom">
+                    <Grid ColumnDefinitions="*,Auto">
+                      <StackPanel Spacing="0" VerticalAlignment="Center" HorizontalAlignment="Left">
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackAvailable}" FontWeight="SemiBold" FontSize="12"/>
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackGetNotified}" Classes="feedback-muted"/>
+                      </StackPanel>
+                      <alder:AlderTextBlock Text="{CompiledBinding NotifyCaption}" FontWeight="Medium" VerticalAlignment="Center" Grid.Column="1"/>
+                    </Grid>
+                  </Border>
+                </Grid>
+              </Border>
+            </alder:AlderButton>
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+              <alder:AlderButton Variant="Ghost" Padding="0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" MinHeight="154" CornerRadius="24" Background="{DynamicResource AlderSurface}" Classes="community-left" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackIndie}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Highlight" />
+                </alder:AlderButton.Feedback>
+                <StackPanel Spacing="10" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="12" Width="{CompiledBinding $parent[alder:AlderButton].Bounds.Width}">
+                  <Border Width="48" Height="48" Background="{DynamicResource AlderNeutral}" CornerRadius="12" HorizontalAlignment="Left">
+                    <alder:AlderTextBlock Text="IH" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                  </Border>
+                  <StackPanel Spacing="3" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                    <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackIndie}" FontSize="14" FontWeight="Medium" TextWrapping="Wrap"/>
+                    <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackIndieCount}" Classes="feedback-muted"/>
+                    <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackByJohn}" Classes="feedback-muted"/>
+                  </StackPanel>
+                </StackPanel>
+              </alder:AlderButton>
+              <alder:AlderButton Variant="Ghost" Padding="0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" MinHeight="154" CornerRadius="24" Background="{DynamicResource AlderSurface}" Classes="community-right" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackBuilders}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Highlight" />
+                </alder:AlderButton.Feedback>
+                <StackPanel Spacing="10" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="12" Width="{CompiledBinding $parent[alder:AlderButton].Bounds.Width}">
+                  <Border Width="48" Height="48" Background="{DynamicResource AlderNeutral}" CornerRadius="12" HorizontalAlignment="Left">
+                    <alder:AlderTextBlock Text="AB" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                  </Border>
+                  <StackPanel Spacing="3" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                    <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackBuilders}" FontSize="14" FontWeight="Medium" TextWrapping="Wrap"/>
+                    <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackBuildersCount}" Classes="feedback-muted"/>
+                    <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackByMartha}" Classes="feedback-muted"/>
+                  </StackPanel>
+                </StackPanel>
+              </alder:AlderButton>
+            </Grid>
+            <alder:AlderButton Variant="Ghost" Padding="0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" CornerRadius="18" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackFuture}">
+              <alder:AlderButton.Feedback>
+                <alder:AlderPressableFeedback Effects="Ripple" />
+              </alder:AlderButton.Feedback>
+              <Grid ColumnDefinitions="72,*" ColumnSpacing="12" Width="{CompiledBinding $parent[alder:AlderButton].Bounds.Width}" Margin="8">
+                <Border CornerRadius="12" ClipToBounds="True" Width="72" Height="72">
+                  <alder:AlderImage Stretch="UniformToFill" Source="avares://Alder.Avalonia.Gallery/Assets/Card/robot1.jpeg"/>
+                </Border>
+                <StackPanel Spacing="4" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="1">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackFuture}" FontSize="14" FontWeight="Medium" TextWrapping="Wrap"/>
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackToday}" Classes="feedback-muted"/>
+                </StackPanel>
+              </Grid>
+            </alder:AlderButton>
+            <alder:AlderButton Variant="Ghost" Padding="0" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" CornerRadius="18" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackAvocado}">
+              <alder:AlderButton.Feedback>
+                <alder:AlderPressableFeedback Effects="Ripple" />
+              </alder:AlderButton.Feedback>
+              <Grid ColumnDefinitions="72,*" ColumnSpacing="12" Width="{CompiledBinding $parent[alder:AlderButton].Bounds.Width}" Margin="8">
+                <Border CornerRadius="12" ClipToBounds="True" Width="72" Height="72">
+                  <alder:AlderImage Stretch="UniformToFill" Source="avares://Alder.Avalonia.Gallery/Assets/Card/avocado.jpeg"/>
+                </Border>
+                <StackPanel Spacing="4" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="1">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackAvocado}" FontSize="14" FontWeight="Medium" TextWrapping="Wrap"/>
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackWednesday}" Classes="feedback-muted"/>
+                </StackPanel>
+              </Grid>
+            </alder:AlderButton>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleCompare" Title="{DynamicResource GalleryText.PressableFeedbackComparison}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="460">
+          <StackPanel Spacing="24" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Left">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackRipple}" Classes="feedback-muted"/>
+              <WrapPanel ItemSpacing="12" LineSpacing="12">
+                <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackPrimary}" Variant="Primary">
+                  <alder:AlderButton.Feedback>
+                    <alder:AlderPressableFeedback Effects="Ripple" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackPrimary}" />
+                  </alder:AlderButton.Feedback>
+                </alder:AlderButton>
+                <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSecondary}" Variant="Secondary">
+                  <alder:AlderButton.Feedback>
+                    <alder:AlderPressableFeedback Effects="Ripple" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackSecondary}" />
+                  </alder:AlderButton.Feedback>
+                </alder:AlderButton>
+                <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackOutline}" Variant="Outline">
+                  <alder:AlderButton.Feedback>
+                    <alder:AlderPressableFeedback Effects="Ripple" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackOutline}" />
+                  </alder:AlderButton.Feedback>
+                </alder:AlderButton>
+              </WrapPanel>
+            </StackPanel>
+            <StackPanel Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Left">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackHighlight}" Classes="feedback-muted"/>
+              <WrapPanel ItemSpacing="12" LineSpacing="12">
+                <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackPrimary}" Variant="Primary">
+                  <alder:AlderButton.Feedback>
+                    <alder:AlderPressableFeedback Effects="Highlight" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackPrimary}" />
+                  </alder:AlderButton.Feedback>
+                </alder:AlderButton>
+                <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSecondary}" Variant="Secondary">
+                  <alder:AlderButton.Feedback>
+                    <alder:AlderPressableFeedback Effects="Highlight" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackSecondary}" />
+                  </alder:AlderButton.Feedback>
+                </alder:AlderButton>
+                <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackOutline}" Variant="Outline">
+                  <alder:AlderButton.Feedback>
+                    <alder:AlderPressableFeedback Effects="Highlight" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackOutline}" />
+                  </alder:AlderButton.Feedback>
+                </alder:AlderButton>
+              </WrapPanel>
+            </StackPanel>
+            <StackPanel Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Left">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackHoldConfirm}" Classes="feedback-muted"/>
+              <WrapPanel ItemSpacing="12" LineSpacing="12">
+                <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackPrimary}" Variant="Primary">
+                  <alder:AlderButton.Feedback>
+                    <alder:AlderPressableFeedback Effects="HoldConfirm" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackPrimary}" />
+                  </alder:AlderButton.Feedback>
+                </alder:AlderButton>
+                <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSecondary}" Variant="Secondary">
+                  <alder:AlderButton.Feedback>
+                    <alder:AlderPressableFeedback Effects="HoldConfirm" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackSecondary}" />
+                  </alder:AlderButton.Feedback>
+                </alder:AlderButton>
+                <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackOutline}" Variant="Outline">
+                  <alder:AlderButton.Feedback>
+                    <alder:AlderPressableFeedback Effects="HoldConfirm" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackOutline}" />
+                  </alder:AlderButton.Feedback>
+                </alder:AlderButton>
+              </WrapPanel>
+            </StackPanel>
+            <StackPanel Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Left">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackProgressFeedback}" Classes="feedback-muted"/>
+              <WrapPanel ItemSpacing="12" LineSpacing="12">
+                <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackPrimary}" Variant="Primary">
+                  <alder:AlderButton.Feedback>
+                    <alder:AlderPressableFeedback Effects="ProgressFeedback" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackPrimary}" />
+                  </alder:AlderButton.Feedback>
+                </alder:AlderButton>
+                <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSecondary}" Variant="Secondary">
+                  <alder:AlderButton.Feedback>
+                    <alder:AlderPressableFeedback Effects="ProgressFeedback" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackSecondary}" />
+                  </alder:AlderButton.Feedback>
+                </alder:AlderButton>
+                <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackOutline}" Variant="Outline">
+                  <alder:AlderButton.Feedback>
+                    <alder:AlderPressableFeedback Effects="ProgressFeedback" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackOutline}" />
+                  </alder:AlderButton.Feedback>
+                </alder:AlderButton>
+              </WrapPanel>
+            </StackPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleHighlight" Title="{DynamicResource GalleryText.PressableFeedbackWithHighlight}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="24" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackPrimary}" Variant="Primary">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Highlight" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSecondary}" Variant="Secondary">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Highlight" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackTertiary}" Variant="Tertiary">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Highlight" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackOutline}" Variant="Outline">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Highlight" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackGhost}" Variant="Ghost">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Highlight" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackDanger}" Variant="Danger">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Highlight" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSearch}" Variant="Primary" Icon="{DynamicResource AlderIconMagnifier}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Highlight" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackAddMember}" Variant="Secondary" Icon="{DynamicResource AlderIconPlus}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Highlight" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackEmail}" Variant="Tertiary" Icon="{DynamicResource AlderIconEnvelope}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Highlight" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackDelete}" Variant="Danger" Icon="{DynamicResource AlderIconTrash}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Highlight" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Variant="Tertiary" Icon="{DynamicResource AlderIconEllipsis}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackMore}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Highlight" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Variant="Secondary" Icon="{DynamicResource AlderIconGear}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackSettings}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Highlight" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Variant="Danger" Icon="{DynamicResource AlderIconTrash}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackDelete}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Highlight" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleRipple" Title="{DynamicResource GalleryText.PressableFeedbackWithRipple}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="24" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackPrimary}" Variant="Primary">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSecondary}" Variant="Secondary">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackTertiary}" Variant="Tertiary">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackOutline}" Variant="Outline">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackGhost}" Variant="Ghost">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackDanger}" Variant="Danger">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackDangerSoft}" Variant="DangerSoft">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSearch}" Variant="Primary" Icon="{DynamicResource AlderIconMagnifier}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackAddMember}" Variant="Secondary" Icon="{DynamicResource AlderIconPlus}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackEmail}" Variant="Tertiary" Icon="{DynamicResource AlderIconEnvelope}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackDelete}" Variant="Danger" Icon="{DynamicResource AlderIconTrash}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Variant="Tertiary" Icon="{DynamicResource AlderIconEllipsis}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackMore}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Variant="Secondary" Icon="{DynamicResource AlderIconGear}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackSettings}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Variant="Danger" Icon="{DynamicResource AlderIconTrash}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackDelete}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleHold" Title="{DynamicResource GalleryText.PressableFeedbackWithHold}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="24" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackHoldHelp}" Classes="feedback-muted"/>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackHoldDelete}" Variant="DangerSoft" Icon="{DynamicResource AlderIconTrash}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="HoldConfirm" OverlayBackground="{DynamicResource AlderDanger}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackHoldDelete}" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackHoldApply}" Variant="Secondary" Icon="{DynamicResource AlderIconGear}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="HoldConfirm" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackHoldApply}" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackHoldAdd}" Variant="Tertiary" Icon="{DynamicResource AlderIconPlus}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="HoldConfirm" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackHoldAdd}" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Variant="DangerSoft" Icon="{DynamicResource AlderIconTrash}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackDelete}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="HoldConfirm" OverlayBackground="{DynamicResource AlderDanger}" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Variant="Secondary" Icon="{DynamicResource AlderIconGear}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackSettings}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="HoldConfirm" OverlayBackground="{DynamicResource AlderAccent}" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleProgress" Title="{DynamicResource GalleryText.PressableFeedbackWithProgress}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="24" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackProgressHelp}" Classes="feedback-muted"/>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackBuy}" Variant="Secondary" Icon="{StaticResource GalleryFeedbackCart}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="ProgressFeedback" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackBuying}" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackApply}" Variant="Secondary" Icon="{DynamicResource AlderIconGear}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="ProgressFeedback" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackApplied}" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackAddItem}" Variant="Tertiary" Icon="{DynamicResource AlderIconPlus}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="ProgressFeedback" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackAdded}" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Variant="DangerSoft" Icon="{DynamicResource AlderIconTrash}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackDelete}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="ProgressFeedback" OverlayBackground="{DynamicResource AlderDanger}" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Variant="Secondary" Icon="{DynamicResource AlderIconGear}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackSettings}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="ProgressFeedback" OverlayBackground="{DynamicResource AlderAccent}" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleHoldDuration" Title="{DynamicResource GalleryText.PressableFeedbackHoldDurations}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="24" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackHoldDurationsHelp}" Classes="feedback-muted"/>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackFast}" Variant="DangerSoft" Icon="{DynamicResource AlderIconTrash}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="HoldConfirm" OverlayBackground="{DynamicResource AlderDanger}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackFast}" Duration="00:00:00.8" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackDefault}" Variant="DangerSoft" Icon="{DynamicResource AlderIconTrash}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="HoldConfirm" OverlayBackground="{DynamicResource AlderDanger}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackDefault}" Duration="00:00:02" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSlow}" Variant="DangerSoft" Icon="{DynamicResource AlderIconTrash}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="HoldConfirm" OverlayBackground="{DynamicResource AlderDanger}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackSlow}" Duration="00:00:04" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleHoldSweep" Title="{DynamicResource GalleryText.PressableFeedbackHoldSweep}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="24" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackSweepHelp}" Classes="feedback-muted"/>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSweepRight}" Variant="DangerSoft" Icon="{DynamicResource AlderIconTrash}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="HoldConfirm" OverlayBackground="{DynamicResource AlderDanger}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackSweepRight}" Sweep="Right" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSweepLeft}" Variant="DangerSoft" Icon="{DynamicResource AlderIconTrash}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="HoldConfirm" OverlayBackground="{DynamicResource AlderDanger}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackSweepLeft}" Sweep="Left" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSweepDown}" Variant="DangerSoft" Icon="{DynamicResource AlderIconTrash}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="HoldConfirm" OverlayBackground="{DynamicResource AlderDanger}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackSweepDown}" Sweep="Down" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSweepUp}" Variant="DangerSoft" Icon="{DynamicResource AlderIconTrash}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="HoldConfirm" OverlayBackground="{DynamicResource AlderDanger}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackSweepUp}" Sweep="Up" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Variant="Secondary" Icon="{DynamicResource AlderIconGear}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackSettings}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="HoldConfirm" Sweep="Right" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Variant="Secondary" Icon="{DynamicResource AlderIconGear}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackSettings}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="HoldConfirm" Sweep="Down" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Variant="Secondary" Icon="{DynamicResource AlderIconGear}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackSettings}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="HoldConfirm" Sweep="Up" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleProgressDuration" Title="{DynamicResource GalleryText.PressableFeedbackProgressDurations}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="24" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackProgressDurationsHelp}" Classes="feedback-muted"/>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackFast}" Variant="Secondary" Icon="{DynamicResource AlderIconTrash}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="ProgressFeedback" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackFast}" Duration="00:00:00.8" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackDefault}" Variant="Secondary" Icon="{DynamicResource AlderIconTrash}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="ProgressFeedback" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackDefault}" Duration="00:00:02" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSlow}" Variant="Secondary" Icon="{DynamicResource AlderIconTrash}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="ProgressFeedback" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackSlow}" Duration="00:00:04" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleProgressSweep" Title="{DynamicResource GalleryText.PressableFeedbackProgressSweep}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="24" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackSweepHelp}" Classes="feedback-muted"/>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSweepRight}" Variant="Secondary" Icon="{DynamicResource AlderIconTrash}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="ProgressFeedback" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackSweepRight}" Sweep="Right" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSweepLeft}" Variant="Secondary" Icon="{DynamicResource AlderIconTrash}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="ProgressFeedback" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackSweepLeft}" Sweep="Left" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSweepDown}" Variant="Secondary" Icon="{DynamicResource AlderIconTrash}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="ProgressFeedback" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackSweepDown}" Sweep="Down" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSweepUp}" Variant="Secondary" Icon="{DynamicResource AlderIconTrash}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="ProgressFeedback" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackSweepUp}" Sweep="Up" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Variant="Secondary" Icon="{DynamicResource AlderIconGear}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackSettings}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="ProgressFeedback" Sweep="Right" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Variant="Secondary" Icon="{DynamicResource AlderIconGear}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackSettings}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="ProgressFeedback" Sweep="Down" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Variant="Secondary" Icon="{DynamicResource AlderIconGear}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackSettings}">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="ProgressFeedback" Sweep="Up" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleNoReset" Title="{DynamicResource GalleryText.PressableFeedbackNoReset}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="24" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.PressableFeedbackNoResetHelp}" Classes="feedback-muted"/>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackDeleteAccount}" Variant="DangerSoft" Icon="{DynamicResource AlderIconTrash}" x:Name="DeleteAccountSample">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="ProgressFeedback" OverlayBackground="{DynamicResource AlderDanger}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackAccountDeleted}" AutoReset="False" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackApply}" Variant="Secondary" Icon="{DynamicResource AlderIconGear}" x:Name="ApplySettingsSample">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="ProgressFeedback" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackSettingsApplied}" AutoReset="False" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.Feedback >
+        <alder:AlderButton Content="{DynamicResource GalleryText.Reset}" Variant="Secondary" Size="Small" HorizontalAlignment="Center" Margin="0,0,0,16" Click="ResetProgressSamples"/>
+      </g:ExampleCard.Feedback>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleStandaloneHighlight" Title="{DynamicResource GalleryText.PressableFeedbackStandaloneHighlight}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <alder:AlderItemCard MaxWidth="500" VerticalAlignment="Center" Focusable="True" Cursor="Hand"
+                               Title="{DynamicResource GalleryText.PressableFeedbackProfile}"
+                               Description="{DynamicResource GalleryText.PressableFeedbackProfileDescription}"
+                               AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackProfile}">
+            <alder:AlderItemCard.Feedback>
+              <alder:AlderPressableFeedback Effects="Highlight" />
+            </alder:AlderItemCard.Feedback>
+            <alder:AlderItemCard.Icon>
+              <alder:AlderPathIcon Data="{DynamicResource AlderIconAvatarPerson}" Width="16" Height="16" />
+            </alder:AlderItemCard.Icon>
+            <alder:AlderItemCard.Action>
+              <alder:AlderPathIcon Data="{DynamicResource AlderIconChevronRight}" Width="12" Height="12"
+                        Foreground="{DynamicResource AlderMuted}" />
+            </alder:AlderItemCard.Action>
+          </alder:AlderItemCard>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleStandaloneRipple" Title="{DynamicResource GalleryText.PressableFeedbackStandaloneRipple}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <alder:AlderItemCard MaxWidth="500" VerticalAlignment="Center" Focusable="True" Cursor="Hand"
+                               Title="{DynamicResource GalleryText.PressableFeedbackProfile}"
+                               Description="{DynamicResource GalleryText.PressableFeedbackProfileDescription}"
+                               AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackProfile}">
+            <alder:AlderItemCard.Feedback>
+              <alder:AlderPressableFeedback Effects="Ripple" />
+            </alder:AlderItemCard.Feedback>
+            <alder:AlderItemCard.Icon>
+              <alder:AlderPathIcon Data="{DynamicResource AlderIconAvatarPerson}" Width="16" Height="16" />
+            </alder:AlderItemCard.Icon>
+            <alder:AlderItemCard.Action>
+              <alder:AlderPathIcon Data="{DynamicResource AlderIconChevronRight}" Width="12" Height="12"
+                        Foreground="{DynamicResource AlderMuted}" />
+            </alder:AlderItemCard.Action>
+          </alder:AlderItemCard>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.PressableFeedbackDisabled}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackDisabledRipple}" Variant="Primary" IsEnabled="False">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSecondary}" Variant="Secondary" IsEnabled="False">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Variant="Tertiary" Icon="{DynamicResource AlderIconGear}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackSettings}" IsEnabled="False">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Ripple" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackDisabledHighlight}" Variant="Primary" IsEnabled="False">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Highlight" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSecondary}" Variant="Secondary" IsEnabled="False">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Highlight" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Variant="Tertiary" Icon="{DynamicResource AlderIconGear}" IsIconOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.PressableFeedbackSettings}" IsEnabled="False">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="Highlight" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackDisabledHold}" Variant="DangerSoft" Icon="{DynamicResource AlderIconTrash}" IsEnabled="False">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="HoldConfirm" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSecondary}" Variant="Secondary" IsEnabled="False">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="HoldConfirm" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+            <WrapPanel ItemSpacing="12" LineSpacing="12">
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackDisabledProgress}" Variant="DangerSoft" Icon="{DynamicResource AlderIconTrash}" IsEnabled="False">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="ProgressFeedback" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+              <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSecondary}" Variant="Secondary" IsEnabled="False">
+                <alder:AlderButton.Feedback>
+                  <alder:AlderPressableFeedback Effects="ProgressFeedback" />
+                </alder:AlderButton.Feedback>
+              </alder:AlderButton>
+            </WrapPanel>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleHoldCallback" Title="{DynamicResource GalleryText.PressableFeedbackHoldCallback}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackHoldDelete}" Variant="DangerSoft" Icon="{DynamicResource AlderIconTrash}">
+              <alder:AlderButton.Feedback>
+                <alder:AlderPressableFeedback Effects="HoldConfirm" OverlayBackground="{DynamicResource AlderDanger}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackHoldDelete}" CompletionCommand="{CompiledBinding CompleteHold}" />
+              </alder:AlderButton.Feedback>
+            </alder:AlderButton>
+            <alder:AlderTextBlock Text="{CompiledBinding HoldCaption}" Classes="feedback-muted" HorizontalAlignment="Center"/>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleProgressCallback" Title="{DynamicResource GalleryText.PressableFeedbackProgressCallback}">
+      <g:ExampleCard.Preview>
+        <Grid MinHeight="320">
+          <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <alder:AlderButton Content="{DynamicResource GalleryText.PressableFeedbackSend}" Variant="Secondary" Icon="{StaticResource GalleryFeedbackSend}">
+              <alder:AlderButton.Feedback>
+                <alder:AlderPressableFeedback Effects="ProgressFeedback" OverlayBackground="{DynamicResource AlderAccent}" OverlayForeground="{DynamicResource AlderOnAccent}" OverlayContent="{DynamicResource GalleryText.PressableFeedbackSend}" CompletionCommand="{CompiledBinding CompleteProgress}" />
+              </alder:AlderButton.Feedback>
+            </alder:AlderButton>
+            <alder:AlderTextBlock Text="{CompiledBinding ProgressCaption}" Classes="feedback-muted" HorizontalAlignment="Center"/>
+          </StackPanel>
+        </Grid>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

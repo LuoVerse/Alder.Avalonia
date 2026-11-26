@@ -1,0 +1,107 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" x:Class="Alder.Avalonia.Gallery.Views.ColorSliderExample"
+             x:DataType="vm:ColorsViewModel" FontFamily="fonts:Inter#Inter">
+  <Design.DataContext><vm:ColorsViewModel /></Design.DataContext>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <Grid Width="320" HorizontalAlignment="Center" ColumnDefinitions="*,Auto" RowDefinitions="20,20" RowSpacing="4">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.ColorHue}" FontWeight="Medium" LineHeight="20" />
+          <alder:AlderTextBlock Grid.Column="1" FontWeight="Medium" LineHeight="20" Text="{Binding #HueSlider.ChannelText}" />
+          <alder:AlderColorSlider x:Name="HueSlider" Width="NaN" Grid.Row="1" Grid.ColumnSpan="2" Channel="Hue"
+                             ColorValue="{Binding HueColor, Mode=TwoWay}" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var slider = new AlderColorSlider { Channel = ColorChannel.Hue };
+        slider.Bind(AlderColorSlider.ColorValueProperty, CompiledBinding.Create((ColorsViewModel model) => model.HueColor, mode: BindingMode.TwoWay));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleAlpha" Title="{DynamicResource GalleryText.ColorAlpha}">
+      <gallery:ExampleCard.Preview>
+        <Grid Width="320" HorizontalAlignment="Center" ColumnDefinitions="*,Auto" RowDefinitions="20,20" RowSpacing="4">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.ColorAlpha}" FontWeight="Medium" LineHeight="20" />
+          <alder:AlderTextBlock Grid.Column="1" FontWeight="Medium" LineHeight="20" Text="{Binding #AlphaSlider.ChannelText}" />
+          <alder:AlderColorSlider x:Name="AlphaSlider" Width="NaN" Grid.Row="1" Grid.ColumnSpan="2" Channel="Alpha"
+                             ColorValue="{Binding TranslucentColor, Mode=TwoWay}" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var slider = new AlderColorSlider { Channel = ColorChannel.Alpha };
+        slider.Bind(AlderColorSlider.ColorValueProperty, CompiledBinding.Create((ColorsViewModel model) => model.TranslucentColor, mode: BindingMode.TwoWay));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleColorSliderRgb" Title="{DynamicResource GalleryText.ColorSliderRgb}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+          <alder:AlderColorSlider Orientation="Vertical" Channel="Red" ColorValue="{Binding AlternateColor, Mode=TwoWay}" />
+          <alder:AlderColorSlider Orientation="Vertical" Channel="Green" ColorValue="{Binding AlternateColor, Mode=TwoWay}" />
+          <alder:AlderColorSlider Orientation="Vertical" Channel="Blue" ColorValue="{Binding AlternateColor, Mode=TwoWay}" />
+          <alder:AlderColorSwatch Color="{Binding AlternateColor, Converter={x:Static alder:AlderColorRendering.ToColor}}"
+                             VerticalAlignment="Center" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var red = new AlderColorSlider { Orientation = Orientation.Vertical, Channel = ColorChannel.Red };
+        red.Bind(AlderColorSlider.ColorValueProperty, CompiledBinding.Create((ColorsViewModel model) => model.AlternateColor, mode: BindingMode.TwoWay));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:ColorsViewModel /></Border.DataContext>
+          <alder:AlderColorSlider ColorValue="{CompiledBinding HueColor, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="256" Channel="Hue" IsEnabled="False" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new ColorsViewModel();
+        var control = new AlderColorSlider { DataContext = model, Width = 256, Channel = ColorChannel.Hue, IsEnabled = false };
+        control.Bind(AlderColorSlider.ColorValueProperty, CompiledBinding.Create((ColorsViewModel vm) => vm.HueColor, mode: BindingMode.TwoWay));
+        var preview = control;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVertical" Title="{DynamicResource GalleryText.Vertical}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:ColorsViewModel /></Border.DataContext>
+          <alder:AlderColorSlider ColorValue="{CompiledBinding HueColor, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="NaN" Height="200" Channel="Hue" Orientation="Vertical" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new ColorsViewModel();
+        var control = new AlderColorSlider { DataContext = model, Width = double.NaN, Height = 200, Channel = ColorChannel.Hue, Orientation = Orientation.Vertical };
+        control.Bind(AlderColorSlider.ColorValueProperty, CompiledBinding.Create((ColorsViewModel vm) => vm.HueColor, mode: BindingMode.TwoWay));
+        var preview = control;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:ColorsViewModel /></Border.DataContext>
+          <alder:AlderColorSlider ColorValue="{CompiledBinding AlternateColor, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="256" Channel="Hue" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new ColorsViewModel();
+        var control = new AlderColorSlider { DataContext = model, Width = 256, Channel = ColorChannel.Hue };
+        control.Bind(AlderColorSlider.ColorValueProperty, CompiledBinding.Create((ColorsViewModel vm) => vm.AlternateColor, mode: BindingMode.TwoWay));
+        var preview = control;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSaturation" Title="{DynamicResource GalleryText.ColorDemoChannels}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:ColorsViewModel /></Border.DataContext>
+          <alder:AlderColorSlider ColorValue="{CompiledBinding AlternateColor, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="256" ColorSpace="Hsl" Channel="Saturation" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new ColorsViewModel();
+        var control = new AlderColorSlider { DataContext = model, Width = 256, ColorSpace = ColorSpace.Hsl, Channel = ColorChannel.Saturation };
+        control.Bind(AlderColorSlider.ColorValueProperty, CompiledBinding.Create((ColorsViewModel vm) => vm.AlternateColor, mode: BindingMode.TwoWay));
+        var preview = control;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,260 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:conv="using:Avalonia.Data.Converters">
+
+  <x:String x:Key="AlderText.Loading">Loading</x:String>
+  <RectangleGeometry x:Key="AlderFeedbackSpinnerViewport" Rect="0,0,24,24" />
+  <DrawingBrush x:Key="AlderFeedbackSpinnerMask" Stretch="Fill">
+    <DrawingBrush.Drawing>
+      <DrawingGroup>
+        <GeometryDrawing Brush="Transparent" Geometry="{StaticResource AlderFeedbackSpinnerViewport}" />
+        <GeometryDrawing Geometry="M10.18 1.66 A10.5 10.5 0 0 0 12 22.5 L12 19.5 A7.5 7.5 0 0 1 10.7 4.61 A1.5 1.5 0 0 0 10.18 1.66 Z">
+          <GeometryDrawing.Brush>
+            <LinearGradientBrush StartPoint="50%,5.3%" EndPoint="50%,91.8%">
+              <GradientStop Offset="0" Color="White" />
+              <GradientStop Offset="1" Color="#8CFFFFFF" />
+            </LinearGradientBrush>
+          </GeometryDrawing.Brush>
+        </GeometryDrawing>
+        <GeometryDrawing Geometry="M12 22.5 A10.5 10.5 0 0 0 19.03 4.2 A1.5 1.5 0 0 0 17.02 6.43 A7.5 7.5 0 0 1 12 19.5 Z">
+          <GeometryDrawing.Brush>
+            <LinearGradientBrush StartPoint="50%,15.2%" EndPoint="50%,87.2%">
+              <GradientStop Offset="0" Color="#00FFFFFF" />
+              <GradientStop Offset="1" Color="#8CFFFFFF" />
+            </LinearGradientBrush>
+          </GeometryDrawing.Brush>
+        </GeometryDrawing>
+      </DrawingGroup>
+    </DrawingBrush.Drawing>
+  </DrawingBrush>
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderFeedbackSuccess" Color="#17C964" />
+      <SolidColorBrush x:Key="AlderFeedbackWarning" Color="#F5A524" />
+      <SolidColorBrush x:Key="AlderAlertSuccessInk" Color="#2B7745" />
+      <SolidColorBrush x:Key="AlderAlertWarningInk" Color="#855F2E" />
+      <SolidColorBrush x:Key="AlderSkeletonFill" Color="#B3E3E3E6" />
+      <LinearGradientBrush x:Key="AlderSkeletonHighlight" StartPoint="0%,50%" EndPoint="100%,50%">
+        <GradientStop Offset="0" Color="#00F8F8FA" />
+        <GradientStop Offset=".5" Color="#F8F8FA" />
+        <GradientStop Offset="1" Color="#00F8F8FA" />
+      </LinearGradientBrush>
+      <LinearGradientBrush x:Key="AlderSkeletonSharedHighlight" StartPoint="0%,50%" EndPoint="100%,50%">
+        <GradientStop Offset="0" Color="#00FFFFFF" />
+        <GradientStop Offset=".5" Color="#AEFFFFFF" />
+        <GradientStop Offset="1" Color="#00FFFFFF" />
+      </LinearGradientBrush>
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderFeedbackSuccess" Color="#17C964" />
+      <SolidColorBrush x:Key="AlderFeedbackWarning" Color="#F7B750" />
+      <SolidColorBrush x:Key="AlderAlertSuccessInk" Color="#74D88F" />
+      <SolidColorBrush x:Key="AlderAlertWarningInk" Color="#F9CB86" />
+      <SolidColorBrush x:Key="AlderSkeletonFill" Color="#B32C2C2F" />
+      <LinearGradientBrush x:Key="AlderSkeletonHighlight" StartPoint="0%,50%" EndPoint="100%,50%">
+        <GradientStop Offset="0" Color="#003B3B40" />
+        <GradientStop Offset=".5" Color="#3B3B40" />
+        <GradientStop Offset="1" Color="#003B3B40" />
+      </LinearGradientBrush>
+      <LinearGradientBrush x:Key="AlderSkeletonSharedHighlight" StartPoint="0%,50%" EndPoint="100%,50%">
+        <GradientStop Offset="0" Color="#00FFFFFF" />
+        <GradientStop Offset=".5" Color="#1DFFFFFF" />
+        <GradientStop Offset="1" Color="#00FFFFFF" />
+      </LinearGradientBrush>
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+
+  <ControlTheme x:Key="{x:Type alder:AlderAlert}" TargetType="alder:AlderAlert">
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="CornerRadius" Value="24" />
+    <Setter Property="Padding" Value="16,12" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldShadow}" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="AutomationProperties.LiveSetting" Value="Polite" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid>
+          <alder:SurfaceFill Name="AlertSurface" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
+                          BorderThickness="{TemplateBinding BorderThickness}" BoxShadow="{TemplateBinding BoxShadow}" ClipToBounds="False" />
+          <Border Name="AlertOutline" CornerRadius="{TemplateBinding CornerRadius}" BackgroundSizing="OuterBorderEdge"
+                  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+            <DockPanel>
+              <Grid Name="IndicatorSlot" DockPanel.Dock="Left" Margin="4,4,20,0" MinWidth="16" VerticalAlignment="Top">
+                <alder:AlderPathIcon Name="DefaultIndicator" Width="16" Height="16" IsHitTestVisible="False"
+                          IsVisible="{CompiledBinding !#CustomIndicator.IsVisible}" Data="{DynamicResource AlderIconInfo}" />
+                <ContentPresenter Name="CustomIndicator" Content="{TemplateBinding Indicator}" />
+              </Grid>
+              <ContentPresenter Name="AlertActions" DockPanel.Dock="Right" VerticalAlignment="Top"
+                                Margin="12,0,0,0" Content="{TemplateBinding Actions}" />
+              <StackPanel>
+                <alder:AlderTextBlock Name="AlertTitle" FontWeight="Medium" FontSize="{TemplateBinding FontSize}" LineHeight="24"
+                           TextWrapping="Wrap" Text="{TemplateBinding Title}"
+                           IsVisible="{CompiledBinding #AlertTitle.Text, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+                <alder:AlderTextBlock Name="AlertDescription" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" LineHeight="20"
+                           FontSize="{TemplateBinding FontSize}"
+                           Text="{TemplateBinding Description}"
+                           IsVisible="{CompiledBinding #AlertDescription.Text, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+                <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" />
+              </StackPanel>
+            </DockPanel>
+          </Border>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ ContentPresenter#CustomIndicator:empty, ^ /template/ ContentPresenter#AlertActions:empty">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^[ShowIndicator=False] /template/ Grid#IndicatorSlot"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^[Color=Accent]"><Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" /></Style>
+    <Style Selector="^[Color=Success]"><Setter Property="Foreground" Value="{DynamicResource AlderAlertSuccessInk}" /></Style>
+    <Style Selector="^[Color=Warning]"><Setter Property="Foreground" Value="{DynamicResource AlderAlertWarningInk}" /></Style>
+    <Style Selector="^[Color=Danger]">
+      <Setter Property="Foreground" Value="{DynamicResource AlderDangerInk}" />
+      <Setter Property="AutomationProperties.LiveSetting" Value="Assertive" />
+    </Style>
+    <Style Selector="^[Color=Success] /template/ PathIcon#DefaultIndicator"><Setter Property="Data" Value="{DynamicResource AlderIconCheckCircle}" /></Style>
+    <Style Selector="^[Color=Warning] /template/ PathIcon#DefaultIndicator"><Setter Property="Data" Value="{DynamicResource AlderIconWarning}" /></Style>
+    <Style Selector="^[Color=Danger] /template/ PathIcon#DefaultIndicator"><Setter Property="Data" Value="{DynamicResource AlderIconAlert}" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderRangeIndicatorTheme" TargetType="alder:AlderRangeIndicator">
+    <Setter Property="TrackBrush" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="IndicatorBrush" Value="{DynamicResource AlderAccent}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Style Selector="^[Color=Default]"><Setter Property="IndicatorBrush" Value="{DynamicResource AlderInk}" /></Style>
+    <Style Selector="^[Color=Success]"><Setter Property="IndicatorBrush" Value="{DynamicResource AlderFeedbackSuccess}" /></Style>
+    <Style Selector="^[Color=Warning]"><Setter Property="IndicatorBrush" Value="{DynamicResource AlderFeedbackWarning}" /></Style>
+    <Style Selector="^[Color=Danger]"><Setter Property="IndicatorBrush" Value="{DynamicResource AlderDanger}" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderLinearIndicatorTheme" TargetType="alder:AlderRangeIndicator" BasedOn="{StaticResource AlderRangeIndicatorTheme}">
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel Spacing="4">
+          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <alder:AlderTextBlock Name="RangeLabel" Text="{TemplateBinding Label}" TextWrapping="Wrap" LineHeight="20"
+                       IsVisible="{CompiledBinding #RangeLabel.Text, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+            <alder:AlderTextBlock Name="RangeOutput" Grid.Column="1" Text="{TemplateBinding ValueText}" LineHeight="20" FontFeatures="tnum"
+                       IsVisible="{TemplateBinding ShowValue}" VerticalAlignment="Center" />
+          </Grid>
+          <Border Name="Track" Background="{TemplateBinding TrackBrush}" CornerRadius="{TemplateBinding CornerRadius}"
+                  ClipToBounds="True" Height="8">
+            <alder:FeedbackSweep Name="Fill" Fraction="{TemplateBinding Fraction}">
+              <alder:FeedbackSweep.Transitions>
+                <Transitions><DoubleTransition Property="Fraction" Duration="0:0:0.3" Easing="0,0,0.2,1" /></Transitions>
+              </alder:FeedbackSweep.Transitions>
+              <Border Background="{TemplateBinding IndicatorBrush}" CornerRadius="{TemplateBinding CornerRadius}" />
+            </alder:FeedbackSweep>
+          </Border>
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Size=Small]">
+      <Setter Property="CornerRadius" Value="2" />
+      <Style Selector="^ /template/ Border#Track"><Setter Property="Height" Value="4" /></Style>
+    </Style>
+    <Style Selector="^[Size=Large]">
+      <Setter Property="CornerRadius" Value="6" />
+      <Style Selector="^ /template/ Border#Track"><Setter Property="Height" Value="12" /></Style>
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ alder|FeedbackSweep#Fill"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderMeter}" TargetType="alder:AlderMeter" BasedOn="{StaticResource AlderLinearIndicatorTheme}" />
+
+  <ControlTheme x:Key="{x:Type alder:AlderProgressBar}" TargetType="alder:AlderProgressBar" BasedOn="{StaticResource AlderLinearIndicatorTheme}">
+    <Style Selector="^[IsIndeterminate=True] /template/ alder|FeedbackSweep#Fill"><Setter Property="IsIndeterminate" Value="True" /></Style>
+    <Style Selector="^[IsIndeterminate=True] /template/ TextBlock#RangeOutput"><Setter Property="IsVisible" Value="False" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderProgressCircle}" TargetType="alder:AlderProgressCircle" BasedOn="{StaticResource AlderRangeIndicatorTheme}">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+          <Grid Name="Ring" FlowDirection="LeftToRight" Width="{TemplateBinding Diameter}" Height="{TemplateBinding Diameter}" VerticalAlignment="Center">
+            <alder:FeedbackArc Name="TrackArc" IsTrack="True" Stroke="{TemplateBinding TrackBrush}"
+                           StrokeThickness="{TemplateBinding StrokeThickness}" TrackStrokeThickness="{TemplateBinding TrackStrokeThickness}" />
+            <alder:FeedbackArc Name="Arc" Stroke="{TemplateBinding IndicatorBrush}" StrokeThickness="{TemplateBinding StrokeThickness}"
+                           TrackStrokeThickness="{TemplateBinding TrackStrokeThickness}" StrokeLineCap="{TemplateBinding StrokeLineCap}"
+                           Fraction="{TemplateBinding Fraction}" IsIndeterminate="{TemplateBinding IsIndeterminate}">
+              <alder:FeedbackArc.Transitions>
+                <Transitions><DoubleTransition Property="Fraction" Duration="0:0:0.3" Easing="0,0,0.2,1" /></Transitions>
+              </alder:FeedbackArc.Transitions>
+            </alder:FeedbackArc>
+          </Grid>
+          <alder:AlderTextBlock Name="CircleLabel" Text="{TemplateBinding Label}" VerticalAlignment="Center"
+                     IsVisible="{CompiledBinding #CircleLabel.Text, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+          <alder:AlderTextBlock Name="CircleOutput" Text="{TemplateBinding ValueText}" IsVisible="{TemplateBinding ShowValue}"
+                     FontFeatures="tnum" VerticalAlignment="Center" />
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Size=Small]"><Setter Property="Diameter" Value="20" /></Style>
+    <Style Selector="^[Size=Large]"><Setter Property="Diameter" Value="36" /></Style>
+    <Style Selector="^[IsIndeterminate=True] /template/ TextBlock#CircleOutput"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ alder|FeedbackArc#Arc"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderSkeleton}" TargetType="alder:AlderSkeleton">
+    <Setter Property="Background" Value="{DynamicResource AlderSkeletonFill}" />
+    <Setter Property="MinHeight" Value="4" />
+    <Setter Property="MinWidth" Value="4" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="IsHitTestVisible" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="Placeholder" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" ClipToBounds="True">
+          <alder:FeedbackSweep Name="Shimmer" IsShimmer="True" IsIndeterminate="True" Duration="{TemplateBinding ShimmerDuration}"
+                               ShimmerScope="{TemplateBinding ShimmerScope}">
+            <Border Name="ShimmerStripe" Background="{DynamicResource AlderSkeletonHighlight}" />
+          </alder:FeedbackSweep>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ alder|FeedbackSweep#Shimmer:shared-shimmer > Border#ShimmerStripe">
+      <Setter Property="Background" Value="{DynamicResource AlderSkeletonSharedHighlight}" />
+    </Style>
+    <Style Selector="^[Animation=Pulse] /template/ alder|FeedbackSweep#Shimmer, ^[Animation=None] /template/ alder|FeedbackSweep#Shimmer,
+                     ^[(alder|AlderMotion.Reduced)=True] /template/ alder|FeedbackSweep#Shimmer">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^[Animation=Pulse][(alder|AlderMotion.Reduced)=False] /template/ Border#Placeholder">
+      <Style.Animations>
+        <Animation Duration="0:0:2" IterationCount="Infinite" Easing="0.4,0,0.6,1">
+          <KeyFrame Cue="0%"><Setter Property="Opacity" Value="1" /></KeyFrame>
+          <KeyFrame Cue="50%"><Setter Property="Opacity" Value="0.5" /></KeyFrame>
+          <KeyFrame Cue="100%"><Setter Property="Opacity" Value="1" /></KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderSpinner}" TargetType="alder:AlderSpinner">
+    <Setter Property="IsHitTestVisible" Value="False" />
+    <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.Loading}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <alder:ButtonSpinner Name="SpinnerGlyph" FlowDirection="LeftToRight"
+                         Data="{StaticResource AlderFeedbackSpinnerViewport}" OpacityMask="{StaticResource AlderFeedbackSpinnerMask}"
+                         Width="24" Height="24" SpinDuration="{TemplateBinding SpinDuration}"
+                         Foreground="{TemplateBinding Foreground}" />
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Size=Small] /template/ PathIcon#SpinnerGlyph"><Setter Property="Width" Value="16" /><Setter Property="Height" Value="16" /></Style>
+    <Style Selector="^[Size=Large] /template/ PathIcon#SpinnerGlyph"><Setter Property="Width" Value="32" /><Setter Property="Height" Value="32" /></Style>
+    <Style Selector="^[Size=ExtraLarge] /template/ PathIcon#SpinnerGlyph"><Setter Property="Width" Value="40" /><Setter Property="Height" Value="40" /></Style>
+    <Style Selector="^[Color=Accent]"><Setter Property="Foreground" Value="{DynamicResource AlderAccent}" /></Style>
+    <Style Selector="^[Color=Success]"><Setter Property="Foreground" Value="{DynamicResource AlderFeedbackSuccess}" /></Style>
+    <Style Selector="^[Color=Warning]"><Setter Property="Foreground" Value="{DynamicResource AlderFeedbackWarning}" /></Style>
+    <Style Selector="^[Color=Danger]"><Setter Property="Foreground" Value="{DynamicResource AlderDanger}" /></Style>
+  </ControlTheme>
+</ResourceDictionary>

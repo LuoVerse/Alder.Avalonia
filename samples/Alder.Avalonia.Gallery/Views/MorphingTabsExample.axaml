@@ -1,0 +1,54 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.MorphingTabsExample" x:DataType="vm:MorphingTabsViewModel">
+  <Design.DataContext><vm:MorphingTabsViewModel /></Design.DataContext>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleMorphingTabs" Title="{DynamicResource GalleryText.MorphingTabs}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="576">
+          <alder:AlderTabs x:Name="WorkspaceTabs" Variant="Morphing"
+                      ItemsSource="{CompiledBinding Tabs}" SelectedItem="{CompiledBinding SelectedTab, Mode=TwoWay}"
+                      ReorderTabCommand="{CompiledBinding Reorder}" CloseTabCommand="{CompiledBinding Close}"
+                      AutomationProperties.Name="{DynamicResource GalleryText.MorphingTabs}"
+                      AutomationProperties.HelpText="{DynamicResource GalleryText.MorphingTabKeys}">
+            <alder:AlderTabs.ItemTemplate>
+              <DataTemplate x:DataType="vm:MorphingTabExampleItem">
+                <alder:AlderTextBlock Text="{CompiledBinding Title}" TextTrimming="CharacterEllipsis" />
+              </DataTemplate>
+            </alder:AlderTabs.ItemTemplate>
+            <alder:AlderTabs.ContentTemplate>
+              <DataTemplate x:DataType="vm:MorphingTabExampleItem">
+                <StackPanel Spacing="8">
+                  <alder:AlderTextBlock Text="{CompiledBinding Title}" FontSize="24" FontWeight="SemiBold"
+                             Foreground="{DynamicResource AlderInk}" TextWrapping="Wrap" />
+                  <alder:AlderTextBlock Text="{CompiledBinding Body}" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                </StackPanel>
+              </DataTemplate>
+            </alder:AlderTabs.ContentTemplate>
+          </alder:AlderTabs>
+          <alder:AlderTextBlock IsVisible="{CompiledBinding IsEmpty}" Text="{DynamicResource GalleryText.MorphingTabEmpty}"
+                     Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+          <WrapPanel ItemSpacing="12" LineSpacing="8">
+            <alder:AlderButton Variant="Secondary" Size="Small" Command="{CompiledBinding Reset}"
+                          Content="{DynamicResource GalleryText.MorphingTabReset}" />
+            <alder:AlderTextBlock VerticalAlignment="Center" Foreground="{DynamicResource AlderMuted}" FontSize="12"
+                       Text="{DynamicResource GalleryText.MorphingTabDrag}" TextWrapping="Wrap" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var tabs = new AlderTabs { Variant = AlderTabsVariant.Morphing };
+        tabs.Bind(AlderTabs.ItemsSourceProperty, CompiledBinding.Create((MorphingTabsViewModel model) => model.Tabs));
+        tabs.Bind(AlderTabs.SelectedItemProperty, CompiledBinding.Create((MorphingTabsViewModel model) => model.SelectedTab, mode: BindingMode.TwoWay));
+        tabs.Bind(AlderTabs.ReorderTabCommandProperty, CompiledBinding.Create((MorphingTabsViewModel model) => model.Reorder));
+        tabs.Bind(AlderTabs.CloseTabCommandProperty, CompiledBinding.Create((MorphingTabsViewModel model) => model.Close));
+        AutomationProperties.SetName(tabs, "Morphing tabs");
+
+        var reset = new AlderButton { Content = "Reset tabs", Size = AlderSize.Small, Variant = ButtonVariant.Secondary };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((MorphingTabsViewModel model) => model.Reset));
+        var preview = new StackPanel { Spacing = 8, Children = { tabs, reset } };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

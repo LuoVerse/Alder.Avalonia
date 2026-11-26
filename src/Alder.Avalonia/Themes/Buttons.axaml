@@ -1,0 +1,341 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:conv="using:Avalonia.Data.Converters"
+                    xmlns:alder="using:Alder.Avalonia.Controls">
+  <ControlTheme x:Key="AlderButtonTheme" TargetType="Button">
+    <Setter Property="Background" Value="{DynamicResource AlderAccent}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderOnAccent}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="MinHeight" Value="36" />
+    <Setter Property="CornerRadius" Value="24" />
+    <Setter Property="Padding" Value="16,4" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <alder:ButtonFeedback Name="Face" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
+                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+          <Grid>
+            <alder:ButtonTint Name="Tint" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+            <Border Name="RippleClip" CornerRadius="{TemplateBinding CornerRadius}" ClipToBounds="True" IsHitTestVisible="False" />
+            <StackPanel Orientation="Horizontal" Spacing="8" Margin="{TemplateBinding Padding}"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+              <alder:AlderPathIcon Name="LeadingIcon" Width="16" Height="16" Margin="-2,0" Foreground="{TemplateBinding Foreground}" IsHitTestVisible="False" />
+              <alder:ButtonSpinner Name="Spinner" Width="16" Height="16" Foreground="{TemplateBinding Foreground}" IsHitTestVisible="False"
+                        Data="{StaticResource AlderSpinnerGlyph}" OpacityMask="{StaticResource AlderSpinnerMask}" />
+              <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                RecognizesAccessKey="True" VerticalAlignment="Center" />
+            </StackPanel>
+            <Border Name="Divider" Background="{TemplateBinding Foreground}" Opacity="0.15" CornerRadius="1" IsVisible="False" IsHitTestVisible="False" />
+            <Border Name="FocusRing" Margin="-3" CornerRadius="{TemplateBinding CornerRadius}" BorderThickness="2"
+                    BorderBrush="{DynamicResource AlderAccent}" IsVisible="False" IsHitTestVisible="False" />
+          </Grid>
+        </alder:ButtonFeedback>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ PathIcon#LeadingIcon"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^ /template/ PathIcon#Spinner"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^ /template/ alder|ButtonTint#Tint">
+      <Setter Property="Background" Value="{DynamicResource AlderOnAccent}" />
+      <Setter Property="Opacity" Value="0" />
+    </Style>
+    <Style Selector="^:pointerover /template/ alder|ButtonTint#Tint, ^:pressed /template/ alder|ButtonTint#Tint">
+      <Setter Property="Opacity" Value="0.1" />
+    </Style>
+    <Style Selector="^:pressed /template/ alder|ButtonFeedback#Face">
+      <Setter Property="PressScale" Value="0.97" />
+    </Style>
+    <Style Selector="^.alder-grouped:pressed /template/ alder|ButtonFeedback#Face">
+      <Setter Property="PressScale" Value="1" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ Border#FocusRing">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^.alder-joined /template/ Border#FocusRing">
+      <Setter Property="Margin" Value="1" />
+    </Style>
+    <Style Selector="^:disabled">
+      <Setter Property="Opacity" Value="0.5" />
+    </Style>
+    <Style Selector="^.alder-divider-x /template/ Border#Divider">
+      <Setter Property="IsVisible" Value="True" /><Setter Property="Width" Value="1" />
+      <Setter Property="HorizontalAlignment" Value="Left" />
+      <Setter Property="RenderTransform" Value="scaleY(0.5)" />
+    </Style>
+    <Style Selector="^.alder-divider-y /template/ Border#Divider">
+      <Setter Property="IsVisible" Value="True" /><Setter Property="Height" Value="1" />
+      <Setter Property="VerticalAlignment" Value="Top" />
+      <Setter Property="RenderTransform" Value="scaleX(0.5)" />
+    </Style>
+    <Style Selector="^.alder-group-full">
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="Width" Value="NaN" />
+    </Style>
+    <Style Selector="^.alder-leading">
+      <Setter Property="CornerRadius" Value="24,0,0,24" />
+    </Style>
+    <Style Selector="^.alder-trailing">
+      <Setter Property="CornerRadius" Value="0,24,24,0" />
+    </Style>
+    <Style Selector="^.alder-top">
+      <Setter Property="CornerRadius" Value="24,24,0,0" />
+    </Style>
+    <Style Selector="^.alder-bottom">
+      <Setter Property="CornerRadius" Value="0,0,24,24" />
+    </Style>
+    <Style Selector="^.alder-middle">
+      <Setter Property="CornerRadius" Value="0" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderButton}" TargetType="alder:AlderButton" BasedOn="{StaticResource AlderButtonTheme}">
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Style Selector="^[Variant=Secondary]">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" />
+    </Style>
+    <Style Selector="^[Variant=Tertiary]">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderTertiaryInk}" />
+    </Style>
+    <Style Selector="^[Variant=Ghost]">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    </Style>
+    <Style Selector="^[Variant=Outline]">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+      <Setter Property="BorderThickness" Value="1" />
+    </Style>
+    <Style Selector="^[Variant=Danger]">
+      <Setter Property="Background" Value="{DynamicResource AlderDanger}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderOnAccent}" />
+    </Style>
+    <Style Selector="^[Variant=DangerSoft]">
+      <Setter Property="Background" Value="{DynamicResource AlderDangerSoft}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderDangerInk}" />
+    </Style>
+    <Style Selector="^[Size=Small]">
+      <Setter Property="MinHeight" Value="32" />
+      <Setter Property="Padding" Value="12,3" />
+    </Style>
+    <Style Selector="^[Size=Large]">
+      <Setter Property="MinHeight" Value="40" />
+      <Setter Property="FontSize" Value="16" />
+    </Style>
+    <Style Selector="^[Size=Small]:pressed /template/ alder|ButtonFeedback#Face">
+      <Setter Property="PressScale" Value="0.98" />
+    </Style>
+    <Style Selector="^[Size=Large]:pressed /template/ alder|ButtonFeedback#Face">
+      <Setter Property="PressScale" Value="0.96" />
+    </Style>
+    <Style Selector="^.alder-grouped:pressed /template/ alder|ButtonFeedback#Face">
+      <Setter Property="PressScale" Value="1" />
+    </Style>
+    <Style Selector="^.icon"><Setter Property="Width" Value="36" /><Setter Property="Padding" Value="0" /></Style>
+    <Style Selector="^.icon[Size=Small]"><Setter Property="Width" Value="32" /></Style>
+    <Style Selector="^.icon[Size=Large]"><Setter Property="Width" Value="40" /></Style>
+    <Style Selector="^[IsIconOnly=True]"><Setter Property="Width" Value="36" /><Setter Property="Padding" Value="0" /></Style>
+    <Style Selector="^[IsIconOnly=True][Size=Small]"><Setter Property="Width" Value="32" /></Style>
+    <Style Selector="^[IsIconOnly=True][Size=Large]"><Setter Property="Width" Value="40" /></Style>
+    <Style Selector="^[FullWidth=True]"><Setter Property="HorizontalAlignment" Value="Stretch" /></Style>
+    <Style Selector="^[Variant=Primary] /template/ alder|ButtonTint#Tint">
+      <Setter Property="Background" Value="{DynamicResource AlderAccentHover}" />
+    </Style>
+    <Style Selector="^[Variant=Secondary] /template/ alder|ButtonTint#Tint, ^[Variant=Tertiary] /template/ alder|ButtonTint#Tint">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
+    <Style Selector="^[Variant=Ghost] /template/ alder|ButtonTint#Tint, ^[Variant=Outline] /template/ alder|ButtonTint#Tint">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+    <Style Selector="^[Variant=Danger] /template/ alder|ButtonTint#Tint">
+      <Setter Property="Background" Value="{DynamicResource AlderDangerHover}" />
+    </Style>
+    <Style Selector="^[Variant=Primary]:pointerover /template/ alder|ButtonTint#Tint, ^[Variant=Primary]:pressed /template/ alder|ButtonTint#Tint,
+                     ^[Variant=Secondary]:pointerover /template/ alder|ButtonTint#Tint, ^[Variant=Secondary]:pressed /template/ alder|ButtonTint#Tint,
+                     ^[Variant=Tertiary]:pointerover /template/ alder|ButtonTint#Tint, ^[Variant=Tertiary]:pressed /template/ alder|ButtonTint#Tint,
+                     ^[Variant=Ghost]:pointerover /template/ alder|ButtonTint#Tint, ^[Variant=Ghost]:pressed /template/ alder|ButtonTint#Tint,
+                     ^[Variant=Danger]:pointerover /template/ alder|ButtonTint#Tint, ^[Variant=Danger]:pressed /template/ alder|ButtonTint#Tint">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="^[Variant=Outline]:pointerover /template/ alder|ButtonTint#Tint, ^[Variant=Outline]:pressed /template/ alder|ButtonTint#Tint">
+      <Setter Property="Opacity" Value="0.6" />
+    </Style>
+    <Style Selector="^[Variant=DangerSoft] /template/ alder|ButtonTint#Tint">
+      <Setter Property="Background" Value="{DynamicResource AlderDanger}" />
+    </Style>
+    <!-- A 6% overlay raises the existing 15% danger fill to 20% when composited. -->
+    <Style Selector="^[Variant=DangerSoft]:pointerover /template/ alder|ButtonTint#Tint, ^[Variant=DangerSoft]:pressed /template/ alder|ButtonTint#Tint">
+      <Setter Property="Opacity" Value="0.06" />
+    </Style>
+    <Style Selector="^ /template/ PathIcon#LeadingIcon">
+      <Setter Property="Data" Value="{Binding Icon, RelativeSource={RelativeSource TemplatedParent}}" />
+      <Setter Property="IsVisible" Value="{Binding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+    </Style>
+    <Style Selector="^.alder-group-full">
+      <Setter Property="Width" Value="NaN" />
+    </Style>
+    <Style Selector="^[Variant=Outline].alder-leading"><Setter Property="BorderThickness" Value="1,1,0,1" /></Style>
+    <Style Selector="^[Variant=Outline].alder-trailing"><Setter Property="BorderThickness" Value="0,1,1,1" /></Style>
+    <Style Selector="^[Variant=Outline].alder-top"><Setter Property="BorderThickness" Value="1,1,1,0" /></Style>
+    <Style Selector="^[Variant=Outline].alder-bottom"><Setter Property="BorderThickness" Value="1,0,1,1" /></Style>
+    <Style Selector="^[Variant=Outline].alder-middle.alder-horizontal">
+      <Setter Property="BorderThickness" Value="0,1" />
+    </Style>
+    <Style Selector="^[Variant=Outline].alder-middle.alder-vertical">
+      <Setter Property="BorderThickness" Value="1,0" />
+    </Style>
+    <Style Selector="^[IsPending=True] /template/ PathIcon#LeadingIcon"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^[IsIconOnly=True] /template/ ContentPresenter#PART_ContentPresenter:empty">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^[IsPending=True][IsIconOnly=True] /template/ ContentPresenter#PART_ContentPresenter, ^.icon[IsPending=True] /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^[IsPending=True] /template/ PathIcon#Spinner"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^[IsPending=True]"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^[IsPending=True] /template/ alder|ButtonFeedback#Face, ^:spring-feedback /template/ alder|ButtonFeedback#Face">
+      <Setter Property="PressScale" Value="1" />
+    </Style>
+    <Style Selector="^[IsPending=True] /template/ alder|ButtonTint#Tint, ^:disabled /template/ alder|ButtonTint#Tint"><Setter Property="Opacity" Value="0" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderToggleButtonTheme" TargetType="ToggleButton" BasedOn="{StaticResource AlderButtonTheme}">
+    <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderTertiaryInk}" />
+    <Style Selector="^ /template/ alder|ButtonTint#Tint">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
+    <Style Selector="^.ghost, ^:ghost">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    </Style>
+    <Style Selector="^.ghost /template/ alder|ButtonTint#Tint, ^:ghost /template/ alder|ButtonTint#Tint">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+    <Style Selector="^:checked">
+      <Setter Property="Background" Value="{DynamicResource AlderSoft}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" />
+    </Style>
+    <Style Selector="^:checked /template/ alder|ButtonTint#Tint">
+      <Setter Property="Background" Value="{DynamicResource AlderSoftHoverTint}" />
+    </Style>
+    <Style Selector="^:pointerover /template/ alder|ButtonTint#Tint, ^:pressed /template/ alder|ButtonTint#Tint">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="^:disabled /template/ alder|ButtonTint#Tint"><Setter Property="Opacity" Value="0" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderToggleButton}" TargetType="alder:AlderToggleButton"
+                BasedOn="{StaticResource AlderToggleButtonTheme}">
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Style Selector="^:not(:disabled):not(:checked):pointerover, ^:not(:disabled):not(:checked):pressed">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
+    <Style Selector="^:ghost:not(:disabled):not(:checked):pointerover, ^:ghost:not(:disabled):not(:checked):pressed,
+                     ^.ghost:not(:disabled):not(:checked):pointerover, ^.ghost:not(:disabled):not(:checked):pressed">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+    <Style Selector="^:checked:not(:disabled):pointerover, ^:checked:not(:disabled):pressed">
+      <Setter Property="Background" Value="{DynamicResource AlderSoftHover}" />
+    </Style>
+    <Style Selector="^ /template/ alder|ButtonTint#Tint">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^[Size=Small]">
+      <Setter Property="MinHeight" Value="32" />
+      <Setter Property="Padding" Value="12,3" />
+    </Style>
+    <Style Selector="^[Size=Large]">
+      <Setter Property="MinHeight" Value="40" />
+      <Setter Property="FontSize" Value="16" />
+    </Style>
+    <Style Selector="^[Size=Small]:pressed /template/ alder|ButtonFeedback#Face">
+      <Setter Property="PressScale" Value="0.98" />
+    </Style>
+    <Style Selector="^[Size=Large]:pressed /template/ alder|ButtonFeedback#Face">
+      <Setter Property="PressScale" Value="0.96" />
+    </Style>
+    <Style Selector="^.alder-grouped:pressed /template/ alder|ButtonFeedback#Face">
+      <Setter Property="PressScale" Value="1" />
+    </Style>
+    <Style Selector="^[IsIconOnly=True]">
+      <Setter Property="Width" Value="36" />
+      <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style Selector="^[IsIconOnly=True][Size=Small]"><Setter Property="Width" Value="32" /></Style>
+    <Style Selector="^[IsIconOnly=True][Size=Large]"><Setter Property="Width" Value="40" /></Style>
+    <Style Selector="^[FullWidth=True], ^.alder-group-full">
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="Width" Value="NaN" />
+    </Style>
+    <Style Selector="^ /template/ PathIcon#LeadingIcon">
+      <Setter Property="Data" Value="{Binding Icon, RelativeSource={RelativeSource TemplatedParent}}" />
+      <Setter Property="IsVisible" Value="{Binding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+    </Style>
+    <Style Selector="^[IsIconOnly=True] /template/ ContentPresenter#PART_ContentPresenter:empty">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^ /template/ alder|ButtonFeedback#Face">
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.1" Easing="CubicEaseOut" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ alder|ButtonFeedback#Face">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderCloseButtonTheme" TargetType="Button" BasedOn="{StaticResource AlderButtonTheme}">
+    <Setter Property="Width" Value="24" />
+    <Setter Property="Height" Value="24" />
+    <Setter Property="MinHeight" Value="24" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Padding" Value="4" />
+    <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="Content" Value="×" />
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.Close}" />
+    <Style Selector="^ /template/ alder|ButtonTint#Tint">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
+    <Style Selector="^:pointerover /template/ alder|ButtonTint#Tint, ^:pressed /template/ alder|ButtonTint#Tint">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="^:disabled /template/ alder|ButtonTint#Tint"><Setter Property="Opacity" Value="0" /></Style>
+    <Style Selector="^:pressed /template/ alder|ButtonFeedback#Face">
+      <Setter Property="PressScale" Value="0.93" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderToastCloseButtonTheme" TargetType="Button" BasedOn="{StaticResource AlderCloseButtonTheme}">
+    <Setter Property="Width" Value="20" />
+    <Setter Property="Height" Value="20" />
+    <Setter Property="MinHeight" Value="20" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Padding" Value="5" />
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="CubicEaseOut" />
+      </Transitions>
+    </Setter>
+    <Style Selector="^ /template/ alder|ButtonTint#Tint">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+    <Style Selector="^.compact">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Style Selector="^ /template/ alder|ButtonTint#Tint">
+        <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+      </Style>
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True]">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

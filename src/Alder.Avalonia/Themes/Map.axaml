@@ -1,0 +1,120 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls" xmlns:conv="using:Avalonia.Data.Converters">
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderMapWater" Color="#C3CBCD" />
+      <SolidColorBrush x:Key="AlderMapLand" Color="#E7E7E2" />
+      <SolidColorBrush x:Key="AlderMapCoastline" Color="#D4D8D4" />
+      <SolidColorBrush x:Key="AlderMapRoad" Color="#FAFAF8" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderMapWater" Color="#222629" />
+      <SolidColorBrush x:Key="AlderMapLand" Color="#343638" />
+      <SolidColorBrush x:Key="AlderMapCoastline" Color="#414548" />
+      <SolidColorBrush x:Key="AlderMapRoad" Color="#4B4D50" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+  <x:String x:Key="AlderText.MapZoomIn">Zoom in</x:String>
+  <x:String x:Key="AlderText.MapZoomOut">Zoom out</x:String>
+  <x:String x:Key="AlderText.MapResetBearing">Reset bearing</x:String>
+  <x:String x:Key="AlderText.MapLocate">Locate</x:String>
+  <x:String x:Key="AlderText.MapFullScreen">Full screen</x:String>
+  <x:String x:Key="AlderText.MapExitFullScreen">Exit full screen</x:String>
+  <x:String x:Key="AlderText.MapClosePopup">Close popup</x:String>
+  <StreamGeometry x:Key="AlderMapCompassNorth">M 7,1 L 10,7 L 4,7 Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderMapCompassSouth">M 4,7 L 10,7 L 7,13 Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderMapLocateIcon">F0 M7 0 H8 V2 A5.5 5.5 0 0 1 13 7 H15 V8 H13 A5.5 5.5 0 0 1 8 13 V15 H7 V13 A5.5 5.5 0 0 1 2 8 H0 V7 H2 A5.5 5.5 0 0 1 7 2 Z M7.5 3.25 A4.25 4.25 0 1 0 7.5 11.75 A4.25 4.25 0 1 0 7.5 3.25 Z M7.5 5.75 A1.75 1.75 0 1 0 7.5 9.25 A1.75 1.75 0 1 0 7.5 5.75 Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderMapFullscreenIcon">M 1,1 H 6 V 2.4 H 2.4 V 6 H 1 Z M 9,1 H 14 V 6 H 12.6 V 2.4 H 9 Z M 1,9 H 2.4 V 12.6 H 6 V 14 H 1 Z M 12.6,9 H 14 V 14 H 9 V 12.6 H 12.6 Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderMapExitFullscreenIcon">M 5,1 H 6.4 V 6.4 H 1 V 5 H 5 Z M 8.6,1 H 10 V 5 H 14 V 6.4 H 8.6 Z M 1,8.6 H 6.4 V 14 H 5 V 10 H 1 Z M 8.6,8.6 H 14 V 10 H 10 V 14 H 8.6 Z</StreamGeometry>
+  <ControlTheme x:Key="{x:Type alder:AlderMap}" TargetType="alder:AlderMap">
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Focusable" Value="True" />
+    <Setter Property="ClipToBounds" Value="True" />
+    <Setter Property="CornerRadius" Value="14" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="MarkerBadgeBrush" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="RoadBrush" Value="{DynamicResource AlderMapRoad}" />
+    <Setter Property="Background" Value="{DynamicResource AlderMapWater}" />
+    <Setter Property="LandBrush" Value="{DynamicResource AlderMapLand}" />
+    <Setter Property="CoastlineBrush" Value="{DynamicResource AlderMapCoastline}" />
+    <Setter Property="MarkerBrush" Value="{DynamicResource AlderAccent}" />
+    <Setter Property="LabelBrush" Value="{DynamicResource AlderInk}" />
+    <Setter Property="MinHeight" Value="230" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid>
+          <ContentPresenter HorizontalAlignment="{TemplateBinding OverlayHorizontalAlignment}"
+                            VerticalAlignment="{TemplateBinding OverlayVerticalAlignment}"
+                            Margin="12" Content="{TemplateBinding OverlayContent}" ContentTemplate="{TemplateBinding OverlayContentTemplate}" />
+          <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Content="{TemplateBinding EmptyContent}"
+                            IsVisible="{CompiledBinding Basemap, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNull}}" />
+          <Canvas>
+            <Border Name="PART_MarkerPopup" IsVisible="False" MaxWidth="244" CornerRadius="18" MinWidth="146"
+                    Background="{DynamicResource AlderSurface}" BoxShadow="{DynamicResource AlderToolbarShadow}" Padding="14,9,8,12">
+              <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" ColumnSpacing="6" RowSpacing="2">
+                <alder:AlderTextBlock Name="PART_PopupTitle" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" VerticalAlignment="Center" />
+                <alder:AlderButton Name="PART_ClosePopup" Grid.Column="1" IsIconOnly="True" Icon="{StaticResource AlderIconXmark}"
+                                   Size="Small" Variant="Secondary" Width="22" Height="22" MinWidth="22" MinHeight="22" Padding="4"
+                                   Foreground="{DynamicResource AlderMuted}"
+                                   AutomationProperties.Name="{DynamicResource AlderText.MapClosePopup}" />
+                <ContentPresenter Name="PART_PopupContent" Grid.Row="1" Grid.ColumnSpan="2"
+                                  FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+              </Grid>
+            </Border>
+          </Canvas>
+          <StackPanel Name="ControlStack" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                      Margin="0,0,9,33" Spacing="6" IsVisible="{TemplateBinding ShowControls}">
+            <Border CornerRadius="16" Background="{DynamicResource AlderSurfaceSecondary}" IsVisible="{TemplateBinding ShowZoomControls}">
+              <StackPanel>
+                <alder:AlderButton Name="PART_ZoomIn" IsIconOnly="True" Icon="{StaticResource AlderIconPlus}"
+                                   Variant="Ghost" Size="Small" Width="32" Height="32"
+                                   AutomationProperties.Name="{DynamicResource AlderText.MapZoomIn}" />
+                <Border Background="{DynamicResource AlderSeparator}" Height="1" Width="14" />
+                <alder:AlderButton Name="PART_ZoomOut" IsIconOnly="True" Icon="{StaticResource AlderIconMinus}"
+                                   Variant="Ghost" Size="Small" Width="32" Height="32"
+                                   AutomationProperties.Name="{DynamicResource AlderText.MapZoomOut}" />
+              </StackPanel>
+            </Border>
+            <alder:AlderButton Name="PART_ResetBearing" IsIconOnly="True" Variant="Secondary" Size="Small"
+                               Width="32" Height="32" IsVisible="{TemplateBinding ShowCompass}"
+                               AutomationProperties.Name="{DynamicResource AlderText.MapResetBearing}">
+              <Grid Name="PART_Compass" Width="14" Height="14" RenderTransformOrigin="50%,50%" IsHitTestVisible="False">
+                <Path Data="{StaticResource AlderMapCompassNorth}" Fill="{DynamicResource AlderDanger}" />
+                <Path Data="{StaticResource AlderMapCompassSouth}" Fill="{DynamicResource AlderMuted}" />
+              </Grid>
+            </alder:AlderButton>
+            <alder:AlderButton IsIconOnly="True" Icon="{StaticResource AlderMapLocateIcon}" Variant="Secondary" Size="Small"
+                               Width="32" Height="32" AutomationProperties.Name="{DynamicResource AlderText.MapLocate}"
+                               Command="{TemplateBinding LocateCommand}"
+                               IsVisible="{CompiledBinding LocateCommand, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+            <alder:AlderButton Name="PART_Fullscreen" IsIconOnly="True" Variant="Secondary" Size="Small"
+                               Width="32" Height="32" Foreground="{DynamicResource AlderInk}"
+                               Command="{TemplateBinding FullscreenCommand}"
+                               IsVisible="{CompiledBinding FullscreenCommand, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+          </StackPanel>
+          <Border HorizontalAlignment="Right" VerticalAlignment="Bottom" Padding="6,3"
+                  Background="{DynamicResource AlderSurface}" CornerRadius="3" Margin="0,0,6,6" IsHitTestVisible="False"
+                  IsVisible="{CompiledBinding Attribution, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}">
+            <alder:AlderTextBlock Text="{TemplateBinding Attribution}" FontSize="10" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource AlderMuted}" />
+          </Border>
+          <Border Name="FocusFrame" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}"
+                  CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:focus-visible /template/ Border#FocusFrame"><Setter Property="BorderThickness" Value="2" /><Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" /></Style>
+    <Style Selector="^[IsInteractive=False]"><Setter Property="Focusable" Value="False" /></Style>
+    <Style Selector="^[IsInteractive=False] /template/ StackPanel#ControlStack"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^ /template/ alder|AlderButton#PART_Fullscreen">
+      <Setter Property="Icon" Value="{StaticResource AlderMapFullscreenIcon}" />
+      <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.MapFullScreen}" />
+    </Style>
+    <Style Selector="^[IsFullscreen=True] /template/ alder|AlderButton#PART_Fullscreen">
+      <Setter Property="Icon" Value="{StaticResource AlderMapExitFullscreenIcon}" />
+      <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.MapExitFullScreen}" />
+    </Style>
+    <Style Selector="^:marker-over"><Setter Property="Cursor" Value="Hand" /></Style>
+    <Style Selector="^:panning"><Setter Property="Cursor" Value="SizeAll" /></Style>
+  </ControlTheme>
+</ResourceDictionary>

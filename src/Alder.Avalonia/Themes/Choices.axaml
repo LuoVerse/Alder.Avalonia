@@ -1,0 +1,470 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:conv="using:Avalonia.Data.Converters"
+                    xmlns:alder="using:Alder.Avalonia.Controls">
+  <StreamGeometry x:Key="AlderCheckDash">M0.75,0 H8.25 A0.75,0.75 0 0 1 8.25,1.5 H0.75 A0.75,0.75 0 0 1 0.75,0Z</StreamGeometry>
+  <ControlTheme x:Key="AlderCheckBoxTheme" TargetType="CheckBox">
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="MinHeight" Value="30" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid RowDefinitions="Auto,Auto,Auto" VerticalAlignment="Center">
+          <Border Name="Row" MinHeight="20" CornerRadius="12" Background="Transparent" Padding="{TemplateBinding Padding}">
+            <Grid ColumnDefinitions="Auto,*">
+              <Grid VerticalAlignment="Center">
+                <Border Name="Indicator"
+                        Background="{DynamicResource AlderSurface}" BoxShadow="{DynamicResource AlderFieldShadow}" />
+                <Border Name="SelectionFill" CornerRadius="{Binding #Indicator.CornerRadius}"
+                        Background="{DynamicResource AlderAccent}" Opacity="0" RenderTransform="scale(0.7)" IsHitTestVisible="False">
+                  <Border.Transitions>
+                    <Transitions>
+                      <BrushTransition Property="Background" Duration="0:0:0.2" Easing="CubicEaseOut" />
+                      <DoubleTransition Property="Opacity" Duration="0:0:0.2" />
+                      <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1" />
+                    </Transitions>
+                  </Border.Transitions>
+                </Border>
+                <Viewbox Name="DefaultCheckMark" Width="10" Height="10" IsHitTestVisible="False">
+                  <Canvas Width="18" Height="18">
+                    <Path Name="CheckStroke" Data="M1.5,9 L7.5,14 L15.5,4" Stretch="None" Fill="{x:Null}"
+                          Stroke="{DynamicResource AlderOnAccent}" StrokeThickness="2.5" StrokeLineCap="Round"
+                          StrokeJoin="Round" StrokeDashArray="8.8,8.8" StrokeDashOffset="8.8">
+                      <Path.Transitions><Transitions><alder:CheckMarkStrokeTransition /></Transitions></Path.Transitions>
+                    </Path>
+                  </Canvas>
+                </Viewbox>
+                <alder:AlderPathIcon Name="CheckMark" Width="10" Height="10"
+                          Opacity="0" Foreground="{DynamicResource AlderOnAccent}" IsHitTestVisible="False">
+                  <alder:AlderPathIcon.Transitions><Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" /></Transitions></alder:AlderPathIcon.Transitions>
+                </alder:AlderPathIcon>
+                <alder:AlderPathIcon Name="Dash" Width="9" Height="9"
+                          Opacity="0" Foreground="{DynamicResource AlderOnAccent}" IsHitTestVisible="False">
+                  <alder:AlderPathIcon.Transitions><Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.2" /></Transitions></alder:AlderPathIcon.Transitions>
+                </alder:AlderPathIcon>
+                <Border Name="FocusRing" IsVisible="False" IsHitTestVisible="False" Margin="-4" BorderThickness="2"
+                        CornerRadius="{Binding #Indicator.CornerRadius}" BorderBrush="{DynamicResource AlderAccent}" />
+              </Grid>
+              <ContentPresenter Grid.Column="1" Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}" Margin="12,0,0,0"
+                                VerticalAlignment="Center" RecognizesAccessKey="True" />
+            </Grid>
+          </Border>
+          <alder:AlderTextBlock Name="Description" Grid.Row="1" Margin="28,4,0,0" IsHitTestVisible="False"
+                     FontSize="12" LineHeight="16" FontWeight="Normal" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" />
+          <alder:AlderTextBlock Name="FieldError" Grid.Row="2" Margin="28,4,0,0" IsHitTestVisible="False" AutomationProperties.LiveSetting="Polite"
+                     FontSize="12" LineHeight="16" FontWeight="Normal" TextWrapping="Wrap" Foreground="{DynamicResource AlderDangerInk}" />
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ Border#Indicator">
+      <Setter Property="Width" Value="16" />
+      <Setter Property="Height" Value="16" />
+      <Setter Property="CornerRadius" Value="6" />
+    </Style>
+    <Style Selector="^ /template/ PathIcon#CheckMark"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^ /template/ PathIcon#Dash"><Setter Property="Data" Value="{StaticResource AlderCheckDash}" /></Style>
+    <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter:empty"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^ /template/ TextBlock#Description, ^ /template/ TextBlock#FieldError">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^.alder-invalid /template/ Border#Indicator">
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderDanger}" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ Border#FocusRing"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:checked /template/ Border#SelectionFill, ^:indeterminate /template/ Border#SelectionFill">
+      <Setter Property="Opacity" Value="1" />
+      <Setter Property="RenderTransform" Value="scale(1)" />
+    </Style>
+    <Style Selector="^:pointerover:not(:disabled) /template/ Border#SelectionFill, ^:indeterminate:pressed:not(:disabled) /template/ Border#SelectionFill">
+      <Setter Property="Background" Value="{DynamicResource AlderAccentHover}" />
+    </Style>
+    <Style Selector="^:checked /template/ Path#CheckStroke"><Setter Property="StrokeDashOffset" Value="0" /></Style>
+    <Style Selector="^:checked /template/ PathIcon#CheckMark"><Setter Property="Opacity" Value="1" /></Style>
+    <Style Selector="^:indeterminate /template/ PathIcon#Dash"><Setter Property="Opacity" Value="1" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^.card"><Setter Property="Padding" Value="14,10" /></Style>
+    <Style Selector="^.card /template/ Border#Row">
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+      <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    </Style>
+    <Style Selector="^.card:checked /template/ Border#Row">
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" />
+      <Setter Property="Background" Value="{DynamicResource AlderSelectionCardFill}" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#SelectionFill,
+                     ^[(alder|AlderMotion.Reduced)=True] /template/ Path#CheckStroke,
+                     ^[(alder|AlderMotion.Reduced)=True] /template/ PathIcon#CheckMark, ^[(alder|AlderMotion.Reduced)=True] /template/ PathIcon#Dash">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderCheckBox}" TargetType="alder:AlderCheckBox" BasedOn="{StaticResource AlderCheckBoxTheme}">
+    <Setter Property="MinHeight" Value="20" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="IndeterminateIcon" Value="{StaticResource AlderCheckDash}" />
+    <Setter Property="AutomationProperties.HelpText" Value="{Binding Description, RelativeSource={RelativeSource Self}}" />
+    <Style Selector="^[IsRequired=True]"><Setter Property="AutomationProperties.IsRequiredForForm" Value="True" /></Style>
+    <Style Selector="^[IsReadOnly=True]"><Setter Property="Cursor" Value="Arrow" /></Style>
+    <Style Selector="^:not(.card) /template/ Border#Row"><Setter Property="HorizontalAlignment" Value="Left" /></Style>
+    <Style Selector="^ /template/ Border#Indicator">
+      <Setter Property="Width" Value="{Binding IndicatorSize, RelativeSource={RelativeSource TemplatedParent}}" />
+      <Setter Property="Height" Value="{Binding IndicatorSize, RelativeSource={RelativeSource TemplatedParent}}" />
+      <Setter Property="CornerRadius" Value="{Binding IndicatorCornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
+    </Style>
+    <Style Selector="^[Variant=Secondary] /template/ Border#Indicator">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+      <Setter Property="BoxShadow" Value="none" />
+    </Style>
+    <Style Selector="^ /template/ PathIcon#CheckMark">
+      <Setter Property="Data" Value="{Binding CheckedIcon, RelativeSource={RelativeSource TemplatedParent}}" />
+      <Setter Property="IsVisible" Value="{Binding CheckedIcon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+    </Style>
+    <Style Selector="^ /template/ Viewbox#DefaultCheckMark">
+      <Setter Property="IsVisible" Value="{Binding CheckedIcon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNull}}" />
+    </Style>
+    <Style Selector="^ /template/ PathIcon#Dash">
+      <Setter Property="Data" Value="{Binding IndeterminateIcon, RelativeSource={RelativeSource TemplatedParent}}" />
+    </Style>
+    <Style Selector="^ /template/ TextBlock#Description">
+      <Setter Property="Text" Value="{Binding Description, RelativeSource={RelativeSource TemplatedParent}}" />
+      <Setter Property="IsVisible" Value="{Binding Description, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+    </Style>
+    <Style Selector="^[IsInvalid=True] /template/ TextBlock#FieldError">
+      <Setter Property="Text" Value="{Binding ErrorMessage, RelativeSource={RelativeSource TemplatedParent}}" />
+      <Setter Property="IsVisible" Value="{Binding ErrorMessage, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+    </Style>
+    <Style Selector="^[IsInvalid=True]:not(:checked):not(:indeterminate) /template/ Border#Indicator">
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderDanger}" />
+    </Style>
+    <Style Selector="^[IsInvalid=True] /template/ Border#SelectionFill">
+      <Setter Property="Background" Value="{DynamicResource AlderDanger}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderRadioButtonTheme" TargetType="alder:AlderRadioButton">
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="MinHeight" Value="20" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="AutomationProperties.HelpText"
+            Value="{Binding Description, RelativeSource={RelativeSource Self}}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="Row" CornerRadius="12" Padding="{TemplateBinding Padding}">
+          <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
+            <Border Grid.ColumnSpan="3" Background="Transparent" Cursor="Hand" />
+            <Grid Name="IndicatorHost" Width="16" Height="16" Margin="0,2,12,0" VerticalAlignment="Top" IsHitTestVisible="False">
+              <Border Name="Indicator" CornerRadius="8" Background="{DynamicResource AlderSurface}"
+                      RenderTransform="scale(1)" BoxShadow="{DynamicResource AlderFieldShadow}">
+                <Panel>
+                  <Border Name="DefaultDot" CornerRadius="8" Background="{DynamicResource AlderSurface}" RenderTransform="scale(1)"
+                          IsVisible="{Binding Indicator, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNull}}" />
+                  <ContentPresenter Name="CustomIndicator" Content="{TemplateBinding Indicator}"
+                                    Foreground="{DynamicResource AlderOnAccent}" Opacity="0"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  <Border Name="InvalidRing" IsVisible="False" Margin="-1" CornerRadius="9" BorderThickness="1"
+                          BorderBrush="{DynamicResource AlderDanger}" />
+                </Panel>
+              </Border>
+              <Border Name="FocusRing" IsVisible="False" Margin="-4" CornerRadius="12" BorderThickness="2"
+                      BorderBrush="{DynamicResource AlderAccent}" />
+            </Grid>
+            <ContentPresenter Grid.Column="1" Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}" MinHeight="20" VerticalContentAlignment="Center"
+                              TextBlock.LineHeight="20" RecognizesAccessKey="True" />
+            <alder:AlderTextBlock Name="Description" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,4,0,0"
+                       FontSize="12" LineHeight="16" FontWeight="Normal" Foreground="{DynamicResource AlderMuted}"
+                       TextWrapping="Wrap" IsHitTestVisible="False" Text="{TemplateBinding Description}"
+                       IsVisible="{Binding Description, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+            <alder:AlderTextBlock Name="FieldError" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,4,0,0"
+                       FontSize="12" LineHeight="16" FontWeight="Normal" Foreground="{DynamicResource AlderDangerInk}"
+                       TextWrapping="Wrap" IsHitTestVisible="False" AutomationProperties.LiveSetting="Polite"
+                       Text="{TemplateBinding FieldError}" IsVisible="False" />
+            <ContentPresenter Name="Footer" Grid.Row="3" Grid.ColumnSpan="3" Content="{TemplateBinding Footer}"
+                              Margin="0,24,0,0" HorizontalContentAlignment="Center" TextBlock.LineHeight="20" IsHitTestVisible="False" />
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ ContentPresenter#Footer:empty"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^ /template/ Border#Indicator">
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.2" Easing="0,0,0.2,1" />
+          <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1" Easing="0,0,0.2,1" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^ /template/ Border#DefaultDot">
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.2" Easing="0,0,0.2,1" />
+          <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" Easing="0,0,0.2,1" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^ /template/ ContentPresenter#CustomIndicator">
+      <Setter Property="Transitions">
+        <Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^[IsSecondary=True] /template/ Border#Indicator">
+      <Setter Property="BoxShadow" Value="none" />
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+    <Style Selector="^[IsSecondary=True] /template/ Border#DefaultDot">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+    <Style Selector="^:field-error">
+      <Setter Property="AutomationProperties.HelpText" Value="{Binding FieldError, RelativeSource={RelativeSource Self}}" />
+    </Style>
+    <Style Selector="^:field-error /template/ TextBlock#FieldError">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^.alder-invalid /template/ Border#InvalidRing, ^:field-error /template/ Border#InvalidRing">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ Border#FocusRing"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:pressed /template/ Border#Indicator"><Setter Property="RenderTransform" Value="scale(0.95)" /></Style>
+    <Style Selector="^:checked /template/ Border#Indicator"><Setter Property="Background" Value="{DynamicResource AlderAccent}" /></Style>
+    <Style Selector="^:pointerover:not(:checked):not(:disabled) /template/ Border#DefaultDot">
+      <Setter Property="Background" Value="{DynamicResource AlderFieldHover}" />
+    </Style>
+    <Style Selector="^[IsSecondary=True]:pointerover:not(:checked):not(:disabled) /template/ Border#DefaultDot">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
+    <Style Selector="^:checked:pressed /template/ Border#Indicator"><Setter Property="Background" Value="{DynamicResource AlderAccentHover}" /></Style>
+    <Style Selector="^:checked /template/ Border#DefaultDot">
+      <Setter Property="Background" Value="{DynamicResource AlderOnAccent}" />
+      <Setter Property="RenderTransform" Value="scale(0.4286)" />
+    </Style>
+    <Style Selector="^:checked:pressed /template/ Border#DefaultDot"><Setter Property="RenderTransform" Value="scale(0.5714)" /></Style>
+    <Style Selector="^:checked /template/ ContentPresenter#CustomIndicator"><Setter Property="Opacity" Value="1" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^.card"><Setter Property="Padding" Value="14,10" /></Style>
+    <Style Selector="^.tile"><Setter Property="Padding" Value="20,16" /></Style>
+    <Style Selector="^.card /template/ Border#Row, ^.tile /template/ Border#Row">
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+      <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.15" Easing="0,0,0.2,1" />
+          <BrushTransition Property="BorderBrush" Duration="0:0:0.15" Easing="0,0,0.2,1" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^.tile /template/ Border#Row"><Setter Property="BorderBrush" Value="Transparent" /></Style>
+    <Style Selector="^.tile /template/ Grid#IndicatorHost">
+      <Setter Property="Width" Value="20" /><Setter Property="Height" Value="20" />
+    </Style>
+    <Style Selector="^.tile.trailing /template/ Grid#IndicatorHost">
+      <Setter Property="Grid.Column" Value="2" />
+      <Setter Property="Margin" Value="4,-4,-4,0" />
+    </Style>
+    <Style Selector="^.tile:checked /template/ Border#DefaultDot"><Setter Property="RenderTransform" Value="scale(0.343)" /></Style>
+    <Style Selector="^.tile:checked:pressed /template/ Border#DefaultDot"><Setter Property="RenderTransform" Value="scale(0.457)" /></Style>
+    <Style Selector="^.card:checked /template/ Border#Row, ^.tile:checked /template/ Border#Row, ^.tile:focus-visible /template/ Border#Row">
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" />
+      <Setter Property="Background" Value="{DynamicResource AlderSelectionCardFill}" />
+    </Style>
+    <Style Selector="^.tile:focus-visible /template/ Border#FocusRing"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#Indicator">
+      <Setter Property="Transitions" Value="{x:Null}" />
+      <Setter Property="RenderTransform" Value="scale(1)" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#DefaultDot, ^[(alder|AlderMotion.Reduced)=True] /template/ ContentPresenter#CustomIndicator,
+                     ^[(alder|AlderMotion.Reduced)=True] /template/ Border#Row">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderSwitchTheme" TargetType="alder:AlderSwitch">
+    <Setter Property="MinHeight" Value="28" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="CheckedTrackBrush" Value="{DynamicResource AlderAccent}" />
+    <Setter Property="CheckedHoverBrush" Value="{DynamicResource AlderAccentHover}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="KnobTransitions">
+      <Transitions><DoubleTransition Property="Canvas.Left" Duration="0:0:0.3" Easing="0.32,0.72,0,1" /></Transitions>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Center">
+          <Border Name="TrackOutline" Width="40" Height="20" CornerRadius="10" UseLayoutRounding="False">
+            <alder:SwitchTrack Name="Track" CornerRadius="{CompiledBinding #TrackOutline.CornerRadius}" ClipToBounds="True"
+                           IsChecked="{TemplateBinding IsChecked, Mode=OneWay}"
+                           IdleBackground="{DynamicResource AlderNeutral}" HoverBackground="{DynamicResource AlderSwitchHover}"
+                           CheckedBackground="{TemplateBinding CheckedTrackBrush}"
+                           CheckedHoverBackground="{TemplateBinding CheckedHoverBrush}">
+              <alder:SwitchTrack.Transitions>
+                <Transitions><BrushTransition Property="Background" Duration="0:0:0.25" Easing="0.25,0.1,0.25,1" /></Transitions>
+              </alder:SwitchTrack.Transitions>
+              <Canvas Name="PART_SwitchKnob" Margin="2,0" HorizontalAlignment="Left" Width="14" Height="20">
+                <Grid Name="PART_MovingKnobs" Width="22" Height="20" Canvas.Left="0">
+                  <Border Name="Knob" Height="16" CornerRadius="8" Background="White" BoxShadow="{DynamicResource AlderFieldShadow}" />
+                  <alder:AlderPathIcon Name="OffGlyph" Width="10" Height="10" Foreground="Black" Opacity="0.7"
+                            Data="{TemplateBinding OffIcon}" IsHitTestVisible="False" />
+                  <alder:AlderPathIcon Name="OnGlyph" Width="10" Height="10" Opacity="0" IsHitTestVisible="False"
+                            Foreground="{DynamicResource AlderAccent}"
+                            Data="{TemplateBinding OnIcon}" />
+                </Grid>
+              </Canvas>
+            </alder:SwitchTrack>
+          </Border>
+          <ContentPresenter Grid.Column="1" Name="PART_ContentPresenter" VerticalAlignment="Center"
+                            Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
+          <ContentPresenter Grid.Column="1" Name="PART_OffContentPresenter" VerticalAlignment="Center" IsVisible="False"
+                            Content="{TemplateBinding OffContent}" ContentTemplate="{TemplateBinding OffContentTemplate}" />
+          <ContentPresenter Grid.Column="1" Name="PART_OnContentPresenter" VerticalAlignment="Center" IsVisible="False"
+                            Content="{TemplateBinding OnContent}" ContentTemplate="{TemplateBinding OnContentTemplate}" />
+          <ContentPresenter Grid.Row="1" Grid.Column="1" Name="Description"
+                            Content="{TemplateBinding Description}">
+            <ContentPresenter.ContentTemplate>
+              <DataTemplate x:DataType="x:String">
+                <alder:AlderTextBlock Text="{CompiledBinding}" FontSize="12" FontWeight="Normal" TextWrapping="Wrap"
+                           Foreground="{DynamicResource AlderMuted}" />
+              </DataTemplate>
+            </ContentPresenter.ContentTemplate>
+          </ContentPresenter>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter,
+                     ^ /template/ ContentPresenter#PART_OffContentPresenter, ^ /template/ ContentPresenter#PART_OnContentPresenter">
+      <Setter Property="Margin" Value="12,0,0,0" />
+    </Style>
+    <Style Selector="^ /template/ ContentPresenter#Description"><Setter Property="Margin" Value="12,4,0,0" /></Style>
+    <Style Selector="^ /template/ ContentPresenter#Description:empty"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^[LabelPlacement=Before] /template/ Border#TrackOutline">
+      <Setter Property="Grid.Column" Value="1" />
+    </Style>
+    <Style Selector="^[LabelPlacement=Before] /template/ ContentPresenter">
+      <Setter Property="Grid.Column" Value="0" />
+      <Setter Property="Margin" Value="0,0,12,0" />
+    </Style>
+    <Style Selector="^[LabelPlacement=Before] /template/ ContentPresenter#Description">
+      <Setter Property="Margin" Value="0,4,12,0" />
+    </Style>
+    <Style Selector="^[ShowStateLabel=True] /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^[ShowStateLabel=True]:not(:checked) /template/ ContentPresenter#PART_OffContentPresenter,
+                     ^[ShowStateLabel=True]:checked /template/ ContentPresenter#PART_OnContentPresenter">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter:empty">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^.small /template/ Border#TrackOutline, ^[Size=Small] /template/ Border#TrackOutline">
+      <Setter Property="Width" Value="32" />
+      <Setter Property="Height" Value="16" />
+      <Setter Property="CornerRadius" Value="8" />
+    </Style>
+    <Style Selector="^.small /template/ Canvas#PART_SwitchKnob, ^[Size=Small] /template/ Canvas#PART_SwitchKnob">
+      <Setter Property="Width" Value="11.5" />
+      <Setter Property="Height" Value="16" />
+    </Style>
+    <Style Selector="^.small /template/ Grid#PART_MovingKnobs, ^[Size=Small] /template/ Grid#PART_MovingKnobs">
+      <Setter Property="Width" Value="16.5" />
+      <Setter Property="Height" Value="16" />
+    </Style>
+    <Style Selector="^.small /template/ Border#Knob, ^[Size=Small] /template/ Border#Knob">
+      <Setter Property="Height" Value="12" />
+      <Setter Property="CornerRadius" Value="6" />
+    </Style>
+    <Style Selector="^.large /template/ Border#TrackOutline, ^[Size=Large] /template/ Border#TrackOutline">
+      <Setter Property="Width" Value="48" />
+      <Setter Property="Height" Value="24" />
+      <Setter Property="CornerRadius" Value="12" />
+    </Style>
+    <Style Selector="^.large /template/ Canvas#PART_SwitchKnob, ^[Size=Large] /template/ Canvas#PART_SwitchKnob">
+      <Setter Property="Width" Value="16.5" />
+      <Setter Property="Height" Value="24" />
+    </Style>
+    <Style Selector="^.large /template/ Grid#PART_MovingKnobs, ^[Size=Large] /template/ Grid#PART_MovingKnobs">
+      <Setter Property="Width" Value="27.5" />
+      <Setter Property="Height" Value="24" />
+    </Style>
+    <Style Selector="^.large /template/ Border#Knob, ^[Size=Large] /template/ Border#Knob">
+      <Setter Property="Height" Value="20" />
+      <Setter Property="CornerRadius" Value="10" />
+    </Style>
+    <Style Selector="^.small /template/ PathIcon, ^[Size=Small] /template/ PathIcon">
+      <Setter Property="Width" Value="8" /><Setter Property="Height" Value="8" />
+    </Style>
+    <Style Selector="^.large /template/ PathIcon, ^[Size=Large] /template/ PathIcon">
+      <Setter Property="Width" Value="12" /><Setter Property="Height" Value="12" />
+    </Style>
+    <Style Selector="^:pointerover /template/ alder|SwitchTrack#Track, ^:pressed /template/ alder|SwitchTrack#Track">
+      <Setter Property="IsHighlighted" Value="True" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ Border#TrackOutline"><Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" /></Style>
+    <Style Selector="^:checked /template/ PathIcon#OnGlyph">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="^:checked /template/ PathIcon#OffGlyph"><Setter Property="Opacity" Value="0" /></Style>
+    <Style Selector="^ /template/ PathIcon">
+      <Setter Property="Transitions">
+        <Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^:checked /template/ Border#Knob">
+      <Setter Property="Background" Value="{DynamicResource AlderOnAccent}" />
+      <Setter Property="BoxShadow" Value="0 0 5 0 #05000000, 0 2 10 0 #0F000000, 0 0 1 0 #4D000000" />
+    </Style>
+    <Style Selector="^:disabled">
+      <Setter Property="Opacity" Value="0.5" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True]">
+      <Setter Property="KnobTransitions" Value="{x:Null}" />
+    </Style>
+    <Style Selector="^:disabled /template/ Border#Knob">
+      <Setter Property="Background" Value="{DynamicResource AlderMuted}" />
+      <Setter Property="Opacity" Value="0.4" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ alder|SwitchTrack#Track,
+                     ^[(alder|AlderMotion.Reduced)=True] /template/ PathIcon">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderSwitchGroup}" TargetType="alder:AlderSwitchGroup">
+    <Setter Property="ItemsPanel"><ItemsPanelTemplate><StackPanel Spacing="10" /></ItemsPanelTemplate></Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel Spacing="8">
+          <ContentPresenter Name="PART_HeaderPresenter" Content="{TemplateBinding Header}"
+                            ContentTemplate="{TemplateBinding HeaderTemplate}" FontWeight="Medium"
+                            Foreground="{DynamicResource AlderInk}" />
+          <ContentPresenter Name="GroupDescription" Content="{TemplateBinding Description}">
+            <ContentPresenter.ContentTemplate>
+              <DataTemplate x:DataType="x:String">
+                <alder:AlderTextBlock Text="{CompiledBinding}" Foreground="{DynamicResource AlderMuted}" FontSize="12" TextWrapping="Wrap" />
+              </DataTemplate>
+            </ContentPresenter.ContentTemplate>
+          </ContentPresenter>
+          <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ ContentPresenter:empty"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^[Orientation=Horizontal]">
+      <Setter Property="ItemsPanel">
+        <ItemsPanelTemplate><WrapPanel ItemSpacing="16" LineSpacing="10" /></ItemsPanelTemplate>
+      </Setter>
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderRadioButton}" TargetType="alder:AlderRadioButton" BasedOn="{StaticResource AlderRadioButtonTheme}" />
+  <ControlTheme x:Key="{x:Type alder:AlderSwitch}" TargetType="alder:AlderSwitch" BasedOn="{StaticResource AlderSwitchTheme}" />
+</ResourceDictionary>

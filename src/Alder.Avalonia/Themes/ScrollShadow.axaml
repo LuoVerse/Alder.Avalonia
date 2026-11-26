@@ -1,0 +1,13 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls">
+  <ControlTheme x:Key="{x:Type alder:AlderScrollShadow}" TargetType="alder:AlderScrollShadow"
+                BasedOn="{StaticResource {x:Type alder:AlderScrollViewer}}">
+    <Style Selector="^ /template/ ScrollContentPresenter#PART_ContentPresenter">
+      <Setter Property="ContentTemplate" Value="{TemplateBinding ContentTemplate}" />
+      <Setter Property="BorderBrush" Value="{TemplateBinding BorderBrush}" />
+      <Setter Property="BorderThickness" Value="{TemplateBinding BorderThickness}" />
+      <Setter Property="CornerRadius" Value="{TemplateBinding CornerRadius}" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

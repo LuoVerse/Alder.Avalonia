@@ -1,0 +1,232 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.ChatToolExample" x:DataType="vm:AiExampleViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleDefault" Classes="flush-preview" Title="{DynamicResource GalleryText.AiDefault}">
+      <g:ExampleCard.Preview>
+        <Border Container.Name="ChatToolPreview" Container.Sizing="Width" x:DataType="vm:AiExampleViewModel">
+          <Border.Styles>
+            <Style Selector="Border.chat-tool-preview"><Setter Property="Padding" Value="40" /></Style>
+            <ContainerQuery Name="ChatToolPreview" Query="max-width:639">
+              <Style Selector="Border.chat-tool-preview"><Setter Property="Padding" Value="24" /></Style>
+            </ContainerQuery>
+          </Border.Styles>
+          <Border Classes="chat-tool-preview" MinHeight="360">
+            <Border.DataContext><vm:AiExampleViewModel /></Border.DataContext>
+            <a:AlderChatMessage Avatar="AI" VerticalAlignment="Center">
+              <StackPanel Spacing="8">
+                <a:AlderTextBlock Text="{DynamicResource GalleryText.AiToolIntro}" TextWrapping="Wrap" FontSize="14" LineHeight="20" />
+                <a:AlderChatTool Status="Completed" Header="{DynamicResource GalleryText.AiToolUsedPrefix}" ToolName="getWeather"
+                                 Arguments="{}{&quot;city&quot;:&quot;Paris&quot;}" Result="{CompiledBinding WeatherJson}" />
+              </StackPanel>
+            </a:AlderChatMessage>
+          </Border>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel();
+        var intro = new AlderTextBlock { TextWrapping = TextWrapping.Wrap, FontSize = 14, LineHeight = 20 };
+        intro[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.AiToolIntro");
+        var tool = new AlderChatTool
+        {
+            Status = AiRunStatus.Completed, ToolName = "getWeather", Arguments = """{"city":"Paris"}"""
+        };
+        tool[!AlderChatTool.HeaderProperty] = new DynamicResourceExtension("GalleryText.AiToolUsedPrefix");
+        tool.Bind(AlderChatTool.ResultProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.WeatherJson, source: model));
+        var reply = new StackPanel { Spacing = 8, Children = { intro, tool } };
+        var preview = new Border
+        {
+            MinHeight = 360, Padding = new Thickness(40), DataContext = model,
+            Child = new AlderChatMessage { Avatar = "AI", VerticalAlignment = VerticalAlignment.Center, Content = reply }
+        };
+        preview.SizeChanged += (_, e) => preview.Padding = new Thickness(e.NewSize.Width < 640 ? 24 : 40);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleGrouped" Classes="flush-preview" Title="{DynamicResource GalleryText.AiVariantGrouped}">
+      <g:ExampleCard.Preview>
+        <Border Container.Name="ChatToolPreview" Container.Sizing="Width" x:DataType="vm:AiExampleViewModel">
+          <Border.Styles>
+            <Style Selector="Border.chat-tool-preview"><Setter Property="Padding" Value="40" /></Style>
+            <ContainerQuery Name="ChatToolPreview" Query="max-width:639">
+              <Style Selector="Border.chat-tool-preview"><Setter Property="Padding" Value="24" /></Style>
+            </ContainerQuery>
+          </Border.Styles>
+          <Border Classes="chat-tool-preview" MinHeight="360">
+            <a:AlderChatMessage Avatar="AI" VerticalAlignment="Center">
+              <a:AlderChatToolGroup Header="{DynamicResource GalleryText.AiTwoTools}">
+                <StackPanel Spacing="6">
+                  <a:AlderChatTool Status="Completed" Header="{DynamicResource GalleryText.AiToolUsedPrefix}" ToolName="searchDocs" />
+                  <a:AlderChatTool Status="Completed" Header="{DynamicResource GalleryText.AiToolUsedPrefix}" ToolName="fetchPage" />
+                </StackPanel>
+              </a:AlderChatToolGroup>
+            </a:AlderChatMessage>
+          </Border>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        AlderChatTool CompletedCall(string name)
+        {
+            var call = new AlderChatTool { ToolName = name, Status = AiRunStatus.Completed };
+            call[!AlderChatTool.HeaderProperty] = new DynamicResourceExtension("GalleryText.AiToolUsedPrefix");
+            return call;
+        }
+        var group = new AlderChatToolGroup
+        {
+            Content = new StackPanel { Spacing = 6, Children = { CompletedCall("searchDocs"), CompletedCall("fetchPage") } }
+        };
+        group[!AlderChatTool.HeaderProperty] = new DynamicResourceExtension("GalleryText.AiTwoTools");
+        var preview = new Border
+        {
+            MinHeight = 360, Padding = new Thickness(40),
+            Child = new AlderChatMessage { Avatar = "AI", VerticalAlignment = VerticalAlignment.Center, Content = group }
+        };
+        preview.SizeChanged += (_, e) => preview.Padding = new Thickness(e.NewSize.Width < 640 ? 24 : 40);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleStreaming" Classes="flush-preview" Title="{DynamicResource GalleryText.AiVariantStreaming}">
+      <g:ExampleCard.Preview>
+        <Border Container.Name="ChatToolPreview" Container.Sizing="Width" x:DataType="vm:AiExampleViewModel">
+          <Border.Styles>
+            <Style Selector="Border.chat-tool-preview"><Setter Property="Padding" Value="40" /></Style>
+            <ContainerQuery Name="ChatToolPreview" Query="max-width:639">
+              <Style Selector="Border.chat-tool-preview"><Setter Property="Padding" Value="24" /></Style>
+            </ContainerQuery>
+          </Border.Styles>
+          <Border Classes="chat-tool-preview" MinHeight="360">
+            <a:AlderChatMessage Avatar="AI" VerticalAlignment="Center">
+              <a:AlderChatTool Status="Running" Header="{DynamicResource GalleryText.AiToolRunningPrefix}" ToolName="searchDocs"
+                               IsExpanded="True" Arguments="{}{&quot;query&quot;:&quot;Avalonia" />
+            </a:AlderChatMessage>
+          </Border>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var tool = new AlderChatTool
+        {
+            Status = AiRunStatus.Running, ToolName = "searchDocs", IsExpanded = true,
+            Arguments = "{\"query\":\"Avalonia"
+        };
+        tool[!AlderChatTool.HeaderProperty] = new DynamicResourceExtension("GalleryText.AiToolRunningPrefix");
+        var preview = new Border
+        {
+            MinHeight = 360, Padding = new Thickness(40),
+            Child = new AlderChatMessage { Avatar = "AI", VerticalAlignment = VerticalAlignment.Center, Content = tool }
+        };
+        preview.SizeChanged += (_, e) => preview.Padding = new Thickness(e.NewSize.Width < 640 ? 24 : 40);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleErrorState" Classes="flush-preview" Title="{DynamicResource GalleryText.AiVariantErrorState}">
+      <g:ExampleCard.Preview>
+        <Border Container.Name="ChatToolPreview" Container.Sizing="Width" x:DataType="vm:AiExampleViewModel">
+          <Border.Styles>
+            <Style Selector="Border.chat-tool-preview"><Setter Property="Padding" Value="40" /></Style>
+            <ContainerQuery Name="ChatToolPreview" Query="max-width:639">
+              <Style Selector="Border.chat-tool-preview"><Setter Property="Padding" Value="24" /></Style>
+            </ContainerQuery>
+          </Border.Styles>
+          <Border Classes="chat-tool-preview" MinHeight="360">
+            <a:AlderChatMessage Avatar="AI" VerticalAlignment="Center">
+              <a:AlderChatTool Status="Failed" Header="{DynamicResource GalleryText.AiToolFailedPrefix}" ToolName="fetchPage"
+                               IsExpanded="True" Arguments="{}{&quot;url&quot;:&quot;https://example.com&quot;}"
+                               Result="{DynamicResource GalleryText.AiError}" />
+            </a:AlderChatMessage>
+          </Border>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var tool = new AlderChatTool
+        {
+            Status = AiRunStatus.Failed, ToolName = "fetchPage", IsExpanded = true,
+            Arguments = """{"url":"https://example.com"}"""
+        };
+        tool[!AlderChatTool.HeaderProperty] = new DynamicResourceExtension("GalleryText.AiToolFailedPrefix");
+        tool[!AlderChatTool.ResultProperty] = new DynamicResourceExtension("GalleryText.AiError");
+        var preview = new Border
+        {
+            MinHeight = 360, Padding = new Thickness(40),
+            Child = new AlderChatMessage { Avatar = "AI", VerticalAlignment = VerticalAlignment.Center, Content = tool }
+        };
+        preview.SizeChanged += (_, e) => preview.Padding = new Thickness(e.NewSize.Width < 640 ? 24 : 40);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleApproval" Classes="flush-preview" Title="{DynamicResource GalleryText.AiVariantApproval}">
+      <g:ExampleCard.Preview>
+        <Border Container.Name="ChatToolPreview" Container.Sizing="Width" x:DataType="vm:AiExampleViewModel">
+          <Border.Styles>
+            <Style Selector="Border.chat-tool-preview"><Setter Property="Padding" Value="40" /></Style>
+            <ContainerQuery Name="ChatToolPreview" Query="max-width:639">
+              <Style Selector="Border.chat-tool-preview"><Setter Property="Padding" Value="24" /></Style>
+            </ContainerQuery>
+          </Border.Styles>
+          <Border Classes="chat-tool-preview" MinHeight="360">
+            <Border.DataContext><vm:AiExampleViewModel /></Border.DataContext>
+            <a:AlderChatMessage Avatar="AI" VerticalAlignment="Center">
+              <a:AlderChatTool Status="Pending" Header="{DynamicResource GalleryText.AiToolApprovalPrefix}" ToolName="sendEmail"
+                               IsExpanded="True" Arguments="{}{&quot;to&quot;:&quot;team@acme.com&quot;,&quot;subject&quot;:&quot;Launch update&quot;}"
+                               ApproveCommand="{CompiledBinding ApproveTool}" RejectCommand="{CompiledBinding RejectTool}" />
+            </a:AlderChatMessage>
+          </Border>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel();
+        var tool = new AlderChatTool
+        {
+            Status = AiRunStatus.Pending, ToolName = "sendEmail", IsExpanded = true,
+            Arguments = """{"to":"team@acme.com","subject":"Launch update"}""",
+            ApproveCommand = model.ApproveTool, RejectCommand = model.RejectTool
+        };
+        tool[!AlderChatTool.HeaderProperty] = new DynamicResourceExtension("GalleryText.AiToolApprovalPrefix");
+        var preview = new Border
+        {
+            MinHeight = 360, Padding = new Thickness(40), DataContext = model,
+            Child = new AlderChatMessage { Avatar = "AI", VerticalAlignment = VerticalAlignment.Center, Content = tool }
+        };
+        preview.SizeChanged += (_, e) => preview.Padding = new Thickness(e.NewSize.Width < 640 ? 24 : 40);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleComposable" Classes="flush-preview" Title="{DynamicResource GalleryText.AiVariantComposable}">
+      <g:ExampleCard.Preview>
+        <Border Container.Name="ChatToolPreview" Container.Sizing="Width" x:DataType="vm:AiExampleViewModel">
+          <Border.Styles>
+            <Style Selector="Border.chat-tool-preview"><Setter Property="Padding" Value="40" /></Style>
+            <ContainerQuery Name="ChatToolPreview" Query="max-width:639">
+              <Style Selector="Border.chat-tool-preview"><Setter Property="Padding" Value="24" /></Style>
+            </ContainerQuery>
+          </Border.Styles>
+          <Border Classes="chat-tool-preview" MinHeight="360">
+            <Border.DataContext><vm:AiExampleViewModel /></Border.DataContext>
+            <a:AlderChatMessage Avatar="AI" VerticalAlignment="Center">
+              <a:AlderChatTool Status="Completed" Header="{DynamicResource GalleryText.AiToolUsedPrefix}" ToolName="getWeather"
+                               Arguments="{}{&#10;  &quot;city&quot;: &quot;Paris&quot;&#10;}" Result="{CompiledBinding WeatherJson}"
+                               ArgumentsLabel="{DynamicResource GalleryText.AiToolParameters}" ResultLabel="{DynamicResource GalleryText.AiToolResultHeading}" />
+            </a:AlderChatMessage>
+          </Border>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel();
+        var tool = new AlderChatTool
+        {
+            Status = AiRunStatus.Completed, ToolName = "getWeather", Arguments = "{\n  \"city\": \"Paris\"\n}"
+        };
+        tool[!AlderChatTool.HeaderProperty] = new DynamicResourceExtension("GalleryText.AiToolUsedPrefix");
+        tool.Bind(AlderChatTool.ResultProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.WeatherJson, source: model));
+        tool[!AlderChatTool.ArgumentsLabelProperty] = new DynamicResourceExtension("GalleryText.AiToolParameters");
+        tool[!AlderChatTool.ResultLabelProperty] = new DynamicResourceExtension("GalleryText.AiToolResultHeading");
+        var preview = new Border
+        {
+            MinHeight = 360, Padding = new Thickness(40), DataContext = model,
+            Child = new AlderChatMessage { Avatar = "AI", VerticalAlignment = VerticalAlignment.Center, Content = tool }
+        };
+        preview.SizeChanged += (_, e) => preview.Padding = new Thickness(e.NewSize.Width < 640 ? 24 : 40);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

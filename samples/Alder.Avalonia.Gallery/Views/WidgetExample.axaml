@@ -1,0 +1,492 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.WidgetExample" x:DataType="vm:ProDataDisplayViewModel">
+  <UserControl.Resources>
+    <ControlTheme x:Key="WidgetOverviewMetric" TargetType="alder:AlderKpi">
+      <Setter Property="MinHeight" Value="48" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <StackPanel Spacing="5">
+            <alder:AlderTextBlock Text="{TemplateBinding Title}" Foreground="{DynamicResource AlderMuted}" FontSize="12" />
+            <WrapPanel Classes="widgetOverviewValue" LineSpacing="4">
+              <alder:AlderTextBlock Text="{TemplateBinding DisplayValue}" FontWeight="SemiBold" />
+              <alder:AlderChip Content="{TemplateBinding Trend}" Color="{TemplateBinding TrendColor}"
+                               Size="Small" Variant="Soft" VerticalAlignment="Center" />
+            </WrapPanel>
+          </StackPanel>
+        </ControlTemplate>
+      </Setter>
+    </ControlTheme>
+    <ControlTheme x:Key="WidgetSparkMetric" TargetType="alder:AlderKpi">
+      <Setter Property="Padding" Value="16,0" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Grid RowDefinitions="Auto,*,Auto" Margin="{TemplateBinding Padding}" MinHeight="116">
+            <alder:AlderTextBlock Text="{TemplateBinding Title}" Foreground="{DynamicResource AlderMuted}" FontSize="14" FontWeight="Medium" />
+            <Grid Grid.Row="1" Grid.RowSpan="2" ColumnDefinitions="Auto,*" ColumnSpacing="8" VerticalAlignment="Bottom">
+              <StackPanel Spacing="4" Margin="0,0,0,3" VerticalAlignment="Bottom">
+                <alder:AlderTextBlock Text="{TemplateBinding DisplayValue}" FontSize="28" FontWeight="SemiBold" />
+                <ContentPresenter Content="{TemplateBinding Footer}" />
+              </StackPanel>
+              <ContentPresenter Grid.Column="1" Content="{TemplateBinding Chart}" VerticalAlignment="Bottom"
+                                MaxWidth="122" HorizontalContentAlignment="Stretch" />
+            </Grid>
+          </Grid>
+        </ControlTemplate>
+      </Setter>
+    </ControlTheme>
+  </UserControl.Resources>
+  <UserControl.Styles>
+    <Style Selector="alder|AlderWidget#DashboardRevenue, alder|AlderWidget#DashboardTraffic">
+      <Setter Property="Grid.ColumnSpan" Value="2" />
+    </Style>
+    <Style Selector="alder|AlderWidget#DashboardTraffic"><Setter Property="Grid.Row" Value="2" /></Style>
+    <Style Selector="WrapPanel.widgetOverviewValue"><Setter Property="ItemSpacing" Value="8" /></Style>
+    <Style Selector="WrapPanel.widgetOverviewValue > TextBlock"><Setter Property="FontSize" Value="20" /></Style>
+    <ContainerQuery Name="Dashboard" Query="min-width:664">
+      <Style Selector="alder|AlderWidget#DashboardRevenue, alder|AlderWidget#DashboardTraffic">
+        <Setter Property="Grid.ColumnSpan" Value="1" />
+      </Style>
+      <Style Selector="alder|AlderWidget#DashboardTraffic">
+        <Setter Property="Grid.Column" Value="1" /><Setter Property="Grid.Row" Value="1" />
+      </Style>
+      <Style Selector="alder|AlderWidget#DashboardSales"><Setter Property="Grid.Row" Value="2" /></Style>
+    </ContainerQuery>
+    <ContainerQuery Name="Dashboard" Query="max-width:460">
+      <Style Selector="WrapPanel.widgetOverviewValue"><Setter Property="ItemSpacing" Value="6" /></Style>
+      <Style Selector="WrapPanel.widgetOverviewValue > TextBlock"><Setter Property="FontSize" Value="18" /></Style>
+    </ContainerQuery>
+    <ContainerQuery Name="WidgetTeam" Query="max-width:420">
+      <Style Selector="TableViewCell">
+        <Setter Property="Padding" Value="2,12" />
+        <Setter Property="FontSize" Value="11" />
+      </Style>
+    </ContainerQuery>
+    <Style Selector="WrapPanel.widgetLegend">
+      <Setter Property="ItemSpacing" Value="12" />
+      <Setter Property="LineSpacing" Value="4" />
+    </Style>
+    <Style Selector="StackPanel.widgetLegendItem">
+      <Setter Property="Orientation" Value="Horizontal" />
+      <Setter Property="Spacing" Value="6" />
+    </Style>
+    <Style Selector="StackPanel.widgetLegendItem > Ellipse">
+      <Setter Property="Width" Value="10" />
+      <Setter Property="Height" Value="10" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="TextBlock.widgetCaption, StackPanel.widgetLegendItem > TextBlock">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    </Style>
+    <Style Selector="alder|AlderAreaChart.widgetSpark">
+      <Setter Property="Height" Value="60" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="ShowXAxis" Value="False" />
+      <Setter Property="ShowYAxis" Value="False" />
+      <Setter Property="ShowGrid" Value="False" />
+      <Setter Property="ShowHoverMarker" Value="False" />
+      <Setter Property="ShowTooltip" Value="False" />
+    </Style>
+    <Style Selector=":is(alder|AlderCartesianChart).widgetPlot">
+      <Setter Property="Padding" Value="4,8,0,11" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.ProDemoWidgetUsage}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="532" Padding="6,10">
+          <alder:AlderWidget Title="{DynamicResource GalleryText.ProDisplayTokensOverTime}">
+            <alder:AlderWidget.Legend>
+              <WrapPanel Classes="widgetLegend">
+                <StackPanel Classes="widgetLegendItem">
+                  <Ellipse Fill="{DynamicResource AlderChartSeries4}" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ProDisplayInputTokensShort}" />
+                </StackPanel>
+                <StackPanel Classes="widgetLegendItem">
+                  <Ellipse Fill="{DynamicResource AlderChartSeries2}" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ProDisplayOutputTokensShort}" />
+                </StackPanel>
+              </WrapPanel>
+            </alder:AlderWidget.Legend>
+            <alder:AlderLineChart Height="220" Padding="8,8,0,11" Margin="0,0,-6,0"
+                                  Categories="{CompiledBinding TokenDates}" Series="{CompiledBinding Tokens}"
+                                  ValueAxisTicks="{CompiledBinding TokenTicks}" CategoryLabelInterval="3"
+                                  AxisValueFormat="0,'k';-0,'k';0" />
+          </alder:AlderWidget>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var widget = new AlderWidget
+        {
+            Title = "Tokens Over Time",
+            Legend = new WrapPanel
+            {
+                ItemSpacing = 12,
+                Children = { LegendItem("Input", "AlderChartSeries4"), LegendItem("Output", "AlderChartSeries2") }
+            },
+            Content = new AlderLineChart
+            {
+                Height = 220, Series = model.Tokens, Categories = model.TokenDates,
+                Padding = new Thickness(8, 8, 0, 11), Margin = new Thickness(0, 0, -6, 0),
+                ValueAxisTicks = model.TokenTicks, CategoryLabelInterval = 3, AxisValueFormat = "0,'k';-0,'k';0"
+            }
+        };
+
+        static StackPanel LegendItem(string label, string brushKey)
+        {
+            var swatch = new Ellipse { Width = 10, Height = 10, VerticalAlignment = VerticalAlignment.Center };
+            swatch[!Shape.FillProperty] = new DynamicResourceExtension(brushKey);
+            var text = new AlderTextBlock { Text = label, FontSize = 12 };
+            text[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+            return new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6, Children = { swatch, text } };
+        }
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDashboard" Title="{DynamicResource GalleryText.ProDemoWidgetDashboard}">
+      <g:ExampleCard.Preview>
+        <Border Container.Name="Dashboard" Container.Sizing="Width" MaxWidth="972" Padding="6,10">
+          <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="12">
+            <alder:AlderWidget Title="{DynamicResource GalleryText.ProWidgetOverview}" Grid.ColumnSpan="2">
+              <alder:AlderKpiGroup Columns="4" MinColumnWidth="132" ShowDividers="False" Background="Transparent" CornerRadius="0">
+                <alder:AlderKpiGroup.Resources>
+                  <BoxShadows x:Key="AlderFieldShadow">none</BoxShadows>
+                </alder:AlderKpiGroup.Resources>
+                <alder:AlderKpi Theme="{StaticResource WidgetOverviewMetric}" Title="{DynamicResource GalleryText.ProDisplayRevenue}"
+                                Value="228" ValueFormat="N0" Prefix="$" Suffix="K" Trend="↑ 12.5%" TrendColor="Success" />
+                <alder:AlderKpi Theme="{StaticResource WidgetOverviewMetric}" Title="{DynamicResource GalleryText.ProWidgetOrders}"
+                                Value="1234" Trend="↑ 8.2%" TrendColor="Success" />
+                <alder:AlderKpi Theme="{StaticResource WidgetOverviewMetric}" Title="{DynamicResource GalleryText.ProDisplayCustomers}"
+                                Value="8921" Trend="↑ 3.1%" TrendColor="Success" />
+                <alder:AlderKpi Theme="{StaticResource WidgetOverviewMetric}" Title="{DynamicResource GalleryText.ProWidgetConversion}"
+                                Value="3.2" ValueFormat="N1" Suffix="%" Trend="↓ 0.4%" TrendColor="Danger" />
+              </alder:AlderKpiGroup>
+            </alder:AlderWidget>
+            <alder:AlderWidget x:Name="DashboardRevenue" Margin="0,12,0,0" Grid.Row="1" Title="{DynamicResource GalleryText.ProDisplayRevenue}">
+              <alder:AlderWidget.Actions>
+                <alder:AlderTextBlock Text="↑ 12.5%" Foreground="{DynamicResource AlderAvatarSuccessInk}" FontSize="12" />
+              </alder:AlderWidget.Actions>
+              <alder:AlderAreaChart Height="180" Padding="9,8,0,12" Categories="{CompiledBinding MonthLabels}" Series="{CompiledBinding DashboardRevenue}"
+                                    ValueAxisTicks="{CompiledBinding RevenueTicks}" AxisValueFormat="$0,'k'" />
+            </alder:AlderWidget>
+            <alder:AlderWidget x:Name="DashboardTraffic" Margin="0,12,0,0" Title="{DynamicResource GalleryText.ProDisplayTraffic}">
+              <alder:AlderWidget.Legend>
+                <WrapPanel Classes="widgetLegend">
+                  <StackPanel Classes="widgetLegendItem">
+                    <Ellipse Fill="{DynamicResource AlderChartSeries1}" /><alder:AlderTextBlock Text="{DynamicResource GalleryText.ProDisplayOrganic}" />
+                  </StackPanel>
+                  <StackPanel Classes="widgetLegendItem">
+                    <Ellipse Fill="{DynamicResource AlderChartSeries2}" /><alder:AlderTextBlock Text="{DynamicResource GalleryText.ProDisplayPaid}" />
+                  </StackPanel>
+                </WrapPanel>
+              </alder:AlderWidget.Legend>
+              <alder:AlderLineChart Height="180" Classes="widgetPlot" Categories="{CompiledBinding HalfYearLabels}" Series="{CompiledBinding DashboardTraffic}"
+                                    ValueAxisTicks="{CompiledBinding DashboardTrafficTicks}" AxisValueFormat="0,'k';-0,'k';0" />
+            </alder:AlderWidget>
+            <alder:AlderWidget x:Name="DashboardSales" Margin="0,12,0,0" Grid.Row="3" Grid.ColumnSpan="2" Title="{DynamicResource GalleryText.ProWidgetMonthlySales}">
+              <alder:AlderWidget.Actions>
+                <alder:AlderTextBlock Classes="widgetCaption" Text="{DynamicResource GalleryText.ProWidgetUnitsSold}" TextWrapping="Wrap" />
+              </alder:AlderWidget.Actions>
+              <alder:AlderBarChart Height="180" Padding="8,8,8,10" Categories="{CompiledBinding MonthLabels}" Series="{CompiledBinding MonthlySales}"
+                                   ValueAxisTicks="{CompiledBinding SalesTicks}" MaxBarWidth="20" BarCornerRadius="10" RoundBarBase="True" />
+            </alder:AlderWidget>
+          </Grid>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var metrics = new AlderKpiGroup { Columns = 4, MinColumnWidth = 132, ShowDividers = false, Background = Brushes.Transparent, CornerRadius = new CornerRadius(0) };
+        metrics.Resources["AlderFieldShadow"] = default(BoxShadows);
+        metrics.Items.Add(new AlderKpi { Title = "Revenue", Value = 228, Prefix = "$", Suffix = "K", Trend = "↑ 12.5%", TrendColor = AlderStatusColor.Success });
+        metrics.Items.Add(new AlderKpi { Title = "Orders", Value = 1234, Trend = "↑ 8.2%", TrendColor = AlderStatusColor.Success });
+        metrics.Items.Add(new AlderKpi { Title = "Customers", Value = 8921, Trend = "↑ 3.1%", TrendColor = AlderStatusColor.Success });
+        metrics.Items.Add(new AlderKpi { Title = "Conversion", Value = 3.2, ValueFormat = "N1", Suffix = "%", Trend = "↓ 0.4%", TrendColor = AlderStatusColor.Danger });
+        var overview = new AlderWidget { Title = "Overview", Content = metrics };
+        var revenue = new AlderWidget
+        {
+            Title = "Revenue", Actions = new AlderTextBlock { Text = "↑ 12.5%" },
+            Content = new AlderAreaChart { Height = 180, Series = model.DashboardRevenue, Categories = model.MonthLabels,
+                ValueAxisTicks = model.RevenueTicks, AxisValueFormat = "$0,'k'", Padding = new Thickness(9, 8, 0, 12) }
+        };
+        var traffic = new AlderWidget
+        {
+            Title = "Traffic", Legend = new AlderTextBlock { Text = "Organic · Paid" },
+            Content = new AlderLineChart { Height = 180, Series = model.DashboardTraffic, Categories = model.HalfYearLabels,
+                ValueAxisTicks = model.DashboardTrafficTicks, AxisValueFormat = "0,'k';-0,'k';0", Padding = new Thickness(4, 8, 0, 11) }
+        };
+        var sales = new AlderWidget
+        {
+            Title = "Monthly Sales", Actions = new AlderTextBlock { Text = "Units sold — Jan to Dec 2025" },
+            Content = new AlderBarChart { Height = 180, Series = model.MonthlySales, Categories = model.MonthLabels,
+                ValueAxisTicks = model.SalesTicks, MaxBarWidth = 20, BarCornerRadius = 10, RoundBarBase = true,
+                Padding = new Thickness(8, 8, 8, 10) }
+        };
+        var dashboard = new Grid { ColumnDefinitions = new ColumnDefinitions("*,*"),
+            RowDefinitions = new RowDefinitions("Auto,Auto,Auto,Auto"), ColumnSpacing = 12 };
+        foreach (var card in new[] { revenue, traffic, sales }) card.Margin = new Thickness(0, 12, 0, 0);
+        dashboard.Children.AddRange([overview, revenue, traffic, sales]);
+        dashboard.SizeChanged += (_, e) =>
+        {
+            bool wide = e.NewSize.Width >= 652;
+            Grid.SetColumnSpan(overview, 2);
+            Grid.SetRow(revenue, 1);
+            Grid.SetColumnSpan(revenue, wide ? 1 : 2);
+            Grid.SetRow(traffic, wide ? 1 : 2);
+            Grid.SetColumn(traffic, wide ? 1 : 0);
+            Grid.SetColumnSpan(traffic, wide ? 1 : 2);
+            Grid.SetRow(sales, wide ? 2 : 3);
+            Grid.SetColumnSpan(sales, 2);
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleKpis" Title="{DynamicResource GalleryText.ProDemoWidgetKpis}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="912" Padding="6,10">
+          <alder:AlderWidget Title="{DynamicResource GalleryText.ProWidgetKeyMetrics}" ContentPadding="16,32">
+            <alder:AlderWidget.Actions>
+              <alder:AlderTextBlock Classes="widgetCaption" Text="{DynamicResource GalleryText.ProDisplayLastThirty}" />
+            </alder:AlderWidget.Actions>
+            <alder:AlderKpiGroup Columns="3" MinColumnWidth="215" Background="Transparent" CornerRadius="0">
+              <alder:AlderKpiGroup.Resources>
+                <BoxShadows x:Key="AlderFieldShadow">none</BoxShadows>
+              </alder:AlderKpiGroup.Resources>
+              <alder:AlderKpi Theme="{StaticResource WidgetSparkMetric}" Title="{DynamicResource GalleryText.ProKpiTotalRevenue}"
+                              Value="228451" Prefix="US$">
+                <alder:AlderKpi.Chart>
+                  <alder:AlderAreaChart Classes="widgetSpark" Categories="{CompiledBinding MonthLabels}" Series="{CompiledBinding WidgetRevenueSparkline}"
+                                        ValueAxisTicks="{CompiledBinding SparklineTicks}" />
+                </alder:AlderKpi.Chart>
+                <alder:AlderKpi.Footer>
+                  <alder:AlderTextBlock Classes="widgetCaption"><Run Text="↑ 3.3%" Foreground="{DynamicResource AlderAvatarSuccessInk}" /> <Run Text="{DynamicResource GalleryText.ProWidgetRevenueTrend}" /></alder:AlderTextBlock>
+                </alder:AlderKpi.Footer>
+              </alder:AlderKpi>
+              <alder:AlderKpi Theme="{StaticResource WidgetSparkMetric}" Title="{DynamicResource GalleryText.ProKpiBounceRate}"
+                              Value="42.3" ValueFormat="N1" Suffix="%">
+                <alder:AlderKpi.Chart>
+                  <alder:AlderAreaChart Classes="widgetSpark" Categories="{CompiledBinding MonthLabels}" Series="{CompiledBinding WidgetBounceSparkline}"
+                                        ValueAxisTicks="{CompiledBinding SparklineTicks}" />
+                </alder:AlderKpi.Chart>
+                <alder:AlderKpi.Footer>
+                  <alder:AlderTextBlock Classes="widgetCaption"><Run Text="↓ 5.9%" Foreground="{DynamicResource AlderDangerInk}" /> <Run Text="{DynamicResource GalleryText.ProWidgetBounceTrend}" /></alder:AlderTextBlock>
+                </alder:AlderKpi.Footer>
+              </alder:AlderKpi>
+              <alder:AlderKpi Theme="{StaticResource WidgetSparkMetric}" Title="{DynamicResource GalleryText.ProKpiActiveUsers}"
+                              Value="{CompiledBinding WidgetActiveUsersDisplayValue}" Suffix="{DynamicResource GalleryText.ProWidgetActiveUsersSuffix}">
+                <alder:AlderKpi.Chart>
+                  <alder:AlderAreaChart Classes="widgetSpark" Categories="{CompiledBinding MonthLabels}" Series="{CompiledBinding WidgetActiveSparkline}"
+                                        ValueAxisTicks="{CompiledBinding SparklineTicks}" />
+                </alder:AlderKpi.Chart>
+                <alder:AlderKpi.Footer>
+                  <alder:AlderTextBlock Classes="widgetCaption"><Run Text="↑ 10.9%" Foreground="{DynamicResource AlderAvatarSuccessInk}" /> <Run Text="{DynamicResource GalleryText.ProWidgetActiveTrend}" /></alder:AlderTextBlock>
+                </alder:AlderKpi.Footer>
+              </alder:AlderKpi>
+            </alder:AlderKpiGroup>
+          </alder:AlderWidget>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var metrics = new AlderKpiGroup { Columns = 3, MinColumnWidth = 215, Background = Brushes.Transparent, CornerRadius = new CornerRadius(0) };
+        metrics.Resources["AlderFieldShadow"] = default(BoxShadows);
+        metrics.Items.Add(new AlderKpi { Title = "Total Revenue", Value = 228451, Prefix = "US$",
+            Chart = Sparkline(model.WidgetRevenueSparkline), ChartPlacement = KpiChartPlacement.Inline,
+            Footer = new AlderTextBlock { Text = "↑ 3.3% last 30d" }, ShowSeparator = false });
+        metrics.Items.Add(new AlderKpi { Title = "Bounce Rate", Value = 42.3, ValueFormat = "N1", Suffix = "%",
+            Chart = Sparkline(model.WidgetBounceSparkline), ChartPlacement = KpiChartPlacement.Inline,
+            Footer = new AlderTextBlock { Text = "↓ 5.9% vs last 7d" }, ShowSeparator = false });
+        metrics.Items.Add(new AlderKpi { Title = "Active Users", Value = 100, Suffix = "K",
+            Chart = Sparkline(model.WidgetActiveSparkline), ChartPlacement = KpiChartPlacement.Inline,
+            Footer = new AlderTextBlock { Text = "↑ 10.9% this month" }, ShowSeparator = false });
+        var widget = new AlderWidget { Title = "Key Metrics", ContentPadding = new Thickness(16, 32),
+            Actions = new AlderTextBlock { Text = "Last 30 days", FontSize = 12 }, Content = metrics };
+
+        AlderAreaChart Sparkline(IReadOnlyList<AlderChartSeries> series) => new()
+        {
+            Height = 60, Padding = new Thickness(0), Categories = model.MonthLabels, Series = series, ValueAxisTicks = model.SparklineTicks,
+            ShowXAxis = false, ShowYAxis = false, ShowGrid = false, ShowTooltip = false, ShowHoverMarker = false
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleLine" Title="{DynamicResource GalleryText.ProDemoWidgetLine}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="532" Padding="6,10">
+          <alder:AlderWidget Title="{DynamicResource GalleryText.ProWidgetTrafficSources}">
+            <alder:AlderWidget.Legend>
+              <WrapPanel Classes="widgetLegend">
+                <StackPanel Classes="widgetLegendItem">
+                  <Ellipse Fill="{DynamicResource AlderChartSeries1}" /><alder:AlderTextBlock Text="{DynamicResource GalleryText.ProDisplayOrganic}" />
+                </StackPanel>
+                <StackPanel Classes="widgetLegendItem">
+                  <Ellipse Fill="{DynamicResource AlderChartSeries2}" /><alder:AlderTextBlock Text="{DynamicResource GalleryText.ProWidgetPaidAds}" />
+                </StackPanel>
+              </WrapPanel>
+            </alder:AlderWidget.Legend>
+            <alder:AlderLineChart Height="200" Classes="widgetPlot" Categories="{CompiledBinding MonthLabels}" Series="{CompiledBinding WidgetTrafficSources}"
+                                  ValueAxisTicks="{CompiledBinding TrafficSourceTicks}" AxisValueFormat="0,'k';-0,'k';0" />
+          </alder:AlderWidget>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var widget = new AlderWidget
+        {
+            Title = "Traffic Sources", Legend = new AlderTextBlock { Text = "Organic · Paid Ads" },
+            Content = new AlderLineChart
+            {
+                Height = 200, Series = model.WidgetTrafficSources, Categories = model.MonthLabels,
+                ValueAxisTicks = model.TrafficSourceTicks, AxisValueFormat = "0,'k';-0,'k';0", Padding = new Thickness(4, 8, 0, 11)
+            }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleBar" Title="{DynamicResource GalleryText.ProDemoWidgetBar}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="532" Padding="6,10">
+          <alder:AlderWidget Title="{DynamicResource GalleryText.ProWidgetRequestsOverTime}">
+            <alder:AlderWidget.Legend>
+              <StackPanel Classes="widgetLegendItem">
+                <Ellipse Fill="{DynamicResource AlderChartSeries1}" /><alder:AlderTextBlock Text="{DynamicResource GalleryText.ProWidgetRequests}" />
+              </StackPanel>
+            </alder:AlderWidget.Legend>
+            <alder:AlderBarChart Height="220" Padding="10,8,8,11" Categories="{CompiledBinding TokenDates}" Series="{CompiledBinding WidgetRequests}"
+                                 ValueAxisTicks="{CompiledBinding RequestTicks}" CategoryLabelInterval="3" MaxBarWidth="11" BarCornerRadius="2"
+                                 AxisValueFormat="0" />
+          </alder:AlderWidget>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var dot = new Ellipse { Width = 10, Height = 10, VerticalAlignment = VerticalAlignment.Center };
+        dot[!Shape.FillProperty] = new DynamicResourceExtension("AlderChartSeries1");
+        var label = new AlderTextBlock { Text = "Requests", FontSize = 12 };
+        label[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        var widget = new AlderWidget
+        {
+            Title = "Requests Over Time",
+            Legend = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6, Children = { dot, label } },
+            Content = new AlderBarChart
+            {
+                Height = 220, Series = model.WidgetRequests, Categories = model.TokenDates,
+                ValueAxisTicks = model.RequestTicks, CategoryLabelInterval = 3,
+                MaxBarWidth = 11, BarCornerRadius = 2, AxisValueFormat = "0", Padding = new Thickness(10, 8, 8, 11)
+            }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SamplePie" Title="{DynamicResource GalleryText.ProDemoWidgetPie}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="372" Padding="6,10">
+          <alder:AlderWidget Title="{DynamicResource GalleryText.ProWidgetBrowserUsage}">
+            <StackPanel Spacing="12">
+              <alder:AlderPieChart Height="200" Slices="{CompiledBinding BrowserUsage}" />
+              <WrapPanel Classes="widgetLegend" MinHeight="20" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel Classes="widgetLegendItem"><Ellipse Fill="{DynamicResource AlderChartSeries4}" /><alder:AlderTextBlock Text="Chrome" /></StackPanel>
+                <StackPanel Classes="widgetLegendItem"><Ellipse Fill="{DynamicResource AlderChartSeries1}" /><alder:AlderTextBlock Text="Safari" /></StackPanel>
+                <StackPanel Classes="widgetLegendItem"><Ellipse Fill="{DynamicResource AlderChartSeries3}" /><alder:AlderTextBlock Text="Firefox" /></StackPanel>
+                <StackPanel Classes="widgetLegendItem"><Ellipse Fill="{DynamicResource AlderChartSeries2}" /><alder:AlderTextBlock Text="Edge" /></StackPanel>
+              </WrapPanel>
+            </StackPanel>
+          </alder:AlderWidget>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var legend = new WrapPanel { ItemSpacing = 12, LineSpacing = 4, MinHeight = 20, HorizontalAlignment = HorizontalAlignment.Center };
+        foreach (var slice in model.BrowserUsage)
+        {
+            var dot = new Ellipse { Width = 10, Height = 10, VerticalAlignment = VerticalAlignment.Center };
+            dot[!Shape.FillProperty] = new DynamicResourceExtension(slice.BrushResourceKey!);
+            legend.Children.Add(new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6,
+                Children = { dot, new AlderTextBlock { Text = slice.Name, FontSize = 12 } } });
+        }
+        var widget = new AlderWidget
+        {
+            Title = "Browser Usage",
+            Content = new StackPanel { Spacing = 12, Children = { new AlderPieChart { Height = 200, Slices = model.BrowserUsage }, legend } }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleTable" Title="{DynamicResource GalleryText.ProDemoWidgetTable}">
+      <g:ExampleCard.Preview>
+        <Border Container.Name="WidgetTeam" Container.Sizing="Width" MaxWidth="652" Padding="6,10">
+          <alder:AlderWidget Title="{DynamicResource GalleryText.ProWidgetTeamMembers}" ContentPadding="0" ClipContent="True">
+            <alder:AlderWidget.Actions><alder:AlderTextBlock Classes="widgetCaption" Text="{DynamicResource GalleryText.ProWidgetMemberCount}" /></alder:AlderWidget.Actions>
+            <alder:AlderTable ItemsSource="{CompiledBinding Team}" Variant="Secondary" ShowColumnHeaders="False">
+              <alder:AlderTableColumn x:DataType="vm:WidgetTeamMember" Header="{DynamicResource GalleryText.ProWidgetColName}" Binding="{CompiledBinding Name}" Width="1.785*" MinWidth="88" />
+              <alder:AlderTableColumn x:DataType="vm:WidgetTeamMember" Header="{DynamicResource GalleryText.ProWidgetColRole}" Binding="{CompiledBinding Role}" Width=".915*" MinWidth="40" />
+              <alder:AlderTableColumn x:DataType="vm:WidgetTeamMember" Header="{DynamicResource GalleryText.ProWidgetColStatus}" Binding="{CompiledBinding Status}" Width="1.3*" MinWidth="55" />
+              <alder:AlderTableColumn x:DataType="vm:WidgetTeamMember" Header="{DynamicResource GalleryText.ProWidgetColEmail}" Binding="{CompiledBinding Email}" Width="2.28*" MinWidth="117" />
+            </alder:AlderTable>
+          </alder:AlderWidget>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var table = new AlderTable { ItemsSource = model.Team, Variant = TableVariant.Secondary, ShowColumnHeaders = false };
+        table.Columns.Add(new AlderTableColumn { Header = "Name", Width = new GridLength(1.785, GridUnitType.Star), MinWidth = 88, Binding = CompiledBinding.Create((WidgetTeamMember member) => member.Name) });
+        table.Columns.Add(new AlderTableColumn { Header = "Role", Width = new GridLength(.915, GridUnitType.Star), MinWidth = 40, Binding = CompiledBinding.Create((WidgetTeamMember member) => member.Role) });
+        table.Columns.Add(new AlderTableColumn { Header = "Status", Width = new GridLength(1.3, GridUnitType.Star), MinWidth = 55, Binding = CompiledBinding.Create((WidgetTeamMember member) => member.Status) });
+        table.Columns.Add(new AlderTableColumn { Header = "Email", Width = new GridLength(2.28, GridUnitType.Star), MinWidth = 117, Binding = CompiledBinding.Create((WidgetTeamMember member) => member.Email) });
+        var widget = new AlderWidget
+        {
+            Title = "Team Members", ContentPadding = new Thickness(0), ClipContent = true,
+            Content = table, Actions = new AlderTextBlock { Text = "4 members", FontSize = 12 }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSummary" Title="{DynamicResource GalleryText.ProDemoWidgetSummary}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="532" Padding="6,10">
+          <alder:AlderWidget Padding="6,0,6,5" ContentPadding="0" ClipContent="True">
+            <alder:AlderWidget.Header>
+              <Grid ColumnDefinitions="3*,1.12*" Margin="4,0">
+                <alder:AlderTextBlock Classes="widgetCaption" Text="{DynamicResource GalleryText.ProWidgetUsageType}" />
+                <alder:AlderTextBlock Classes="widgetCaption" Grid.Column="1" Text="{DynamicResource GalleryText.ProDisplayAmount}" />
+              </Grid>
+            </alder:AlderWidget.Header>
+            <alder:AlderItemsControl ItemsSource="{CompiledBinding WidgetUsage}">
+              <alder:AlderItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:WidgetUsageMetric">
+                  <Border MinHeight="45" Padding="16,0" BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="0,0,0,1">
+                    <Grid ColumnDefinitions="3*,1.12*" VerticalAlignment="Center">
+                      <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <alder:AlderProgressCircle Diameter="20" StrokeThickness="2" Value="{CompiledBinding Progress}"
+                                                   Color="{CompiledBinding Color}" IsHitTestVisible="False" VerticalAlignment="Center"
+                                                   AutomationProperties.AccessibilityView="Raw" />
+                        <alder:AlderTextBlock Grid.Column="1" Text="{CompiledBinding Label}" FontSize="14" FontWeight="Medium"
+                                   TextWrapping="Wrap" VerticalAlignment="Center" />
+                      </Grid>
+                      <alder:AlderTextBlock Grid.Column="1" Text="{CompiledBinding Amount}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </alder:AlderItemsControl.ItemTemplate>
+            </alder:AlderItemsControl>
+          </alder:AlderWidget>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var header = new Grid { ColumnDefinitions = new ColumnDefinitions("3*,1.12*"), Margin = new Thickness(4, 0) };
+        var amount = new AlderTextBlock { Text = "Amount", FontSize = 12 };
+        Grid.SetColumn(amount, 1);
+        header.Children.AddRange([new AlderTextBlock { Text = "Usage Type", FontSize = 12 }, amount]);
+        var rows = new AlderItemsControl
+        {
+            ItemsSource = model.WidgetUsage,
+            ItemTemplate = new FuncDataTemplate<WidgetUsageMetric>((metric, _) =>
+            {
+                if (metric is null) return null;
+                var progress = new AlderProgressCircle { Diameter = 20, StrokeThickness = 2, Value = metric.Progress, Color = metric.Color };
+                var value = new AlderTextBlock { Text = metric.Amount, FontWeight = FontWeight.SemiBold };
+                var row = new Grid { ColumnDefinitions = new ColumnDefinitions("3*,1.12*"), VerticalAlignment = VerticalAlignment.Center };
+                row.Children.Add(new StackPanel { Orientation = Orientation.Horizontal, Spacing = 12,
+                    Children = { progress, new AlderTextBlock { Text = metric.Label } } });
+                Grid.SetColumn(value, 1);
+                row.Children.Add(value);
+                var border = new Border { MinHeight = 45, Padding = new Thickness(16, 0),
+                    BorderThickness = new Thickness(0, 0, 0, 1), Child = row };
+                border[!Border.BorderBrushProperty] = new DynamicResourceExtension("AlderSeparator");
+                return border;
+            })
+        };
+        var widget = new AlderWidget { Header = header, Content = rows, Padding = new Thickness(6, 0, 6, 5),
+            ContentPadding = new Thickness(0), ClipContent = true };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,516 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:c="using:Avalonia.Data.Converters">
+  <x:String x:Key="AlderText.TableEmpty">No rows to display</x:String>
+  <x:String x:Key="AlderText.TableSelectAll">Select all rows</x:String>
+  <x:String x:Key="AlderText.TableSelectRow">Select row</x:String>
+  <x:String x:Key="AlderText.TableResizeColumn">Resize column</x:String>
+  <x:String x:Key="AlderText.TableExpandRow">Expand row</x:String>
+  <x:String x:Key="AlderText.TableCollapseRow">Collapse row</x:String>
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderDataGridScrollThumb" Color="#2618181B" />
+      <SolidColorBrush x:Key="AlderDataGridScrollThumbActive" Color="#4D18181B" />
+      <SolidColorBrush x:Key="AlderTableRowHover" Color="#F5F5F6" />
+      <SolidColorBrush x:Key="AlderTableSecondaryHover" Color="#80E9E9EA" />
+      <SolidColorBrush x:Key="AlderTableRowSelected" Color="#F1F1F2" />
+      <SolidColorBrush x:Key="AlderTableRowLine" Color="#80CDCDCF" />
+      <SolidColorBrush x:Key="AlderTableSecondaryRowLine" Color="#80E4E4E7" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderDataGridScrollThumb" Color="#26FCFCFC" />
+      <SolidColorBrush x:Key="AlderDataGridScrollThumbActive" Color="#4DFCFCFC" />
+      <SolidColorBrush x:Key="AlderTableRowHover" Color="#1F1F21" />
+      <SolidColorBrush x:Key="AlderTableSecondaryHover" Color="#80262629" />
+      <SolidColorBrush x:Key="AlderTableRowSelected" Color="#222224" />
+      <SolidColorBrush x:Key="AlderTableRowLine" Color="#803C3C3F" />
+      <SolidColorBrush x:Key="AlderTableSecondaryRowLine" Color="#803B3B41" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+  <ControlTheme x:Key="{x:Type alder:AlderTable}" TargetType="alder:AlderTable">
+    <Setter Property="Background" Value="{DynamicResource AlderSurfaceSecondary}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="Padding" Value="4,0,4,4" />
+    <Setter Property="CornerRadius" Value="20" />
+    <Setter Property="EmptyContent" Value="{DynamicResource AlderText.TableEmpty}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}"
+                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                CornerRadius="{TemplateBinding CornerRadius}" ClipToBounds="True">
+          <Grid RowDefinitions="*,Auto,Auto">
+            <Grid>
+              <alder:AlderTableView Name="PART_Table" Variant="{TemplateBinding Variant}" CanUserResizeColumns="{TemplateBinding CanResizeColumns}"
+                               ShowColumnHeaders="{TemplateBinding ShowColumnHeaders}"
+                               AutomationProperties.Name="{CompiledBinding (AutomationProperties.Name), RelativeSource={RelativeSource TemplatedParent}}" />
+              <Border Name="EmptyState" IsVisible="False" Margin="0,36,0,0" MinHeight="122" Padding="16"
+                      Background="{DynamicResource AlderSurface}" CornerRadius="16">
+                <ContentPresenter Content="{TemplateBinding EmptyContent}" ContentTemplate="{TemplateBinding EmptyContentTemplate}"
+                                  Foreground="{DynamicResource AlderMuted}" FontSize="14"
+                                  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+              </Border>
+            </Grid>
+            <Border Grid.Row="1" IsVisible="{TemplateBinding IsLoading}" Padding="16,12"
+                    Background="{DynamicResource AlderSurface}" CornerRadius="12">
+              <alder:AlderSpinner Size="Small" HorizontalAlignment="Center"
+                             AutomationProperties.Name="{DynamicResource AlderText.Loading}" />
+            </Border>
+            <ContentPresenter Grid.Row="2" Name="FooterContent" Content="{TemplateBinding Footer}" ContentTemplate="{TemplateBinding FooterTemplate}"
+                              Padding="16,10" IsVisible="{CompiledBinding Footer, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:empty[IsLoading=False] /template/ Border#EmptyState">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^[ShowColumnHeaders=False] /template/ Border#EmptyState">
+      <Setter Property="Margin" Value="0" />
+    </Style>
+    <Style Selector="^[Variant=Secondary]">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="CornerRadius" Value="0" />
+    </Style>
+    <Style Selector="^[Variant=Secondary] /template/ Border#EmptyState">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+  </ControlTheme>
+  <x:String x:Key="AlderText.DataGridDragRow">Reorder row</x:String>
+  <ControlTheme x:Key="{x:Type alder:AlderDataGrid}" TargetType="alder:AlderDataGrid"
+                BasedOn="{StaticResource {x:Type alder:AlderTable}}">
+    <Style Selector="^ /template/ Border#EmptyState">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+  </ControlTheme>
+  <StreamGeometry x:Key="AlderDataGridRowActionsIcon">M8 1 A1.25 1.25 0 1 1 7.99 1 Z M8 6.5 A1.25 1.25 0 1 1 7.99 6.5 Z M8 12 A1.25 1.25 0 1 1 7.99 12 Z</StreamGeometry>
+  <ControlTheme x:Key="AlderDataGridRowActionsButtonTheme" TargetType="alder:AlderButton"
+                BasedOn="{StaticResource {x:Type alder:AlderButton}}">
+    <Setter Property="Size" Value="Small" />
+    <Setter Property="Variant" Value="Tertiary" />
+    <Setter Property="IsIconOnly" Value="True" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="Icon" Value="{StaticResource AlderDataGridRowActionsIcon}" />
+    <Style Selector="^:flyout-open:not(:flyout-dismissing) /template/ alder|ButtonTint#Tint">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderDataGridDragPreviewTheme" TargetType="Border">
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="BoxShadow" Value="{DynamicResource AlderToolbarShadow}" />
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderDataGridDragHandle}" TargetType="alder:AlderDataGridDragHandle">
+    <Setter Property="Width" Value="26" /><Setter Property="Height" Value="26" />
+    <Setter Property="Cursor" Value="Hand" /><Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="GripSurface" Background="Transparent" CornerRadius="6">
+          <alder:AlderPathIcon Width="12" Height="14" Data="M4 1 A1 1 0 1 1 3.99 1 Z M10 1 A1 1 0 1 1 9.99 1 Z M4 6 A1 1 0 1 1 3.99 6 Z M10 6 A1 1 0 1 1 9.99 6 Z M4 11 A1 1 0 1 1 3.99 11 Z M10 11 A1 1 0 1 1 9.99 11 Z" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover /template/ Border#GripSurface, ^:focus-visible /template/ Border#GripSurface">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderDataGridScrollTrackButton" TargetType="RepeatButton">
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="Template"><ControlTemplate><Border Background="Transparent" /></ControlTemplate></Setter>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderDataGridScrollThumbTheme" TargetType="Thumb">
+    <Setter Property="Background" Value="{DynamicResource AlderDataGridScrollThumb}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="Transparent">
+          <Border Name="ThumbFill" Margin="2" Background="{TemplateBinding Background}" CornerRadius="3"
+                  IsHitTestVisible="False" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover, ^:pressed">
+      <Setter Property="Background" Value="{DynamicResource AlderDataGridScrollThumbActive}" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=False] /template/ Border#ThumbFill">
+      <Setter Property="Transitions">
+        <Transitions><BrushTransition Property="Background" Duration="0:0:0.12" /></Transitions>
+      </Setter>
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderDataGridScrollBarTheme" TargetType="ScrollBar">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="ShowDelay" Value="0:0:0" />
+    <Setter Property="HideDelay" Value="0:0:0" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Track Name="PART_Track" Orientation="{TemplateBinding Orientation}" Minimum="{TemplateBinding Minimum}"
+               Maximum="{TemplateBinding Maximum}" Value="{TemplateBinding Value, Mode=TwoWay}"
+               ViewportSize="{TemplateBinding ViewportSize}" DeferThumbDrag="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}">
+          <Track.DecreaseButton>
+            <alder:AlderRepeatButton Name="PART_PageUpButton" Theme="{StaticResource AlderDataGridScrollTrackButton}" />
+          </Track.DecreaseButton>
+          <Track.IncreaseButton>
+            <alder:AlderRepeatButton Name="PART_PageDownButton" Theme="{StaticResource AlderDataGridScrollTrackButton}" />
+          </Track.IncreaseButton>
+          <alder:AlderThumb Name="PART_Thumb" Theme="{StaticResource AlderDataGridScrollThumbTheme}" />
+        </Track>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:vertical /template/ Track#PART_Track">
+      <Setter Property="IsDirectionReversed" Value="True" />
+    </Style>
+    <Style Selector="^:horizontal /template/ Thumb#PART_Thumb"><Setter Property="MinWidth" Value="26" /></Style>
+    <Style Selector="^:vertical /template/ Thumb#PART_Thumb"><Setter Property="MinHeight" Value="26" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderScrollBar}" TargetType="alder:AlderScrollBar" BasedOn="{StaticResource AlderDataGridScrollBarTheme}">
+    <Style Selector="^:horizontal"><Setter Property="Height" Value="10" /></Style>
+    <Style Selector="^:vertical"><Setter Property="Width" Value="10" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderScrollViewer}" TargetType="alder:AlderScrollViewer">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid ColumnDefinitions="*,Auto" RowDefinitions="*,Auto">
+          <ScrollContentPresenter Name="PART_ContentPresenter"
+                                  Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}"
+                                  HorizontalSnapPointsType="{TemplateBinding HorizontalSnapPointsType}"
+                                  VerticalSnapPointsType="{TemplateBinding VerticalSnapPointsType}"
+                                  HorizontalSnapPointsAlignment="{TemplateBinding HorizontalSnapPointsAlignment}"
+                                  VerticalSnapPointsAlignment="{TemplateBinding VerticalSnapPointsAlignment}"
+                                  ScrollViewer.IsScrollInertiaEnabled="{TemplateBinding IsScrollInertiaEnabled}">
+            <ScrollContentPresenter.GestureRecognizers>
+              <ScrollGestureRecognizer CanHorizontallyScroll="{CompiledBinding #PART_ContentPresenter.CanHorizontallyScroll}"
+                                       CanVerticallyScroll="{CompiledBinding #PART_ContentPresenter.CanVerticallyScroll}"
+                                       IsScrollInertiaEnabled="{CompiledBinding #PART_ContentPresenter.(ScrollViewer.IsScrollInertiaEnabled)}"
+                                       Offset="{CompiledBinding #PART_ContentPresenter.Offset}"
+                                       Viewport="{CompiledBinding #PART_ContentPresenter.Viewport}"
+                                       Extent="{CompiledBinding #PART_ContentPresenter.Extent}" />
+            </ScrollContentPresenter.GestureRecognizers>
+          </ScrollContentPresenter>
+          <alder:AlderScrollBar Name="PART_HorizontalScrollBar" Grid.Row="1" Orientation="Horizontal" />
+          <alder:AlderScrollBar Name="PART_VerticalScrollBar" Grid.Column="1" Orientation="Vertical" />
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[AllowAutoHide=True] /template/ ScrollContentPresenter#PART_ContentPresenter">
+      <Setter Property="Grid.ColumnSpan" Value="2" />
+      <Setter Property="Grid.RowSpan" Value="2" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderInlineSelectScrollViewerTheme" TargetType="alder:AlderScrollViewer"
+                BasedOn="{StaticResource {x:Type alder:AlderScrollViewer}}">
+    <Setter Property="AllowAutoHide" Value="False" />
+    <Style Selector="^ /template/ alder|AlderScrollBar#PART_VerticalScrollBar">
+      <Setter Property="Margin" Value="0,5,6,5" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderListBox}" TargetType="alder:AlderListBox">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+    <Setter Property="ScrollViewer.IsScrollChainingEnabled" Value="True" />
+    <Setter Property="ScrollViewer.IsScrollInertiaEnabled" Value="True" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}"
+                ClipToBounds="{TemplateBinding ClipToBounds}">
+          <alder:AlderScrollViewer Name="PART_ScrollViewer"
+                                  HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+                                  VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
+                                  HorizontalSnapPointsType="{TemplateBinding (ScrollViewer.HorizontalSnapPointsType)}"
+                                  VerticalSnapPointsType="{TemplateBinding (ScrollViewer.VerticalSnapPointsType)}"
+                                  IsScrollChainingEnabled="{TemplateBinding (ScrollViewer.IsScrollChainingEnabled)}"
+                                  IsScrollInertiaEnabled="{TemplateBinding (ScrollViewer.IsScrollInertiaEnabled)}"
+                                  IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}"
+                                  AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
+                                  BringIntoViewOnFocusChange="{TemplateBinding (ScrollViewer.BringIntoViewOnFocusChange)}">
+            <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" Margin="{TemplateBinding Padding}" />
+          </alder:AlderScrollViewer>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderTableScrollTheme" TargetType="ScrollViewer">
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid RowDefinitions="*,Auto" ColumnDefinitions="*,Auto">
+          <DockPanel>
+            <Border Name="HeaderSurface" DockPanel.Dock="Top" MinHeight="36"
+                    Background="{DynamicResource AlderSurfaceSecondary}" ClipToBounds="True">
+              <alder:AlderDataGridHeadersPresenter />
+            </Border>
+            <Border Name="RowsSurface" CornerRadius="{TemplateBinding CornerRadius}" Background="{TemplateBinding Background}" ClipToBounds="True">
+              <ScrollContentPresenter Name="PART_ContentPresenter"
+                                      ScrollViewer.IsScrollInertiaEnabled="{TemplateBinding IsScrollInertiaEnabled}">
+                <ScrollContentPresenter.GestureRecognizers>
+                  <ScrollGestureRecognizer CanHorizontallyScroll="{CompiledBinding #PART_ContentPresenter.CanHorizontallyScroll}"
+                                           CanVerticallyScroll="{CompiledBinding #PART_ContentPresenter.CanVerticallyScroll}"
+                                           IsScrollInertiaEnabled="{CompiledBinding #PART_ContentPresenter.(ScrollViewer.IsScrollInertiaEnabled)}" />
+                </ScrollContentPresenter.GestureRecognizers>
+              </ScrollContentPresenter>
+            </Border>
+          </DockPanel>
+          <alder:AlderScrollBar Name="PART_HorizontalScrollBar" Grid.Row="1" Orientation="Horizontal" />
+          <alder:AlderScrollBar Name="PART_VerticalScrollBar" Grid.Column="1" Orientation="Vertical" />
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^.without-column-headers /template/ Border#HeaderSurface">
+      <!-- Column headers still need to be measured to resolve star widths. -->
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="Height" Value="0" />
+      <Setter Property="IsEnabled" Value="False" />
+      <Setter Property="IsHitTestVisible" Value="False" />
+    </Style>
+    <Style Selector="^.dataGridScroll /template/ :is(ScrollBar)#PART_HorizontalScrollBar">
+      <Setter Property="Theme" Value="{StaticResource AlderDataGridScrollBarTheme}" />
+      <Setter Property="Grid.Row" Value="0" />
+      <Setter Property="VerticalAlignment" Value="Bottom" />
+      <Setter Property="Height" Value="10" />
+      <Setter Property="Margin" Value="4,0,10,1" />
+    </Style>
+    <Style Selector="^.dataGridScroll /template/ :is(ScrollBar)#PART_VerticalScrollBar">
+      <Setter Property="Theme" Value="{StaticResource AlderDataGridScrollBarTheme}" />
+      <Setter Property="Grid.Column" Value="0" />
+      <Setter Property="HorizontalAlignment" Value="Right" />
+      <Setter Property="Width" Value="10" />
+      <Setter Property="Margin" Value="0,4,1,10" />
+    </Style>
+    <Style Selector="^.dataGridScroll /template/ :is(ScrollBar)">
+      <Setter Property="Opacity" Value="0" />
+    </Style>
+    <Style Selector="^.dataGridScroll[(alder|AlderMotion.Reduced)=False] /template/ :is(ScrollBar)">
+      <Setter Property="Transitions">
+        <Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.12" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^.dataGridScroll /template/ :is(ScrollBar)[IsExpanded=True], ^.dataGridScroll.dataGridScrollingHorizontal /template/ :is(ScrollBar)#PART_HorizontalScrollBar, ^.dataGridScroll.dataGridScrollingVertical /template/ :is(ScrollBar)#PART_VerticalScrollBar">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderTableSecondaryScrollTheme" TargetType="ScrollViewer" BasedOn="{StaticResource AlderTableScrollTheme}">
+    <Setter Property="CornerRadius" Value="0" />
+    <Setter Property="Background" Value="Transparent" />
+    <Style Selector="^ /template/ Border#HeaderSurface"><Setter Property="CornerRadius" Value="16" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderTableRowTheme" TargetType="TableViewRow">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderTableRowLine}" />
+    <Setter Property="BorderThickness" Value="0,0,0,1" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}">
+            <alder:AlderDataGridCellsPresenter Name="PART_CellsPresenter" />
+          </Border>
+          <Border Name="DropBefore" Height="2" VerticalAlignment="Top" IsVisible="False" IsHitTestVisible="False" Background="{DynamicResource AlderAccent}" />
+          <Border Name="DropAfter" Height="2" VerticalAlignment="Bottom" IsVisible="False" IsHitTestVisible="False" Background="{DynamicResource AlderAccent}" />
+          <Border Name="RowFocus" IsVisible="False" IsHitTestVisible="False" CornerRadius="8" BorderThickness="2"
+                  BorderBrush="{DynamicResource AlderAccent}" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover"><Setter Property="Background" Value="{DynamicResource AlderTableRowHover}" /></Style>
+    <Style Selector="^.secondary"><Setter Property="BorderBrush" Value="{DynamicResource AlderTableSecondaryRowLine}" /></Style>
+    <Style Selector="^.secondary:pointerover"><Setter Property="Background" Value="{DynamicResource AlderTableSecondaryHover}" /></Style>
+    <Style Selector="^:selected"><Setter Property="Background" Value="{DynamicResource AlderTableRowSelected}" /></Style>
+    <Style Selector="^.data-grid-row[(alder|AlderMotion.Reduced)=False]">
+      <Setter Property="Transitions">
+        <Transitions><BrushTransition Property="Background" Duration="0:0:0.12" Easing="0.2,0,0,1" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^.grid-drag-source">
+      <Setter Property="Background" Value="{DynamicResource AlderTableRowHover}" />
+    </Style>
+    <Style Selector="^.grid-drag-source /template/ alder|AlderDataGridCellsPresenter">
+      <Setter Property="Opacity" Value="0.5" />
+    </Style>
+    <Style Selector="^.grid-drop-before /template/ Border#DropBefore, ^.grid-drop-after /template/ Border#DropAfter">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^.last-row"><Setter Property="BorderThickness" Value="0" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#RowFocus"><Setter Property="IsVisible" Value="True" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderTableCellTheme" TargetType="TableViewCell">
+    <Setter Property="Padding" Value="16,12" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Normal" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+        <Border Padding="{TemplateBinding Padding}">
+          <DockPanel VerticalAlignment="Center">
+            <alder:AlderTableExpander DockPanel.Dock="Left" Column="{TemplateBinding Column}"
+                                 Row="{CompiledBinding DataContext, RelativeSource={RelativeSource TemplatedParent}}" />
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="Center"
+                              TextBlock.LineHeight="20" TextBlock.TextTrimming="CharacterEllipsis" />
+          </DockPanel>
+        </Border>
+          <Border Name="PinEdge" Width="1" IsVisible="False" IsHitTestVisible="False" Background="{DynamicResource AlderSeparator}" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^.data-grid-cell"><Setter Property="Padding" Value="12,7" /></Style>
+    <Style Selector="^.grid-pin-start-edge /template/ Border#PinEdge">
+      <Setter Property="IsVisible" Value="True" /><Setter Property="HorizontalAlignment" Value="Right" />
+    </Style>
+    <Style Selector="^.grid-pin-end-edge /template/ Border#PinEdge">
+      <Setter Property="IsVisible" Value="True" /><Setter Property="HorizontalAlignment" Value="Left" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderDataGridActionsCellTheme" TargetType="TableViewCell" BasedOn="{StaticResource AlderTableCellTheme}">
+    <Style Selector="^.data-grid-cell"><Setter Property="Padding" Value="4,7" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderTableSelectionCellTheme" TargetType="TableViewCell" BasedOn="{StaticResource AlderTableCellTheme}">
+    <Setter Property="Padding" Value="4,0" />
+  </ControlTheme>
+  <ControlTheme x:Key="AlderTableHeaderTheme" TargetType="TableViewColumnHeader">
+    <Setter Property="MinHeight" Value="36" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="Padding" Value="16,0" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <alder:AlderTableSortButton Column="{CompiledBinding ((alder:AlderTableColumn)Column), RelativeSource={RelativeSource TemplatedParent}}"
+                                 Direction="{CompiledBinding ((alder:AlderTableColumn)Column)?.SortDirection, RelativeSource={RelativeSource TemplatedParent}}"
+                                 CanSort="{CompiledBinding ((alder:AlderTableColumn)Column)?.CanSort, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=False}"
+                                 Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                 HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                 Padding="{TemplateBinding Padding}" />
+          <Border Name="Separator" Width="1" Height="16" CornerRadius="0.5" Background="{DynamicResource AlderSeparator}"
+                  HorizontalAlignment="Right" VerticalAlignment="Center" IsHitTestVisible="False" />
+          <Border Name="PinEdge" Width="1" IsVisible="False" IsHitTestVisible="False" Background="{DynamicResource AlderSeparator}" />
+          <alder:AlderTableResizeThumb Width="24" Margin="0,0,-12,0" HorizontalAlignment="Right" Cursor="SizeWestEast"
+                                  IsVisible="{CompiledBinding Column?.CanUserEffectivelyResize, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=False}" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^.grid-resize-from-start /template/ alder|AlderTableResizeThumb">
+      <Setter Property="HorizontalAlignment" Value="Left" />
+      <Setter Property="Margin" Value="-12,0,0,0" />
+    </Style>
+    <Style Selector="^.column-resizing /template/ alder|AlderTableSortButton">
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    </Style>
+    <Style Selector="^:nth-last-child(1) /template/ Border#Separator"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^.grid-pin-start-edge /template/ Border#PinEdge">
+      <Setter Property="IsVisible" Value="True" /><Setter Property="HorizontalAlignment" Value="Right" />
+    </Style>
+    <Style Selector="^.grid-pin-end-edge /template/ Border#PinEdge">
+      <Setter Property="IsVisible" Value="True" /><Setter Property="HorizontalAlignment" Value="Left" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderTableSelectionHeaderTheme" TargetType="TableViewColumnHeader" BasedOn="{StaticResource AlderTableHeaderTheme}">
+    <Setter Property="Padding" Value="4,0" />
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderTableResizeThumb}" TargetType="alder:AlderTableResizeThumb">
+    <Setter Property="Focusable" Value="True" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="Transparent"><Border Name="ResizeLine" Width="1" Height="16"
+                HorizontalAlignment="Center" VerticalAlignment="Center" Background="{DynamicResource AlderSeparator}" /></Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover /template/ Border#ResizeLine, ^:resizing /template/ Border#ResizeLine, ^:focus-visible /template/ Border#ResizeLine">
+      <Setter Property="Width" Value="2" />
+      <Setter Property="Height" Value="NaN" />
+      <Setter Property="VerticalAlignment" Value="Stretch" />
+      <Setter Property="Background" Value="{DynamicResource AlderAccent}" />
+    </Style>
+    <Style Selector="^.gridResizer:not(:pointerover):not(:resizing):not(:focus-visible) /template/ Border#ResizeLine">
+      <Setter Property="Opacity" Value="0" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderTableSortButton}" TargetType="alder:AlderTableSortButton">
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Padding="{TemplateBinding Padding}" Name="SortSurface" Background="Transparent" CornerRadius="8"
+                BorderBrush="{DynamicResource AlderAccent}">
+          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6" VerticalAlignment="Center">
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" TextBlock.TextTrimming="CharacterEllipsis" />
+            <alder:AlderPathIcon Name="SortIcon" Grid.Column="1" Data="{DynamicResource AlderIconChevronUp}" Width="12" Height="12" IsVisible="False" />
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[CanSort=True]">
+      <Setter Property="Focusable" Value="True" />
+      <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="^[CanSort=True]:pointerover"><Setter Property="Foreground" Value="{DynamicResource AlderInk}" /></Style>
+    <Style Selector="^:sorted /template/ PathIcon#SortIcon"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:descending /template/ PathIcon#SortIcon"><Setter Property="Data" Value="{DynamicResource AlderIconChevronDown}" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#SortSurface"><Setter Property="BorderThickness" Value="2" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderTableExpander}" TargetType="alder:AlderTableExpander">
+    <Setter Property="Height" Value="0" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="ToggleSurface" Background="Transparent" CornerRadius="16">
+          <alder:AlderPathIcon Name="Chevron" Width="16" Height="16" Data="{DynamicResource AlderIconChevronRight}" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:branch"><Setter Property="Height" Value="32" /></Style>
+    <Style Selector="^ /template/ PathIcon#Chevron">
+      <Setter Property="RenderTransform" Value="rotate(0deg)" />
+      <Setter Property="Transitions">
+        <Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" Easing="0.4,0,0.2,1" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^:expanded /template/ PathIcon#Chevron"><Setter Property="RenderTransform" Value="rotate(90deg)" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ PathIcon#Chevron">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+    <Style Selector="^:pointerover /template/ Border#ToggleSurface, ^:focus-visible /template/ Border#ToggleSurface">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderTableView}" TargetType="alder:AlderTableView">
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="ItemContainerTheme" Value="{StaticResource AlderTableRowTheme}" />
+    <Setter Property="ItemsPanel"><ItemsPanelTemplate><VirtualizingStackPanel /></ItemsPanelTemplate></Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <alder:AlderScrollViewer Name="PART_ScrollViewer" Theme="{StaticResource AlderTableScrollTheme}"
+                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AllowAutoHide="True">
+          <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+        </alder:AlderScrollViewer>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^.grid-unvirtualized">
+      <Setter Property="ItemsPanel"><ItemsPanelTemplate><StackPanel /></ItemsPanelTemplate></Setter>
+    </Style>
+    <Style Selector="^[Variant=Secondary] /template/ :is(ScrollViewer)#PART_ScrollViewer">
+      <Setter Property="Theme" Value="{StaticResource AlderTableSecondaryScrollTheme}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderTableColumn}" TargetType="alder:AlderTableColumn">
+    <Setter Property="HeaderTheme" Value="{StaticResource AlderTableHeaderTheme}" />
+    <Setter Property="CellTheme" Value="{StaticResource AlderTableCellTheme}" />
+    <Style Selector="^.selection, ^.reorder-handle">
+      <Setter Property="HeaderTheme" Value="{StaticResource AlderTableSelectionHeaderTheme}" />
+      <Setter Property="CellTheme" Value="{StaticResource AlderTableSelectionCellTheme}" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

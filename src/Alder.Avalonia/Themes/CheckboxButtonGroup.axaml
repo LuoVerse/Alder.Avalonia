@@ -1,0 +1,87 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls" xmlns:conv="using:Avalonia.Data.Converters">
+  <ControlTheme x:Key="{x:Type alder:AlderCheckboxButtonGroupItem}" TargetType="alder:AlderCheckboxButtonGroupItem">
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="SelectionBrush" Value="{DynamicResource AlderAccent}" />
+    <Setter Property="Variant" Value="Secondary" />
+    <Setter Property="Padding" Value="20,16" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Top" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="AutomationProperties.HelpText" Value="{CompiledBinding Description, RelativeSource={RelativeSource Self}}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Background="Transparent">
+          <Border Name="CardFace" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}" />
+          <Border Name="RippleClip" ClipToBounds="True" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+          <Border Name="SelectionRing" BorderBrush="{TemplateBinding SelectionBrush}" BorderThickness="2" Opacity="0"
+                  CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False">
+            <Border.Transitions>
+              <Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="CubicEaseOut" /></Transitions>
+            </Border.Transitions>
+          </Border>
+          <Border BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+            <Grid ColumnDefinitions="Auto,*,Auto" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+              <ContentPresenter Name="LeadingIcon" Content="{TemplateBinding Icon}" VerticalAlignment="Center" Margin="0,0,16,0"
+                                IsVisible="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+              <StackPanel Grid.Column="1">
+                <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  RecognizesAccessKey="True" />
+                <alder:AlderTextBlock Text="{TemplateBinding Description}" TextWrapping="Wrap" FontSize="12" LineHeight="16" FontWeight="Normal"
+                           Foreground="{DynamicResource AlderMuted}"
+                           IsVisible="{CompiledBinding Description, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+                <ContentPresenter Content="{TemplateBinding Details}" Margin="0,8,0,0"
+                                  IsVisible="{CompiledBinding Details, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+              </StackPanel>
+              <Panel Grid.Column="2" Name="IndicatorSlot" Margin="8,-6,-5,0" VerticalAlignment="Top"
+                     IsVisible="{TemplateBinding ShowIndicator}" IsHitTestVisible="False">
+                <alder:AlderCheckBox Name="DefaultCheck" MinHeight="16" Variant="{TemplateBinding Variant}"
+                                     IndicatorSize="{TemplateBinding IndicatorSize}" IndicatorCornerRadius="{TemplateBinding IndicatorCornerRadius}"
+                                     IsThreeState="{TemplateBinding IsThreeState}" IsChecked="{TemplateBinding IsChecked, Mode=OneWay}"
+                                     Focusable="False" IsHitTestVisible="False" IsReadOnly="True" AutomationProperties.AccessibilityView="Raw"
+                                     IsVisible="{CompiledBinding Indicator, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNull}}" />
+                <ContentPresenter Name="CustomIndicator" Content="{TemplateBinding Indicator}" Opacity="0"
+                                  IsVisible="{CompiledBinding Indicator, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}"
+                                  AutomationProperties.AccessibilityView="Raw">
+                  <ContentPresenter.Transitions>
+                    <Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="CubicEaseOut" /></Transitions>
+                  </ContentPresenter.Transitions>
+                </ContentPresenter>
+              </Panel>
+            </Grid>
+          </Border>
+          <Border Name="CardFocusRing" Margin="-4" IsVisible="False" IsHitTestVisible="False" BorderThickness="2"
+                  CornerRadius="{TemplateBinding CornerRadius}" BorderBrush="{DynamicResource AlderAccent}" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter > :is(TextBlock)">
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style Selector="^:checked /template/ Border#SelectionRing, ^:indeterminate /template/ Border#SelectionRing,
+                     ^:checked /template/ ContentPresenter#CustomIndicator, ^:indeterminate /template/ ContentPresenter#CustomIndicator">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ Border#CardFocusRing"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^.alder-invalid /template/ Border#CardFace, ^[IsInvalid=True] /template/ Border#CardFace">
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderDanger}" />
+    </Style>
+    <Style Selector="^[IsRequired=True]"><Setter Property="AutomationProperties.IsRequiredForForm" Value="True" /></Style>
+    <Style Selector="^[IsReadOnly=True]"><Setter Property="Cursor" Value="Arrow" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value=".5" /><Setter Property="Cursor" Value="Arrow" /></Style>
+    <Style Selector="^:disabled /template/ alder|AlderCheckBox#DefaultCheck"><Setter Property="Opacity" Value="1" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#SelectionRing,
+                     ^[(alder|AlderMotion.Reduced)=True] /template/ ContentPresenter#CustomIndicator">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

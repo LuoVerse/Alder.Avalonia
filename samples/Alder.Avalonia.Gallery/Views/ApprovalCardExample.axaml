@@ -1,0 +1,268 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:a="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls" xmlns:conv="using:Avalonia.Data.Converters" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" x:Class="Alder.Avalonia.Gallery.Views.ApprovalCardExample" x:DataType="vm:AiExampleViewModel">
+  <UserControl.Resources>
+    <ControlTheme x:Key="ApprovalStepTheme" TargetType="a:AlderStepperStep">
+      <Setter Property="MinWidth" Value="16" />
+      <Setter Property="Height" Value="28" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="AutomationProperties.Name" Value="{CompiledBinding Content, RelativeSource={RelativeSource Self}}" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Panel Background="Transparent">
+            <Border Name="Marker" VerticalAlignment="Center" HorizontalAlignment="Center" Width="6" Height="6"
+                    CornerRadius="3" Background="{DynamicResource AlderNeutralHover}">
+              <Border.Transitions>
+                <Transitions>
+                  <DoubleTransition Property="Width" Duration="0:0:0.2" Easing="CubicEaseOut" />
+                  <BrushTransition Property="Background" Duration="0:0:0.15" Easing="CubicEaseOut" />
+                </Transitions>
+              </Border.Transitions>
+            </Border>
+          </Panel>
+        </ControlTemplate>
+      </Setter>
+      <Style Selector="^:pointerover /template/ Border#Marker">
+        <Setter Property="Background" Value="{DynamicResource AlderMuted}" />
+      </Style>
+      <Style Selector="^[Status=Active] /template/ Border#Marker">
+        <Setter Property="Width" Value="18" />
+        <Setter Property="Background" Value="{DynamicResource AlderAccent}" />
+      </Style>
+      <Style Selector="^[(a|AlderMotion.Reduced)=True] /template/ Border#Marker">
+        <Setter Property="Transitions" Value="{x:Null}" />
+      </Style>
+    </ControlTheme>
+    <ControlTheme x:Key="ApprovalStepperTheme" TargetType="a:AlderStepper">
+      <Setter Property="ItemContainerTheme" Value="{StaticResource ApprovalStepTheme}" />
+      <Setter Property="ItemsPanel">
+        <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="2" /></ItemsPanelTemplate>
+      </Setter>
+      <Setter Property="Template">
+        <ControlTemplate><ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" /></ControlTemplate>
+      </Setter>
+    </ControlTheme>
+    <DataTemplate x:Key="ApprovalQuestion" x:DataType="vm:AiExampleViewModel">
+      <StackPanel Spacing="6" IsEnabled="{CompiledBinding IsApprovalPending}">
+        <a:AlderRadioButtonGroup Spacing="2" SelectedKey="{CompiledBinding SelectedChoice, Mode=TwoWay}">
+          <a:AlderRadioButtonGroupItem Variant="Inline" a:AlderChoiceGroup.Key="1" Content="{CompiledBinding Options[0].Title}"
+                                       Description="{CompiledBinding Options[0].Description}" />
+          <a:AlderRadioButtonGroupItem Variant="Inline" a:AlderChoiceGroup.Key="2" Content="{CompiledBinding Options[1].Title}"
+                                       Description="{CompiledBinding Options[1].Description}" />
+          <a:AlderRadioButtonGroupItem Variant="Inline" a:AlderChoiceGroup.Key="3" Content="{CompiledBinding Options[2].Title}"
+                                       Description="{CompiledBinding Options[2].Description}" />
+        </a:AlderRadioButtonGroup>
+        <a:AlderInput IsVisible="{CompiledBinding LastQuestion}" Variant="Secondary" MaxLength="600" Margin="8,0"
+                      Width="NaN" HorizontalAlignment="Stretch"
+                      AutomationProperties.Name="{DynamicResource GalleryText.AiOtherAnswer}"
+                      PlaceholderText="{DynamicResource GalleryText.AiOtherPlaceholder}"
+                      Text="{CompiledBinding OtherAnswer, Mode=TwoWay}" />
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="ApprovalProgress" x:DataType="vm:AiExampleViewModel">
+      <WrapPanel ItemSpacing="6" VerticalAlignment="Center" AutomationProperties.Name="{CompiledBinding QuestionProgressLabel}">
+        <a:AlderStepper Theme="{StaticResource ApprovalStepperTheme}" ItemsSource="{CompiledBinding QuestionSteps}"
+                        ActiveStep="{CompiledBinding ActiveQuestion, Mode=TwoWay}" IsEnabled="{CompiledBinding IsApprovalPending}" />
+        <a:AlderTextBlock Text="{CompiledBinding QuestionNumber}" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource AlderMuted}" />
+        <a:AlderTextBlock Text="{CompiledBinding SkippedLabel}" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource AlderMuted}"
+                   IsVisible="{CompiledBinding SkippedLabel, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+      </WrapPanel>
+    </DataTemplate>
+  </UserControl.Resources>
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleDefault" Title="{DynamicResource GalleryText.AiDefault}">
+      <g:ExampleCard.Preview>
+        <Border Padding="16,24" MinHeight="92">
+          <Border.DataContext>
+            <vm:AiExampleViewModel/>
+          </Border.DataContext>
+          <StackPanel Spacing="10">
+            <a:AlderApprovalCard IsVisible="{CompiledBinding !Dismissed}" DismissCommand="{CompiledBinding Dismiss}"
+                                 Header="{CompiledBinding Question}" Decision="{CompiledBinding Decision}" ApproveLabel="{CompiledBinding NextLabel}"
+                                 CanApprove="{CompiledBinding HasAnswer}" RejectLabel="{DynamicResource GalleryText.AiSkip}"
+                                 ApproveCommand="{CompiledBinding Next}" RejectCommand="{CompiledBinding SkipQuestion}"
+                                 Content="{CompiledBinding}" ContentTemplate="{StaticResource ApprovalQuestion}">
+              <a:AlderApprovalCard.Footer>
+                <ContentPresenter Content="{CompiledBinding}" ContentTemplate="{StaticResource ApprovalProgress}" />
+              </a:AlderApprovalCard.Footer>
+            </a:AlderApprovalCard>
+            <a:AlderButton IsVisible="{CompiledBinding Dismissed}" Content="{DynamicResource GalleryText.AiRestartPreview}" Command="{CompiledBinding Restart}" Size="Small" Variant="Ghost" HorizontalAlignment="Center" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var options = new AlderRadioButtonGroup { Spacing = 2, DataContext = model };
+        for (int index = 0; index < model.Options.Length; index++)
+        {
+            int optionIndex = index;
+            var item = new AlderRadioButtonGroupItem { Variant = RadioButtonGroupItemVariant.Inline, DataContext = model };
+            item.Bind(ContentControl.ContentProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.Options[optionIndex].Title));
+            item.Bind(AlderRadioButtonGroupItem.DescriptionProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.Options[optionIndex].Description));
+            AlderChoiceGroup.SetKey(item, (index + 1).ToString());
+            options.Children.Add(item);
+        }
+        options.Bind(AlderRadioButtonGroup.SelectedKeyProperty,
+            CompiledBinding.Create((AiExampleViewModel vm) => vm.SelectedChoice, mode: BindingMode.TwoWay));
+        var steps = new AlderStepper { ItemsSource = model.QuestionSteps, DataContext = model,
+            Theme = (ControlTheme)this.FindResource("ApprovalStepperTheme")! };
+        steps.Bind(AlderStepper.ActiveStepProperty,
+            CompiledBinding.Create((AiExampleViewModel vm) => vm.ActiveQuestion, mode: BindingMode.TwoWay));
+        var answer = new AlderInput { Variant = InputVariant.Secondary, PlaceholderText = "Something else…", DataContext = model };
+        answer.Bind(AlderInput.TextProperty,
+            CompiledBinding.Create((AiExampleViewModel vm) => vm.OtherAnswer, mode: BindingMode.TwoWay));
+        answer.Bind(Visual.IsVisibleProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.LastQuestion));
+        var card = new AlderApprovalCard { DataContext = model, ApproveCommand = model.Next, RejectCommand = model.SkipQuestion,
+            Content = new StackPanel { Spacing = 6, Children = { options, answer } }, Footer = steps, DismissCommand = model.Dismiss };
+        card.Bind(AlderApprovalCard.HeaderProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.Question));
+        card.Bind(AlderApprovalCard.CanApproveProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.HasAnswer));
+        card.Bind(AlderApprovalCard.DecisionProperty,
+            CompiledBinding.Create((AiExampleViewModel vm) => vm.Decision, mode: BindingMode.TwoWay));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleCustomApproval" Title="{DynamicResource GalleryText.AiVariantCustomApproval}">
+      <g:ExampleCard.Preview>
+        <Border Padding="16,24" MinHeight="92" Container.Name="HotelPreview" Container.Sizing="Width">
+          <Border.DataContext>
+            <vm:AiExampleViewModel/>
+          </Border.DataContext>
+          <Border.Styles>
+            <Style Selector="UniformGrid.hotel-details"><Setter Property="Columns" Value="4" /></Style>
+            <Style Selector="a|AlderApprovalCard /template/ a|AlderButton#PART_Reject">
+              <Setter Property="ContentTemplate">
+                <DataTemplate x:DataType="x:String">
+                  <StackPanel Orientation="Horizontal" Spacing="6">
+                    <a:AlderTextBlock Text="{CompiledBinding}" VerticalAlignment="Center" />
+                    <a:AlderKbd Classes="approval-shortcut" FontSize="11" Padding="5,0" MinHeight="18">
+                      <a:AlderKbdKey KeyValue="Escape" />
+                    </a:AlderKbd>
+                  </StackPanel>
+                </DataTemplate>
+              </Setter>
+            </Style>
+            <Style Selector="a|AlderApprovalCard /template/ a|AlderButton#PART_Approve">
+              <Setter Property="ContentTemplate">
+                <DataTemplate x:DataType="x:String">
+                  <StackPanel Orientation="Horizontal" Spacing="6">
+                    <a:AlderTextBlock Text="{CompiledBinding}" VerticalAlignment="Center" />
+                    <a:AlderKbd Classes="approval-shortcut" Variant="Light" Foreground="{DynamicResource AlderOnAccent}"
+                                FontSize="11" Padding="0" MinHeight="18">
+                      <a:AlderKbdKey KeyValue="{CompiledBinding $parent[a:AlderApprovalCard].((vm:AiExampleViewModel)DataContext).ApprovalModifier}" />
+                      <a:AlderKbdKey KeyValue="Enter" />
+                    </a:AlderKbd>
+                  </StackPanel>
+                </DataTemplate>
+              </Setter>
+            </Style>
+            <ContainerQuery Name="HotelPreview" Query="max-width:400">
+              <Style Selector="UniformGrid.hotel-details"><Setter Property="Columns" Value="2" /></Style>
+              <Style Selector="a|AlderKbd.approval-shortcut"><Setter Property="IsVisible" Value="False" /></Style>
+              <Style Selector="a|AlderApprovalCard /template/ Grid#Footer">
+                <Setter Property="RowSpacing" Value="10" />
+              </Style>
+              <Style Selector="a|AlderApprovalCard /template/ ContentPresenter#ApprovalFooterContent">
+                <Setter Property="Grid.ColumnSpan" Value="2" />
+              </Style>
+              <Style Selector="a|AlderApprovalCard /template/ StackPanel#Choices">
+                <Setter Property="Grid.Column" Value="0" /><Setter Property="Grid.Row" Value="1" />
+                <Setter Property="Grid.ColumnSpan" Value="2" />
+              </Style>
+            </ContainerQuery>
+          </Border.Styles>
+          <a:AlderApprovalCard MaxWidth="480" RejectVariant="Secondary" RejectLabel="{DynamicResource GalleryText.AiDecline}"
+                               ApproveLabel="{DynamicResource GalleryText.AiBook}">
+            <a:AlderApprovalCard.Header>
+              <StackPanel Spacing="12" Orientation="Horizontal">
+                <Border Width="56" Height="56" CornerRadius="8" ClipToBounds="True">
+                  <a:AlderImage Source="/Assets/Card/casa-lago.jpeg" Stretch="UniformToFill"/>
+                </Border>
+                <StackPanel Spacing="2" VerticalAlignment="Center">
+                  <a:AlderTextBlock Text="{DynamicResource GalleryText.AiBookHotel}" TextWrapping="Wrap" FontWeight="SemiBold"/>
+                  <a:AlderTextBlock Text="{DynamicResource GalleryText.AiHotelLocation}" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" FontSize="14" FontWeight="Normal"/>
+                </StackPanel>
+              </StackPanel>
+            </a:AlderApprovalCard.Header>
+            <a:AlderApprovalCard.Footer>
+              <a:AlderCheckBox FontSize="12" Variant="Secondary" Foreground="{DynamicResource AlderMuted}" Content="{DynamicResource GalleryText.AiAlwaysAllow}"/>
+            </a:AlderApprovalCard.Footer>
+            <StackPanel Spacing="14" Margin="0,10,0,8">
+              <UniformGrid Classes="hotel-details" ColumnSpacing="8" RowSpacing="12">
+                <StackPanel Spacing="2">
+                  <a:AlderTextBlock Text="{DynamicResource GalleryText.AiCheckIn}" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" FontSize="12"/>
+                  <a:AlderTextBlock Text="{DynamicResource GalleryText.AiArrival}" TextWrapping="Wrap" FontWeight="Normal"/>
+                </StackPanel>
+                <StackPanel Spacing="2">
+                  <a:AlderTextBlock Text="{DynamicResource GalleryText.AiCheckOut}" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" FontSize="12"/>
+                  <a:AlderTextBlock Text="{DynamicResource GalleryText.AiDeparture}" TextWrapping="Wrap" FontWeight="Normal"/>
+                </StackPanel>
+                <StackPanel Spacing="2">
+                  <a:AlderTextBlock Text="{DynamicResource GalleryText.AiGuests}" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" FontSize="12"/>
+                  <a:AlderTextBlock Text="{DynamicResource GalleryText.AiTwoAdults}" TextWrapping="Wrap" FontWeight="Normal"/>
+                </StackPanel>
+                <StackPanel Spacing="2">
+                  <a:AlderTextBlock Text="{DynamicResource GalleryText.AiRoom}" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" FontSize="12"/>
+                  <a:AlderTextBlock Text="{DynamicResource GalleryText.AiKing}" TextWrapping="Wrap" FontWeight="Normal"/>
+                </StackPanel>
+              </UniformGrid>
+              <StackPanel Spacing="5">
+                <Grid ColumnDefinitions="*,Auto">
+                  <a:AlderTextBlock Text="{DynamicResource GalleryText.AiNightPrice}" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}"/>
+                  <a:AlderTextBlock Text="$867.00" TextWrapping="Wrap" Grid.Column="1" FontWeight="Medium"/>
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto">
+                  <a:AlderTextBlock Text="{DynamicResource GalleryText.AiTaxes}" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}"/>
+                  <a:AlderTextBlock Text="$112.71" TextWrapping="Wrap" Grid.Column="1" FontWeight="Medium"/>
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto">
+                  <a:AlderTextBlock Text="{DynamicResource GalleryText.AiTotal}" TextWrapping="Wrap" FontWeight="SemiBold"/>
+                  <a:AlderTextBlock Text="$979.71" TextWrapping="Wrap" Grid.Column="1" FontWeight="Medium"/>
+                </Grid>
+              </StackPanel>
+              <a:AlderChip Size="Small" Color="Success" Variant="Soft" HorizontalAlignment="Left"
+                           Content="{DynamicResource GalleryText.AiHotelCancel}" />
+            </StackPanel>
+          </a:AlderApprovalCard>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var card = new AlderApprovalCard { Header = "Book Casa Lago", ApproveLabel = "Book", RejectLabel = "Decline",
+            Footer = new AlderCheckBox { Content = "Always allow under $1,000" } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleWithAiSdk" Title="{DynamicResource GalleryText.AiVariantWithAiSdk}">
+      <g:ExampleCard.Preview>
+        <Border Padding="16,24" MinHeight="92">
+          <Border.DataContext>
+            <vm:AiExampleViewModel Scenario="Flight"/>
+          </Border.DataContext>
+          <StackPanel Spacing="10" MaxWidth="400">
+            <a:AlderTextBlock Text="{DynamicResource GalleryText.AiFlight}" TextWrapping="Wrap" FontSize="14" FontWeight="SemiBold"
+                       Foreground="{DynamicResource AlderInk}" />
+            <a:AlderTextBlock Text="{DynamicResource GalleryText.AiFlightIntro}" TextWrapping="Wrap" FontSize="14"
+                       Foreground="{DynamicResource AlderMuted}" Margin="0,0,0,4" />
+            <a:AlderApprovalCard IsVisible="{CompiledBinding !Dismissed}" DismissCommand="{CompiledBinding Dismiss}"
+                                 Header="{CompiledBinding Question}" Decision="{CompiledBinding Decision}" ApproveLabel="{CompiledBinding NextLabel}"
+                                 CanApprove="{CompiledBinding HasAnswer}" RejectLabel="{DynamicResource GalleryText.AiSkip}"
+                                 ApproveCommand="{CompiledBinding Next}" RejectCommand="{CompiledBinding SkipQuestion}"
+                                 Content="{CompiledBinding}" ContentTemplate="{StaticResource ApprovalQuestion}">
+              <a:AlderApprovalCard.Footer>
+                <ContentPresenter Content="{CompiledBinding}" ContentTemplate="{StaticResource ApprovalProgress}" />
+              </a:AlderApprovalCard.Footer>
+            </a:AlderApprovalCard>
+            <a:AlderButton IsVisible="{CompiledBinding Dismissed}" Content="{DynamicResource GalleryText.AiRestartPreview}" Command="{CompiledBinding Restart}" Size="Small" Variant="Ghost" HorizontalAlignment="Center" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel { Scenario = AiGalleryScenario.Flight };
+        var card = new AlderApprovalCard
+        {
+            DataContext = model, ApproveCommand = model.Next, RejectCommand = model.SkipQuestion,
+            Content = model, ContentTemplate = (IDataTemplate)this.FindResource("ApprovalQuestion")!,
+            Footer = new ContentPresenter { Content = model, ContentTemplate = (IDataTemplate)this.FindResource("ApprovalProgress")! }
+        };
+        card.Bind(AlderApprovalCard.HeaderProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.Question));
+        card.Bind(AlderApprovalCard.CanApproveProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.HasAnswer));
+        card.Bind(AlderApprovalCard.DecisionProperty,
+            CompiledBinding.Create((AiExampleViewModel vm) => vm.Decision, mode: BindingMode.TwoWay));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

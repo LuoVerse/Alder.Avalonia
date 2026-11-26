@@ -1,0 +1,131 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.ProgressCircleExample" x:DataType="vm:FeedbackViewModel">
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleBasic" Title="{DynamicResource GalleryText.FeedbackBasic}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="14" MaxWidth="360">
+          <alder:AlderProgressCircle Color="{CompiledBinding PreviewColor}" Size="{CompiledBinding PreviewSize}" HorizontalAlignment="Center"
+                                AutomationProperties.Name="{DynamicResource GalleryText.FeedbackTransfer}" Value="{CompiledBinding PreviewValue}"
+                             IsIndeterminate="{CompiledBinding PreviewIsIndeterminate}" FormatCulture="{DynamicResource GalleryCulture}" />
+          <alder:AlderSlider MaxWidth="256" Theme="{StaticResource AlderSliderTheme}" Maximum="100" SmallChange="1" LargeChange="10"
+                  Value="{CompiledBinding PreviewValue, Mode=TwoWay}" AutomationProperties.Name="{DynamicResource GalleryText.FeedbackValue}" />
+          <WrapPanel ItemSpacing="8" LineSpacing="8" HorizontalAlignment="Center">
+            <alder:AlderSelect MinWidth="108" Variant="Secondary"
+                               AutomationProperties.Name="{DynamicResource GalleryText.FeedbackColors}"
+                               SelectedItem="{CompiledBinding PreviewColor, Mode=TwoWay}"
+                               ItemsSource="{CompiledBinding PreviewColors}" TextSelector="{CompiledBinding PreviewColorCaption}" />
+            <alder:AlderSelect MinWidth="108" Variant="Secondary"
+                               AutomationProperties.Name="{DynamicResource GalleryText.Sizes}"
+                               SelectedItem="{CompiledBinding PreviewSize, Mode=TwoWay}"
+                               ItemsSource="{CompiledBinding PreviewSizes}" TextSelector="{CompiledBinding PreviewSizeCaption}" />
+          </WrapPanel>
+          <alder:AlderCheckBox HorizontalAlignment="Center" Content="{DynamicResource GalleryText.FeedbackIndeterminate}"
+                          IsChecked="{CompiledBinding PreviewIsIndeterminate, Mode=TwoWay}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var indicator = new AlderProgressCircle();
+        indicator.Bind(AlderProgressCircle.ColorProperty, CompiledBinding.Create((FeedbackViewModel model) => model.PreviewColor));
+        indicator.Bind(AlderProgressCircle.SizeProperty, CompiledBinding.Create((FeedbackViewModel model) => model.PreviewSize));
+        indicator.Bind(RangeBase.ValueProperty, CompiledBinding.Create((FeedbackViewModel model) => model.PreviewValue));
+        indicator.Bind(AlderProgressIndicator.IsIndeterminateProperty, CompiledBinding.Create((FeedbackViewModel model) => model.PreviewIsIndeterminate));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSizes" Title="{DynamicResource GalleryText.Sizes}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="16" LineSpacing="16" HorizontalAlignment="Center">
+          <alder:AlderProgressCircle Size="Small" Value="40" AutomationProperties.Name="{DynamicResource GalleryText.Small}" />
+          <alder:AlderProgressCircle Size="Medium" Value="60" AutomationProperties.Name="{DynamicResource GalleryText.Medium}" />
+          <alder:AlderProgressCircle Size="Large" Value="80" AutomationProperties.Name="{DynamicResource GalleryText.Large}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var small = new AlderProgressCircle { Size = AlderSize.Small, Value = 40 };
+        var medium = new AlderProgressCircle { Size = AlderSize.Medium, Value = 60 };
+        var large = new AlderProgressCircle { Size = AlderSize.Large, Value = 80 };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleColors" Title="{DynamicResource GalleryText.FeedbackColors}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="16" LineSpacing="16" HorizontalAlignment="Center">
+          <alder:AlderProgressCircle Color="Default" Value="60" AutomationProperties.Name="{DynamicResource GalleryText.FeedbackDefault}" />
+          <alder:AlderProgressCircle Color="Accent" Value="60" AutomationProperties.Name="{DynamicResource GalleryText.FeedbackAccent}" />
+          <alder:AlderProgressCircle Color="Success" Value="60" AutomationProperties.Name="{DynamicResource GalleryText.FeedbackSuccess}" />
+          <alder:AlderProgressCircle Color="Warning" Value="60" AutomationProperties.Name="{DynamicResource GalleryText.FeedbackWarning}" />
+          <alder:AlderProgressCircle Color="Danger" Value="60" AutomationProperties.Name="{DynamicResource GalleryText.FeedbackDanger}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var defaultCircle = new AlderProgressCircle { Color = FeedbackColor.Default, Value = 60 };
+        var accentCircle = new AlderProgressCircle { Color = FeedbackColor.Accent, Value = 60 };
+        var successCircle = new AlderProgressCircle { Color = FeedbackColor.Success, Value = 60 };
+        var warningCircle = new AlderProgressCircle { Color = FeedbackColor.Warning, Value = 60 };
+        var dangerCircle = new AlderProgressCircle { Color = FeedbackColor.Danger, Value = 60 };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleIndeterminate" Title="{DynamicResource GalleryText.FeedbackIndeterminate}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="12" HorizontalAlignment="Center">
+          <alder:AlderProgressCircle HorizontalAlignment="Center" AutomationProperties.Name="{DynamicResource GalleryText.Loading}"
+                                Value="60" ShowValue="True"
+                                IsIndeterminate="{CompiledBinding IsIndeterminate}" FormatCulture="{DynamicResource GalleryCulture}" />
+          <alder:AlderCheckBox Content="{DynamicResource GalleryText.FeedbackIndeterminate}" IsChecked="{CompiledBinding IsIndeterminate, Mode=TwoWay}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var progress = new AlderProgressCircle { Value = 60, ShowValue = true };
+        AutomationProperties.SetName(progress, "Loading");
+        progress.Bind(AlderProgressIndicator.IsIndeterminateProperty, CompiledBinding.Create((FeedbackViewModel model) => model.IsIndeterminate));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleLabeled" Title="{DynamicResource GalleryText.FeedbackWithLabel}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderProgressCircle HorizontalAlignment="Center" Label="{DynamicResource GalleryText.FeedbackTransfer}"
+                              Value="75" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var progress = new AlderProgressCircle { Label = "File transfer", Value = 75 };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleStrokes" Title="{DynamicResource GalleryText.FeedbackStrokeWidths}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="20" LineSpacing="12" HorizontalAlignment="Center">
+          <alder:AlderProgressCircle StrokeThickness="1.5" TrackStrokeThickness="1.5" Value="60"
+                                AutomationProperties.Name="{DynamicResource GalleryText.FeedbackThin}" />
+          <alder:AlderProgressCircle Value="60" AutomationProperties.Name="{DynamicResource GalleryText.FeedbackDefault}" />
+          <alder:AlderProgressCircle StrokeThickness="5" TrackStrokeThickness="2" StrokeLineCap="Flat" Value="60"
+                                AutomationProperties.Name="{DynamicResource GalleryText.FeedbackThick}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var thin = new AlderProgressCircle { StrokeThickness = 1.5, TrackStrokeThickness = 1.5, Value = 60 };
+        var standard = new AlderProgressCircle { Value = 60 };
+        var thick = new AlderProgressCircle
+        {
+            StrokeThickness = 5, TrackStrokeThickness = 2, StrokeLineCap = PenLineCap.Flat, Value = 60
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustom" Title="{DynamicResource GalleryText.CustomStyles}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="256" Spacing="12">
+          <alder:AlderProgressCircle Label="{DynamicResource GalleryText.FeedbackTransfer}" Diameter="56" StrokeThickness="4" ShowValue="True"
+                                IndicatorBrush="{DynamicResource AlderMuted}" TrackBrush="{DynamicResource AlderNeutral}"
+                                Value="{CompiledBinding Work}" Minimum="100" Maximum="1000" FormatCulture="{DynamicResource GalleryCulture}" />
+          <alder:AlderSlider Minimum="100" Maximum="1000" SmallChange="1" LargeChange="100" Theme="{StaticResource AlderSliderTheme}"
+                  Value="{CompiledBinding Work, Mode=TwoWay}" AutomationProperties.Name="{DynamicResource GalleryText.FeedbackTransfer}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var progress = new AlderProgressCircle
+        {
+            Diameter = 56, StrokeThickness = 4, Minimum = 100, Maximum = 1000, ShowValue = true, Label = "File transfer"
+        };
+        progress[!AlderRangeIndicator.IndicatorBrushProperty] = new DynamicResourceExtension("AlderMuted");
+        progress.Bind(RangeBase.ValueProperty, CompiledBinding.Create((FeedbackViewModel model) => model.Work));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

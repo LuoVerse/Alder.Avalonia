@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:a="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls" x:Class="Alder.Avalonia.Gallery.Views.ChatLoaderExample">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleDefault" Title="{DynamicResource GalleryText.AiDefault}">
+      <g:ExampleCard.Preview>
+        <Border Padding="22,24">
+          <StackPanel Spacing="32" MaxWidth="420">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+              <a:AlderTextBlock Text="{DynamicResource GalleryText.AiChatIndicatorDots}" Foreground="{DynamicResource AlderMuted}"
+                                FontSize="14" LineHeight="20" VerticalAlignment="Center" />
+              <a:AlderChatLoader Variant="Dots" VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="12">
+              <a:AlderTextBlock Text="{DynamicResource GalleryText.AiChatIndicatorPulse}" Foreground="{DynamicResource AlderMuted}"
+                                FontSize="14" LineHeight="20" VerticalAlignment="Center" />
+              <a:AlderChatLoader Variant="Pulse" VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="12">
+              <a:AlderTextBlock Text="{DynamicResource GalleryText.AiChatIndicatorRing}" Foreground="{DynamicResource AlderMuted}"
+                                FontSize="14" LineHeight="20" VerticalAlignment="Center" />
+              <a:AlderChatLoader Variant="Ring" VerticalAlignment="Center" />
+            </StackPanel>
+            <a:AlderChatSkeleton />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var dots = new AlderChatLoader { Variant = AiLoaderVariant.Dots };
+        var pulse = new AlderChatLoader { Variant = AiLoaderVariant.Pulse };
+        var spinner = new AlderChatLoader { Variant = AiLoaderVariant.Ring };
+        var placeholder = new AlderChatSkeleton();
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

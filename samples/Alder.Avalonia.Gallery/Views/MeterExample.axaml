@@ -1,0 +1,103 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.MeterExample" x:DataType="vm:FeedbackViewModel">
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleBasic" Title="{DynamicResource GalleryText.FeedbackBasic}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="14" MaxWidth="360">
+          <alder:AlderMeter Color="{CompiledBinding PreviewColor}" Size="{CompiledBinding PreviewSize}"
+                       Label="{DynamicResource GalleryText.FeedbackStorage}" MaxWidth="256" Value="{CompiledBinding PreviewValue}" FormatCulture="{DynamicResource GalleryCulture}" />
+          <alder:AlderSlider MaxWidth="256" Theme="{StaticResource AlderSliderTheme}" Maximum="100" SmallChange="1" LargeChange="10"
+                  Value="{CompiledBinding PreviewValue, Mode=TwoWay}" AutomationProperties.Name="{DynamicResource GalleryText.FeedbackValue}" />
+          <WrapPanel ItemSpacing="8" LineSpacing="8" HorizontalAlignment="Center">
+            <alder:AlderSelect MinWidth="108" Variant="Secondary"
+                               AutomationProperties.Name="{DynamicResource GalleryText.FeedbackColors}"
+                               SelectedItem="{CompiledBinding PreviewColor, Mode=TwoWay}"
+                               ItemsSource="{CompiledBinding PreviewColors}" TextSelector="{CompiledBinding PreviewColorCaption}" />
+            <alder:AlderSelect MinWidth="108" Variant="Secondary"
+                               AutomationProperties.Name="{DynamicResource GalleryText.Sizes}"
+                               SelectedItem="{CompiledBinding PreviewSize, Mode=TwoWay}"
+                               ItemsSource="{CompiledBinding PreviewSizes}" TextSelector="{CompiledBinding PreviewSizeCaption}" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var indicator = new AlderMeter();
+        indicator.Bind(AlderMeter.ColorProperty, CompiledBinding.Create((FeedbackViewModel model) => model.PreviewColor));
+        indicator.Bind(AlderMeter.SizeProperty, CompiledBinding.Create((FeedbackViewModel model) => model.PreviewSize));
+        indicator.Bind(RangeBase.ValueProperty, CompiledBinding.Create((FeedbackViewModel model) => model.PreviewValue));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSizes" Title="{DynamicResource GalleryText.Sizes}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="256">
+          <alder:AlderMeter Size="Small" Label="{DynamicResource GalleryText.Small}" Color="Success" Value="40" FormatCulture="{DynamicResource GalleryCulture}" />
+          <alder:AlderMeter Size="Medium" Label="{DynamicResource GalleryText.Medium}" Color="Accent" Value="60" FormatCulture="{DynamicResource GalleryCulture}" />
+          <alder:AlderMeter Size="Large" Label="{DynamicResource GalleryText.Large}" Color="Warning" Value="80" FormatCulture="{DynamicResource GalleryCulture}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var small = new AlderMeter { Size = AlderSize.Small, Color = FeedbackColor.Success, Value = 40 };
+        var medium = new AlderMeter { Size = AlderSize.Medium, Color = FeedbackColor.Accent, Value = 60 };
+        var large = new AlderMeter { Size = AlderSize.Large, Color = FeedbackColor.Warning, Value = 80 };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleColors" Title="{DynamicResource GalleryText.FeedbackColors}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="256">
+          <alder:AlderMeter Label="{DynamicResource GalleryText.FeedbackDefault}" Color="Default" Value="50" FormatCulture="{DynamicResource GalleryCulture}" />
+          <alder:AlderMeter Label="{DynamicResource GalleryText.FeedbackAccent}" Color="Accent" Value="50" FormatCulture="{DynamicResource GalleryCulture}" />
+          <alder:AlderMeter Label="{DynamicResource GalleryText.FeedbackSuccess}" Color="Success" Value="50" FormatCulture="{DynamicResource GalleryCulture}" />
+          <alder:AlderMeter Label="{DynamicResource GalleryText.FeedbackWarning}" Color="Warning" Value="50" FormatCulture="{DynamicResource GalleryCulture}" />
+          <alder:AlderMeter Label="{DynamicResource GalleryText.FeedbackDanger}" Color="Danger" Value="50" FormatCulture="{DynamicResource GalleryCulture}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var defaultIndicator = new AlderMeter { Color = FeedbackColor.Default, Value = 50 };
+        var accentIndicator = new AlderMeter { Color = FeedbackColor.Accent, Value = 50 };
+        var successIndicator = new AlderMeter { Color = FeedbackColor.Success, Value = 50 };
+        var warningIndicator = new AlderMeter { Color = FeedbackColor.Warning, Value = 50 };
+        var dangerIndicator = new AlderMeter { Color = FeedbackColor.Danger, Value = 50 };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleNoLabel" Title="{DynamicResource GalleryText.FeedbackWithoutLabel}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderMeter MaxWidth="256" Value="45" ShowValue="False" AutomationProperties.Name="{DynamicResource GalleryText.FeedbackStorage}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var indicator = new AlderMeter { Value = 45, ShowValue = false };
+        AutomationProperties.SetName(indicator, "Storage used");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleRange" Title="{DynamicResource GalleryText.FeedbackCustomRange}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="256" Spacing="12">
+          <alder:AlderMeter Label="{DynamicResource GalleryText.FeedbackRevenue}" Minimum="100" Maximum="1000"
+                       Value="{CompiledBinding Work}" ValueFormat="C2" FormatCulture="{DynamicResource GalleryCulture}" />
+          <alder:AlderSlider Minimum="100" Maximum="1000" SmallChange="1" LargeChange="100" Theme="{StaticResource AlderSliderTheme}"
+                  Value="{CompiledBinding Work, Mode=TwoWay}" AutomationProperties.Name="{DynamicResource GalleryText.FeedbackRevenue}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var indicator = new AlderMeter
+        {
+            Minimum = 100, Maximum = 1000, Label = "Revenue", ValueFormat = "C2"
+        };
+        indicator.Bind(RangeBase.ValueProperty, CompiledBinding.Create((FeedbackViewModel model) => model.Work));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustom" Title="{DynamicResource GalleryText.CustomStyles}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderMeter MaxWidth="256" Label="{DynamicResource GalleryText.FeedbackStorage}" Value="68"
+                     FormatCulture="{DynamicResource GalleryCulture}"
+                     TrackBrush="{DynamicResource AlderSoft}" IndicatorBrush="{DynamicResource AlderAccent}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var meter = new AlderMeter { Label = "Storage used", Value = 68 };
+        meter[!AlderRangeIndicator.TrackBrushProperty] = new DynamicResourceExtension("AlderSoft");
+        meter[!AlderRangeIndicator.IndicatorBrushProperty] = new DynamicResourceExtension("AlderAccent");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,310 @@
+<Styles x:Class="Alder.Avalonia.Themes.AlderTheme" xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:alder="using:Alder.Avalonia.Controls" xmlns:md="using:Alder.NativeMarkdown.UI.Themes">
+  <md:StreamMarkTheme />
+  <Styles.Resources>
+    <ResourceDictionary>
+      <x:String x:Key="AlderText.BreadcrumbNavigation">Breadcrumb navigation</x:String>
+      <x:String x:Key="AlderText.CurrentPage">Current page</x:String>
+      <x:String x:Key="AlderText.Pagination">Pagination</x:String>
+      <x:String x:Key="AlderText.PreviousPage">Previous</x:String>
+      <x:String x:Key="AlderText.NextPage">Next</x:String>
+      <x:String x:Key="AlderText.PageNumberFormat">Page {0}</x:String>
+      <x:String x:Key="AlderText.CurrentPageNumberFormat">Page {0}, current page</x:String>
+      <x:String x:Key="AlderText.PreviousTabs">Scroll to previous tabs</x:String>
+      <x:String x:Key="AlderText.NextTabs">Scroll to next tabs</x:String>
+      <x:String x:Key="AlderText.CloseTab">Close tab</x:String>
+      <x:String x:Key="AlderText.OpenCalendar">Open calendar</x:String>
+      <x:String x:Key="AlderText.OpenRangeCalendar">Open range calendar</x:String>
+      <x:String x:Key="AlderText.StartDate">Start date</x:String>
+      <x:String x:Key="AlderText.EndDate">End date</x:String>
+      <x:String x:Key="AlderText.ChooseYear">Choose year</x:String>
+      <x:String x:Key="AlderText.PreviousPeriod">Previous period</x:String>
+      <x:String x:Key="AlderText.NextPeriod">Next period</x:String>
+      <x:String x:Key="AlderText.LowerValue">Lower value</x:String>
+      <x:String x:Key="AlderText.UpperValue">Upper value</x:String>
+      <x:String x:Key="AlderText.DecreaseValue">Decrease value</x:String>
+      <x:String x:Key="AlderText.IncreaseValue">Increase value</x:String>
+      <x:String x:Key="AlderText.Increase">Increase</x:String>
+      <x:String x:Key="AlderText.Decrease">Decrease</x:String>
+      <x:String x:Key="AlderText.Close">Close</x:String>
+      <x:String x:Key="AlderText.WindowMinimize">Minimize</x:String>
+      <x:String x:Key="AlderText.WindowMaximize">Maximize</x:String>
+      <x:String x:Key="AlderText.WindowRestore">Restore window</x:String>
+      <x:String x:Key="AlderText.ClearSearch">Clear search</x:String>
+      <x:String x:Key="AlderText.Unavailable">Unavailable</x:String>
+      <x:String x:Key="AlderText.Selected">Selected</x:String>
+      <x:String x:Key="AlderText.Year">Year</x:String>
+      <x:String x:Key="AlderText.Month">Month</x:String>
+      <x:String x:Key="AlderText.Day">Day</x:String>
+      <x:String x:Key="AlderText.Hour">Hour</x:String>
+      <x:String x:Key="AlderText.Minute">Minute</x:String>
+      <x:String x:Key="AlderText.SecondUnit">Second</x:String>
+      <x:String x:Key="AlderText.Period">Period</x:String>
+      <x:String x:Key="AlderText.YearPlaceholder">yyyy</x:String>
+      <x:String x:Key="AlderText.MonthPlaceholder">mm</x:String>
+      <x:String x:Key="AlderText.DayPlaceholder">dd</x:String>
+      <x:String x:Key="AlderText.HourPlaceholder">hh</x:String>
+      <x:String x:Key="AlderText.MinutePlaceholder">mm</x:String>
+      <x:String x:Key="AlderText.SecondPlaceholder">ss</x:String>
+
+      <BoxShadows x:Key="AlderFocusShadow">0 0 0 2 #0485F7</BoxShadows>
+      <ControlTheme x:Key="AlderAttachedToolbarSurfaceTheme" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+        <Setter Property="CornerRadius" Value="24" />
+        <Setter Property="Padding" Value="4" />
+        <Setter Property="BoxShadow" Value="{DynamicResource AlderToolbarShadow}" />
+      </ControlTheme>
+      <!-- The choice cards use accent/10, while toggle buttons use the theme’s accent-soft. -->
+      <SolidColorBrush x:Key="AlderSelectionCardFill" Color="#1A0485F7" />
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+          <SolidColorBrush x:Key="AlderMuted" Color="#71717A" />
+          <SolidColorBrush x:Key="AlderSliderStep" Color="#4071717A" />
+          <SolidColorBrush x:Key="AlderFieldHover" Color="#EBF7F7F7" />
+          <SolidColorBrush x:Key="AlderInputHover" Color="#EBF8F8F8" />
+          <SolidColorBrush x:Key="AlderNumberStepPressed" Color="#1A18181B" />
+          <BoxShadows x:Key="AlderFieldInvalidOutline">0 0 0 1 #FF383C</BoxShadows>
+          <BoxShadows x:Key="AlderFieldInvalidRing">0 0 0 2 #FF383C</BoxShadows>
+          <SolidColorBrush x:Key="AlderSoftHoverTint" Color="#0F0485F7" />
+          <SolidColorBrush x:Key="AlderSwitchHover" Color="#CCEBEBEC" />
+          <BoxShadows x:Key="AlderFieldShadow">0 2 4 0 #0A000000, 0 1 2 0 #0F000000, 0 0 1 0 #0F000000</BoxShadows>
+          <SolidColorBrush x:Key="AlderAccent" Color="#0485F7" />
+          <SolidColorBrush x:Key="AlderAccentHover" Color="#3592F9" />
+          <SolidColorBrush x:Key="AlderOnAccent" Color="#FCFCFC" />
+          <SolidColorBrush x:Key="AlderInk" Color="#18181B" />
+          <SolidColorBrush x:Key="AlderTabIndicator" Color="#FFFFFF" />
+          <SolidColorBrush x:Key="AlderNeutral" Color="#EBEBEC" />
+          <SolidColorBrush x:Key="AlderNeutralHover" Color="#E1E1E2" />
+          <SolidColorBrush x:Key="AlderTertiaryInk" Color="#E618181B" />
+          <SolidColorBrush x:Key="AlderBorder" Color="#DDDEE0" />
+          <SolidColorBrush x:Key="AlderSeparator" Color="#E4E4E7" />
+          <SolidColorBrush x:Key="AlderSoft" Color="#260485F7" />
+          <SolidColorBrush x:Key="AlderSoftHover" Color="#330485F7" />
+          <SolidColorBrush x:Key="AlderSoftInk" Color="#1E63AE" />
+          <SolidColorBrush x:Key="AlderDanger" Color="#FF383C" />
+          <SolidColorBrush x:Key="AlderDangerHover" Color="#FF5551" />
+          <SolidColorBrush x:Key="AlderDangerSoft" Color="#26FF383C" />
+          <SolidColorBrush x:Key="AlderDangerInk" Color="#A43533" />
+          <SolidColorBrush x:Key="AlderSurface" Color="White" />
+          <SolidColorBrush x:Key="AlderSurfaceSecondary" Color="#EFEFF0" />
+          <BoxShadows x:Key="AlderToolbarShadow">0 2 8 0 #0F000000, 0 -6 12 0 #08000000, 0 14 28 0 #14000000</BoxShadows>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+          <SolidColorBrush x:Key="AlderMuted" Color="#9F9FA9" />
+          <SolidColorBrush x:Key="AlderSliderStep" Color="#409F9FA9" />
+          <SolidColorBrush x:Key="AlderFieldHover" Color="#EB1B1B1F" />
+          <SolidColorBrush x:Key="AlderInputHover" Color="#EB1C1C1F" />
+          <SolidColorBrush x:Key="AlderNumberStepPressed" Color="#1AFCFCFC" />
+          <BoxShadows x:Key="AlderFieldInvalidOutline">0 0 0 1 #DB3B3E</BoxShadows>
+          <BoxShadows x:Key="AlderFieldInvalidRing">0 0 0 2 #DB3B3E</BoxShadows>
+          <SolidColorBrush x:Key="AlderSoftHoverTint" Color="#0C0485F7" />
+          <SolidColorBrush x:Key="AlderSwitchHover" Color="#CC27272A" />
+          <BoxShadows x:Key="AlderFieldShadow">none</BoxShadows>
+          <SolidColorBrush x:Key="AlderAccent" Color="#0485F7" />
+          <SolidColorBrush x:Key="AlderAccentHover" Color="#3592F9" />
+          <SolidColorBrush x:Key="AlderOnAccent" Color="#FCFCFC" />
+          <SolidColorBrush x:Key="AlderInk" Color="#FCFCFC" />
+          <SolidColorBrush x:Key="AlderTabIndicator" Color="#3F3F46" />
+          <SolidColorBrush x:Key="AlderNeutral" Color="#27272A" />
+          <SolidColorBrush x:Key="AlderNeutralHover" Color="#2E2E31" />
+          <SolidColorBrush x:Key="AlderTertiaryInk" Color="#E6FCFCFC" />
+          <SolidColorBrush x:Key="AlderBorder" Color="#28282C" />
+          <SolidColorBrush x:Key="AlderSeparator" Color="#212124" />
+          <SolidColorBrush x:Key="AlderSoft" Color="#1F0485F7" />
+          <SolidColorBrush x:Key="AlderSoftHover" Color="#290485F7" />
+          <SolidColorBrush x:Key="AlderSoftInk" Color="#61A8FB" />
+          <SolidColorBrush x:Key="AlderDanger" Color="#DB3B3E" />
+          <SolidColorBrush x:Key="AlderDangerHover" Color="#E15451" />
+          <SolidColorBrush x:Key="AlderDangerSoft" Color="#26DB3B3E" />
+          <SolidColorBrush x:Key="AlderDangerInk" Color="#EB7872" />
+          <SolidColorBrush x:Key="AlderSurface" Color="#18181B" />
+          <SolidColorBrush x:Key="AlderSurfaceSecondary" Color="#232325" />
+          <BoxShadows x:Key="AlderToolbarShadow">inset 0 0 1 0 #4DFFFFFF</BoxShadows>
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Icons.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Buttons.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Choices.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/CheckboxButtonGroup.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/RadioButtonGroup.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/DropZone.axaml" />
+
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Labels.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Inputs.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/InputOtp.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/NumberField.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/SearchField.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Sliders.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Colors.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/TextArea.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/TemporalFields.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Calendars.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/ActionBar.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/EmptyState.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/FileTree.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/FloatingToc.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/HoloCard.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/HoverCard.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/ProDataDisplay.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Kanban.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Map.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Agenda.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Carousel.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/DatePickers.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Disclosure.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Accordion.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Breadcrumbs.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Link.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Pagination.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Tabs.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/ExpandableTabs.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Dialogs.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Window.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Feedback.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/FeedbackExtras.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Layout.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Resizable.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/AppLayout.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Sidebar.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Segment.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Command.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Stepper.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Navbar.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/ContextMenu.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/UserMenu.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Avatars.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Pickers.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Emoji.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/AI.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Cells.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Typography.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/StatusIndicators.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Tables.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Charts.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/ScrollShadow.axaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Styles.Resources>
+  <Style Selector="alder|AlderActionBar:compact alder|AlderButton.action-bar-label">
+    <Setter Property="IsIconOnly" Value="True" />
+  </Style>
+  <Style Selector="alder|AlderActionBar:compact alder|AlderButton.action-bar-label /template/ ContentPresenter#PART_ContentPresenter,
+                   alder|AlderActionBar:compact TextBlock.action-bar-label">
+    <Setter Property="IsVisible" Value="False" />
+  </Style>
+  <StyleInclude Source="avares://Alder.Avalonia/Themes/TypographyProse.axaml" />
+  <Style Selector="alder|SliderMarks > TextBlock">
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="Transitions">
+      <Transitions><BrushTransition Property="Foreground" Duration="0:0:0.2" Easing="CubicEaseOut" /></Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="alder|SliderMarks > TextBlock.filled">
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+  </Style>
+  <Style Selector="alder|SliderMarks > TextBlock[(alder|AlderMotion.Reduced)=True]">
+    <Setter Property="Transitions" Value="{x:Null}" />
+  </Style>
+  <Style Selector="Border.alder-sheet-handle">
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+  </Style>
+  <Style Selector="Border.alder-sheet-handle > Border">
+    <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+  </Style>
+  <Style Selector="Border.alder-sheet-handle:focus-visible > Border">
+    <Setter Property="Background" Value="{DynamicResource AlderAccent}" />
+  </Style>
+  <Style Selector="alder|AlderRadioGroup[Variant=Secondary] > alder|AlderRadioButton">
+    <Setter Property="IsSecondary" Value="True" />
+  </Style>
+  <Style Selector="alder|AlderTabs[HeaderAlignment=Start] > TabItem">
+    <Setter Property="HorizontalContentAlignment" Value="Left" />
+  </Style>
+  <Style Selector="alder|AlderTabs[HeaderAlignment=End] > TabItem">
+    <Setter Property="HorizontalContentAlignment" Value="Right" />
+  </Style>
+  <Style Selector="alder|AlderTabs:vertical > TabItem">
+    <Setter Property="MinWidth" Value="80" />
+  </Style>
+  <Style Selector="alder|AlderTabs[Variant=Secondary] > TabItem">
+    <Setter Property="CornerRadius" Value="0" />
+  </Style>
+  <Style Selector="alder|AlderTabs:vertical > TabItem /template/ Border#Separator">
+    <Setter Property="Height" Value="1" /><Setter Property="Width" Value="NaN" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" /><Setter Property="VerticalAlignment" Value="Top" />
+    <Setter Property="Margin" Value="8,-2,8,0" />
+  </Style>
+  <Style Selector="alder|AlderTabs:morphing > TabItem">
+    <Setter Property="MinHeight" Value="56" />
+    <Setter Property="Padding" Value="12,0" />
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="CornerRadius" Value="24" />
+  </Style>
+  <Style Selector="alder|AlderTabs:morphing > TabItem:not(:selected)">
+    <Setter Property="Padding" Value="12,0,12,8" />
+  </Style>
+  <Style Selector="alder|AlderTabs:morphing > TabItem > AccessText">
+    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+  </Style>
+  <Style Selector="alder|AlderTabs:morphing > TabItem /template/ Border#MorphingHeaderFace">
+    <Setter Property="IsVisible" Value="True" />
+  </Style>
+  <Style Selector="alder|AlderTabs:morphing > TabItem[(alder|AlderMotion.Reduced)=False]:not(.alder-tab-dragging) /template/ Border#MorphingHeaderFace">
+    <Setter Property="Transitions">
+      <Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="CubicEaseOut" /></Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="alder|AlderTabs:morphing > TabItem.alder-tab-dragging:selected /template/ Border#MorphingDragFace">
+    <Setter Property="IsVisible" Value="True" />
+    <Setter Property="Background" Value="{CompiledBinding IndicatorBrush, RelativeSource={RelativeSource AncestorType=alder:AlderTabs}}" />
+  </Style>
+  <Style Selector="alder|AlderTabs:morphing:closeable > TabItem:not(:pinned) /template/ :is(Button)#PART_TabClose">
+    <Setter Property="IsVisible" Value="True" />
+  </Style>
+  <Style Selector="alder|AlderTabs:morphing > TabItem:not(:selected) /template/ :is(Button)#PART_TabClose">
+    <Setter Property="Margin" Value="0,0,8,8" />
+  </Style>
+  <Style Selector="alder|AlderTabs:morphing > TabItem:not(:selected):not(:disabled):pointerover,
+                   alder|AlderTabs:morphing > TabItem.alder-tab-dragging:not(:selected)">
+    <Setter Property="Opacity" Value="1" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+  </Style>
+  <Style Selector="alder|AlderTabs:morphing > TabItem:not(:selected):not(:disabled):pointerover /template/ Border#MorphingHeaderFace,
+                   alder|AlderTabs:morphing > TabItem.alder-tab-dragging:not(:selected) /template/ Border#MorphingHeaderFace">
+    <Setter Property="Opacity" Value="1" />
+  </Style>
+  <Style Selector="alder|AlderNavbar[Size=Small] alder|AlderNavbarItem[IsMenuItem=False]">
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="MinHeight" Value="28" />
+    <Setter Property="Padding" Value="7,3" />
+  </Style>
+  <Style Selector="alder|AlderContextMenu Separator">
+    <Setter Property="Theme" Value="{DynamicResource AlderContextMenuSeparatorTheme}" />
+  </Style>
+  <Style Selector="alder|AlderTabs:morphing > TabItem.alder-tab-closing">
+    <Setter Property="Opacity" Value="0" />
+    <Setter Property="IsHitTestVisible" Value="False" />
+  </Style>
+  <Style Selector="alder|AlderTabs:morphing > TabItem.alder-tab-closing[(alder|AlderMotion.Reduced)=False]">
+    <Setter Property="Transitions">
+      <Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.12" Easing="CubicEaseOut" /></Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="alder|AlderItemCardGroup[Layout=List] alder|AlderItemCard">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="0" />
+    <Setter Property="alder:DataDisplaySurface.Shadow" Value="none" />
+  </Style>
+  <Style Selector="alder|AlderListView[ShowSelectionIndicator=False] alder|AlderListViewItem /template/ alder|AlderCheckBox#SelectMark,
+                   alder|AlderListView[SelectionEnabled=False] alder|AlderListViewItem /template/ alder|AlderCheckBox#SelectMark">
+    <Setter Property="IsVisible" Value="False" />
+  </Style>
+  <Style Selector="alder|AlderKanban[Size=Small] alder|AlderKanbanColumn"><Setter Property="Width" Value="240" /></Style>
+  <Style Selector="alder|AlderKanban[Size=Large] alder|AlderKanbanColumn"><Setter Property="Width" Value="320" /></Style>
+  <Style Selector="alder|AlderKanban[Size=Small] alder|AlderKanbanCard"><Setter Property="Padding" Value="8" /><Setter Property="FontSize" Value="12" /></Style>
+  <Style Selector="alder|AlderKanban[Size=Large] alder|AlderKanbanCard"><Setter Property="Padding" Value="16" /><Setter Property="FontSize" Value="16" /></Style>
+  <StyleInclude Source="avares://Alder.Avalonia/Themes/RichTextEditor.axaml" />
+</Styles>

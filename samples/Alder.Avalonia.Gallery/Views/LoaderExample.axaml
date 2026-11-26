@@ -1,0 +1,218 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             x:Class="Alder.Avalonia.Gallery.Views.LoaderExample">
+  <UserControl.Styles>
+    <Style Selector="StackPanel.loader-caption">
+      <Setter Property="Spacing" Value="8" />
+    </Style>
+    <Style Selector="StackPanel.loader-caption > TextBlock">
+      <Setter Property="HorizontalAlignment" Value="Center" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+      <Setter Property="FontFamily" Value="{DynamicResource Md.MonospaceFontFamily}" />
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="LineHeight" Value="16" />
+    </Style>
+    <Style Selector="UniformGrid.loader-grid"><Setter Property="Columns" Value="7" /></Style>
+    <ContainerQuery Name="LoaderPreview" Query="max-width:639">
+      <Style Selector="UniformGrid.loader-grid"><Setter Property="Columns" Value="3" /></Style>
+    </ContainerQuery>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleDefault" Title="{DynamicResource GalleryText.AiDefault}">
+      <g:ExampleCard.Preview>
+        <Border MinHeight="420" Padding="24" Container.Name="LoaderPreview" Container.Sizing="Width">
+          <UniformGrid Classes="loader-grid" RowSpacing="24" ColumnSpacing="24" HorizontalAlignment="Center" VerticalAlignment="Center">
+              <StackPanel Classes="loader-caption">
+                <a:AlderLoader Variant="Ring" Size="Large" />
+                <a:AlderTextBlock Text="ring" />
+              </StackPanel>
+              <StackPanel Classes="loader-caption">
+                <a:AlderLoader Variant="Classic" Size="Large" />
+                <a:AlderTextBlock Text="classic" />
+              </StackPanel>
+              <StackPanel Classes="loader-caption">
+                <a:AlderLoader Variant="Dots" Size="Large" />
+                <a:AlderTextBlock Text="dots" />
+              </StackPanel>
+              <StackPanel Classes="loader-caption">
+                <a:AlderLoader Variant="Pulse" Size="Large" />
+                <a:AlderTextBlock Text="pulse" />
+              </StackPanel>
+              <StackPanel Classes="loader-caption">
+                <a:AlderLoader Variant="Scan" Size="Large" />
+                <a:AlderTextBlock Text="scan" />
+              </StackPanel>
+              <StackPanel Classes="loader-caption">
+                <a:AlderLoader Variant="Grid" Size="Large" />
+                <a:AlderTextBlock Text="grid" />
+              </StackPanel>
+              <StackPanel Classes="loader-caption">
+                <a:AlderLoader Variant="Shuffle" Size="Large" />
+                <a:AlderTextBlock Text="shuffle" />
+              </StackPanel>
+              <StackPanel Classes="loader-caption">
+                <a:AlderLoader Variant="Wave" Size="Large" />
+                <a:AlderTextBlock Text="wave" />
+              </StackPanel>
+              <StackPanel Classes="loader-caption">
+                <a:AlderLoader Variant="Sparkle" Size="Large" />
+                <a:AlderTextBlock Text="sparkle" />
+              </StackPanel>
+              <StackPanel Classes="loader-caption">
+                <a:AlderLoader Variant="Atom" Size="Large" />
+                <a:AlderTextBlock Text="atom" />
+              </StackPanel>
+              <StackPanel Classes="loader-caption">
+                <a:AlderLoader Variant="Morph" Size="Large" />
+                <a:AlderTextBlock Text="morph" />
+              </StackPanel>
+              <StackPanel Classes="loader-caption">
+                <a:AlderLoader Variant="Helix" Size="Large" />
+                <a:AlderTextBlock Text="helix" />
+              </StackPanel>
+              <StackPanel Classes="loader-caption">
+                <a:AlderLoader Variant="Twist" Size="Large" />
+                <a:AlderTextBlock Text="twist" />
+              </StackPanel>
+              <StackPanel Classes="loader-caption">
+                <a:AlderLoader Variant="Infinity" Size="Large" />
+                <a:AlderTextBlock Text="infinity" />
+              </StackPanel>
+          </UniformGrid>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var variants = new UniformGrid
+        {
+            Columns = 7, RowSpacing = 24, ColumnSpacing = 24,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        foreach (var variant in Enum.GetValues<AiLoaderVariant>())
+        {
+            var caption = new AlderTextBlock
+            {
+                Text = variant.ToString().ToLowerInvariant(), FontSize = 12, LineHeight = 16,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            caption[!TextBlock.FontFamilyProperty] = new DynamicResourceExtension("Md.MonospaceFontFamily");
+            caption[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+            variants.Children.Add(new StackPanel
+            {
+                Spacing = 8,
+                Children = { new AlderLoader { Variant = variant, Size = SpinnerSize.Large }, caption }
+            });
+        }
+        var preview = new Border { MinHeight = 420, Padding = new Thickness(24), Child = variants };
+        preview.SizeChanged += (_, args) => variants.Columns = args.NewSize.Width < 640 ? 3 : 7;
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleWithLabel" Title="{DynamicResource GalleryText.AiVariantWithLabel}">
+      <g:ExampleCard.Preview>
+        <Border MinHeight="420" Padding="24">
+          <StackPanel Spacing="12" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <a:AlderLoader Variant="Classic" Size="Small" HorizontalAlignment="Left" Label="{DynamicResource GalleryText.AiLoaderClassic}" />
+            <a:AlderLoader Variant="Scan" Size="Small" HorizontalAlignment="Left" Label="{DynamicResource GalleryText.AiLoaderScan}" />
+            <a:AlderLoader Variant="Grid" Size="Small" HorizontalAlignment="Left" Label="{DynamicResource GalleryText.AiLoaderGrid}" />
+            <a:AlderLoader Variant="Shuffle" Size="Small" HorizontalAlignment="Left" Label="{DynamicResource GalleryText.AiLoaderShuffle}" />
+            <a:AlderLoader Variant="Wave" Size="Small" HorizontalAlignment="Left" Label="{DynamicResource GalleryText.AiLoaderWave}" />
+            <a:AlderLoader Variant="Sparkle" Size="Small" HorizontalAlignment="Left" Label="{DynamicResource GalleryText.AiLoaderSparkle}" />
+            <a:AlderLoader Variant="Atom" Size="Small" HorizontalAlignment="Left" Label="{DynamicResource GalleryText.AiLoaderAtom}" />
+            <a:AlderLoader Variant="Morph" Size="Small" HorizontalAlignment="Left" Label="{DynamicResource GalleryText.AiLoaderMorph}" />
+            <a:AlderLoader Variant="Helix" Size="Small" HorizontalAlignment="Left" Label="{DynamicResource GalleryText.AiLoaderHelix}" />
+            <a:AlderLoader Variant="Twist" Size="Small" HorizontalAlignment="Left" Label="{DynamicResource GalleryText.AiLoaderTwist}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var labels = new StackPanel
+        {
+            Spacing = 12, HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        foreach (var (variant, key) in new[]
+        {
+            (AiLoaderVariant.Classic, "AiLoaderClassic"),
+            (AiLoaderVariant.Scan, "AiLoaderScan"),
+            (AiLoaderVariant.Grid, "AiLoaderGrid"),
+            (AiLoaderVariant.Shuffle, "AiLoaderShuffle"),
+            (AiLoaderVariant.Wave, "AiLoaderWave"),
+            (AiLoaderVariant.Sparkle, "AiLoaderSparkle"),
+            (AiLoaderVariant.Atom, "AiLoaderAtom"),
+            (AiLoaderVariant.Morph, "AiLoaderMorph"),
+            (AiLoaderVariant.Helix, "AiLoaderHelix"),
+            (AiLoaderVariant.Twist, "AiLoaderTwist")
+        })
+        {
+            var loader = new AlderLoader { Variant = variant, Size = SpinnerSize.Small, HorizontalAlignment = HorizontalAlignment.Left };
+            loader[!AlderLoader.LabelProperty] = new DynamicResourceExtension("GalleryText." + key);
+            labels.Children.Add(loader);
+        }
+        var preview = new Border { MinHeight = 420, Padding = new Thickness(24), Child = labels };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSizes" Title="{DynamicResource GalleryText.AiVariantSizes}">
+      <g:ExampleCard.Preview>
+        <Border MinHeight="360" Padding="24">
+          <StackPanel Spacing="32" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel Classes="loader-caption" VerticalAlignment="Bottom">
+              <a:AlderLoader Variant="Grid" Size="Small" />
+              <a:AlderTextBlock Text="sm" />
+            </StackPanel>
+            <StackPanel Classes="loader-caption" VerticalAlignment="Bottom">
+              <a:AlderLoader Variant="Grid" Size="Medium" />
+              <a:AlderTextBlock Text="md" />
+            </StackPanel>
+            <StackPanel Classes="loader-caption" VerticalAlignment="Bottom">
+              <a:AlderLoader Variant="Grid" Size="Large" />
+              <a:AlderTextBlock Text="lg" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var sizes = new StackPanel
+        {
+            Orientation = Orientation.Horizontal, Spacing = 32,
+            HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center
+        };
+        foreach (var (size, name) in new[]
+        {
+            (SpinnerSize.Small, "sm"), (SpinnerSize.Medium, "md"), (SpinnerSize.Large, "lg")
+        })
+        {
+            var caption = new AlderTextBlock
+            {
+                Text = name, FontSize = 12, LineHeight = 16,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            caption[!TextBlock.FontFamilyProperty] = new DynamicResourceExtension("Md.MonospaceFontFamily");
+            caption[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+            sizes.Children.Add(new StackPanel
+            {
+                Spacing = 8, VerticalAlignment = VerticalAlignment.Bottom,
+                Children = { new AlderLoader { Variant = AiLoaderVariant.Grid, Size = size }, caption }
+            });
+        }
+        var preview = new Border { MinHeight = 360, Padding = new Thickness(24), Child = sizes };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleComposition" Title="{DynamicResource GalleryText.AiVariantComposition}">
+      <g:ExampleCard.Preview>
+        <Border MinHeight="360" Padding="24">
+          <a:AlderLoader Variant="Infinity" Size="Small">
+            <a:AlderLoader.Label>
+              <a:AlderTextShimmer Text="{DynamicResource GalleryText.AiThinking}" FontSize="14" LineHeight="20" />
+            </a:AlderLoader.Label>
+          </a:AlderLoader>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var label = new AlderTextShimmer { FontSize = 14, LineHeight = 20 };
+        label[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.AiThinking");
+        var loader = new AlderLoader { Variant = AiLoaderVariant.Infinity, Size = SpinnerSize.Small, Label = label };
+        var preview = new Border { MinHeight = 360, Padding = new Thickness(24), Child = loader };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

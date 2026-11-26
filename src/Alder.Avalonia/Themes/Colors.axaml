@@ -1,0 +1,354 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:conv="using:Avalonia.Data.Converters">
+  <x:String x:Key="AlderText.ColorArea">Color area</x:String>
+  <x:String x:Key="AlderText.ColorHue">Hue</x:String>
+  <x:String x:Key="AlderText.ColorSaturation">Saturation</x:String>
+  <x:String x:Key="AlderText.ColorBrightness">Brightness</x:String>
+  <x:String x:Key="AlderText.ColorLightness">Lightness</x:String>
+  <x:String x:Key="AlderText.ColorAlpha">Opacity</x:String>
+  <x:String x:Key="AlderText.ColorRed">Red</x:String>
+  <x:String x:Key="AlderText.ColorGreen">Green</x:String>
+  <x:String x:Key="AlderText.ColorBlue">Blue</x:String>
+  <x:String x:Key="AlderText.ColorValue">Color value</x:String>
+  <x:String x:Key="AlderText.ColorInvalid">Enter a valid color or a channel value within its range.</x:String>
+  <x:String x:Key="AlderText.ColorApply">Apply</x:String>
+  <x:String x:Key="AlderText.ColorChoose">Pick a color</x:String>
+
+  <SolidColorBrush x:Key="AlderColorInset">#1A000000</SolidColorBrush>
+  <BoxShadows x:Key="AlderColorThumbShadow">0 0 0 1 #1A000000, inset 0 0 0 1 #1A000000</BoxShadows>
+
+  <ControlTheme x:Key="{x:Type alder:AlderColorArea}" TargetType="alder:AlderColorArea">
+    <Setter Property="Width" Value="224" />
+    <Setter Property="Height" Value="224" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Focusable" Value="True" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="FlowDirection" Value="LeftToRight" />
+    <Setter Property="BorderBrush" Value="{StaticResource AlderColorInset}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Canvas IsHitTestVisible="False" ClipToBounds="False">
+          <Border Name="PART_Thumb" Width="16" Height="16" CornerRadius="12" BorderThickness="3" BorderBrush="White"
+                  Background="{TemplateBinding Value, Converter={x:Static alder:AlderColorRendering.ToBrush}}"
+                  BoxShadow="{StaticResource AlderColorThumbShadow}">
+            <Border.Transitions>
+              <Transitions>
+                <DoubleTransition Property="Width" Duration="0:0:0.15" Easing="0,0,0.2,1" />
+                <DoubleTransition Property="Height" Duration="0:0:0.15" Easing="0,0,0.2,1" />
+              </Transitions>
+            </Border.Transitions>
+            <Border Name="ThumbFocus" Margin="-7" CornerRadius="16" BorderThickness="2"
+                    BorderBrush="{DynamicResource AlderAccent}" IsHitTestVisible="False" IsVisible="False" />
+          </Border>
+        </Canvas>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:color-dragging /template/ Border#PART_Thumb">
+      <Setter Property="Width" Value="20" /><Setter Property="Height" Value="20" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ Border#ThumbFocus"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#PART_Thumb">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderColorField}" TargetType="alder:AlderColorField" BasedOn="{StaticResource {x:Type alder:AlderInputGroup}}">
+    <Setter Property="Width" Value="280" />
+    <Setter Property="PrefixPadding" Value="12,0,0,0" />
+    <Setter Property="SuffixPadding" Value="0,0,12,0" />
+    <Setter Property="FlowDirection" Value="LeftToRight" />
+    <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.ColorValue}" />
+    <Setter Property="ValidationMessage" Value="{DynamicResource AlderText.ColorInvalid}" />
+    <Style Selector="^:has-prefix /template/ :is(ScrollViewer)#PART_ScrollViewer">
+      <Setter Property="Margin" Value="8,8,12,8" />
+    </Style>
+    <Style Selector="^:has-suffix /template/ :is(ScrollViewer)#PART_ScrollViewer">
+      <Setter Property="Margin" Value="12,8,8,8" />
+    </Style>
+    <Style Selector="^:has-prefix:has-suffix /template/ :is(ScrollViewer)#PART_ScrollViewer">
+      <Setter Property="Margin" Value="8" />
+    </Style>
+    <Style Selector="^:invalid-color:secondary /template/ Border#FieldSurface">
+      <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    </Style>
+    <Style Selector="^:invalid-color">
+      <Setter Property="AutomationProperties.HelpText" Value="{Binding ValidationMessage, RelativeSource={RelativeSource Self}}" />
+      <Setter Property="alder:AlderToolTip.Tip" Value="{Binding ValidationMessage, RelativeSource={RelativeSource Self}}" />
+      <Setter Property="alder:AlderLabel.IsInvalid" Value="True" />
+    </Style>
+    <Style Selector="^:invalid-color /template/ alder|InputFocusRing#FieldRing">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldInvalidOutline}" />
+    </Style>
+    <Style Selector="^:invalid-color:focus-within /template/ alder|InputFocusRing#FieldRing">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldInvalidRing}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderColorSliderThumbTheme" TargetType="Thumb">
+    <Setter Property="Width" Value="20" /><Setter Property="Height" Value="20" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Background="Transparent">
+          <Border Name="Face" Margin="2" CornerRadius="8" Background="{TemplateBinding Background}"
+                  BorderBrush="White" BorderThickness="3" BoxShadow="{DynamicResource AlderToolbarShadow}" />
+          <Border Name="FocusRing" Margin="-2" CornerRadius="12" BorderThickness="2"
+                  BorderBrush="{DynamicResource AlderAccent}" IsHitTestVisible="False" Opacity="0">
+            <Border.Transitions>
+              <Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions>
+            </Border.Transitions>
+          </Border>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Tag=alder-color-focus] /template/ Border#FocusRing"><Setter Property="Opacity" Value="1" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#FocusRing"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderColorSlider}" TargetType="alder:AlderColorSlider">
+    <Setter Property="Width" Value="320" />
+    <Setter Property="Height" Value="20" />
+    <Setter Property="MinWidth" Value="20" />
+    <Setter Property="MinHeight" Value="20" />
+    <Setter Property="SmallChange" Value="1" />
+    <Setter Property="LargeChange" Value="10" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="FlowDirection" Value="LeftToRight" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid Background="Transparent">
+          <Border Name="Rail" CornerRadius="16" ClipToBounds="True" IsHitTestVisible="False"
+                  Background="{x:Static alder:AlderColorRendering.Checkerboard}">
+            <Border CornerRadius="16" Background="{TemplateBinding Gradient}" BackgroundSizing="OuterBorderEdge"
+                    BorderBrush="{StaticResource AlderColorInset}" BorderThickness="1" />
+          </Border>
+          <Track Name="PART_Track" Orientation="{TemplateBinding Orientation}" Minimum="{TemplateBinding Minimum}"
+                 Maximum="{TemplateBinding Maximum}" IsDirectionReversed="{TemplateBinding IsDirectionReversed}"
+                 Value="{TemplateBinding Value, Mode=TwoWay}">
+            <Track.DecreaseButton>
+              <alder:AlderRepeatButton Name="PART_DecreaseButton" Theme="{StaticResource AlderSliderTrackButton}" />
+            </Track.DecreaseButton>
+            <Track.IncreaseButton>
+              <alder:AlderRepeatButton Name="PART_IncreaseButton" Theme="{StaticResource AlderSliderTrackButton}" />
+            </Track.IncreaseButton>
+            <alder:AlderThumb Name="Thumb" Theme="{StaticResource AlderColorSliderThumbTheme}" HorizontalAlignment="Center" VerticalAlignment="Center">
+              <alder:AlderThumb.Background>
+                <TemplateBinding Property="ColorValue" Converter="{x:Static alder:AlderColorRendering.ToBrush}" />
+              </alder:AlderThumb.Background>
+            </alder:AlderThumb>
+          </Track>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:vertical"><Setter Property="Width" Value="20" /><Setter Property="Height" Value="192" /></Style>
+    <Style Selector="^:focus-visible /template/ Thumb"><Setter Property="Tag" Value="alder-color-focus" /></Style>
+    <Style Selector="^:color-dragging /template/ Thumb"><Setter Property="Cursor" Value="SizeAll" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderColorSwatch}" TargetType="alder:AlderColorSwatch">
+    <Setter Property="Width" Value="32" />
+    <Setter Property="Height" Value="32" />
+    <Setter Property="CornerRadius" Value="6" />
+    <Setter Property="BorderBrush" Value="{StaticResource AlderColorInset}" />
+    <Style Selector="^[Size=ExtraSmall]"><Setter Property="Width" Value="16" /><Setter Property="Height" Value="16" /></Style>
+    <Style Selector="^[Size=Small]"><Setter Property="Width" Value="24" /><Setter Property="Height" Value="24" /></Style>
+    <Style Selector="^[Size=Large]"><Setter Property="Width" Value="36" /><Setter Property="Height" Value="36" /></Style>
+    <Style Selector="^[Size=ExtraLarge]"><Setter Property="Width" Value="40" /><Setter Property="Height" Value="40" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderColorSwatchPicker}" TargetType="alder:AlderColorSwatchPicker">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="SelectionMode" Value="Single" />
+    <Setter Property="KeyboardNavigation.TabNavigation" Value="Once" />
+    <Setter Property="ItemsPanel"><ItemsPanelTemplate><WrapPanel ItemSpacing="8" LineSpacing="8" /></ItemsPanelTemplate></Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+          <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Layout=Stack]">
+      <Setter Property="ItemsPanel"><ItemsPanelTemplate><StackPanel Spacing="8" /></ItemsPanelTemplate></Setter>
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderColorPaletteSwatchTheme" TargetType="alder:AlderColorSwatch">
+    <Setter Property="CornerRadius" Value="8" />
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderColorSwatchPickerItem}" TargetType="alder:AlderColorSwatchPickerItem">
+    <Setter Property="Width" Value="32" /><Setter Property="Height" Value="32" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="BorderThickness" Value="2" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="alder:AlderToolTip.Tip" Value="{Binding ColorName, RelativeSource={RelativeSource Self}}" />
+    <Setter Property="AutomationProperties.Name" Value="{Binding DisplayName, RelativeSource={RelativeSource Self}}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="Frame" Background="Transparent" BorderBrush="Transparent" CornerRadius="{TemplateBinding CornerRadius}"
+                  BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+            <Border.Transitions>
+              <Transitions>
+                <BrushTransition Property="BorderBrush" Duration="0:0:0.1" Easing="0,0,0.2,1" />
+                <BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.1" Easing="0,0,0.2,1" />
+              </Transitions>
+            </Border.Transitions>
+            <Panel IsHitTestVisible="False">
+              <alder:AlderColorSwatch Name="Swatch" Theme="{StaticResource AlderColorPaletteSwatchTheme}"
+                                 Color="{TemplateBinding Color}" Shape="{TemplateBinding Shape}" RenderTransform="scale(1)">
+                <alder:AlderColorSwatch.Transitions>
+                  <Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1" Easing="0,0,0.2,1" /></Transitions>
+                </alder:AlderColorSwatch.Transitions>
+              </alder:AlderColorSwatch>
+              <alder:AlderPathIcon Name="SelectedMark" Data="{StaticResource AlderIconCheck}" Width="10" Height="10" RenderTransform="scale(0)"
+                        Foreground="{TemplateBinding Color, Converter={x:Static alder:AlderColorRendering.SwatchIndicatorBrush}}">
+                <alder:AlderPathIcon.Transitions>
+                  <Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions>
+                </alder:AlderPathIcon.Transitions>
+              </alder:AlderPathIcon>
+            </Panel>
+          </Border>
+          <Border Name="FocusRing" Margin="-4" CornerRadius="{TemplateBinding CornerRadius}" BorderThickness="2"
+                  BorderBrush="{DynamicResource AlderAccent}" IsHitTestVisible="False" IsVisible="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Size=ExtraSmall]">
+      <Setter Property="Width" Value="16" /><Setter Property="Height" Value="16" /><Setter Property="CornerRadius" Value="8" />
+      <Setter Property="BorderThickness" Value="1" />
+    </Style>
+    <Style Selector="^[Size=Small]">
+      <Setter Property="Width" Value="24" /><Setter Property="Height" Value="24" /><Setter Property="CornerRadius" Value="12" />
+    </Style>
+    <Style Selector="^[Size=Large]">
+      <Setter Property="Width" Value="36" /><Setter Property="Height" Value="36" /><Setter Property="CornerRadius" Value="24" />
+      <Setter Property="BorderThickness" Value="3" />
+    </Style>
+    <Style Selector="^[Size=ExtraLarge]">
+      <Setter Property="Width" Value="40" /><Setter Property="Height" Value="40" /><Setter Property="CornerRadius" Value="24" />
+      <Setter Property="BorderThickness" Value="3" />
+    </Style>
+    <Style Selector="^[Shape=Square]"><Setter Property="CornerRadius" Value="12" /></Style>
+    <Style Selector="^[Shape=Square][Size=Small]"><Setter Property="CornerRadius" Value="8" /></Style>
+    <Style Selector="^[Shape=Square][Size=ExtraSmall]"><Setter Property="CornerRadius" Value="6" /></Style>
+    <Style Selector="^[Shape=Square][Size=ExtraSmall] /template/ alder|AlderColorSwatch#Swatch"><Setter Property="CornerRadius" Value="6" /></Style>
+    <Style Selector="^[Size=ExtraSmall] /template/ PathIcon#SelectedMark"><Setter Property="Width" Value="5" /><Setter Property="Height" Value="5" /></Style>
+    <Style Selector="^[Size=Small] /template/ PathIcon#SelectedMark"><Setter Property="Width" Value="7" /><Setter Property="Height" Value="7" /></Style>
+    <Style Selector="^[Size=ExtraLarge] /template/ PathIcon#SelectedMark"><Setter Property="Width" Value="11" /><Setter Property="Height" Value="11" /></Style>
+    <Style Selector="^:pointerover:not(:selected):not(:disabled) /template/ alder|AlderColorSwatch#Swatch">
+      <Setter Property="RenderTransform" Value="scale(1.1)" />
+    </Style>
+    <Style Selector="^:selected /template/ Border#Frame">
+      <Setter Property="BorderBrush" Value="{Binding Color, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static alder:AlderColorRendering.SwatchBrush}}" />
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldShadow}" />
+    </Style>
+    <Style Selector="^:selected /template/ alder|AlderColorSwatch#Swatch"><Setter Property="RenderTransform" Value="scale(0.77)" /></Style>
+    <Style Selector="^:selected /template/ PathIcon#SelectedMark"><Setter Property="RenderTransform" Value="scale(1)" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#FocusRing"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#Frame, ^[(alder|AlderMotion.Reduced)=True] /template/ alder|AlderColorSwatch#Swatch, ^[(alder|AlderMotion.Reduced)=True] /template/ PathIcon#SelectedMark">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+  </ControlTheme>
+
+
+  <ControlTheme x:Key="AlderColorPickerTriggerTheme" TargetType="Button">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Background="{TemplateBinding Background}">
+          <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
+          <Border Name="FocusRing" Margin="-4" CornerRadius="8" BorderThickness="2"
+                  BorderBrush="{DynamicResource AlderAccent}" IsHitTestVisible="False" Opacity="0">
+            <Border.Transitions>
+              <Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions>
+            </Border.Transitions>
+          </Border>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:focus-visible /template/ Border#FocusRing"><Setter Property="Opacity" Value="1" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#FocusRing"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+  </ControlTheme>
+
+  <DataTemplate x:Key="AlderColorPickerPopupTemplate" x:DataType="alder:AlderColorPicker">
+    <Border x:Name="ColorPickerSurface" Margin="20,18,20,30" CornerRadius="20" Background="{DynamicResource AlderSurface}"
+            BoxShadow="{DynamicResource AlderToolbarShadow}" Focusable="True" FocusAdorner="{x:Null}"
+            KeyboardNavigation.IsTabStop="False" KeyboardNavigation.TabNavigation="Cycle">
+      <alder:AlderScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled"
+                    MaxHeight="460" IsScrollChainingEnabled="False">
+        <StackPanel Width="232" Spacing="12" Margin="8,8,8,12">
+          <ContentPresenter Content="{CompiledBinding}" ContentTemplate="{CompiledBinding PopupHeaderTemplate}"
+                            IsVisible="{CompiledBinding PopupHeaderTemplate, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+          <alder:AlderColorArea Width="232" Height="232" Value="{Binding DraftValue, Mode=TwoWay}" />
+          <Grid Margin="4,0" ColumnDefinitions="*,Auto" RowDefinitions="Auto,20" RowSpacing="4">
+            <alder:AlderTextBlock Text="{DynamicResource AlderText.ColorHue}" FontSize="14" LineHeight="20" FontWeight="Medium" />
+            <alder:AlderTextBlock Grid.Column="1" Text="{Binding #Hue.ChannelText}" FontSize="14" LineHeight="20" FontWeight="Medium"
+                       Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderColorSlider x:Name="Hue" Grid.Row="1" Grid.ColumnSpan="2" Width="NaN"
+                               ColorValue="{Binding DraftValue, Mode=TwoWay}" />
+          </Grid>
+          <Grid Margin="4,0" ColumnDefinitions="*,Auto" RowDefinitions="Auto,20" RowSpacing="4" IsVisible="{Binding ShowAlpha}">
+            <alder:AlderTextBlock Text="{DynamicResource AlderText.ColorAlpha}" FontSize="14" LineHeight="20" FontWeight="Medium" />
+            <alder:AlderTextBlock Grid.Column="1" Text="{Binding #Opacity.ChannelText}" FontSize="14" LineHeight="20" FontWeight="Medium"
+                       Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderColorSlider x:Name="Opacity" Grid.Row="1" Grid.ColumnSpan="2" Width="NaN" Channel="Alpha"
+                               ColorValue="{Binding DraftValue, Mode=TwoWay}" />
+          </Grid>
+          <StackPanel Spacing="4">
+            <StackPanel.IsVisible>
+              <MultiBinding Converter="{x:Static conv:BoolConverters.Or}"><Binding Path="ShowField" /><Binding Path="CommitOnApply" /></MultiBinding>
+            </StackPanel.IsVisible>
+            <alder:AlderColorField x:Name="PART_Field" Variant="Secondary" FullWidth="True"
+                              Value="{Binding DraftValue, Mode=TwoWay}">
+              <alder:AlderColorField.Prefix>
+                <alder:AlderColorSwatch Size="ExtraSmall" Color="{Binding DraftValue, Converter={x:Static alder:AlderColorRendering.ToColor}}" />
+              </alder:AlderColorField.Prefix>
+            </alder:AlderColorField>
+            <alder:AlderTextBlock Text="{Binding #PART_Field.ValidationMessage}" IsVisible="{Binding #PART_Field.HasInvalidInput}"
+                       FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource AlderDangerInk}" AutomationProperties.LiveSetting="Polite" />
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" IsVisible="{Binding CommitOnApply}">
+            <alder:AlderButton x:Name="PART_Cancel" Variant="Ghost" Size="Small" Content="{DynamicResource AlderText.Dialog.Cancel}" />
+            <alder:AlderButton x:Name="PART_Apply" Size="Small" Content="{DynamicResource AlderText.ColorApply}" />
+          </StackPanel>
+        </StackPanel>
+      </alder:AlderScrollViewer>
+    </Border>
+  </DataTemplate>
+
+  <ControlTheme x:Key="{x:Type alder:AlderColorPicker}" TargetType="alder:AlderColorPicker">
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="VerticalAlignment" Value="Top" />
+    <Setter Property="PopupTemplate" Value="{StaticResource AlderColorPickerPopupTemplate}" />
+    <Setter Property="Label" Value="{DynamicResource AlderText.ColorChoose}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <alder:AlderButton Name="PART_Trigger" Theme="{StaticResource AlderColorPickerTriggerTheme}"
+                AutomationProperties.Name="{TemplateBinding Label}" AutomationProperties.HelpText="{TemplateBinding Value}">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <alder:AlderColorSwatch Size="Large" Color="{TemplateBinding Value, Converter={x:Static alder:AlderColorRendering.ToColor}}" />
+            <alder:AlderTextBlock Text="{TemplateBinding Label}" FontSize="14" LineHeight="20" FontWeight="Medium"
+                       VerticalAlignment="Center" />
+          </StackPanel>
+        </alder:AlderButton>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[IsReadOnly=True] /template/ :is(Button)#PART_Trigger"><Setter Property="IsEnabled" Value="False" /></Style>
+  </ControlTheme>
+</ResourceDictionary>

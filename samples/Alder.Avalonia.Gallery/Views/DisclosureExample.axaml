@@ -1,0 +1,118 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.DisclosureExample" x:DataType="vm:DisclosureViewModel" FontFamily="fonts:Inter#Inter">
+  <Design.DataContext><vm:DisclosureViewModel /></Design.DataContext>
+  <UserControl.Resources>
+    <ControlTheme x:Key="CenteredDisclosureTrigger" TargetType="ToggleButton" BasedOn="{StaticResource AlderDisclosureTriggerTheme}">
+      <Setter Property="HorizontalAlignment" Value="Center" />
+    </ControlTheme>
+    <ControlTheme x:Key="ShippingDisclosureTrigger" TargetType="ToggleButton" BasedOn="{StaticResource AlderDisclosureTriggerTheme}">
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+      <Setter Property="CornerRadius" Value="12" />
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Style Selector="^:pointerover:not(:disabled), ^:pressed:not(:disabled)">
+        <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+      </Style>
+    </ControlTheme>
+  </UserControl.Resources>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderDisclosure x:Name="PreviewDisclosure" Header="{DynamicResource GalleryText.DisclosurePreviewDetails}"
+                            Icon="{StaticResource AlderIconGlobe}" TriggerTheme="{StaticResource CenteredDisclosureTrigger}"
+                            IsExpanded="{CompiledBinding IsPreviewExpanded, Mode=TwoWay}">
+            <Border Background="{DynamicResource AlderSurface}" CornerRadius="24" Padding="16">
+              <StackPanel Spacing="12" MaxWidth="260">
+                <StackPanel Spacing="6">
+                  <alder:AlderLabel Theme="{StaticResource AlderLabelTheme}" x:Name="PreviewNameLabel" Target="{Binding #PreviewName}"
+                         Content="{DynamicResource GalleryText.DisclosurePreviewName}" />
+                  <alder:AlderInput x:Name="PreviewName" Variant="Secondary" FullWidth="True"
+                               Text="{CompiledBinding PreviewName, Mode=TwoWay}"
+                               PlaceholderText="{DynamicResource GalleryText.DisclosurePreviewPlaceholder}"
+                               AutomationProperties.LabeledBy="{Binding #PreviewNameLabel}" />
+                </StackPanel>
+                <alder:AlderButton x:Name="ClosePreview" Size="Small" HorizontalAlignment="Center" Command="{CompiledBinding ClosePreview}"
+                              Content="{DynamicResource GalleryText.DisclosureCloseDetails}" />
+              </StackPanel>
+            </Border>
+          </alder:AlderDisclosure>
+          <alder:AlderButton Size="Small" Variant="Secondary" HorizontalAlignment="Center" Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetPreview}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var disclosure = new AlderDisclosure
+        {
+            Header = "Preview details",
+            Icon = (Geometry)this.FindResource("AlderIconGlobe")!,
+            TriggerTheme = (ControlTheme)this.FindResource("CenteredDisclosureTrigger")!,
+        };
+        disclosure.Bind(AlderDisclosure.IsExpandedProperty, CompiledBinding.Create((DisclosureViewModel model) => model.IsPreviewExpanded, mode: BindingMode.TwoWay));
+        var name = new AlderInput { Variant = InputVariant.Secondary, FullWidth = true, PlaceholderText = "Preview name" };
+        name.Bind(TextBox.TextProperty, CompiledBinding.Create((DisclosureViewModel model) => model.PreviewName, mode: BindingMode.TwoWay));
+        var close = new AlderButton { Content = "Close details", Size = AlderSize.Small, HorizontalAlignment = HorizontalAlignment.Center };
+        close.Bind(Button.CommandProperty, CompiledBinding.Create((DisclosureViewModel model) => model.ClosePreview));
+        disclosure.Content = new StackPanel { Spacing = 12, MaxWidth = 260, Children = { name, close } };
+
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary, HorizontalAlignment = HorizontalAlignment.Center };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((DisclosureViewModel model) => model.ResetPreview));
+        var preview = new StackPanel { Spacing = 8, Children = { disclosure, reset } };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderDisclosure x:Name="ShippingDisclosure" Header="{DynamicResource GalleryText.DisclosureShipping}"
+                            Icon="{StaticResource AlderIconClock}" TriggerTheme="{StaticResource ShippingDisclosureTrigger}"
+                            Padding="8,16,8,8" IsExpanded="{CompiledBinding IsShippingExpanded, Mode=TwoWay}">
+            <Border BorderBrush="{DynamicResource AlderBorder}" BorderThickness="1" CornerRadius="12"
+                    Padding="16" Background="{DynamicResource AlderSurface}">
+              <alder:AlderTextBlock Foreground="{DynamicResource AlderMuted}" LineHeight="22" TextWrapping="Wrap"
+                         Text="{DynamicResource GalleryText.DisclosureShippingBody}" />
+            </Border>
+          </alder:AlderDisclosure>
+          <WrapPanel ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Variant="Ghost" Size="Small" Content="{CompiledBinding ShippingAction}" Command="{CompiledBinding ToggleShipping}" />
+            <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetShipping}" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var disclosure = new AlderDisclosure
+        {
+            Header = "Shipping details",
+            Icon = (Geometry)this.FindResource("AlderIconClock")!,
+            TriggerTheme = (ControlTheme)this.FindResource("ShippingDisclosureTrigger")!,
+            Padding = new Thickness(8, 16, 8, 8),
+        };
+        disclosure.Bind(AlderDisclosure.IsExpandedProperty, CompiledBinding.Create((DisclosureViewModel model) => model.IsShippingExpanded, mode: BindingMode.TwoWay));
+
+        var toggle = new AlderButton { Size = AlderSize.Small, Variant = ButtonVariant.Ghost };
+        toggle.Bind(ContentControl.ContentProperty, CompiledBinding.Create((DisclosureViewModel model) => model.ShippingAction));
+        toggle.Bind(Button.CommandProperty, CompiledBinding.Create((DisclosureViewModel model) => model.ToggleShipping));
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((DisclosureViewModel model) => model.ResetShipping));
+        var actions = new WrapPanel { ItemSpacing = 8, LineSpacing = 8, Children = { toggle, reset } };
+        var preview = new StackPanel { Spacing = 8, Children = { disclosure, actions } };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabledState" Title="{DynamicResource GalleryText.DisabledState}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderDisclosure x:Name="DisabledDisclosure" IsEnabled="False" Header="{DynamicResource GalleryText.DisclosurePreviewDetails}"
+                          Content="{DynamicResource GalleryText.DisclosureDesktopBody}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var disclosure = new AlderDisclosure
+        {
+            IsEnabled = false,
+            Header = "Preview details",
+            Content = "Open the Gallery to try the controls with a mouse or keyboard.",
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

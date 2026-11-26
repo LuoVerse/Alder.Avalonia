@@ -1,0 +1,237 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:c="using:Avalonia.Data.Converters">
+  <StreamGeometry x:Key="AlderUserMenuLogOutIcon">F0 M3,1 H8 Q10,1 10,3 V4 H8.5 V3 Q8.5,2.5 8,2.5 H3 Q2.5,2.5 2.5,3 V13 Q2.5,13.5 3,13.5 H8 Q8.5,13.5 8.5,13 V12 H10 V13 Q10,15 8,15 H3 Q1,15 1,13 V3 Q1,1 3,1 Z M11,4.5 L14.5,8 L11,11.5 L9.9,10.4 L11.6,8.75 H5 V7.25 H11.6 L9.9,5.6 Z</StreamGeometry>
+  <x:String x:Key="AlderText.UserMenuAccount">Account</x:String>
+  <x:String x:Key="AlderText.UserMenuTheme">Theme</x:String>
+  <x:String x:Key="AlderText.UserMenuLight">Light</x:String>
+  <x:String x:Key="AlderText.UserMenuDark">Dark</x:String>
+  <x:String x:Key="AlderText.UserMenuSystem">System</x:String>
+  <x:String x:Key="AlderText.UserMenuLogOut">Log out</x:String>
+  <x:String x:Key="AlderText.EditCut">Cut</x:String>
+  <x:String x:Key="AlderText.EditCopy">Copy</x:String>
+  <x:String x:Key="AlderText.EditPaste">Paste</x:String>
+
+  <DataTemplate x:Key="AlderUserMenuAvatarTemplate" x:DataType="alder:AlderUserMenu">
+    <Panel>
+      <alder:AlderAvatar Size="Small" MinWidth="0" MinHeight="0" Variant="Soft" Color="Success"
+                         Fallback="{Binding Initials}" Alt="{Binding Title}"
+                         IsVisible="{Binding AvatarTemplate, Converter={x:Static c:ObjectConverters.IsNull}}" />
+      <alder:AlderContentControl Content="{Binding AvatarData}" ContentTemplate="{Binding AvatarTemplate}"
+                      IsVisible="{Binding AvatarTemplate, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+    </Panel>
+  </DataTemplate>
+
+  <DataTemplate x:Key="AlderUserMenuIdentity" x:DataType="alder:AlderUserMenu">
+    <DockPanel Margin="12,12,12,4">
+      <alder:AlderContentControl DockPanel.Dock="Left" Width="32" Height="32" Margin="0,0,8,0"
+                      Content="{Binding}" ContentTemplate="{StaticResource AlderUserMenuAvatarTemplate}"
+                      IsVisible="{Binding ShowAvatarInMenu}" />
+      <StackPanel Spacing="1" VerticalAlignment="Center">
+        <alder:AlderTextBlock Text="{Binding Title}" FontSize="14" LineHeight="16" FontWeight="Medium"
+                   Foreground="{DynamicResource AlderInk}" TextTrimming="CharacterEllipsis" />
+        <alder:AlderTextBlock Text="{Binding Description}" FontSize="12" LineHeight="15" Foreground="{DynamicResource AlderMuted}"
+                   TextTrimming="CharacterEllipsis"
+                   IsVisible="{Binding Description, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+      </StackPanel>
+    </DockPanel>
+  </DataTemplate>
+
+  <DataTemplate x:Key="AlderUserMenuThemeSwitcher" x:DataType="alder:AlderUserMenu">
+    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10" Margin="10,0,10,8">
+      <alder:AlderTextBlock Text="{DynamicResource AlderText.UserMenuTheme}" VerticalAlignment="Center" Foreground="{DynamicResource AlderMuted}" />
+      <alder:AlderSegment Grid.Column="1" Size="Small" SelectedKey="{Binding ThemeMode, Mode=TwoWay}"
+                          AutomationProperties.Name="{DynamicResource AlderText.UserMenuTheme}">
+        <alder:AlderSegmentItem Key="{x:Static alder:AlderUserThemeMode.Light}" Icon="{StaticResource AlderThemeLightIcon}"
+                                alder:AlderToolTip.Tip="{DynamicResource AlderText.UserMenuLight}" AutomationProperties.Name="{DynamicResource AlderText.UserMenuLight}" />
+        <alder:AlderSegmentItem Key="{x:Static alder:AlderUserThemeMode.Dark}" Icon="{StaticResource AlderThemeDarkIcon}"
+                                alder:AlderToolTip.Tip="{DynamicResource AlderText.UserMenuDark}" AutomationProperties.Name="{DynamicResource AlderText.UserMenuDark}" />
+        <alder:AlderSegmentItem Key="{x:Static alder:AlderUserThemeMode.System}" Icon="{StaticResource AlderThemeSystemIcon}"
+                                alder:AlderToolTip.Tip="{DynamicResource AlderText.UserMenuSystem}" AutomationProperties.Name="{DynamicResource AlderText.UserMenuSystem}" />
+      </alder:AlderSegment>
+    </Grid>
+  </DataTemplate>
+
+  <ControlTheme x:Key="AlderUserMenuItemTheme" TargetType="MenuItem">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="Padding" Value="10,6" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="MinHeight" Value="36" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="Row" Padding="{TemplateBinding Padding}" CornerRadius="{TemplateBinding CornerRadius}"
+                Background="{TemplateBinding Background}">
+          <DockPanel>
+            <ContentPresenter Name="RowIcon" DockPanel.Dock="Right" Content="{TemplateBinding Icon}" Margin="8,0,0,0"
+                              VerticalAlignment="Center" Foreground="{DynamicResource AlderMuted}" IsHitTestVisible="False"
+                              IsVisible="{TemplateBinding Icon, Converter={x:Static c:ObjectConverters.IsNotNull}}"
+                              AutomationProperties.AccessibilityView="Raw" />
+            <ContentPresenter Name="PART_HeaderPresenter" Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}"
+                              VerticalAlignment="Center" RecognizesAccessKey="True" />
+          </DockPanel>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:focus-visible, ^:pointerover"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#Row"><Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" /></Style>
+    <Style Selector="^.danger"><Setter Property="Foreground" Value="{DynamicResource AlderDanger}" /></Style>
+    <Style Selector="^.danger /template/ ContentPresenter#RowIcon"><Setter Property="Foreground" Value="{DynamicResource AlderDanger}" /></Style>
+    <Style Selector="^.danger:focus-visible, ^.danger:pointerover"><Setter Property="Background" Value="{DynamicResource AlderDangerSoft}" /></Style>
+    <Style Selector="^.leading-icon /template/ ContentPresenter#RowIcon">
+      <Setter Property="DockPanel.Dock" Value="Left" /><Setter Property="Margin" Value="0,0,12,0" />
+    </Style>
+    <Style Selector="^:separator">
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="Template">
+        <ControlTemplate><Border Height="1" Margin="6,0" Background="{DynamicResource AlderSeparator}" /></ControlTemplate>
+      </Setter>
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderDropdownItemTheme" TargetType="MenuItem"
+                BasedOn="{StaticResource AlderContextMenuItemTheme}">
+    <Setter Property="Padding" Value="10,6" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="ItemContainerTheme" Value="{DynamicResource AlderDropdownItemTheme}" />
+    <Style Selector="^ /template/ ContentPresenter#PART_IconPresenter">
+      <Setter Property="Margin" Value="0,0,12,0" />
+    </Style>
+    <Style Selector="^:pointerover:not(:pressed) /template/ Border#PART_LayoutRoot, ^:focus-visible:not(:pressed) /template/ Border#PART_LayoutRoot">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ Border#PART_LayoutRoot">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" />
+    </Style>
+    <Style Selector="^.danger:pointerover /template/ Border#PART_LayoutRoot, ^.danger:focus-visible /template/ Border#PART_LayoutRoot">
+      <Setter Property="Background" Value="{DynamicResource AlderDangerSoft}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderMenuItem}" TargetType="alder:AlderMenuItem"
+                BasedOn="{StaticResource AlderDropdownItemTheme}" />
+
+  <ControlTheme x:Key="AlderDropdownPresenterTheme" TargetType="MenuFlyoutPresenter">
+    <Setter Property="Margin" Value="{StaticResource AlderContextMenuShadowMargin}" />
+    <Setter Property="MaxHeight" Value="440" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Focusable" Value="True" />
+    <Setter Property="ItemContainerTheme" Value="{DynamicResource AlderDropdownItemTheme}" />
+    <Setter Property="KeyboardNavigation.TabNavigation" Value="Cycle" />
+    <Setter Property="ItemsPanel"><ItemsPanelTemplate><StackPanel Spacing="2" /></ItemsPanelTemplate></Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="Surface" Background="{DynamicResource AlderSurface}" CornerRadius="22"
+                BoxShadow="{DynamicResource AlderToolbarShadow}" Padding="6">
+          <alder:AlderScrollViewer HorizontalScrollBarVisibility="Disabled" IsScrollChainingEnabled="False">
+            <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+          </alder:AlderScrollViewer>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderMenuFlyoutPresenter}" TargetType="alder:AlderMenuFlyoutPresenter"
+                BasedOn="{StaticResource AlderDropdownPresenterTheme}" />
+
+  <ControlTheme x:Key="AlderTextEditTouchMenuTheme" TargetType="MenuFlyoutPresenter"
+                BasedOn="{StaticResource AlderDropdownPresenterTheme}">
+    <Setter Property="ItemsPanel">
+      <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="2" /></ItemsPanelTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <alder:AlderTextEditMenuFlyout x:Key="AlderTextEditMenu" ShowMode="{OnFormFactor Desktop=Standard, Mobile=Transient}" />
+  <alder:AlderTextEditMenuFlyout x:Key="AlderTextEditTouchMenu" Mode="Touch"
+                                  ShowMode="{OnFormFactor Desktop=Standard, Mobile=Transient}"
+                                  FlyoutPresenterTheme="{StaticResource AlderTextEditTouchMenuTheme}" />
+  <alder:AlderTextEditMenuFlyout x:Key="AlderTextSelectionMenu" Mode="Selection" Placement="Bottom" />
+
+  <ControlTheme x:Key="AlderUserMenuPresenterTheme" TargetType="MenuFlyoutPresenter" x:DataType="alder:AlderUserMenu">
+    <Setter Property="Width" Value="{Binding MenuWidth}" />
+    <Setter Property="MaxHeight" Value="440" />
+    <Setter Property="Margin" Value="{StaticResource AlderContextMenuShadowMargin}" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="KeyboardNavigation.TabNavigation" Value="Cycle" />
+    <Setter Property="ItemsPanel">
+      <ItemsPanelTemplate><StackPanel Spacing="2" /></ItemsPanelTemplate>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="Surface" Background="{DynamicResource AlderSurface}" CornerRadius="22"
+                BoxShadow="{DynamicResource AlderToolbarShadow}">
+          <Grid RowDefinitions="Auto,*,Auto">
+            <alder:AlderContentControl Content="{TemplateBinding DataContext}" ContentTemplate="{StaticResource AlderUserMenuIdentity}"
+                            IsHitTestVisible="False" />
+            <alder:AlderScrollViewer Grid.Row="1" Margin="6" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+              <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+            </alder:AlderScrollViewer>
+            <alder:AlderContentControl Grid.Row="2" Content="{TemplateBinding DataContext}" IsVisible="{Binding ShowThemeSwitcher}"
+                            ContentTemplate="{StaticResource AlderUserMenuThemeSwitcher}" />
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderUserMenu}" TargetType="alder:AlderUserMenu" BasedOn="{StaticResource {x:Type alder:AlderButton}}">
+    <Setter Property="Variant" Value="Ghost" />
+    <Setter Property="Size" Value="Small" />
+    <Setter Property="MinHeight" Value="32" />
+    <Setter Property="Padding" Value="8,4" />
+    <Setter Property="MenuTheme" Value="{StaticResource AlderUserMenuPresenterTheme}" />
+    <Setter Property="ItemContainerTheme" Value="{StaticResource AlderUserMenuItemTheme}" />
+    <Setter Property="LogOutText" Value="{DynamicResource AlderText.UserMenuLogOut}" />
+    <Setter Property="LogOutIcon" Value="{StaticResource AlderUserMenuLogOutIcon}" />
+    <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.UserMenuAccount}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <alder:ButtonFeedback Name="TriggerSurface" CornerRadius="{TemplateBinding CornerRadius}" Background="{TemplateBinding Background}"
+                Padding="{TemplateBinding Padding}">
+          <Panel>
+            <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                              VerticalContentAlignment="Center"
+                              IsVisible="{TemplateBinding Content, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+            <Grid ColumnDefinitions="Auto,*,Auto" IsVisible="{TemplateBinding Content, Converter={x:Static c:ObjectConverters.IsNull}}">
+              <alder:AlderContentControl Width="24" Height="24" VerticalAlignment="Center" ContentTemplate="{StaticResource AlderUserMenuAvatarTemplate}"
+                              Content="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
+              <Panel Name="TriggerLabel" Grid.Column="1">
+                <Panel Margin="6,0" IsVisible="{TemplateBinding ShowLabel}">
+                  <alder:AlderTextBlock FontWeight="Medium" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                             Text="{TemplateBinding Title}"
+                             IsVisible="{TemplateBinding TriggerTitle, Converter={x:Static c:ObjectConverters.IsNull}}" />
+                  <alder:AlderTextBlock FontWeight="Medium" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                             Text="{TemplateBinding TriggerTitle}"
+                             IsVisible="{TemplateBinding TriggerTitle, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+                </Panel>
+              </Panel>
+              <Panel Name="TriggerChevron" Grid.Column="2">
+                <alder:AlderPathIcon Width="12" Height="12" Data="{StaticResource AlderIconChevronDown}"
+                          Foreground="{DynamicResource AlderMuted}" IsVisible="{TemplateBinding ShowChevron}" />
+              </Panel>
+            </Grid>
+          </Panel>
+        </alder:ButtonFeedback>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
+    <Style Selector="^:pressed"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
+    <Style Selector="^:pressed /template/ alder|ButtonFeedback#TriggerSurface">
+      <Setter Property="PressScale" Value="0.97" />
+    </Style>
+    <Style Selector="^:flyout-open:not(:flyout-dismissing) /template/ alder|ButtonFeedback#TriggerSurface">
+      <Setter Property="ActiveScale" Value="0.97" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ alder|ButtonFeedback#TriggerSurface">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" />
+    </Style>
+    <Style Selector="^[(alder|AlderSidebar.Rail)=True] /template/ Panel#TriggerLabel,
+                     ^[(alder|AlderSidebar.Rail)=True] /template/ Panel#TriggerChevron">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

@@ -1,0 +1,97 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             xmlns:views="using:Alder.Avalonia.Gallery.Views"
+             xmlns:converters="using:Avalonia.Data.Converters"
+             x:Class="Alder.Avalonia.Gallery.Views.NavigationPreviewSidebar"
+             x:DataType="vm:NavigationPreview">
+  <UserControl.Resources>
+    <DataTemplate x:Key="PreviewSidebarBrandIcon" x:DataType="vm:NavigationPreview">
+      <Grid Width="26" Height="26">
+        <Border CornerRadius="7" Background="{DynamicResource AlderAccent}" IsVisible="{Binding !BrandIsAvatar}">
+          <alder:AlderTextBlock Text="{Binding BrandMark}" Foreground="{DynamicResource AlderOnAccent}" FontWeight="Bold" FontSize="12"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Border>
+        <alder:AlderAvatar Width="26" Height="26" Size="Small" Variant="Soft" Fallback="{Binding BrandMark}" Alt="{Binding Brand}"
+                           IsVisible="{Binding BrandIsAvatar}" />
+      </Grid>
+    </DataTemplate>
+    <DataTemplate x:Key="PreviewSidebarHeader" x:DataType="vm:NavigationPreview">
+      <StackPanel Spacing="6">
+        <DockPanel IsVisible="{Binding HasBrand}">
+          <alder:AlderContentControl DockPanel.Dock="Left" Margin="0,0,9,0" Content="{Binding}"
+                          ContentTemplate="{StaticResource PreviewSidebarBrandIcon}" IsVisible="{Binding HasPinnedNavigation}" />
+          <StackPanel Classes="rail-hidden" Spacing="2" VerticalAlignment="Center">
+            <alder:AlderTextBlock Text="{Binding Brand}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+            <alder:AlderTextBlock Text="{Binding BrandHint}" FontSize="11" FontWeight="Normal" Foreground="{DynamicResource AlderMuted}"
+                       IsVisible="{Binding BrandHint, Converter={x:Static converters:ObjectConverters.IsNotNull}}" />
+          </StackPanel>
+        </DockPanel>
+        <alder:AlderItemsControl ItemsSource="{Binding Header}" ItemTemplate="{StaticResource NavigationPreviewGroup}"
+                      IsVisible="{Binding HasPinnedNavigation}" />
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="PreviewSidebarFooter" x:DataType="vm:NavigationPreview">
+      <StackPanel Spacing="6">
+        <alder:AlderItemsControl ItemsSource="{Binding Footer}" ItemTemplate="{StaticResource NavigationPreviewGroup}" />
+        <alder:AlderButton Classes="rail-hidden" Size="Small" Variant="Secondary" HorizontalAlignment="Stretch"
+                           Icon="{StaticResource AlderIconPlus}" Content="{DynamicResource GalleryText.NavDemoNewChat}"
+                           IsVisible="{Binding ShowNewChat}" Click="OnNewChat" />
+        <Border Classes="rail-hidden" Height="1" Background="{DynamicResource AlderSeparator}"
+                IsVisible="{Binding HasSidebarAccount}" IsHitTestVisible="False" />
+        <views:NavigationPreviewAccount IsVisible="{Binding HasSidebarAccount}" ShowLabel="True" />
+      </StackPanel>
+    </DataTemplate>
+  </UserControl.Resources>
+  <UserControl.Styles>
+    <Style Selector="alder|AlderSidebar[(alder|AlderSidebar.Rail)=True] :is(Control).rail-hidden">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="alder|AlderSidebar[(alder|AlderSidebar.Rail)=True] views|NavigationPreviewAccount">
+      <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="alder|AlderSidebar.icon-only">
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+    <Style Selector="alder|AlderSidebar.icon-only /template/ ContentPresenter#PART_Footer">
+      <Setter Property="Padding" Value="0,16" />
+    </Style>
+    <Style Selector="alder|AlderSidebar.icon-only alder|AlderSidebarItem">
+      <Setter Property="Margin" Value="0,2" />
+      <Setter Property="CornerRadius" Value="20" />
+    </Style>
+    <Style Selector="alder|AlderSidebar:drawer /template/ ContentPresenter#PART_Footer">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="alder|AlderSidebar.meetingNotes /template/ alder|AlderButton#PART_Search">
+      <Setter Property="Height" Value="26" />
+      <Setter Property="MinHeight" Value="26" />
+      <Setter Property="Margin" Value="10,10,10,8" />
+      <Setter Property="Padding" Value="8,0,14,0" />
+      <Setter Property="FontSize" Value="11" />
+    </Style>
+    <Style Selector="alder|AlderSidebar.meetingNotes /template/ PathIcon#SearchIcon">
+      <Setter Property="Width" Value="12" />
+      <Setter Property="Height" Value="12" />
+    </Style>
+    <Style Selector="alder|AlderSidebar.meetingNotes /template/ TextBlock#SearchLabel">
+      <Setter Property="Text" Value="{DynamicResource GalleryText.NavDemoSearch}" />
+    </Style>
+  </UserControl.Styles>
+  <alder:AlderSidebar x:Name="Navigation" CompactRows="{Binding Compact}" ShowRail="{Binding ShowRail}"
+                       IsSearchEnabled="{Binding IsSearchEnabled}" Classes.meetingNotes="{Binding IsMeetingNotes}"
+                       Classes.icon-only="{Binding IconOnly}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                       Header="{Binding HeaderContent}" HeaderTemplate="{StaticResource PreviewSidebarHeader}"
+                       HeaderIcon="{Binding HeaderIconContent}" HeaderIconTemplate="{StaticResource PreviewSidebarBrandIcon}"
+                       Footer="{Binding FooterContent}" FooterTemplate="{StaticResource PreviewSidebarFooter}">
+    <Grid>
+      <alder:AlderItemsControl ItemsSource="{Binding Groups}" ItemTemplate="{StaticResource NavigationPreviewGroup}"
+                    IsVisible="{Binding !HasPages}">
+        <alder:AlderItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Spacing="10" /></ItemsPanelTemplate></alder:AlderItemsControl.ItemsPanel>
+      </alder:AlderItemsControl>
+      <alder:AlderSidebarPages ItemsSource="{Binding Pages}" ItemTemplate="{StaticResource NavigationPreviewGroup}"
+                               IsVisible="{Binding HasPages}" SelectedIndex="{Binding PageIndex, Mode=TwoWay}" />
+    </Grid>
+  </alder:AlderSidebar>
+</UserControl>

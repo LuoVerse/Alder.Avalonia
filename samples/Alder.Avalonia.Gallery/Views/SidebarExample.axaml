@@ -1,0 +1,232 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" xmlns:views="using:Alder.Avalonia.Gallery.Views"
+             x:Class="Alder.Avalonia.Gallery.Views.SidebarExample" x:DataType="vm:SidebarViewModel">
+  <Design.DataContext><vm:SidebarViewModel /></Design.DataContext>
+  <UserControl.Resources>
+    <ControlTheme x:Key="GallerySidebarScenarioTheme" TargetType="alder:AlderAppLayout"
+                  BasedOn="{StaticResource {x:Type alder:AlderAppLayout}}">
+      <Setter Property="CornerRadius" Value="14" />
+      <Setter Property="Height" Value="500" />
+      <Setter Property="Width" Value="1080" />
+      <Setter Property="ShowOverlayCloseButtons" Value="False" />
+      <Setter Property="SidebarTemplate" Value="{StaticResource NavigationPreviewSidebar}" />
+      <Setter Property="NavbarTemplate" Value="{StaticResource NavigationPreviewNavbar}" />
+      <Setter Property="ContentTemplate" Value="{StaticResource NavigationPreviewSummary}" />
+    </ControlTheme>
+    <DataTemplate x:Key="SidebarInsetMain" x:DataType="vm:NavigationPreview">
+      <Border Margin="0,0,8,8" Background="{DynamicResource AlderSurface}" BorderBrush="{DynamicResource AlderBorder}"
+              BorderThickness="1" CornerRadius="16" Padding="16">
+        <Grid RowDefinitions="50,288" RowSpacing="16">
+          <Grid ColumnDefinitions="*,*,*" ColumnSpacing="14">
+            <Border CornerRadius="12" BorderBrush="{DynamicResource AlderBorder}" BorderThickness="1" />
+            <Border Grid.Column="1" CornerRadius="12" BorderBrush="{DynamicResource AlderBorder}" BorderThickness="1" />
+            <Border Grid.Column="2" CornerRadius="12" BorderBrush="{DynamicResource AlderBorder}" BorderThickness="1" />
+          </Grid>
+          <Border Grid.Row="1" CornerRadius="12" BorderBrush="{DynamicResource AlderBorder}" BorderThickness="1" />
+        </Grid>
+      </Border>
+    </DataTemplate>
+  </UserControl.Resources>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleBinding" Title="{DynamicResource GalleryText.NavigationBindingMvvm}">
+      <gallery:ExampleCard.Preview>
+        <views:SidebarBindingExample x:Name="BindingExample" />
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleInline" Title="{DynamicResource GalleryText.NavigationBindingInline}">
+      <gallery:ExampleCard.Preview>
+        <views:SidebarInlineExample x:Name="InlineExample" />
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleUsage" Title="{DynamicResource GalleryText.SidebarUsageExample}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="10" DataContext="{Binding Usage}">
+          <alder:AlderToggleButton x:DataType="vm:NavigationPreview" Content="{DynamicResource GalleryText.NavDemoMobileViewport}"
+                                   HorizontalAlignment="Right" Size="Small" Variant="Ghost"
+                                   IsChecked="{Binding IsNarrow, Mode=TwoWay}" />
+          <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left">
+            <alder:AlderSidebarHost x:Name="LayoutUsage" x:DataType="vm:NavigationPreview"
+                      Theme="{StaticResource GallerySidebarScenarioTheme}"
+                      Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                      Width="{Binding PreviewWidth}" />
+          </Viewbox>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleComplex" Title="{DynamicResource GalleryText.SidebarComplexExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding Complex}">
+          <alder:AlderSidebarHost x:Name="LayoutComplex" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GallerySidebarScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                    SidebarCollapse="OffCanvas" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleAccount" Title="{DynamicResource GalleryText.SidebarAccountExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding Account}">
+          <alder:AlderSidebarHost x:Name="LayoutAccount" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GallerySidebarScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleInset" Title="{DynamicResource GalleryText.SidebarInsetExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding Inset}">
+          <alder:AlderSidebarHost x:Name="LayoutInset" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GallerySidebarScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                    SidebarVariant="Inset" Padding="0" ContentTemplate="{StaticResource SidebarInsetMain}" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleFloating" Title="{DynamicResource GalleryText.SidebarFloatingExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding Floating}">
+          <alder:AlderSidebarHost x:Name="LayoutFloating" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GallerySidebarScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                    SidebarVariant="Floating" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleRight" Title="{DynamicResource GalleryText.SidebarRightExample}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="10" DataContext="{Binding Right}">
+          <alder:AlderToggleButton x:DataType="vm:NavigationPreview" Content="{DynamicResource GalleryText.NavDemoMobileViewport}"
+                                   HorizontalAlignment="Right" Size="Small" Variant="Ghost"
+                                   IsChecked="{Binding IsNarrow, Mode=TwoWay}" />
+          <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left">
+            <alder:AlderSidebarHost x:Name="LayoutRight" x:DataType="vm:NavigationPreview"
+                      Theme="{StaticResource GallerySidebarScenarioTheme}"
+                      Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                      Width="{Binding PreviewWidth}"
+                      SidebarPlacement="End" />
+          </Viewbox>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleCollapsible" Title="{DynamicResource GalleryText.SidebarCollapsibleExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding Collapsible}">
+          <alder:AlderSidebarHost x:Name="LayoutCollapsible" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GallerySidebarScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleIconOnly" Title="{DynamicResource GalleryText.SidebarIconOnlyExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding IconOnly}">
+          <alder:AlderSidebarHost x:Name="LayoutIconOnly" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GallerySidebarScenarioTheme}"
+                    Sidebar="{Binding}" Content="{Binding}"
+                    CollapsedSidebarWidth="56" IsSidebarOpen="False" ShowToggleButtons="False"
+                    ContentTemplate="{StaticResource NavigationPreviewTitleAndSummary}">
+            <alder:AlderSidebarHost.Resources>
+              <x:Double x:Key="AlderSidebarRailRowSize">40</x:Double>
+            </alder:AlderSidebarHost.Resources>
+          </alder:AlderSidebarHost>
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleGroups" Title="{DynamicResource GalleryText.SidebarGroupsExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding Groups}">
+          <alder:AlderSidebarHost x:Name="LayoutGroups" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GallerySidebarScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                    SidebarCollapse="None" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleCollapsibleGroups" Title="{DynamicResource GalleryText.SidebarCollapsibleGroupsExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding CollapsibleGroups}">
+          <alder:AlderSidebarHost x:Name="LayoutCollapsibleGroups" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GallerySidebarScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleAvatar" Title="{DynamicResource GalleryText.SidebarAvatarExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding Avatar}">
+          <alder:AlderSidebarHost x:Name="LayoutAvatar" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GallerySidebarScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SamplePages" Title="{DynamicResource GalleryText.SidebarPagesExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding Pages}">
+          <alder:AlderSidebarHost x:Name="LayoutPages" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GallerySidebarScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleMeetingNotes" Title="{DynamicResource GalleryText.SidebarMeetingNotesExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding MeetingNotes}">
+          <alder:AlderSidebarHost x:Name="LayoutMeetingNotes" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GallerySidebarScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                    SidebarCollapse="OffCanvas" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleAgentHub" Title="{DynamicResource GalleryText.SidebarAgentHubExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding AgentHub}">
+          <alder:AlderSidebarHost x:Name="LayoutAgentHub" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GallerySidebarScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                    SidebarCollapse="OffCanvas" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleAgentWorkspace" Title="{DynamicResource GalleryText.SidebarAgentWorkspaceExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding AgentWorkspace}">
+          <alder:AlderSidebarHost x:Name="LayoutAgentWorkspace" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GallerySidebarScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                    SidebarWidth="264" SidebarCollapse="OffCanvas" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard Classes="layout-preview" x:Name="SampleReducedMotion" Title="{DynamicResource GalleryText.SidebarReducedMotionExample}">
+      <gallery:ExampleCard.Preview>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" DataContext="{Binding ReducedMotion}">
+          <alder:AlderSidebarHost x:Name="LayoutReducedMotion" x:DataType="vm:NavigationPreview"
+                    Theme="{StaticResource GallerySidebarScenarioTheme}"
+                    Sidebar="{Binding}" Navbar="{Binding}" Content="{Binding}"
+                    alder:AlderMotion.Reduced="True" />
+        </Viewbox>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,94 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.EmojiReactionButtonExample" x:DataType="vm:EmojiReactionButtonViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <Border Padding="20,24" MinHeight="120">
+          <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+            <alder:AlderEmojiReactionButton Emoji="❤️" Count="12" IsChecked="True" />
+            <alder:AlderEmojiReactionButton Emoji="🎉" Count="1" />
+            <alder:AlderEmojiReactionButton Emoji="👍" Count="5" />
+            <alder:AlderEmojiReactionButton Emoji="😂" Count="3" />
+            <alder:AlderEmojiReactionButton Emoji="🚀" Count="1" />
+          </WrapPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var reactions = new WrapPanel
+        {
+            ItemSpacing = 8, LineSpacing = 8,
+            Children =
+            {
+                new AlderEmojiReactionButton { Emoji = "❤️", Count = 12, IsChecked = true },
+                new AlderEmojiReactionButton { Emoji = "🎉", Count = 1 },
+                new AlderEmojiReactionButton { Emoji = "👍", Count = 5 },
+                new AlderEmojiReactionButton { Emoji = "😂", Count = 3 },
+                new AlderEmojiReactionButton { Emoji = "🚀", Count = 1 }
+            }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <g:ExampleCard.Preview>
+        <Border Padding="20,24" MinHeight="120">
+          <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderEmojiReactionButton Emoji="❤️" Count="12" IsChecked="True" IsEnabled="False" />
+            <alder:AlderEmojiReactionButton Emoji="👍" Count="3" IsEnabled="False" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var disabled = new AlderEmojiReactionButton { Emoji = "❤️", Count = 12, IsChecked = true, IsEnabled = false };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleReadOnly" Title="{DynamicResource GalleryText.EmojiReactionReadOnly}">
+      <g:ExampleCard.Preview>
+        <Border Padding="20,24" MinHeight="120">
+          <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderEmojiReactionButton Emoji="❤️" Count="12" IsChecked="True" IsReadOnly="True" />
+            <alder:AlderEmojiReactionButton Emoji="👍" Count="3" IsReadOnly="True" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var readOnly = new AlderEmojiReactionButton { Emoji = "❤️", Count = 12, IsChecked = true, IsReadOnly = true };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleSizes" Title="{DynamicResource GalleryText.Sizes}">
+      <g:ExampleCard.Preview>
+        <Border Padding="20,24">
+          <StackPanel Spacing="12" HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <alder:AlderTextBlock Width="18" Text="{DynamicResource GalleryText.EmojiSizeSmall}" FontSize="12" Foreground="{DynamicResource AlderMuted}" VerticalAlignment="Center" />
+              <alder:AlderEmojiReactionButton Emoji="👍" Count="5" Size="Small" IsChecked="True" />
+              <alder:AlderEmojiReactionButton Emoji="😂" Count="2" Size="Small" />
+              <alder:AlderEmojiReactionButton Emoji="🎉" Count="1" Size="Small" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <alder:AlderTextBlock Width="18" Text="{DynamicResource GalleryText.EmojiSizeMedium}" FontSize="12" Foreground="{DynamicResource AlderMuted}" VerticalAlignment="Center" />
+              <alder:AlderEmojiReactionButton Emoji="👍" Count="5" Size="Medium" IsChecked="True" />
+              <alder:AlderEmojiReactionButton Emoji="😂" Count="2" Size="Medium" />
+              <alder:AlderEmojiReactionButton Emoji="🎉" Count="1" Size="Medium" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <alder:AlderTextBlock Width="18" Text="{DynamicResource GalleryText.EmojiSizeLarge}" FontSize="12" Foreground="{DynamicResource AlderMuted}" VerticalAlignment="Center" />
+              <alder:AlderEmojiReactionButton Emoji="👍" Count="5" Size="Large" IsChecked="True" />
+              <alder:AlderEmojiReactionButton Emoji="😂" Count="2" Size="Large" />
+              <alder:AlderEmojiReactionButton Emoji="🎉" Count="1" Size="Large" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var small = new AlderEmojiReactionButton { Emoji = "👍", Count = 5, IsChecked = true, Size = AlderSize.Small };
+        var medium = new AlderEmojiReactionButton { Emoji = "👍", Count = 5, IsChecked = true, Size = AlderSize.Medium };
+        var large = new AlderEmojiReactionButton { Emoji = "👍", Count = 5, IsChecked = true, Size = AlderSize.Large };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

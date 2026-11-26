@@ -1,0 +1,61 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" x:Class="Alder.Avalonia.Gallery.Views.ColorSwatchExample"
+             x:DataType="vm:ColorsViewModel" FontFamily="fonts:Inter#Inter">
+  <Design.DataContext><vm:ColorsViewModel /></Design.DataContext>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
+          <alder:AlderColorSwatch Color="#0485F7" ColorName="{DynamicResource GalleryText.ColorBlue}" />
+          <alder:AlderColorSwatch Color="#EF4444" ColorName="{DynamicResource GalleryText.ColorRed}" />
+          <alder:AlderColorSwatch Color="#F59E0B" ColorName="{DynamicResource GalleryText.ColorAmber}" />
+          <alder:AlderColorSwatch Color="#10B981" ColorName="{DynamicResource GalleryText.ColorGreen}" />
+          <alder:AlderColorSwatch Color="#D946EF" ColorName="{DynamicResource GalleryText.ColorFuchsia}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var swatch = new AlderColorSwatch { Color = Color.Parse("#0485F7"), ColorName = "Blue" };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSizes" Title="{DynamicResource GalleryText.Sizes}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center" VerticalAlignment="Center">
+          <alder:AlderColorSwatch Color="#0485F7" Size="ExtraSmall" />
+          <alder:AlderColorSwatch Color="#EF4444" Size="Small" />
+          <alder:AlderColorSwatch Color="#F59E0B" Size="Medium" />
+          <alder:AlderColorSwatch Color="#10B981" Size="Large" />
+          <alder:AlderColorSwatch Color="#D946EF" Size="ExtraLarge" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var swatch = new AlderColorSwatch { Size = ColorSwatchSize.Large, Color = Color.Parse("#10B981") };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleColorSwatchShapes" Title="{DynamicResource GalleryText.ColorSwatchShapes}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center" VerticalAlignment="Center">
+          <alder:AlderColorSwatch Color="#0485F7" Shape="Circle" />
+          <alder:AlderColorSwatch Color="#0485F7" Shape="Square" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var square = new AlderColorSwatch { Shape = ColorSwatchShape.Square, Color = Color.Parse("#0485F7") };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleColorSwatchTransparency" Title="{DynamicResource GalleryText.ColorSwatchTransparency}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center" VerticalAlignment="Center">
+          <alder:AlderColorSwatch Color="#0485F7" />
+          <alder:AlderColorSwatch Color="#BF0485F7" />
+          <alder:AlderColorSwatch Color="#800485F7" />
+          <alder:AlderColorSwatch Color="#400485F7" />
+          <alder:AlderColorSwatch Color="#000485F7" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var swatch = new AlderColorSwatch { Color = Color.FromArgb(128, 4, 133, 247) };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,119 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.FloatingTocExample" x:DataType="vm:FloatingTocViewModel">
+  <StackPanel x:Name="Examples" Spacing="20">
+    <gallery:ExampleCard x:Name="Usage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <Grid MinHeight="250" MaxWidth="660" Background="Transparent">
+          <alder:AlderFloatingToc HorizontalAlignment="Center" ItemsSource="{CompiledBinding Entries}" Margin="0,0,12,0"  />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="InPage" Title="{DynamicResource GalleryText.TocInPage}">
+      <gallery:ExampleCard.Preview>
+        <Grid Height="410" MaxWidth="720" Background="Transparent">
+          <alder:AlderScrollViewer x:Name="PageScroll" Margin="0,0,48,0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <alder:AlderItemsControl ItemsSource="{CompiledBinding Page}">
+              <alder:AlderItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:TocDemoSection">
+                  <StackPanel MinHeight="165" Margin="18,12,12,0" Spacing="10">
+                    <alder:AlderTextBlock FontSize="22" FontWeight="SemiBold" TextWrapping="Wrap" Text="{CompiledBinding Title}"
+                               alder:AlderFloatingToc.AnchorKey="{CompiledBinding Key}" />
+                    <alder:AlderTextBlock FontSize="14" LineHeight="21" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" Text="{CompiledBinding Body}" />
+                  </StackPanel>
+                </DataTemplate>
+              </alder:AlderItemsControl.ItemTemplate>
+            </alder:AlderItemsControl>
+          </alder:AlderScrollViewer>
+          <alder:AlderFloatingToc ItemsSource="{CompiledBinding Entries}" ScrollHost="{CompiledBinding #PageScroll}" Margin="0,0,12,0" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="Hierarchy" Title="{DynamicResource GalleryText.TocHierarchy}">
+      <gallery:ExampleCard.Preview>
+        <Grid MinHeight="365" MaxWidth="660" Background="Transparent">
+          <alder:AlderFloatingToc HorizontalAlignment="Center" ItemsSource="{CompiledBinding NestedEntries}" Margin="0,0,12,0" Header="{DynamicResource GalleryText.TocContents}" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="LeftPlacement" Title="{DynamicResource GalleryText.TocLeftPlacement}">
+      <gallery:ExampleCard.Preview>
+        <Grid MinHeight="250" MaxWidth="660" Background="Transparent">
+          <alder:AlderFloatingToc HorizontalAlignment="Center" ItemsSource="{CompiledBinding Entries}" Margin="12,0,0,0" Placement="Left" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="LeftAligned" Title="{DynamicResource GalleryText.TocLeftAligned}">
+      <gallery:ExampleCard.Preview>
+        <Grid MinHeight="250" MaxWidth="660" Background="Transparent">
+          <alder:AlderFloatingToc HorizontalAlignment="Center" ItemsSource="{CompiledBinding Entries}" Margin="0,0,12,0" AlignBarsLeft="True" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="Press" Title="{DynamicResource GalleryText.TocPress}">
+      <gallery:ExampleCard.Preview>
+        <Grid MinHeight="365" MaxWidth="660" Background="Transparent">
+          <alder:AlderFloatingToc HorizontalAlignment="Center" ItemsSource="{CompiledBinding NestedEntries}" Margin="0,0,12,0" TriggerMode="Press" Header="{DynamicResource GalleryText.TocContents}" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="PressInPage" Title="{DynamicResource GalleryText.TocPressInPage}">
+      <gallery:ExampleCard.Preview>
+        <Grid Height="410" MaxWidth="720" Background="Transparent">
+          <alder:AlderScrollViewer x:Name="PressScroll" Margin="0,0,48,0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <alder:AlderItemsControl ItemsSource="{CompiledBinding Page}">
+              <alder:AlderItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:TocDemoSection">
+                  <StackPanel MinHeight="165" Margin="18,12,12,0" Spacing="10">
+                    <alder:AlderTextBlock FontSize="22" FontWeight="SemiBold" TextWrapping="Wrap" Text="{CompiledBinding Title}"
+                               alder:AlderFloatingToc.AnchorKey="{CompiledBinding Key}" />
+                    <alder:AlderTextBlock FontSize="14" LineHeight="21" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" Text="{CompiledBinding Body}" />
+                  </StackPanel>
+                </DataTemplate>
+              </alder:AlderItemsControl.ItemTemplate>
+            </alder:AlderItemsControl>
+          </alder:AlderScrollViewer>
+          <alder:AlderFloatingToc ItemsSource="{CompiledBinding Entries}" ScrollHost="{CompiledBinding #PressScroll}" Margin="0,0,12,0" TriggerMode="Press" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="Delays" Title="{DynamicResource GalleryText.TocDelays}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="16" LineSpacing="16" HorizontalAlignment="Center">
+          <StackPanel Spacing="4">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.TocDelayInstant}" Foreground="{DynamicResource AlderMuted}" HorizontalAlignment="Center" />
+            <alder:AlderFloatingToc ItemsSource="{CompiledBinding Entries}" OpenDelay="0:0:0" CloseDelay="0:0:0.08" />
+          </StackPanel>
+          <StackPanel Spacing="4">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.TocDelayDefault}" Foreground="{DynamicResource AlderMuted}" HorizontalAlignment="Center" />
+            <alder:AlderFloatingToc ItemsSource="{CompiledBinding Entries}"  />
+          </StackPanel>
+          <StackPanel Spacing="4">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.TocDelaySlow}" Foreground="{DynamicResource AlderMuted}" HorizontalAlignment="Center" />
+            <alder:AlderFloatingToc ItemsSource="{CompiledBinding Entries}" OpenDelay="0:0:0.6" CloseDelay="0:0:0.5" />
+          </StackPanel>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="Controlled" Title="{DynamicResource GalleryText.Controlled}">
+      <gallery:ExampleCard.Preview>
+        <Grid MinHeight="250" MaxWidth="660" Background="Transparent">
+          <StackPanel Spacing="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.TocToggle}" Command="{CompiledBinding Toggle}" />
+            <alder:AlderTextBlock Text="{CompiledBinding Status}" Foreground="{DynamicResource AlderMuted}" AutomationProperties.LiveSetting="Polite" />
+          </StackPanel>
+          <alder:AlderFloatingToc ItemsSource="{CompiledBinding Entries}" TriggerMode="Press" IsLightDismissEnabled="False"
+                                 IsOpen="{CompiledBinding IsOpen, Mode=TwoWay}" Margin="0,0,12,0" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="Virtualized" Title="{DynamicResource GalleryText.TocVirtualized}">
+      <gallery:ExampleCard.Preview>
+        <Grid MinHeight="420" MaxWidth="660" Background="Transparent">
+          <alder:AlderFloatingToc HorizontalAlignment="Center" ItemsSource="{CompiledBinding ManyEntries}" Margin="0,0,12,0" TriggerMode="Press" Header="{DynamicResource GalleryText.TocContents}" />
+        </Grid>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

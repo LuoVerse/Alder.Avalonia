@@ -1,0 +1,153 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.ChipExample" x:DataType="vm:StatusIndicatorViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="300" TextElement.FontFamily="fonts:Inter#Inter">
+          <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center" ItemSpacing="12" LineSpacing="16">
+            <alder:AlderChip Content="{DynamicResource GalleryText.StatusDefault}"  />
+            <alder:AlderChip Content="{DynamicResource GalleryText.StatusAccent}" Color="Accent" />
+            <alder:AlderChip Content="{DynamicResource GalleryText.StatusSuccess}" Color="Success" />
+            <alder:AlderChip Content="{DynamicResource GalleryText.StatusWarning}" Color="Warning" />
+            <alder:AlderChip Content="{DynamicResource GalleryText.StatusDanger}" Color="Danger" />
+          </WrapPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var status = new AlderChip { Color = AlderStatusColor.Success, Content = "Success" };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.Variants}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <alder:AlderScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+            <alder:AlderItemsControl ItemsSource="{CompiledBinding ChipSizes}">
+              <alder:AlderItemsControl.ItemsPanel>
+                <ItemsPanelTemplate><StackPanel /></ItemsPanelTemplate>
+              </alder:AlderItemsControl.ItemsPanel>
+              <alder:AlderItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:ChipExampleSize">
+                  <StackPanel>
+                    <StackPanel Spacing="16">
+                      <alder:AlderTextBlock Text="{CompiledBinding Label}" FontSize="14" LineHeight="20" FontWeight="SemiBold" Foreground="{DynamicResource AlderMuted}" />
+                      <Grid ColumnDefinitions="96,130,130,130,130,130">
+                        <alder:AlderTextBlock Grid.Column="1" Text="{DynamicResource GalleryText.StatusAccent}" HorizontalAlignment="Center" Foreground="{DynamicResource AlderMuted}" FontSize="12" LineHeight="16" />
+                        <alder:AlderTextBlock Grid.Column="2" Text="{DynamicResource GalleryText.StatusDefault}" HorizontalAlignment="Center" Foreground="{DynamicResource AlderMuted}" FontSize="12" LineHeight="16" />
+                        <alder:AlderTextBlock Grid.Column="3" Text="{DynamicResource GalleryText.StatusSuccess}" HorizontalAlignment="Center" Foreground="{DynamicResource AlderMuted}" FontSize="12" LineHeight="16" />
+                        <alder:AlderTextBlock Grid.Column="4" Text="{DynamicResource GalleryText.StatusWarning}" HorizontalAlignment="Center" Foreground="{DynamicResource AlderMuted}" FontSize="12" LineHeight="16" />
+                        <alder:AlderTextBlock Grid.Column="5" Text="{DynamicResource GalleryText.StatusDanger}" HorizontalAlignment="Center" Foreground="{DynamicResource AlderMuted}" FontSize="12" LineHeight="16" />
+                      </Grid>
+                      <alder:AlderItemsControl ItemsSource="{CompiledBinding Variants}">
+                        <alder:AlderItemsControl.ItemsPanel>
+                          <ItemsPanelTemplate><StackPanel Spacing="12" /></ItemsPanelTemplate>
+                        </alder:AlderItemsControl.ItemsPanel>
+                        <alder:AlderItemsControl.ItemTemplate>
+                          <DataTemplate x:DataType="vm:ChipExampleVariant">
+                            <StackPanel Orientation="Horizontal">
+                              <alder:AlderTextBlock Width="96" FontSize="14" LineHeight="20" Text="{CompiledBinding Label}" VerticalAlignment="Center" Foreground="{DynamicResource AlderMuted}" />
+                              <alder:AlderItemsControl ItemsSource="{CompiledBinding Chips}">
+                                <alder:AlderItemsControl.ItemsPanel>
+                                  <ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate>
+                                </alder:AlderItemsControl.ItemsPanel>
+                                <alder:AlderItemsControl.ItemTemplate>
+                                  <DataTemplate x:DataType="vm:ChipExample">
+                                    <Border Width="130">
+                                      <alder:AlderChip HorizontalAlignment="Center" Content="{CompiledBinding Label}" Size="{CompiledBinding Size}"
+                                                  Color="{CompiledBinding Color}" Variant="{CompiledBinding Variant}" IconSize="16"
+                                                  Icon="{DynamicResource AlderIconCircleDashed}" TrailingIcon="{DynamicResource AlderIconCircleDashed}" />
+                                    </Border>
+                                  </DataTemplate>
+                                </alder:AlderItemsControl.ItemTemplate>
+                              </alder:AlderItemsControl>
+                            </StackPanel>
+                          </DataTemplate>
+                        </alder:AlderItemsControl.ItemTemplate>
+                      </alder:AlderItemsControl>
+                    </StackPanel>
+                    <alder:AlderSeparator IsVisible="{CompiledBinding ShowDivider}" Margin="0,32" />
+                  </StackPanel>
+                </DataTemplate>
+              </alder:AlderItemsControl.ItemTemplate>
+            </alder:AlderItemsControl>
+          </alder:AlderScrollViewer>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var label = new AlderChip
+        {
+            Color = AlderStatusColor.Accent,
+            Variant = ChipVariant.Primary,
+            Size = AlderSize.Large,
+            IconSize = 16,
+            Content = "Label"
+        };
+        label[!AlderChip.IconProperty] = new DynamicResourceExtension("AlderIconCircleDashed");
+        label[!AlderChip.TrailingIconProperty] = new DynamicResourceExtension("AlderIconCircleDashed");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleStatuses" Title="{DynamicResource GalleryText.ChipStatuses}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel Spacing="16" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <WrapPanel ItemSpacing="12" LineSpacing="8">
+              <alder:AlderChip Content="{DynamicResource GalleryText.StatusDefault}" Variant="Primary" IconSize="6" Icon="{DynamicResource AlderIconStatusDot}" />
+              <alder:AlderChip Content="{DynamicResource GalleryText.StatusActive}" Variant="Primary" Color="Success" IconSize="6" Icon="{DynamicResource AlderIconStatusDot}" />
+              <alder:AlderChip Content="{DynamicResource GalleryText.StatusPending}" Variant="Primary" Color="Warning" IconSize="6" Icon="{DynamicResource AlderIconStatusDot}" />
+              <alder:AlderChip Content="{DynamicResource GalleryText.StatusInactive}" Variant="Primary" Color="Danger" IconSize="6" Icon="{DynamicResource AlderIconStatusDot}" />
+            </WrapPanel>
+            <WrapPanel ItemSpacing="12" LineSpacing="8">
+              <alder:AlderChip Content="{DynamicResource GalleryText.StatusNewFeature}" Icon="{DynamicResource AlderIconInfo}" />
+              <alder:AlderChip Content="{DynamicResource GalleryText.StatusAvailable}" Color="Success" Icon="{DynamicResource AlderIconCheck}" />
+              <alder:AlderChip Content="{DynamicResource GalleryText.StatusBeta}" Color="Warning" Icon="{DynamicResource AlderIconWarning}" />
+              <alder:AlderChip Content="{DynamicResource GalleryText.StatusDeprecated}" Color="Danger" Icon="{DynamicResource AlderIconBan}" />
+            </WrapPanel>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var active = new AlderChip { Color = AlderStatusColor.Success, Variant = ChipVariant.Primary, Content = "Active", IconSize = 6 };
+        active[!AlderChip.IconProperty] = new DynamicResourceExtension("AlderIconStatusDot");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleIcons" Title="{DynamicResource GalleryText.ChipWithIcons}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center" ItemSpacing="12" LineSpacing="16">
+            <alder:AlderChip Content="{DynamicResource GalleryText.StatusInformation}" IconSize="6" Icon="{DynamicResource AlderIconStatusDot}" />
+            <alder:AlderChip Content="{DynamicResource GalleryText.StatusCompleted}" Color="Success" Icon="{DynamicResource AlderIconCheckCircleFilled}" />
+            <alder:AlderChip Content="{DynamicResource GalleryText.StatusPending}" Color="Warning" Icon="{DynamicResource AlderIconClock}" />
+            <alder:AlderChip Content="{DynamicResource GalleryText.StatusFailed}" Color="Danger" Icon="{DynamicResource AlderIconXmark}" />
+            <alder:AlderChip Content="{DynamicResource GalleryText.StatusLabel}" Color="Accent" TrailingIcon="{DynamicResource AlderIconChevronDown}" />
+          </WrapPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var chip = new AlderChip { Color = AlderStatusColor.Success, Content = "Completed" };
+        chip[!AlderChip.IconProperty] = new DynamicResourceExtension("AlderIconCheckCircleFilled");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleCustom" Title="{DynamicResource GalleryText.CustomStyles}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center" ItemSpacing="8" LineSpacing="16">
+            <alder:AlderChip Content="{DynamicResource GalleryText.StatusDraft}" Variant="Soft" Padding="12,2" CornerRadius="16" />
+            <alder:AlderChip Content="{DynamicResource GalleryText.StatusReview}" Variant="Soft" Color="Warning" Padding="12,2" CornerRadius="16" />
+            <alder:AlderChip Content="{DynamicResource GalleryText.StatusPublished}" Variant="Soft" Color="Success" Padding="12,2" CornerRadius="16" />
+          </WrapPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var chip = new AlderChip
+        {
+            Variant = ChipVariant.Soft,
+            Color = AlderStatusColor.Warning,
+            Padding = new Thickness(12, 2),
+            CornerRadius = new CornerRadius(16),
+            Content = "In review"
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

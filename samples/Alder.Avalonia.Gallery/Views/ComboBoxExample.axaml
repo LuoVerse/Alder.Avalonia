@@ -1,0 +1,531 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             xmlns:c="using:Avalonia.Data.Converters"
+             x:Class="Alder.Avalonia.Gallery.Views.ComboBoxExample" x:DataType="vm:ComboBoxViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="300" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.PickerFavoriteAnimal}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                            ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { Label = "Favorite Animal", PlaceholderText = "Search animals..." };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Animals));
+        comboBox.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Caption));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.Variants}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.PickerPrimary}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                            ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}" />
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.PickerSecondary}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                            ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                            Variant="Secondary" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { Variant = InputVariant.Secondary };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Animals));
+        comboBox.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Caption));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleFullWidth" Title="{DynamicResource GalleryText.FullWidth}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <Panel MaxWidth="400" VerticalAlignment="Center">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.PickerFavoriteAnimal}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                            ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                            FullWidth="True" />
+          </Panel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { FullWidth = true };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Animals));
+        comboBox.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Caption));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDescription" Title="{DynamicResource GalleryText.AutocompleteDescription}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.PickerFavoriteAnimal}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                            ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                            Description="{DynamicResource GalleryText.ComboFavoriteDescription}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { Description = "Search and select your favorite animal" };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Animals));
+        comboBox.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Caption));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleRequired" Title="{DynamicResource GalleryText.AutocompleteRequired}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16" Width="256">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.PickerFavoriteAnimal}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                            ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                            IsRequired="True" FullWidth="True"
+                            SelectedItem="{CompiledBinding Required.Selected, Mode=TwoWay}" Text="{CompiledBinding Required.Input, Mode=TwoWay}"
+                            IsInvalid="{CompiledBinding Required.IsInvalid}" ErrorText="{CompiledBinding Required.ErrorText}" />
+            <alder:AlderButton Content="{DynamicResource GalleryText.Submit}" Command="{CompiledBinding Required.Submit}" HorizontalAlignment="Left" />
+            <alder:AlderTextBlock Text="{CompiledBinding Required.Status}" Foreground="{DynamicResource AlderMuted}" FontSize="14" LineHeight="20" TextWrapping="Wrap"
+                       IsVisible="{CompiledBinding Required.Status, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { IsRequired = true };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Animals));
+        comboBox.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Caption));
+        comboBox.Bind(SelectingItemsControl.SelectedItemProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Required.Selected, mode: BindingMode.TwoWay));
+        comboBox.Bind(AlderPicker.TextProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Required.Input, mode: BindingMode.TwoWay));
+        comboBox.Bind(AlderPicker.IsInvalidProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Required.IsInvalid));
+        comboBox.Bind(AlderPicker.ErrorTextProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Required.ErrorText));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.PickerFavoriteAnimal}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                            ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                            IsEnabled="False" SelectedIndex="1" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { IsEnabled = false, SelectedIndex = 1 };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Animals));
+        comboBox.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Caption));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDisabledOptions" Title="{DynamicResource GalleryText.AutocompleteDisabledOptions}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.AutocompleteAnimal}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                            ItemsSource="{CompiledBinding DisabledAnimals}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { Label = "Animal" };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.DisabledAnimals));
+        var disabled = new AlderPickerOption { Text = "Cat", IsEnabled = false };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleOptions" Title="{DynamicResource GalleryText.AutocompleteSections}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.AutocompleteCountry}" PlaceholderText="{DynamicResource GalleryText.AutocompleteSearchCountries}"
+                            ItemsSource="{CompiledBinding CountrySections}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { Label = "Country" };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.CountrySections));
+        var country = new AlderPickerOption { Text = "Canada", Group = "North America" };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.ComboControlledAnimal}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                            ItemsSource="{CompiledBinding Pets}" TextSelector="{CompiledBinding Caption}"
+                            SelectedItem="{CompiledBinding SelectedAnimal, Mode=TwoWay}" />
+            <alder:AlderTextBlock Text="{CompiledBinding SelectedStatus}" Foreground="{DynamicResource AlderMuted}" FontSize="14" LineHeight="20" TextWrapping="Wrap" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { Label = "Animal (controlled)" };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Pets));
+        comboBox.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Caption));
+        comboBox.Bind(SelectingItemsControl.SelectedItemProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.SelectedAnimal, mode: BindingMode.TwoWay));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleControlledInput" Title="{DynamicResource GalleryText.ComboControlledInput}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.ComboInputLabel}" PlaceholderText="{DynamicResource GalleryText.ComboInputSearch}"
+                            ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                            Text="{CompiledBinding ControlledText, Mode=TwoWay}" />
+            <alder:AlderTextBlock Text="{CompiledBinding InputStatus}" Foreground="{DynamicResource AlderMuted}" FontSize="14" LineHeight="20" TextWrapping="Wrap" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { Label = "Search (controlled input)" };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Animals));
+        comboBox.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Caption));
+        comboBox.Bind(AlderPicker.TextProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.ControlledText, mode: BindingMode.TwoWay));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleAsync" Title="{DynamicResource GalleryText.PickerAsync}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.ComboCharacter}" PlaceholderText="{DynamicResource GalleryText.ComboCharacterPlaceholder}"
+                            ItemsSource="{CompiledBinding Characters}"
+                            AllowsEmptyCollection="True"
+                            Text="{CompiledBinding AsyncQuery, Mode=TwoWay}" Filter="{CompiledBinding AsyncFilter}"
+                            IsLoading="{CompiledBinding IsSearching}" LoadMoreCommand="{CompiledBinding LoadMore}" LoadingText="{DynamicResource GalleryText.SelectLoadingMore}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { AllowsEmptyCollection = true };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Characters));
+        comboBox.Bind(AlderPicker.TextProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.AsyncQuery, mode: BindingMode.TwoWay));
+        comboBox.Bind(AlderPicker.FilterProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.AsyncFilter));
+        comboBox.Bind(AlderPicker.IsLoadingProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.IsSearching));
+        comboBox.Bind(AlderComboBox.LoadMoreCommandProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.LoadMore));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDefaultSelection" Title="{DynamicResource GalleryText.ComboDefaultSelected}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.PickerFavoriteAnimal}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                            ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                            SelectedIndex="1" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { SelectedIndex = 1 };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Animals));
+        comboBox.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Caption));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleAllowsCustom" Title="{DynamicResource GalleryText.ComboAllowsCustom}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.PickerFavoriteAnimal}" PlaceholderText="{DynamicResource GalleryText.ComboCustomPlaceholder}"
+                            ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                            AllowsCustomValue="True" Description="{DynamicResource GalleryText.ComboCustomHint}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { AllowsCustomValue = true, PlaceholderText = "Search or type an animal..." };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Animals));
+        comboBox.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Caption));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleIndicator" Title="{DynamicResource GalleryText.AutocompleteCustomIndicator}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.PickerFavoriteAnimal}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                            ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                            Classes="custom-indicator" Indicator="{DynamicResource AlderIconChevronsExpandVertical}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox();
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Animals));
+        comboBox.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Caption));
+        comboBox.Classes.Add("custom-indicator");
+        comboBox[!AlderPicker.IndicatorProperty] = new DynamicResourceExtension("AlderIconChevronsExpandVertical");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleValue" Title="{DynamicResource GalleryText.AutocompleteCustomValue}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.AutocompleteUser}" PlaceholderText="{DynamicResource GalleryText.AutocompleteSearchUsers}"
+                            ItemsSource="{CompiledBinding Users}"
+                            TextSelector="{x:Static vm:SelectViewModel.UserCaption}">
+              <alder:AlderComboBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:SelectExampleUser">
+                  <Grid ColumnDefinitions="32,*" ColumnSpacing="12">
+                    <alder:AlderAvatar Size="Small" Source="{CompiledBinding Photo}" Fallback="{CompiledBinding Initials}" />
+                    <StackPanel Grid.Column="1">
+                      <alder:AlderTextBlock Text="{CompiledBinding Name}" LineHeight="20" FontWeight="Medium" />
+                      <alder:AlderTextBlock Text="{CompiledBinding Email}" LineHeight="16" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+                    </StackPanel>
+                  </Grid>
+                </DataTemplate>
+              </alder:AlderComboBox.ItemTemplate>
+            </alder:AlderComboBox>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { Label = "User", TextSelector = SelectViewModel.UserCaption };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Users));
+        comboBox.ItemTemplate = new FuncDataTemplate<SelectExampleUser>((user, _) => new StackPanel
+        {
+            Orientation = Orientation.Horizontal, Spacing = 12,
+            Children =
+            {
+                new AlderAvatar { Size = AlderSize.Small, Source = user!.Photo, Fallback = user.Initials },
+                new StackPanel { Children = { new AlderTextBlock { Text = user.Name }, new AlderTextBlock { Text = user.Email } } }
+            }
+        });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleFiltering" Title="{DynamicResource GalleryText.ComboCustomFiltering}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.ComboFilterLabel}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                            ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                            Filter="{CompiledBinding PrefixFilter}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox();
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Animals));
+        comboBox.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Caption));
+        comboBox.Bind(AlderPicker.FilterProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.PrefixFilter));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleRender" Title="{DynamicResource GalleryText.SelectCustomRendering}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.PickerFavoriteAnimal}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                            ItemsSource="{CompiledBinding DisplayedAnimals}">
+              <alder:AlderComboBox.ItemTemplate>
+                <DataTemplate x:DataType="x:String"><alder:AlderTextBlock Text="{CompiledBinding}" LineHeight="20" TextWrapping="Wrap" /></DataTemplate>
+              </alder:AlderComboBox.ItemTemplate>
+            </alder:AlderComboBox>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox();
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.DisplayedAnimals));
+        comboBox.ItemTemplate = new FuncDataTemplate<string>((name, _) => new AlderTextBlock { Text = name });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleTrigger" Title="{DynamicResource GalleryText.PickerMenuTrigger}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="444" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="32" Width="256">
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.ComboFocusMode}" FontSize="14" LineHeight="20" FontWeight="Medium" Foreground="{DynamicResource AlderMuted}" />
+              <alder:AlderComboBox Label="{DynamicResource GalleryText.PickerFavoriteAnimal}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                              ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                              MenuTrigger="Focus" Description="{DynamicResource GalleryText.ComboFocusHint}" />
+            </StackPanel>
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.ComboInputMode}" FontSize="14" LineHeight="20" FontWeight="Medium" Foreground="{DynamicResource AlderMuted}" />
+              <alder:AlderComboBox Label="{DynamicResource GalleryText.PickerFavoriteAnimal}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                              ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                              MenuTrigger="Input" Description="{DynamicResource GalleryText.ComboInputHint}" />
+            </StackPanel>
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.ComboManualMode}" FontSize="14" LineHeight="20" FontWeight="Medium" Foreground="{DynamicResource AlderMuted}" />
+              <alder:AlderComboBox Label="{DynamicResource GalleryText.PickerFavoriteAnimal}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                              ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                              MenuTrigger="Manual" Description="{DynamicResource GalleryText.ComboManualHint}" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { MenuTrigger = PickerMenuTrigger.Input };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Animals));
+        comboBox.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Caption));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleFormValue" Title="{DynamicResource GalleryText.ComboFormValue}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16" Width="256">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.AutocompleteAnimal}" PlaceholderText="{DynamicResource GalleryText.ComboFormPlaceholder}"
+                            ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                            IsRequired="True" FullWidth="True" Description="{DynamicResource GalleryText.ComboFormKeyHint}"
+                            SelectedItem="{CompiledBinding FormKey, Mode=TwoWay}" IsInvalid="{CompiledBinding FormKeyInvalid}"
+                            ErrorText="{DynamicResource GalleryText.ComboRequiredError}" />
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.ComboFormTextLabel}" PlaceholderText="{DynamicResource GalleryText.ComboFormPlaceholder}"
+                            ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                            IsRequired="True" FullWidth="True" Description="{DynamicResource GalleryText.ComboFormTextHint}"
+                            SelectedItem="{CompiledBinding FormText, Mode=TwoWay}" IsInvalid="{CompiledBinding FormTextInvalid}"
+                            ErrorText="{DynamicResource GalleryText.ComboRequiredError}" />
+            <alder:AlderButton Content="{DynamicResource GalleryText.Submit}" Command="{CompiledBinding SubmitValues}" HorizontalAlignment="Left" />
+            <alder:AlderTextBlock Text="{CompiledBinding FormStatus}" Foreground="{DynamicResource AlderMuted}" FontSize="14" LineHeight="20" TextWrapping="Wrap"
+                       IsVisible="{CompiledBinding FormStatus, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { IsRequired = true };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Animals));
+        comboBox.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Caption));
+        comboBox.Bind(SelectingItemsControl.SelectedItemProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.FormKey, mode: BindingMode.TwoWay));
+        var selectedKey = comboBox.SelectedItem;
+        var submittedText = comboBox.SelectionText;
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleValidationBehavior" Title="{DynamicResource GalleryText.ComboValidationBehavior}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="336" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="32" Width="256">
+            <StackPanel Spacing="16">
+              <alder:AlderComboBox Label="{DynamicResource GalleryText.ComboNativeLabel}" PlaceholderText="{DynamicResource GalleryText.ComboFormPlaceholder}"
+                              ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                              IsRequired="True" FullWidth="True"
+                              SelectedItem="{CompiledBinding NativeValidation.Selected, Mode=TwoWay}" Text="{CompiledBinding NativeValidation.Input, Mode=TwoWay}"
+                              IsInvalid="{CompiledBinding NativeValidation.IsInvalid}" ErrorText="{CompiledBinding NativeValidation.ErrorText}"
+                              Description="{DynamicResource GalleryText.ComboNativeHint}" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.ComboSubmitNative}" Command="{CompiledBinding NativeValidation.Submit}" HorizontalAlignment="Left" />
+              <alder:AlderTextBlock Text="{CompiledBinding NativeValidation.Status}" Foreground="{DynamicResource AlderMuted}" FontSize="14" LineHeight="20" TextWrapping="Wrap"
+                         IsVisible="{CompiledBinding NativeValidation.Status, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+            </StackPanel>
+            <StackPanel Spacing="16">
+              <alder:AlderComboBox Label="{DynamicResource GalleryText.ComboAriaLabel}" PlaceholderText="{DynamicResource GalleryText.ComboFormPlaceholder}"
+                              ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                              IsRequired="True" FullWidth="True"
+                              SelectedItem="{CompiledBinding LiveValidation.Selected, Mode=TwoWay}" Text="{CompiledBinding LiveValidation.Input, Mode=TwoWay}"
+                              IsInvalid="{CompiledBinding LiveValidation.IsInvalid}" ErrorText="{CompiledBinding LiveValidation.ErrorText}"
+                              Description="{DynamicResource GalleryText.ComboAriaHint}" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.ComboSubmitAria}" Command="{CompiledBinding LiveValidation.Submit}" HorizontalAlignment="Left" />
+              <alder:AlderTextBlock Text="{CompiledBinding LiveValidation.Status}" Foreground="{DynamicResource AlderMuted}" FontSize="14" LineHeight="20" TextWrapping="Wrap"
+                         IsVisible="{CompiledBinding LiveValidation.Status, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { IsRequired = true };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Animals));
+        comboBox.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Caption));
+        comboBox.Bind(SelectingItemsControl.SelectedItemProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.LiveValidation.Selected, mode: BindingMode.TwoWay));
+        comboBox.Bind(AlderPicker.TextProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.LiveValidation.Input, mode: BindingMode.TwoWay));
+        comboBox.Bind(AlderPicker.IsInvalidProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.LiveValidation.IsInvalid));
+        comboBox.Bind(AlderPicker.ErrorTextProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.LiveValidation.ErrorText));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleCustomValidation" Title="{DynamicResource GalleryText.ComboCustomValidation}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16" Width="256">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.PickerFavoriteAnimal}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                            ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                            IsRequired="True" FullWidth="True"
+                            SelectedItem="{CompiledBinding CustomValidation.Selected, Mode=TwoWay}" Text="{CompiledBinding CustomValidation.Input, Mode=TwoWay}"
+                            IsInvalid="{CompiledBinding CustomValidation.IsInvalid}" ErrorText="{CompiledBinding CustomValidation.ErrorText}" />
+            <alder:AlderButton Content="{DynamicResource GalleryText.Submit}" Command="{CompiledBinding CustomValidation.Submit}" HorizontalAlignment="Left" />
+            <alder:AlderTextBlock Text="{CompiledBinding CustomValidation.Status}" Foreground="{DynamicResource AlderMuted}" FontSize="14" LineHeight="20" TextWrapping="Wrap"
+                       IsVisible="{CompiledBinding CustomValidation.Status, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { IsRequired = true };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Animals));
+        comboBox.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Caption));
+        comboBox.Bind(SelectingItemsControl.SelectedItemProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.CustomValidation.Selected, mode: BindingMode.TwoWay));
+        comboBox.Bind(AlderPicker.TextProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.CustomValidation.Input, mode: BindingMode.TwoWay));
+        comboBox.Bind(AlderPicker.IsInvalidProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.CustomValidation.IsInvalid));
+        comboBox.Bind(AlderPicker.ErrorTextProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.CustomValidation.ErrorText));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleReadOnly" Title="{DynamicResource GalleryText.ReadOnly}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.PickerFavoriteAnimal}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                            ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                            IsReadOnly="True" SelectedIndex="1" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { IsReadOnly = true, SelectedIndex = 1 };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Animals));
+        comboBox.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Caption));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleMultiple" Title="{DynamicResource GalleryText.ComboMultipleSelection}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.ComboFavoriteAnimals}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                            ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                            SelectionMode="Multiple" SelectionPlaceholderText="{DynamicResource GalleryText.ComboNoAnimals}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { SelectionMode = SelectionMode.Multiple, SelectionPlaceholderText = "No animals selected" };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Animals));
+        comboBox.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Caption));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSurface" Title="{DynamicResource GalleryText.AutocompleteInSurface}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="184" TextElement.FontFamily="fonts:Inter#Inter">
+          <alder:AlderSurface MaxWidth="320" Padding="24" CornerRadius="24" VerticalAlignment="Center">
+            <StackPanel Spacing="16">
+              <alder:AlderComboBox Label="{DynamicResource GalleryText.PickerFavoriteAnimal}" PlaceholderText="{DynamicResource GalleryText.ComboSearchAnimals}"
+                              ItemsSource="{CompiledBinding Animals}" TextSelector="{CompiledBinding Caption}"
+                              IsRequired="True" FullWidth="True"
+                              SelectedItem="{CompiledBinding Surface.Selected, Mode=TwoWay}" Text="{CompiledBinding Surface.Input, Mode=TwoWay}"
+                              IsInvalid="{CompiledBinding Surface.IsInvalid}" ErrorText="{CompiledBinding Surface.ErrorText}"
+                              Variant="Secondary" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Submit}" Command="{CompiledBinding Surface.Submit}" HorizontalAlignment="Left" />
+              <alder:AlderTextBlock Text="{CompiledBinding Surface.Status}" Foreground="{DynamicResource AlderMuted}" FontSize="14" LineHeight="20" TextWrapping="Wrap"
+                         IsVisible="{CompiledBinding Surface.Status, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+            </StackPanel>
+          </alder:AlderSurface>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { Variant = InputVariant.Secondary, FullWidth = true, IsRequired = true };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Animals));
+        comboBox.Bind(AlderPicker.TextSelectorProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Caption));
+        comboBox.Bind(SelectingItemsControl.SelectedItemProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Surface.Selected, mode: BindingMode.TwoWay));
+        comboBox.Bind(AlderPicker.TextProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Surface.Input, mode: BindingMode.TwoWay));
+        comboBox.Bind(AlderPicker.IsInvalidProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Surface.IsInvalid));
+        comboBox.Bind(AlderPicker.ErrorTextProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Surface.ErrorText));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleCustom" Title="{DynamicResource GalleryText.CustomStyles}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="180" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderComboBox Label="{DynamicResource GalleryText.ComboFramework}" PlaceholderText="{DynamicResource GalleryText.PickerSearch}"
+                            ItemsSource="{CompiledBinding Frameworks}"
+                            CornerRadius="12" BorderBrush="{DynamicResource AlderBorder}" BorderThickness="1"
+                            DropDownCornerRadius="12" DropDownPadding="4" DropDownBorderBrush="{DynamicResource AlderBorder}" DropDownBorderThickness="1">
+              <alder:AlderComboBox.ItemContainerTheme>
+                <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource AlderSelectRowTheme}">
+                  <Setter Property="CornerRadius" Value="8" />
+                </ControlTheme>
+              </alder:AlderComboBox.ItemContainerTheme>
+            </alder:AlderComboBox>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var comboBox = new AlderComboBox { DropDownCornerRadius = new CornerRadius(12), DropDownPadding = new Thickness(4) };
+        comboBox.Bind(ItemsControl.ItemsSourceProperty, CompiledBinding.Create((ComboBoxViewModel model) => model.Frameworks));
+        comboBox.BorderThickness = comboBox.DropDownBorderThickness = new Thickness(1);
+        comboBox[!TemplatedControl.BorderBrushProperty] = new DynamicResourceExtension("AlderBorder");
+        comboBox[!AlderComboBox.DropDownBorderBrushProperty] = new DynamicResourceExtension("AlderBorder");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

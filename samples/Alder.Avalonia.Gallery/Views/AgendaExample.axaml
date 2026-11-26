@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.AgendaExample" x:DataType="vm:AgendaViewModel">
+  <StackPanel>
+    <gallery:ExampleCard x:Name="SampleAgenda" Title="{DynamicResource GalleryText.AgendaUsage}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderButton Size="Small" Variant="Secondary" HorizontalAlignment="Right" Margin="0,0,12,0"
+                             Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding Reset}" />
+          <alder:AlderAgenda Height="580" Culture="{DynamicResource GalleryCulture}"
+                             Events="{CompiledBinding Events}" EditCommand="{CompiledBinding EditCommand}"
+                             DisplayDate="{CompiledBinding Date, Mode=TwoWay}" View="{CompiledBinding View, Mode=TwoWay}"
+                             SelectedEventId="{CompiledBinding SelectedEventId, Mode=TwoWay}"
+                             IsAllDayExpanded="{CompiledBinding IsAllDayExpanded, Mode=TwoWay}"
+                             StartHour="8" EndHour="20" AllowsSwipe="True"
+                             AutomationProperties.Name="{DynamicResource GalleryText.Agenda}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

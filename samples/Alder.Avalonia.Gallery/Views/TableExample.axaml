@@ -1,0 +1,448 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.TableExample" x:DataType="vm:TableViewModel">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+          <SolidColorBrush x:Key="CustomTableHeader" Color="#F4F4F4" />
+          <BoxShadows x:Key="CustomTableShadow">0 0 0 1 #0D000000, 0 1 2 0 #17000000</BoxShadows>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+          <SolidColorBrush x:Key="CustomTableHeader" Color="#252526" />
+          <BoxShadows x:Key="CustomTableShadow">0 0 0 1 #1AFFFFFF, 0 1 2 0 #17000000</BoxShadows>
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+      <DataTemplate x:Key="CustomHeaderTemplate" x:DataType="x:String">
+        <alder:AlderTextBlock Text="{CompiledBinding}" FontWeight="SemiBold" LetterSpacing="0.3" />
+      </DataTemplate>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <UserControl.Styles>
+    <Style Selector="alder|AlderTable.custom-style /template/ alder|AlderTableView /template/ :is(ScrollViewer) /template/ Border#HeaderSurface">
+      <Setter Property="Background" Value="{DynamicResource CustomTableHeader}" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="344" TextElement.FontFamily="fonts:Inter#Inter">
+          <alder:AlderTable x:Name="BasicTable" ItemsSource="{CompiledBinding BasicRows}" RowKeySelector="{CompiledBinding RowKey}"
+                       VerticalAlignment="Center" AutomationProperties.Name="{DynamicResource GalleryText.Table}">
+            <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.TableName}" Width="2*" MinWidth="134"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Name}" />
+            <alder:AlderTableColumn Key="role" Header="{DynamicResource GalleryText.TableRole}" Width="*" MinWidth="82"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Role}" />
+            <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.TableStatus}" Width="1.45*" MinWidth="105"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Status}" />
+            <alder:AlderTableColumn Key="email" Header="{DynamicResource GalleryText.TableEmail}" Width="2.55*" MinWidth="164"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Email}" />
+          </alder:AlderTable>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var table = new AlderTable();
+        table.Bind(AlderTable.ItemsSourceProperty, CompiledBinding.Create((TableViewModel model) => model.BasicRows));
+        table.Columns.Add(new AlderTableColumn
+        {
+            Key = "name",
+            Header = "Name",
+            Width = new GridLength(2, GridUnitType.Star),
+            Binding = CompiledBinding.Create((TableExampleRow row) => row.Name)
+        });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSecondary" Title="{DynamicResource GalleryText.TableSecondary}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="344" TextElement.FontFamily="fonts:Inter#Inter">
+          <alder:AlderTable ItemsSource="{CompiledBinding BasicRows}" RowKeySelector="{CompiledBinding RowKey}"
+                       VerticalAlignment="Center" AutomationProperties.Name="{DynamicResource GalleryText.Table}" Variant="Secondary">
+            <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.TableName}" Width="2*" MinWidth="134"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Name}" />
+            <alder:AlderTableColumn Key="role" Header="{DynamicResource GalleryText.TableRole}" Width="*" MinWidth="82"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Role}" />
+            <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.TableStatus}" Width="1.45*" MinWidth="105"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Status}" />
+            <alder:AlderTableColumn Key="email" Header="{DynamicResource GalleryText.TableEmail}" Width="2.55*" MinWidth="164"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Email}" />
+          </alder:AlderTable>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var table = new AlderTable { Variant = TableVariant.Secondary };
+        table.Bind(AlderTable.ItemsSourceProperty, CompiledBinding.Create((TableViewModel model) => model.BasicRows));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleAsync" Title="{DynamicResource GalleryText.TableAsync}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="404" TextElement.FontFamily="fonts:Inter#Inter">
+          <alder:AlderTable x:Name="AsyncTable" ItemsSource="{CompiledBinding AsyncRows}" RowKeySelector="{CompiledBinding RowKey}"
+                       VerticalAlignment="Center" AutomationProperties.Name="{DynamicResource GalleryText.Table}" Height="284" HasMoreItems="{CompiledBinding HasMoreRows}"
+                       IsLoading="{CompiledBinding IsLoading}" LoadMoreCommand="{CompiledBinding LoadMore}">
+            <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.TableName}" Width="2*" MinWidth="134"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Name}" />
+            <alder:AlderTableColumn Key="role" Header="{DynamicResource GalleryText.TableRole}" Width="*" MinWidth="82"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Role}" />
+            <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.TableStatus}" Width="1.45*" MinWidth="105"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Status}" />
+            <alder:AlderTableColumn Key="email" Header="{DynamicResource GalleryText.TableEmail}" Width="2.55*" MinWidth="164"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Email}" />
+          </alder:AlderTable>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var table = new AlderTable { Height = 284 };
+        table.Bind(AlderTable.ItemsSourceProperty, CompiledBinding.Create((TableViewModel model) => model.AsyncRows));
+        table.Bind(AlderTable.HasMoreItemsProperty, CompiledBinding.Create((TableViewModel model) => model.HasMoreRows));
+        table.Bind(AlderTable.IsLoadingProperty, CompiledBinding.Create((TableViewModel model) => model.IsLoading));
+        table.Bind(AlderTable.LoadMoreCommandProperty, CompiledBinding.Create((TableViewModel model) => model.LoadMore));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSorting" Title="{DynamicResource GalleryText.TableSorting}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="404" TextElement.FontFamily="fonts:Inter#Inter">
+          <alder:AlderTable x:Name="SortingTable" ItemsSource="{CompiledBinding WideRows}" RowKeySelector="{CompiledBinding RowKey}"
+                       VerticalAlignment="Center" AutomationProperties.Name="{DynamicResource GalleryText.Table}">
+            <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.TableName}" Width="2*" MinWidth="134" CanSort="True" SortComparison="{CompiledBinding CompareName}">
+              <alder:AlderTableColumn.CellTemplate>
+                <DataTemplate x:DataType="vm:TableExampleRow"><alder:AlderTextBlock Text="{CompiledBinding Name}" TextTrimming="CharacterEllipsis" LineHeight="20" /></DataTemplate>
+              </alder:AlderTableColumn.CellTemplate>
+            </alder:AlderTableColumn>
+            <alder:AlderTableColumn Key="role" Header="{DynamicResource GalleryText.TableRole}" Width="*" MinWidth="82" CanSort="True" SortComparison="{CompiledBinding CompareRole}">
+              <alder:AlderTableColumn.CellTemplate>
+                <DataTemplate x:DataType="vm:TableExampleRow"><alder:AlderTextBlock Text="{CompiledBinding Role}" TextTrimming="CharacterEllipsis" LineHeight="20" /></DataTemplate>
+              </alder:AlderTableColumn.CellTemplate>
+            </alder:AlderTableColumn>
+            <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.TableStatus}" Width="1.45*" MinWidth="105" CanSort="True" SortComparison="{CompiledBinding CompareStatus}">
+              <alder:AlderTableColumn.CellTemplate>
+                <DataTemplate x:DataType="vm:TableExampleRow"><alder:AlderTextBlock Text="{CompiledBinding Status}" TextTrimming="CharacterEllipsis" LineHeight="20" /></DataTemplate>
+              </alder:AlderTableColumn.CellTemplate>
+            </alder:AlderTableColumn>
+            <alder:AlderTableColumn Key="email" Header="{DynamicResource GalleryText.TableEmail}" Width="2.55*" MinWidth="164" CanSort="True" SortComparison="{CompiledBinding CompareEmail}">
+              <alder:AlderTableColumn.CellTemplate>
+                <DataTemplate x:DataType="vm:TableExampleRow"><alder:AlderTextBlock Text="{CompiledBinding Email}" TextTrimming="CharacterEllipsis" LineHeight="20" /></DataTemplate>
+              </alder:AlderTableColumn.CellTemplate>
+            </alder:AlderTableColumn>
+          </alder:AlderTable>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        table.Columns.Add(new AlderTableColumn
+        {
+            Key = "name",
+            Header = "Name",
+            CanSort = true,
+            SortComparison = viewModel.CompareName,
+            Binding = CompiledBinding.Create((TableExampleRow row) => row.Name)
+        });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSelection" Title="{DynamicResource GalleryText.Selection}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="404" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel Spacing="12" MaxWidth="608" VerticalAlignment="Center">
+            <alder:AlderTable x:Name="SelectionTable" MaxWidth="608" ItemsSource="{CompiledBinding BasicRows}" RowKeySelector="{CompiledBinding RowKey}"
+                         VerticalAlignment="Center" AutomationProperties.Name="{DynamicResource GalleryText.Table}" SelectionMode="Multiple" ShowSelectionCheckboxes="True"
+                         SelectedKeys="{CompiledBinding SelectedKeys, Mode=TwoWay}">
+              <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.TableName}" Width="2*" MinWidth="134"
+                                 x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Name}" />
+              <alder:AlderTableColumn Key="role" Header="{DynamicResource GalleryText.TableRole}" Width="*" MinWidth="82"
+                                 x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Role}" />
+              <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.TableStatus}" Width="1.45*" MinWidth="105"
+                                 x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Status}" />
+              <alder:AlderTableColumn Key="email" Header="{DynamicResource GalleryText.TableEmail}" Width="2.55*" MinWidth="164"
+                                 x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Email}" />
+            </alder:AlderTable>
+            <alder:AlderTextBlock Text="{CompiledBinding SelectionSummary}" FontSize="14" LineHeight="20"
+                       Foreground="{DynamicResource AlderMuted}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var table = new AlderTable { SelectionMode = TableSelectionMode.Multiple, ShowSelectionCheckboxes = true };
+        table.Bind(AlderTable.ItemsSourceProperty, CompiledBinding.Create((TableViewModel model) => model.BasicRows));
+        table.Bind(AlderTable.RowKeySelectorProperty, CompiledBinding.Create((TableViewModel model) => model.RowKey));
+        table.Bind(AlderTable.SelectedKeysProperty, CompiledBinding.Create((TableViewModel model) => model.SelectedKeys));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleTree" Title="{DynamicResource GalleryText.TableExpandable}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="444" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel Spacing="8" VerticalAlignment="Center">
+            <alder:AlderButton Size="Small" Variant="Secondary" HorizontalAlignment="Right" Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetTree}" />
+            <alder:AlderTable x:Name="TreeTable" ItemsSource="{CompiledBinding TreeRows}" RowKeySelector="{CompiledBinding RowKey}"
+                         VerticalAlignment="Center" AutomationProperties.Name="{DynamicResource GalleryText.Table}" ChildrenSelector="{CompiledBinding RowChildren}"
+                         ExpandedKeys="{CompiledBinding ExpandedKeys, Mode=TwoWay}" TreeColumnKey="name">
+              <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.TableName}" Width="1.55*" MinWidth="160"
+                                 x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Name}" />
+              <alder:AlderTableColumn Key="type" Header="{DynamicResource GalleryText.TableType}" Width="*" MinWidth="90"
+                                 x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Role}" />
+              <alder:AlderTableColumn Key="date" Header="{DynamicResource GalleryText.TableDateModified}" Width="1.2*" MinWidth="95"
+                                 x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Status}" />
+            </alder:AlderTable>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var table = new AlderTable
+        {
+            ItemsSource = viewModel.TreeRows,
+            RowKeySelector = viewModel.RowKey,
+            ChildrenSelector = viewModel.RowChildren,
+            TreeColumnKey = "name"
+        };
+        table.Columns.Add(new AlderTableColumn
+        {
+            Key = "name",
+            Header = "Name",
+            Binding = CompiledBinding.Create((TableExampleRow row) => row.Name)
+        });
+
+        table.Bind(AlderTable.ExpandedKeysProperty, CompiledBinding.Create((TableViewModel model) => model.ExpandedKeys, mode: BindingMode.TwoWay));
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary, HorizontalAlignment = HorizontalAlignment.Right };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((TableViewModel model) => model.ResetTree));
+        var preview = new StackPanel { Spacing = 8, Children = { reset, table } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SamplePagination" Title="{DynamicResource GalleryText.TablePagination}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="424" TextElement.FontFamily="fonts:Inter#Inter">
+          <alder:AlderTable x:Name="PagedTable" ItemsSource="{CompiledBinding PagedRows}" RowKeySelector="{CompiledBinding RowKey}"
+                       VerticalAlignment="Center" AutomationProperties.Name="{DynamicResource GalleryText.Table}">
+            <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.TableName}" Width="2*" MinWidth="134"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Name}" />
+            <alder:AlderTableColumn Key="role" Header="{DynamicResource GalleryText.TableRole}" Width="*" MinWidth="82"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Role}" />
+            <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.TableStatus}" Width="1.45*" MinWidth="105"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Status}" />
+            <alder:AlderTableColumn Key="email" Header="{DynamicResource GalleryText.TableEmail}" Width="2.55*" MinWidth="164"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Email}" />
+            <alder:AlderTable.Footer>
+              <alder:AlderPagination CurrentPage="{CompiledBinding Page, Mode=TwoWay}" PageCount="3" HorizontalAlignment="Center" />
+            </alder:AlderTable.Footer>
+          </alder:AlderTable>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var table = new AlderTable();
+        var pager = new AlderPagination { PageCount = 3, HorizontalAlignment = HorizontalAlignment.Center };
+        pager.Bind(AlderPagination.CurrentPageProperty, CompiledBinding.Create((TableViewModel model) => model.Page));
+        table.Bind(AlderTable.ItemsSourceProperty, CompiledBinding.Create((TableViewModel model) => model.PagedRows));
+        table.Footer = pager;
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleResizing" Title="{DynamicResource GalleryText.TableResizing}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="444" TextElement.FontFamily="fonts:Inter#Inter">
+          <alder:AlderTable x:Name="ResizableTable" ItemsSource="{CompiledBinding WideRows}" RowKeySelector="{CompiledBinding RowKey}"
+                       VerticalAlignment="Center" AutomationProperties.Name="{DynamicResource GalleryText.Table}" CanResizeColumns="True">
+            <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.TableName}" Width="1.5*" MinWidth="110"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Name}" />
+            <alder:AlderTableColumn Key="role" Header="{DynamicResource GalleryText.TableRole}" Width="1*" MinWidth="72"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Role}" />
+            <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.TableStatus}" Width="1.15*" MinWidth="90"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Status}" />
+            <alder:AlderTableColumn Key="email" Header="{DynamicResource GalleryText.TableEmail}" Width="2*" MinWidth="130"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Email}" />
+          </alder:AlderTable>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var table = new AlderTable { CanResizeColumns = true };
+        table.Columns.Add(new AlderTableColumn
+        {
+            Key = "name",
+            Header = "Name",
+            MinWidth = 110,
+            MaxWidth = 480,
+            CanUserResize = true,
+            Binding = CompiledBinding.Create((TableExampleRow row) => row.Name)
+        });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleEmpty" Title="{DynamicResource GalleryText.TableEmptyState}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="324" TextElement.FontFamily="fonts:Inter#Inter">
+          <alder:AlderTable x:Name="EmptyTable" ItemsSource="{CompiledBinding EmptyRows}" RowKeySelector="{CompiledBinding RowKey}"
+                       VerticalAlignment="Center" AutomationProperties.Name="{DynamicResource GalleryText.Table}" Height="200" EmptyContent="{DynamicResource GalleryText.TableEmpty}">
+            <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.TableName}" Width="2*" MinWidth="134"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Name}" />
+            <alder:AlderTableColumn Key="role" Header="{DynamicResource GalleryText.TableRole}" Width="*" MinWidth="82"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Role}" />
+            <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.TableStatus}" Width="1.45*" MinWidth="105"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Status}" />
+            <alder:AlderTableColumn Key="email" Header="{DynamicResource GalleryText.TableEmail}" Width="2.55*" MinWidth="164"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Email}" />
+          </alder:AlderTable>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var table = new AlderTable { Height = 200, ItemsSource = Array.Empty<TableExampleRow>() };
+        table[!AlderTable.EmptyContentProperty] = new DynamicResourceExtension("GalleryText.TableEmpty");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleVirtualization" Title="{DynamicResource GalleryText.TableVirtualization}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="404" TextElement.FontFamily="fonts:Inter#Inter">
+          <alder:AlderTable x:Name="VirtualTable" ItemsSource="{CompiledBinding VirtualRows}" RowKeySelector="{CompiledBinding RowKey}"
+                       VerticalAlignment="Center" AutomationProperties.Name="{DynamicResource GalleryText.Table}" Height="304">
+            <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.TableName}" Width="2*" MinWidth="134"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Name}" />
+            <alder:AlderTableColumn Key="role" Header="{DynamicResource GalleryText.TableRole}" Width="*" MinWidth="82"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Role}" />
+            <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.TableStatus}" Width="1.45*" MinWidth="105"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Status}" />
+            <alder:AlderTableColumn Key="email" Header="{DynamicResource GalleryText.TableEmail}" Width="2.55*" MinWidth="164"
+                               x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Email}" />
+          </alder:AlderTable>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var table = new AlderTable { Height = 304 };
+        table.Bind(AlderTable.ItemsSourceProperty, CompiledBinding.Create((TableViewModel model) => model.VirtualRows));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.TableControlled}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="444" TextElement.FontFamily="fonts:Inter#Inter">
+          <StackPanel Spacing="12" VerticalAlignment="Center">
+            <WrapPanel ItemSpacing="8" LineSpacing="8">
+              <alder:AlderSearchField MaxWidth="320" HorizontalAlignment="Left" PlaceholderText="{DynamicResource GalleryText.TableSearch}"
+                                 Text="{CompiledBinding Filter, Mode=TwoWay}" />
+              <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetControlled}" />
+            </WrapPanel>
+            <alder:AlderTable x:Name="ControlledTable" ItemsSource="{CompiledBinding ControlledRows}" RowKeySelector="{CompiledBinding RowKey}"
+                         VerticalAlignment="Center" AutomationProperties.Name="{DynamicResource GalleryText.Table}" Height="271" SortDescriptor="{CompiledBinding ControlledSort, Mode=TwoWay}">
+              <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.TableName}" Width="2*" MinWidth="134" CanSort="True"
+                                 x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Name}" />
+              <alder:AlderTableColumn Key="role" Header="{DynamicResource GalleryText.TableRole}" Width="*" MinWidth="82" CanSort="True"
+                                 x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Role}" />
+              <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.TableStatus}" Width="1.45*" MinWidth="105"
+                                 x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Status}" />
+              <alder:AlderTableColumn Key="email" Header="{DynamicResource GalleryText.TableEmail}" Width="2.55*" MinWidth="164"
+                                 x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Email}" />
+            </alder:AlderTable>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var table = new AlderTable { Height = 271 };
+        table.Bind(AlderTable.ItemsSourceProperty, CompiledBinding.Create((TableViewModel model) => model.ControlledRows));
+        table.Bind(AlderTable.SortDescriptorProperty, CompiledBinding.Create((TableViewModel model) => model.ControlledSort, mode: BindingMode.TwoWay));
+
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((TableViewModel model) => model.ResetControlled));
+        var search = new AlderSearchField { MaxWidth = 320, PlaceholderText = "Search" };
+        search.Bind(AlderSearchField.TextProperty, CompiledBinding.Create((TableViewModel model) => model.Filter, mode: BindingMode.TwoWay));
+        var filters = new WrapPanel { ItemSpacing = 8, LineSpacing = 8, Children = { search, reset } };
+        var preview = new StackPanel { Spacing = 12, Children = { filters, table } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleCells" Title="{DynamicResource GalleryText.TableCustomCells}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="444" TextElement.FontFamily="fonts:Inter#Inter">
+          <alder:AlderTable x:Name="CellsTable" ItemsSource="{CompiledBinding WorkerRows}" RowKeySelector="{CompiledBinding RowKey}"
+                       VerticalAlignment="Center" AutomationProperties.Name="{DynamicResource GalleryText.Table}"
+                       SelectionMode="Multiple" ShowSelectionCheckboxes="True"
+                       SortDescriptor="{CompiledBinding InitialWorkerSort, Mode=OneTime}">
+            <alder:AlderTableColumn Key="id" Header="{DynamicResource GalleryText.TableWorkerId}" Width="142" CanSort="True" SortComparison="{CompiledBinding CompareId}">
+              <alder:AlderTableColumn.CellTemplate>
+                <DataTemplate x:DataType="vm:TableExampleRow">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <alder:AlderTextBlock Text="{CompiledBinding WorkerId}" FontWeight="Medium" VerticalAlignment="Center" />
+                    <alder:AlderButton IsIconOnly="True" Size="Small" Variant="Ghost" Icon="{DynamicResource AlderIconCopy}"
+                                  AutomationProperties.Name="{DynamicResource GalleryText.TableCopyWorkerId}"
+                                  Command="{CompiledBinding $parent[alder:AlderTable].((vm:TableViewModel)DataContext).CopyWorkerIdCommand}"
+                                  CommandParameter="{CompiledBinding $self}" />
+                  </StackPanel>
+                </DataTemplate>
+              </alder:AlderTableColumn.CellTemplate>
+            </alder:AlderTableColumn>
+            <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.TableMember}" Width="*" MinWidth="190" CanSort="True" SortComparison="{CompiledBinding CompareName}">
+              <alder:AlderTableColumn.CellTemplate>
+                <DataTemplate x:DataType="vm:TableExampleRow">
+                  <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <alder:AlderAvatar Size="Small" Source="{CompiledBinding Avatar}" Fallback="{CompiledBinding Initials}" Alt="{CompiledBinding Name}" />
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                      <alder:AlderTextBlock FontSize="12" LineHeight="16" Text="{CompiledBinding Name}" TextTrimming="CharacterEllipsis" />
+                      <alder:AlderTextBlock FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}"
+                                 Text="{CompiledBinding Email}" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                  </Grid>
+                </DataTemplate>
+              </alder:AlderTableColumn.CellTemplate>
+            </alder:AlderTableColumn>
+            <alder:AlderTableColumn Key="role" Header="{DynamicResource GalleryText.TableRole}" Width="208" CanSort="True" SortComparison="{CompiledBinding CompareRole}">
+              <alder:AlderTableColumn.CellTemplate>
+                <DataTemplate x:DataType="vm:TableExampleRow">
+                  <alder:AlderTextBlock Text="{CompiledBinding Role}" TextTrimming="CharacterEllipsis" />
+                </DataTemplate>
+              </alder:AlderTableColumn.CellTemplate>
+            </alder:AlderTableColumn>
+            <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.TableStatus}" Width="100" CanSort="True" SortComparison="{CompiledBinding CompareStatus}">
+              <alder:AlderTableColumn.CellTemplate>
+                <DataTemplate x:DataType="vm:TableExampleRow">
+                  <alder:AlderChip Size="Small" Variant="Soft" Content="{CompiledBinding Status}" Color="{CompiledBinding StatusColor}" />
+                </DataTemplate>
+              </alder:AlderTableColumn.CellTemplate>
+            </alder:AlderTableColumn>
+            <alder:AlderTableColumn Key="actions" Header="{DynamicResource GalleryText.TableActions}" Width="136">
+              <alder:AlderTableColumn.CellTemplate>
+                <DataTemplate x:DataType="vm:TableExampleRow">
+                  <StackPanel Orientation="Horizontal" Spacing="4">
+                    <alder:AlderButton IsIconOnly="True" Size="Small" Variant="Tertiary" Icon="{DynamicResource AlderIconEye}"
+                                  AutomationProperties.Name="{DynamicResource GalleryText.TableViewWorker}" />
+                    <alder:AlderButton IsIconOnly="True" Size="Small" Variant="Tertiary" Icon="{DynamicResource AlderIconPencil}"
+                                  AutomationProperties.Name="{DynamicResource GalleryText.TableEditWorker}" />
+                    <alder:AlderButton IsIconOnly="True" Size="Small" Variant="DangerSoft" Icon="{DynamicResource AlderIconTrash}"
+                                  AutomationProperties.Name="{DynamicResource GalleryText.Delete}" />
+                  </StackPanel>
+                </DataTemplate>
+              </alder:AlderTableColumn.CellTemplate>
+            </alder:AlderTableColumn>
+          </alder:AlderTable>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var status = new AlderTableColumn { Key = "status", Header = "Status" };
+        status.CellTemplate = new FuncDataTemplate<TableExampleRow>((row, _) => new AlderChip
+        {
+            Content = row.Status,
+            Color = row.StatusColor,
+            Variant = ChipVariant.Soft,
+            Size = AlderSize.Small
+        });
+        table.Columns.Add(status);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleCustom" Title="{DynamicResource GalleryText.CustomStyles}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,12" MinHeight="201" TextElement.FontFamily="fonts:Inter#Inter">
+          <Border MaxWidth="672" CornerRadius="12" BoxShadow="{DynamicResource CustomTableShadow}" VerticalAlignment="Center">
+            <alder:AlderTable x:Name="CustomTable" Classes="custom-style" ItemsSource="{CompiledBinding CustomRows}" RowKeySelector="{CompiledBinding RowKey}"
+                         AutomationProperties.Name="{DynamicResource GalleryText.Table}" CornerRadius="12"
+                         BorderThickness="1" BorderBrush="{DynamicResource AlderBorder}">
+              <alder:AlderTableColumn Key="name" Width="2*" MinWidth="260" Header="{DynamicResource GalleryText.TableCustomName}"
+                                 HeaderTemplate="{StaticResource CustomHeaderTemplate}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:TableExampleRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding Name}" FontWeight="Medium" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderTableColumn Key="role" Width="1.06*" MinWidth="140" Header="{DynamicResource GalleryText.TableCustomRole}"
+                                 HeaderTemplate="{StaticResource CustomHeaderTemplate}" x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Role}" />
+              <alder:AlderTableColumn Key="status" Width="1.45*" MinWidth="190" Header="{DynamicResource GalleryText.TableCustomStatus}"
+                                 HeaderTemplate="{StaticResource CustomHeaderTemplate}" x:DataType="vm:TableExampleRow" Binding="{CompiledBinding Status}" />
+            </alder:AlderTable>
+          </Border>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var table = new AlderTable { MaxWidth = 672, CornerRadius = new CornerRadius(12), BorderThickness = new Thickness(1) };
+        table[!TemplatedControl.BorderBrushProperty] = new DynamicResourceExtension("AlderBorder");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

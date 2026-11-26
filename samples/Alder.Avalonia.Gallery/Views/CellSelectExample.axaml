@@ -1,0 +1,104 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.CellSelectExample" x:DataType="vm:CellSelectViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="ChoiceLabel" x:DataType="vm:CellSelectChoice">
+      <alder:AlderTextBlock Text="{CompiledBinding Title}" TextTrimming="CharacterEllipsis" />
+    </DataTemplate>
+    <DataTemplate x:Key="ChoiceValue" x:DataType="vm:CellSelectChoice">
+      <alder:AlderTextBlock Text="{CompiledBinding Title}" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource AlderMuted}" />
+    </DataTemplate>
+    <DataTemplate x:Key="IconChoiceLabel" x:DataType="vm:CellSelectChoice">
+      <StackPanel Orientation="Horizontal" Spacing="12">
+        <alder:AlderPathIcon Data="{CompiledBinding Icon}" Width="14" Height="14" />
+        <alder:AlderTextBlock Text="{CompiledBinding Title}" />
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="FontChoiceLabel" x:DataType="vm:CellSelectChoice">
+      <alder:AlderTextBlock Text="{CompiledBinding Title}" FontFamily="{CompiledBinding Font}" TextTrimming="CharacterEllipsis" />
+    </DataTemplate>
+    <DataTemplate x:Key="FontChoiceValue" x:DataType="vm:CellSelectChoice">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <alder:AlderTextBlock Text="{CompiledBinding Title}" Foreground="{DynamicResource AlderMuted}" />
+        <alder:AlderTextBlock Text="{DynamicResource GalleryText.CellFontSample}" FontFamily="{CompiledBinding Font}" />
+      </StackPanel>
+    </DataTemplate>
+  </UserControl.Resources>
+  <StackPanel x:Name="Examples" Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="252">
+          <alder:AlderCellSelect Label="{DynamicResource GalleryText.CellTheme}" ItemsSource="{CompiledBinding Themes}" SelectedIndex="0"
+              SelectionTemplate="{StaticResource ChoiceValue}" ItemTemplate="{StaticResource ChoiceLabel}" />
+          <alder:AlderCellSelect Label="{DynamicResource GalleryText.CellLanguage}" ItemsSource="{CompiledBinding Languages}" SelectedIndex="0"
+              SelectionTemplate="{StaticResource ChoiceValue}" ItemTemplate="{StaticResource ChoiceLabel}" />
+          <alder:AlderCellSelect Label="{DynamicResource GalleryText.CellFontSize}" ItemsSource="{CompiledBinding FontSizes}" SelectedIndex="1"
+              SelectionTemplate="{StaticResource ChoiceValue}" ItemTemplate="{StaticResource ChoiceLabel}" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="252">
+          <alder:AlderCellSelect Label="{DynamicResource GalleryText.CellTheme}" ItemsSource="{CompiledBinding Themes}" SelectedItem="{CompiledBinding SelectedTheme, Mode=TwoWay}"
+              SelectionTemplate="{StaticResource ChoiceValue}" ItemTemplate="{StaticResource ChoiceLabel}" />
+          <alder:AlderTextBlock Text="{CompiledBinding ThemeResult}" FontSize="12" LineHeight="20" Foreground="{DynamicResource AlderMuted}" AutomationProperties.LiveSetting="Polite" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleCustom" Title="{DynamicResource GalleryText.CellCustomValue}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="252">
+          <alder:AlderCellSelect Label="{DynamicResource GalleryText.CellIcons}" ItemsSource="{CompiledBinding IconSets}" SelectedItem="{CompiledBinding SelectedIcons, Mode=TwoWay}"
+              SelectionTemplate="{StaticResource ChoiceValue}" ItemTemplate="{StaticResource IconChoiceLabel}" Indicator="{CompiledBinding SelectedIcons?.Icon}" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="252">
+          <alder:AlderCellSelect Label="{DynamicResource GalleryText.CellTheme}" ItemsSource="{CompiledBinding Themes}" SelectedIndex="0"
+              SelectionTemplate="{StaticResource ChoiceValue}" ItemTemplate="{StaticResource ChoiceLabel}" IsEnabled="False" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleFonts" Title="{DynamicResource GalleryText.CellFontFamily}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="252">
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.CellFontFamily}" FontSize="14" LineHeight="20" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderCellSelect Label="{DynamicResource GalleryText.CellHeading}" ItemsSource="{CompiledBinding Fonts}" SelectedIndex="0"
+                SelectionTemplate="{StaticResource FontChoiceValue}" ItemTemplate="{StaticResource FontChoiceLabel}" Indicator="{x:Null}" />
+            <alder:AlderCellSelect Label="{DynamicResource GalleryText.CellBody}" Variant="Secondary" ItemsSource="{CompiledBinding Fonts}" SelectedIndex="0"
+                SelectionTemplate="{StaticResource FontChoiceValue}" ItemTemplate="{StaticResource FontChoiceLabel}" Indicator="{x:Null}" />
+          </StackPanel>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSettings" Title="{DynamicResource GalleryText.CellSingleSetting}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="8" MaxWidth="252">
+          <alder:AlderCellSelect Label="{DynamicResource GalleryText.CellTheme}" ItemsSource="{CompiledBinding Themes}" SelectedIndex="0"
+              SelectionTemplate="{StaticResource ChoiceValue}" ItemTemplate="{StaticResource ChoiceLabel}" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.Variants}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="252">
+          <StackPanel>
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.CellVariantPrimary}" FontSize="14" LineHeight="20" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderCellSelect Label="{DynamicResource GalleryText.CellTheme}" ItemsSource="{CompiledBinding Themes}" SelectedIndex="0"
+                SelectionTemplate="{StaticResource ChoiceValue}" ItemTemplate="{StaticResource ChoiceLabel}" />
+          </StackPanel>
+          <StackPanel>
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.CellVariantSecondary}" FontSize="14" LineHeight="20" Foreground="{DynamicResource AlderMuted}" />
+            <alder:AlderCellSelect Label="{DynamicResource GalleryText.CellTheme}" ItemsSource="{CompiledBinding Themes}" SelectedIndex="0"
+                SelectionTemplate="{StaticResource ChoiceValue}" ItemTemplate="{StaticResource ChoiceLabel}" Variant="Secondary" />
+          </StackPanel>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

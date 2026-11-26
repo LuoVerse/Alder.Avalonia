@@ -1,0 +1,381 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.RadialChartExample" x:DataType="vm:ChartsViewModel">
+  <StackPanel Spacing="24">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="380" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+          <StackPanel Spacing="12">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartRadialEnergyActivity}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+            <StackPanel Spacing="9">
+              <StackPanel Spacing="3">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartCalories}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                <alder:AlderTextBlock Text="1,670 / 2,000 kcal" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Spacing="3">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartSteps}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                <alder:AlderTextBlock Text="8,210 / 10,000" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Spacing="3">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartExercise}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                <alder:AlderTextBlock Text="36 / 120" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" />
+              </StackPanel>
+            </StackPanel>
+            <alder:AlderRadialChart Rings="{CompiledBinding EnergyRings}" Height="200"
+                                   AutomationProperties.Name="{DynamicResource GalleryText.ChartRadialEnergyActivity}" Padding="10"
+                                   RingThickness="10" RingSpacing="6">
+              <alder:AlderRadialChart.CenterContent>
+                <StackPanel Spacing="3">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartCalories}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" TextAlignment="Center" />
+                  <alder:AlderTextBlock Text="{CompiledBinding CaloriesValue}" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" TextAlignment="Center" />
+                </StackPanel>
+              </alder:AlderRadialChart.CenterContent>
+            </alder:AlderRadialChart>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var chart = new AlderRadialChart
+        {
+            Rings = viewModel.EnergyRings,
+            Height = 200,
+            Padding = new Thickness(10),
+            RingThickness = 10,
+            RingSpacing = 6,
+            CenterContent = new StackPanel
+            {
+                Children =
+                {
+                    new AlderTextBlock { Text = "Calories", FontSize = 12, TextAlignment = TextAlignment.Center },
+                    new AlderTextBlock { Text = viewModel.CaloriesValue, FontSize = 16, FontWeight = FontWeight.SemiBold, TextAlignment = TextAlignment.Center },
+                }
+            },
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleGauge" Title="{DynamicResource GalleryText.ChartGauge}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="280" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+          <StackPanel Spacing="12">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartActivity}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+            <alder:AlderRadialChart Rings="{CompiledBinding ActivityRing}" Height="200"
+                                   AutomationProperties.Name="{DynamicResource GalleryText.ChartActivity}" StartAngle="135"
+                                   SweepAngle="270" Padding="20" RingThickness="10">
+              <alder:AlderRadialChart.CenterContent>
+                <StackPanel Spacing="3">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartActiveUsers}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" TextAlignment="Center" />
+                  <alder:AlderTextBlock Text="1,410" FontSize="22" FontWeight="SemiBold" TextWrapping="Wrap" TextAlignment="Center" />
+                </StackPanel>
+              </alder:AlderRadialChart.CenterContent>
+            </alder:AlderRadialChart>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var chart = new AlderRadialChart
+        {
+            Rings = viewModel.ActivityRing,
+            Height = 200,
+            StartAngle = 135,
+            SweepAngle = 270,
+            Padding = new Thickness(20),
+            RingThickness = 10,
+            CenterContent = new StackPanel
+            {
+                Children =
+                {
+                    new AlderTextBlock { Text = "Active users", FontSize = 12, TextAlignment = TextAlignment.Center },
+                    new AlderTextBlock { Text = "1,410", FontSize = 24, FontWeight = FontWeight.SemiBold, TextAlignment = TextAlignment.Center },
+                }
+            },
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleProgressRing" Title="{DynamicResource GalleryText.ChartProgressRing}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="300" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+          <StackPanel Spacing="12">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartDailySteps}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+            <alder:AlderRadialChart Rings="{CompiledBinding StepsRing}" Height="200"
+                                   AutomationProperties.Name="{DynamicResource GalleryText.ChartDailySteps}" Padding="10"
+                                   RingThickness="12">
+              <alder:AlderRadialChart.CenterContent>
+                <StackPanel Spacing="3">
+                  <alder:AlderTextBlock Text="75%" FontSize="30" FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center" />
+                  <alder:AlderTextBlock Text="7,520 / 10,000" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" TextAlignment="Center" />
+                </StackPanel>
+              </alder:AlderRadialChart.CenterContent>
+            </alder:AlderRadialChart>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var chart = new AlderRadialChart
+        {
+            Rings = viewModel.StepsRing,
+            Height = 200,
+            Padding = new Thickness(10),
+            RingThickness = 12,
+            CenterContent = new StackPanel
+            {
+                Children =
+                {
+                    new AlderTextBlock { Text = "75%", FontSize = 30, FontWeight = FontWeight.SemiBold, TextAlignment = TextAlignment.Center },
+                    new AlderTextBlock { Text = "7,520 / 10,000", FontSize = 12, TextAlignment = TextAlignment.Center },
+                }
+            },
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleGaugeGrid" Title="{DynamicResource GalleryText.ChartGaugeGrid}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="640" Container.Name="Gauges" Container.Sizing="Width">
+          <Border.Styles>
+            <Style Selector="Border.chartCell1"><Setter Property="Grid.Column" Value="1" /></Style>
+            <Style Selector="Border.chartCell2"><Setter Property="Grid.Row" Value="1" /></Style>
+            <Style Selector="Border.chartCell3"><Setter Property="Grid.Row" Value="1" /><Setter Property="Grid.Column" Value="1" /></Style>
+            <ContainerQuery Name="Gauges" Query="max-width:390">
+              <Style Selector="Border.chartCell0">
+                <Setter Property="Grid.Row" Value="0" />
+                <Setter Property="Grid.Column" Value="0" />
+                <Setter Property="Grid.ColumnSpan" Value="2" />
+              </Style>
+              <Style Selector="Border.chartCell1">
+                <Setter Property="Grid.Row" Value="1" />
+                <Setter Property="Grid.Column" Value="0" />
+                <Setter Property="Grid.ColumnSpan" Value="2" />
+              </Style>
+              <Style Selector="Border.chartCell2">
+                <Setter Property="Grid.Row" Value="2" />
+                <Setter Property="Grid.Column" Value="0" />
+                <Setter Property="Grid.ColumnSpan" Value="2" />
+              </Style>
+              <Style Selector="Border.chartCell3">
+                <Setter Property="Grid.Row" Value="3" />
+                <Setter Property="Grid.Column" Value="0" />
+                <Setter Property="Grid.ColumnSpan" Value="2" />
+              </Style>
+            </ContainerQuery>
+          </Border.Styles>
+          <Grid ColumnDefinitions="*,*" ColumnSpacing="12" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12">
+            <Border Classes="chartCell0">
+              <Border MaxWidth="315" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                      BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+                <StackPanel Spacing="12">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartConversion}" FontSize="13" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                  <alder:AlderRadialChart Rings="{CompiledBinding ConversionRing}" Height="120"
+                                         AutomationProperties.Name="{DynamicResource GalleryText.ChartConversion}" StartAngle="135"
+                                         SweepAngle="270" Padding="12" RingThickness="9">
+                    <alder:AlderRadialChart.CenterContent>
+                      <StackPanel Spacing="3">
+                        <alder:AlderTextBlock Text="74%" FontSize="24" FontWeight="SemiBold" TextWrapping="Wrap" TextAlignment="Center" />
+                      </StackPanel>
+                    </alder:AlderRadialChart.CenterContent>
+                  </alder:AlderRadialChart>
+                </StackPanel>
+              </Border>
+            </Border>
+            <Border Classes="chartCell1">
+              <Border MaxWidth="315" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                      BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+                <StackPanel Spacing="12">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartEngagement}" FontSize="13" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                  <alder:AlderRadialChart Rings="{CompiledBinding EngagementRing}" Height="120"
+                                         AutomationProperties.Name="{DynamicResource GalleryText.ChartEngagement}" StartAngle="135"
+                                         SweepAngle="270" Padding="12" RingThickness="9">
+                    <alder:AlderRadialChart.CenterContent>
+                      <StackPanel Spacing="3">
+                        <alder:AlderTextBlock Text="79%" FontSize="24" FontWeight="SemiBold" TextWrapping="Wrap" TextAlignment="Center" />
+                      </StackPanel>
+                    </alder:AlderRadialChart.CenterContent>
+                  </alder:AlderRadialChart>
+                </StackPanel>
+              </Border>
+            </Border>
+            <Border Classes="chartCell2">
+              <Border MaxWidth="315" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                      BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+                <StackPanel Spacing="12">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartBounceRate}" FontSize="13" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                  <alder:AlderRadialChart Rings="{CompiledBinding BounceRing}" Height="120"
+                                         AutomationProperties.Name="{DynamicResource GalleryText.ChartBounceRate}" StartAngle="135"
+                                         SweepAngle="270" Padding="12" RingThickness="9">
+                    <alder:AlderRadialChart.CenterContent>
+                      <StackPanel Spacing="3">
+                        <alder:AlderTextBlock Text="36%" FontSize="24" FontWeight="SemiBold" TextWrapping="Wrap" TextAlignment="Center" />
+                      </StackPanel>
+                    </alder:AlderRadialChart.CenterContent>
+                  </alder:AlderRadialChart>
+                </StackPanel>
+              </Border>
+            </Border>
+            <Border Classes="chartCell3">
+              <Border MaxWidth="315" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                      BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+                <StackPanel Spacing="12">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartErrors}" FontSize="13" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                  <alder:AlderRadialChart Rings="{CompiledBinding ErrorRing}" Height="120"
+                                         AutomationProperties.Name="{DynamicResource GalleryText.ChartErrors}" StartAngle="135"
+                                         SweepAngle="270" Padding="12" RingThickness="9">
+                    <alder:AlderRadialChart.CenterContent>
+                      <StackPanel Spacing="3">
+                        <alder:AlderTextBlock Text="87%" FontSize="24" FontWeight="SemiBold" TextWrapping="Wrap" TextAlignment="Center" />
+                      </StackPanel>
+                    </alder:AlderRadialChart.CenterContent>
+                  </alder:AlderRadialChart>
+                </StackPanel>
+              </Border>
+            </Border>
+          </Grid>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var conversionGauge = new AlderRadialChart
+        {
+            Rings = viewModel.ConversionRing,
+            Height = 120,
+            StartAngle = 135,
+            SweepAngle = 270,
+            Padding = new Thickness(12),
+            RingThickness = 9,
+            CenterContent = new StackPanel
+            {
+                Children =
+                {
+                    new AlderTextBlock { Text = "74%", FontSize = 24, FontWeight = FontWeight.SemiBold, TextAlignment = TextAlignment.Center },
+
+                }
+            },
+        };
+
+        var engagementGauge = new AlderRadialChart
+        {
+            Rings = viewModel.EngagementRing,
+            Height = 120,
+            StartAngle = 135,
+            SweepAngle = 270,
+            Padding = new Thickness(12),
+            RingThickness = 9,
+            CenterContent = new StackPanel
+            {
+                Children =
+                {
+                    new AlderTextBlock { Text = "79%", FontSize = 24, FontWeight = FontWeight.SemiBold, TextAlignment = TextAlignment.Center },
+
+                }
+            },
+        };
+
+        var bounceRateGauge = new AlderRadialChart
+        {
+            Rings = viewModel.BounceRing,
+            Height = 120,
+            StartAngle = 135,
+            SweepAngle = 270,
+            Padding = new Thickness(12),
+            RingThickness = 9,
+            CenterContent = new StackPanel
+            {
+                Children =
+                {
+                    new AlderTextBlock { Text = "36%", FontSize = 24, FontWeight = FontWeight.SemiBold, TextAlignment = TextAlignment.Center },
+
+                }
+            },
+        };
+
+        var errorsGauge = new AlderRadialChart
+        {
+            Rings = viewModel.ErrorRing,
+            Height = 120,
+            StartAngle = 135,
+            SweepAngle = 270,
+            Padding = new Thickness(12),
+            RingThickness = 9,
+            CenterContent = new StackPanel
+            {
+                Children =
+                {
+                    new AlderTextBlock { Text = "87%", FontSize = 24, FontWeight = FontWeight.SemiBold, TextAlignment = TextAlignment.Center },
+
+                }
+            },
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleLegend" Title="{DynamicResource GalleryText.ChartWithLegend}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="400" Background="{DynamicResource AlderSurface}" CornerRadius="16" Padding="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}">
+          <StackPanel Spacing="12">
+            <StackPanel Spacing="3">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartStorageBreakdown}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+              <alder:AlderTextBlock Text="{CompiledBinding RadialStorageUsed}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+            </StackPanel>
+            <alder:AlderRadialChart Rings="{CompiledBinding StorageRings}" Height="180"
+                                   AutomationProperties.Name="{DynamicResource GalleryText.ChartStorageBreakdown}" Padding="9"
+                                   RingThickness="10" RingSpacing="7">
+              <alder:AlderRadialChart.CenterContent>
+                <StackPanel Spacing="3">
+                  <alder:AlderTextBlock Text="90" FontSize="24" FontWeight="SemiBold" TextWrapping="Wrap" TextAlignment="Center" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartGbUsed}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" TextAlignment="Center" />
+                </StackPanel>
+              </alder:AlderRadialChart.CenterContent>
+            </alder:AlderRadialChart>
+            <StackPanel Spacing="10" VerticalAlignment="Center" HorizontalAlignment="Center">
+              <Grid ColumnDefinitions="10,*,Auto,Auto" ColumnSpacing="12">
+                <Ellipse Width="10" Height="10" Fill="{DynamicResource AlderChartSeries3}" VerticalAlignment="Center" />
+                <alder:AlderTextBlock Grid.Column="1" Text="{DynamicResource GalleryText.ChartDocuments}" FontSize="13" TextWrapping="Wrap" />
+                <alder:AlderTextBlock Grid.Column="2" Text="{CompiledBinding StorageRingValues[0]}" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" />
+              </Grid>
+              <Grid ColumnDefinitions="10,*,Auto,Auto" ColumnSpacing="12">
+                <Ellipse Width="10" Height="10" Fill="{DynamicResource AlderChartSeries1}" VerticalAlignment="Center" />
+                <alder:AlderTextBlock Grid.Column="1" Text="{DynamicResource GalleryText.ChartMedia}" FontSize="13" TextWrapping="Wrap" />
+                <alder:AlderTextBlock Grid.Column="2" Text="{CompiledBinding StorageRingValues[1]}" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" />
+              </Grid>
+              <Grid ColumnDefinitions="10,*,Auto,Auto" ColumnSpacing="12">
+                <Ellipse Width="10" Height="10" Fill="{DynamicResource AlderChartSeries4}" VerticalAlignment="Center" />
+                <alder:AlderTextBlock Grid.Column="1" Text="{DynamicResource GalleryText.ChartSystem}" FontSize="13" TextWrapping="Wrap" />
+                <alder:AlderTextBlock Grid.Column="2" Text="{CompiledBinding StorageRingValues[2]}" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" />
+              </Grid>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var viewModel = new ChartsViewModel();
+
+        var chart = new AlderRadialChart
+        {
+            Rings = viewModel.StorageRings,
+            Height = 180,
+            Padding = new Thickness(9),
+            RingThickness = 10,
+            RingSpacing = 7,
+            CenterContent = new StackPanel
+            {
+                Children =
+                {
+                    new AlderTextBlock { Text = "90", FontSize = 24, FontWeight = FontWeight.SemiBold, TextAlignment = TextAlignment.Center },
+                    new AlderTextBlock { Text = "GB used", FontSize = 12, TextAlignment = TextAlignment.Center },
+                }
+            },
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

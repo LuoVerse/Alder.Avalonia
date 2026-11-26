@@ -1,0 +1,58 @@
+# .NET build, publish, test and benchmark output
+[Bb]in/
+[Oo]bj/
+[Aa]rtifacts/
+[Pp]ublish/
+TestResults/
+BenchmarkDotNet.Artifacts/
+*.trx
+*.coverage
+*.coveragexml
+*.nupkg
+*.snupkg
+*.binlog
+
+# Local previews and diagnostic captures
+/.preview/
+/captures/
+*.log
+*.dmp
+*.hprof
+*.nettrace
+*.netperf
+*.speedscope.json
+
+# IDE and OS state
+.idea/
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+
+# Local environment overrides
+.env
+.env.*
+!.env.example
+
+# Local development tools
+.agents/
+.claude/
+.codex/
+.cursor/
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+/.mcp.json
+/.cursorrules
+/.github/agents/
+/.github/skills/
+/.github/prompts/
+/.github/instructions/
+/.github/copilot-instructions.md
+/docs/PROMPTS.md

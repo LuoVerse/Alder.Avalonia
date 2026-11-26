@@ -1,0 +1,101 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:c="using:Avalonia.Data.Converters"
+                    xmlns:m="using:Avalonia.Media">
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderAvatarGroupRing" Color="#F5F5F5" />
+      <SolidColorBrush x:Key="AlderAvatarNeutralSoft" Color="#80EBEBEB" />
+      <SolidColorBrush x:Key="AlderAvatarAccentSoft" Color="#260786F8" />
+      <SolidColorBrush x:Key="AlderAvatarDangerSoft" Color="#26FF363C" />
+      <SolidColorBrush x:Key="AlderAvatarSuccessInk" Color="#2B7745" />
+      <SolidColorBrush x:Key="AlderAvatarSuccessSoft" Color="#2614C965" />
+      <SolidColorBrush x:Key="AlderAvatarWarningInk" Color="#855F2E" />
+      <SolidColorBrush x:Key="AlderAvatarWarningSoft" Color="#26F8A822" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderAvatarGroupRing" Color="#060607" />
+      <SolidColorBrush x:Key="AlderAvatarNeutralSoft" Color="#8028282A" />
+      <SolidColorBrush x:Key="AlderAvatarAccentSoft" Color="#1F0084F7" />
+      <SolidColorBrush x:Key="AlderAvatarDangerSoft" Color="#26DD3C3C" />
+      <SolidColorBrush x:Key="AlderAvatarSuccessInk" Color="#74D88F" />
+      <SolidColorBrush x:Key="AlderAvatarSuccessSoft" Color="#1F19C563" />
+      <SolidColorBrush x:Key="AlderAvatarWarningInk" Color="#F9CB86" />
+      <SolidColorBrush x:Key="AlderAvatarWarningSoft" Color="#1FF7B552" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+  <ControlTheme x:Key="{x:Type alder:AlderAvatar}" TargetType="alder:AlderAvatar">
+    <Setter Property="Width" Value="40" />
+    <Setter Property="Height" Value="40" />
+    <Setter Property="CornerRadius" Value="20" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderTertiaryInk}" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border CornerRadius="{TemplateBinding CornerRadius}" ClipToBounds="True">
+            <Panel>
+              <Panel Name="FallbackLayer" Background="{TemplateBinding Background}"
+                     IsVisible="{CompiledBinding !#Portrait.IsVisible}">
+                <Border Padding="{TemplateBinding GroupFallbackInset}" IsVisible="{TemplateBinding IsFallbackVisible}">
+                  <Panel>
+                    <alder:AlderPathIcon Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center"
+                              Foreground="{TemplateBinding Foreground}" Data="{DynamicResource AlderIconAvatarPerson}"
+                              IsVisible="{CompiledBinding !#FallbackContent.IsVisible}" />
+                    <ContentPresenter Name="FallbackContent" Content="{TemplateBinding Fallback}" ContentTemplate="{TemplateBinding FallbackTemplate}"
+                                      HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                      IsVisible="{CompiledBinding #FallbackContent.Content, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+                  </Panel>
+                </Border>
+              </Panel>
+              <ContentPresenter Name="Portrait" Content="{TemplateBinding Source}" ContentTemplate="{TemplateBinding ImageTemplate}"
+                                HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                                IsVisible="{CompiledBinding #Portrait.Content, Converter={x:Static c:ObjectConverters.IsNotNull}}"
+                                AutomationProperties.AccessibilityView="Raw">
+                <ContentPresenter.DataTemplates>
+                  <DataTemplate x:DataType="m:IImage">
+                    <alder:AlderImage Source="{CompiledBinding}" Stretch="UniformToFill" RenderOptions.BitmapInterpolationMode="HighQuality" />
+                  </DataTemplate>
+                </ContentPresenter.DataTemplates>
+              </ContentPresenter>
+            </Panel>
+          </Border>
+          <Border CornerRadius="{TemplateBinding CornerRadius}" BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}" IsHitTestVisible="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Size=Small]">
+      <Setter Property="Width" Value="32" /><Setter Property="Height" Value="32" />
+      <Setter Property="CornerRadius" Value="16" /><Setter Property="FontSize" Value="12" />
+    </Style>
+    <Style Selector="^[Size=Large]">
+      <Setter Property="Width" Value="48" /><Setter Property="Height" Value="48" />
+      <Setter Property="CornerRadius" Value="24" /><Setter Property="FontSize" Value="16" />
+    </Style>
+    <Style Selector="^[Color=Accent]"><Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" /></Style>
+    <Style Selector="^[Color=Success]"><Setter Property="Foreground" Value="{DynamicResource AlderAvatarSuccessInk}" /></Style>
+    <Style Selector="^[Color=Warning]"><Setter Property="Foreground" Value="{DynamicResource AlderAvatarWarningInk}" /></Style>
+    <Style Selector="^[Color=Danger]"><Setter Property="Foreground" Value="{DynamicResource AlderDangerInk}" /></Style>
+    <Style Selector="^[Variant=Soft]"><Setter Property="Background" Value="{DynamicResource AlderAvatarNeutralSoft}" /></Style>
+    <Style Selector="^[Variant=Soft][Color=Accent]"><Setter Property="Background" Value="{DynamicResource AlderAvatarAccentSoft}" /></Style>
+    <Style Selector="^[Variant=Soft][Color=Success]"><Setter Property="Background" Value="{DynamicResource AlderAvatarSuccessSoft}" /></Style>
+    <Style Selector="^[Variant=Soft][Color=Warning]"><Setter Property="Background" Value="{DynamicResource AlderAvatarWarningSoft}" /></Style>
+    <Style Selector="^[Variant=Soft][Color=Danger]"><Setter Property="Background" Value="{DynamicResource AlderAvatarDangerSoft}" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderAvatarGroup}" TargetType="alder:AlderAvatarGroup">
+    <Setter Property="RingBrush" Value="{DynamicResource AlderAvatarGroupRing}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <alder:AvatarGroupPanel Name="PART_Avatars" IsGrid="{TemplateBinding IsGrid}" Overlap="{TemplateBinding Overlap}"
+                            Spacing="{TemplateBinding Spacing}" OverlapAmount="{TemplateBinding OverlapAmount}" SeamThickness="{TemplateBinding SeamThickness}"
+                            RingBrush="{TemplateBinding RingBrush}" />
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+</ResourceDictionary>

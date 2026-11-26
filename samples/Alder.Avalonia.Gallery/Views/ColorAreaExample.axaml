@@ -1,0 +1,68 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" x:Class="Alder.Avalonia.Gallery.Views.ColorAreaExample"
+             x:DataType="vm:ColorsViewModel" FontFamily="fonts:Inter#Inter">
+  <Design.DataContext><vm:ColorsViewModel /></Design.DataContext>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderColorArea HorizontalAlignment="Center" ColorSpace="Rgb" Value="{Binding AreaColor, Mode=TwoWay}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var area = new AlderColorArea { ColorSpace = ColorSpace.Rgb };
+        area.Bind(AlderColorArea.ValueProperty, CompiledBinding.Create((ColorsViewModel model) => model.AreaColor, mode: BindingMode.TwoWay));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleColorAreaChannels" Title="{DynamicResource GalleryText.ColorAreaDots}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderColorArea HorizontalAlignment="Center" ColorSpace="Hsl" ShowDots="True" Value="{Binding DottedColor, Mode=TwoWay}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var area = new AlderColorArea { ColorSpace = ColorSpace.Hsl, ShowDots = true };
+        area.Bind(AlderColorArea.ValueProperty, CompiledBinding.Create((ColorsViewModel model) => model.DottedColor, mode: BindingMode.TwoWay));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSpaceChannels" Title="{DynamicResource GalleryText.ColorDemoChannels}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:ColorsViewModel /></Border.DataContext>
+          <alder:AlderColorArea Value="{CompiledBinding DottedColor, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="224" Height="224" ColorSpace="Hsl" XChannel="Saturation" YChannel="Lightness" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new ColorsViewModel();
+        var control = new AlderColorArea { DataContext = model, Width = 224, Height = 224, ColorSpace = ColorSpace.Hsl, XChannel = ColorChannel.Saturation, YChannel = ColorChannel.Lightness };
+        control.Bind(AlderColorArea.ValueProperty, CompiledBinding.Create((ColorsViewModel vm) => vm.DottedColor, mode: BindingMode.TwoWay));
+        var preview = control;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:ColorsViewModel /></Border.DataContext>
+          <alder:AlderColorArea Value="{CompiledBinding AreaColor, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="224" Height="224" IsEnabled="False" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new ColorsViewModel();
+        var control = new AlderColorArea { DataContext = model, Width = 224, Height = 224, IsEnabled = false };
+        control.Bind(AlderColorArea.ValueProperty, CompiledBinding.Create((ColorsViewModel vm) => vm.AreaColor, mode: BindingMode.TwoWay));
+        var preview = control;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:ColorsViewModel /></Border.DataContext>
+          <alder:AlderColorArea Value="{CompiledBinding AreaColor, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="224" Height="224" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new ColorsViewModel();
+        var control = new AlderColorArea { DataContext = model, Width = 224, Height = 224 };
+        control.Bind(AlderColorArea.ValueProperty, CompiledBinding.Create((ColorsViewModel vm) => vm.AreaColor, mode: BindingMode.TwoWay));
+        var preview = control;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

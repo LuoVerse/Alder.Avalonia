@@ -1,0 +1,133 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             xmlns:conv="using:Avalonia.Data.Converters"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             x:Class="Alder.Avalonia.Gallery.Views.MessageBoxExample" x:DataType="vm:MessageBoxViewModel">
+  <Design.DataContext><vm:MessageBoxViewModel /></Design.DataContext>
+  <StackPanel Spacing="24">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton HorizontalAlignment="Center" Variant="Danger" Command="{CompiledBinding OpenUsageCommand}"
+                           Content="{DynamicResource GalleryText.MessageBoxUsageTrigger}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var deleteProject = ReactiveCommand.CreateFromTask(async () =>
+        {
+            await MessageBox.ShowAsync("This permanently deletes the example project and all of its data.",
+                new MessageBoxOptions
+                {
+                    Title = "Delete project permanently?", Status = MessageBoxStatus.Danger,
+                    MaxWidth = 400, Buttons = DialogButtons.OKCancel,
+                    PrimaryText = "Delete Project", ShowCloseButton = true, IsDestructive = true
+                });
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleMessageBox" Title="{DynamicResource GalleryText.MessageBoxStatuses}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="8" LineSpacing="8" HorizontalAlignment="Center">
+          <alder:AlderButton Command="{CompiledBinding OpenMessageCommand}" CommandParameter="{x:Static alder:MessageBoxStatus.Default}" Variant="Secondary"
+                        Content="{DynamicResource GalleryText.MessageBoxDefault}" />
+          <alder:AlderButton Command="{CompiledBinding OpenMessageCommand}" CommandParameter="{x:Static alder:MessageBoxStatus.Accent}"
+                        Content="{DynamicResource GalleryText.MessageBoxAccent}" />
+          <alder:AlderButton Command="{CompiledBinding OpenMessageCommand}" CommandParameter="{x:Static alder:MessageBoxStatus.Success}" Variant="Secondary"
+                        Content="{DynamicResource GalleryText.MessageBoxSuccess}" />
+          <alder:AlderButton Command="{CompiledBinding OpenMessageCommand}" CommandParameter="{x:Static alder:MessageBoxStatus.Warning}" Variant="Outline"
+                        Content="{DynamicResource GalleryText.MessageBoxWarning}" />
+          <alder:AlderButton Command="{CompiledBinding OpenMessageCommand}" CommandParameter="{x:Static alder:MessageBoxStatus.Danger}" Variant="Danger"
+                        Content="{DynamicResource GalleryText.MessageBoxDanger}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.Feedback>
+        <alder:AlderTextBlock Text="{CompiledBinding Feedback}" TextWrapping="Wrap"
+                   AutomationProperties.LiveSetting="Polite" Foreground="{DynamicResource AlderMuted}"
+                   IsVisible="{CompiledBinding Feedback, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+      </gallery:ExampleCard.Feedback>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var result = await MessageBox.ShowAsync("This permanently removes the project and its settings.", new MessageBoxOptions
+        {
+            Title = "Delete project?",
+            Status = MessageBoxStatus.Danger,
+            Buttons = DialogButtons.OKCancel,
+            PrimaryText = "Delete",
+            ShowCloseButton = true,
+            IsDestructive = true,
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleAlertSizes" Title="{DynamicResource GalleryText.OverlaySizes}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogSize.ExtraSmall}" Content="{DynamicResource GalleryText.OverlaySizeExtraSmall}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogSize.Small}" Content="{DynamicResource GalleryText.OverlaySizeSmall}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogSize.Medium}" Content="{DynamicResource GalleryText.OverlaySizeMedium}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogSize.Large}" Content="{DynamicResource GalleryText.OverlaySizeLarge}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogSize.Cover}" Content="{DynamicResource GalleryText.OverlaySizeCover}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        await MessageBox.ShowAsync(message, new MessageBoxOptions { Size = DialogSize.Small });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleAlertPlacement" Title="{DynamicResource GalleryText.DrawerPlacement}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogPlacement.Top}" Content="{DynamicResource GalleryText.DrawerTop}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogPlacement.Center}" Content="{DynamicResource GalleryText.DialogCentered}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogPlacement.Bottom}" Content="{DynamicResource GalleryText.DrawerBottom}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        await MessageBox.ShowAsync(message, new MessageBoxOptions { Placement = DialogPlacement.Top });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleAlertBackdrop" Title="{DynamicResource GalleryText.OverlayBackdrops}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogBackdrop.Opaque}" Content="{DynamicResource GalleryText.OverlayBackdropOpaque}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogBackdrop.Blur}" Content="{DynamicResource GalleryText.OverlayBackdropBlur}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogBackdrop.Transparent}" Content="{DynamicResource GalleryText.OverlayBackdropTransparent}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        await MessageBox.ShowAsync(message, new MessageBoxOptions { Backdrop = DialogBackdrop.Transparent });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleAlertCustom" Title="{DynamicResource GalleryText.OverlayCustomization}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="CustomIcon" Content="{DynamicResource GalleryText.OverlayCustomIcon}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="Gradient" Content="{DynamicResource GalleryText.OverlayGradient}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="Motion" Content="{DynamicResource GalleryText.OverlayMotion}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="LightDismiss" Content="{DynamicResource GalleryText.OverlayLightDismiss}" />
+            <alder:AlderButton Command="{CompiledBinding OpenPresentationCommand}" Variant="Secondary" CommandParameter="CustomClose" Content="{DynamicResource GalleryText.OverlayCustomClose}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        await MessageBox.ShowAsync(message, new MessageBoxOptions
+        {
+            Icon = (Geometry)Application.Current!.FindResource("AlderIconBell")!,
+            Status = MessageBoxStatus.Accent,
+            CanLightDismiss = true,
+            CanEscapeDismiss = true,
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleAlertLocal" Title="{DynamicResource GalleryText.OverlayLocalHost}">
+      <gallery:ExampleCard.Preview>
+        <alder:DialogHost HostId="sample-overlay" Height="216">
+          <Border Padding="12" Background="{DynamicResource AlderNeutral}" CornerRadius="14">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+              <alder:AlderButton Command="{CompiledBinding OpenLocalCommand}" Variant="Secondary" Content="{DynamicResource GalleryText.OverlayOpenLocal}" />
+            </StackPanel>
+          </Border>
+        </alder:DialogHost>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        await MessageBox.ShowAsync(message, new MessageBoxOptions { Size = DialogSize.ExtraSmall }, hostId: "sample-overlay");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

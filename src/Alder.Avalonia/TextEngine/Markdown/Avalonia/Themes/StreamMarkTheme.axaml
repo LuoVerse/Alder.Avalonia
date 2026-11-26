@@ -1,0 +1,50 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Alder.NativeMarkdown.UI.Themes.StreamMarkTheme">
+    <!-- 默认外观；宿主覆盖同名 Md.* 资源即可替换。
+         Md.FontFamily / Md.FontSize / Md.LineHeight / Md.CodeFontSize / Md.CodeLineHeight 默认不设置：
+         正文沿用控件继承的字体、行高取字号的 1.6 倍；代码字号取正文字号的 0.9 倍、代码行高取代码字号的 1.55 倍。 -->
+    <Styles.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="Md.Foreground" Color="#18181B" />
+                    <SolidColorBrush x:Key="Md.SecondaryForeground" Color="#73000000" />
+                    <SolidColorBrush x:Key="Md.LinkForeground" Color="#1677FF" />
+                    <SolidColorBrush x:Key="Md.SelectionBackground" Color="#401677FF" />
+                    <SolidColorBrush x:Key="Md.CodeBackground" Color="#EFEFF0" />
+                    <SolidColorBrush x:Key="Md.CodeForeground" Color="#24292E" />
+                    <SolidColorBrush x:Key="Md.CodeHeaderForeground" Color="#71717A" />
+                    <SolidColorBrush x:Key="Md.CodeBorderBrush" Color="Transparent" />
+                    <SolidColorBrush x:Key="Md.InlineCodeBackground" Color="#0F000000" />
+                    <SolidColorBrush x:Key="Md.QuoteBorderBrush" Color="#26000000" />
+                    <SolidColorBrush x:Key="Md.TableBorderBrush" Color="#08000000" />
+                    <SolidColorBrush x:Key="Md.TableHeaderBackground" Color="#0A000000" />
+                    <SolidColorBrush x:Key="Md.HoverBackground" Color="#14000000" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="Md.Foreground" Color="#FCFCFC" />
+                    <SolidColorBrush x:Key="Md.SecondaryForeground" Color="#73FFFFFF" />
+                    <SolidColorBrush x:Key="Md.LinkForeground" Color="#4096FF" />
+                    <SolidColorBrush x:Key="Md.SelectionBackground" Color="#594096FF" />
+                    <SolidColorBrush x:Key="Md.CodeBackground" Color="#232325" />
+                    <SolidColorBrush x:Key="Md.CodeForeground" Color="#E1E4E8" />
+                    <SolidColorBrush x:Key="Md.CodeHeaderForeground" Color="#9F9FA9" />
+                    <SolidColorBrush x:Key="Md.CodeBorderBrush" Color="Transparent" />
+                    <SolidColorBrush x:Key="Md.InlineCodeBackground" Color="#1AFFFFFF" />
+                    <SolidColorBrush x:Key="Md.QuoteBorderBrush" Color="#33FFFFFF" />
+                    <SolidColorBrush x:Key="Md.TableBorderBrush" Color="#26FFFFFF" />
+                    <SolidColorBrush x:Key="Md.TableHeaderBackground" Color="#0FFFFFFF" />
+                    <SolidColorBrush x:Key="Md.HoverBackground" Color="#0AFFFFFF" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+            <FontFamily x:Key="Md.MonospaceFontFamily">Menlo, Consolas, "DejaVu Sans Mono", monospace</FontFamily>
+            <x:Double x:Key="Md.FontSize">14</x:Double>
+            <x:Double x:Key="Md.LineHeight">22.75</x:Double>
+            <x:Double x:Key="Md.CodeFontSize">13</x:Double>
+            <x:Double x:Key="Md.CodeLineHeight">21.125</x:Double>
+            <x:Double x:Key="Md.BlockSpacing">12</x:Double>
+            <CornerRadius x:Key="Md.CornerRadius">16</CornerRadius>
+        </ResourceDictionary>
+    </Styles.Resources>
+</Styles>

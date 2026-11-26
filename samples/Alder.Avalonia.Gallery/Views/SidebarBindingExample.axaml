@@ -1,0 +1,51 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.SidebarBindingExample" x:DataType="vm:NavigationBindingViewModel">
+  <UserControl.Resources>
+    <TreeDataTemplate x:Key="NavigationTree" x:DataType="vm:NavigationBindingPage" ItemsSource="{Binding Children}">
+      <alder:AlderTextBlock Text="{Binding Title}" />
+    </TreeDataTemplate>
+    <ControlTheme x:Key="NavigationRow" TargetType="alder:AlderSidebarItem"
+                  BasedOn="{StaticResource {x:Type alder:AlderSidebarItem}}" x:DataType="vm:NavigationBindingPage">
+      <Setter Property="Icon" Value="{Binding Icon}" />
+      <Setter Property="RailToolTip" Value="{Binding Title}" />
+      <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+    </ControlTheme>
+    <ControlTheme x:Key="AccountAction" TargetType="MenuItem"
+                  BasedOn="{StaticResource AlderUserMenuItemTheme}" x:DataType="vm:NavigationBindingAction">
+      <Setter Property="Header" Value="{Binding Title}" />
+      <Setter Property="Command" Value="{Binding Command}" />
+    </ControlTheme>
+  </UserControl.Resources>
+
+  <!-- Apply the chosen theme to this workspace only. -->
+  <ThemeVariantScope RequestedThemeVariant="{Binding PreviewTheme}">
+    <alder:AlderSidebarHost Height="360" CornerRadius="14" SidebarCollapse="Icon" IsSidebarOpen="{Binding IsSidebarOpen, Mode=TwoWay}">
+      <alder:AlderSidebarHost.Sidebar>
+        <alder:AlderSidebar Header="{Binding WorkspaceTitle}" HeaderIcon="{Binding WorkspaceIcon}"
+                            IsSearchEnabled="True" SelectedItem="{Binding SelectedPage, Mode=TwoWay}">
+          <alder:AlderSidebarMenu ItemsSource="{Binding Navigation}"
+                                  ItemTemplate="{StaticResource NavigationTree}"
+                                  ItemContainerTheme="{StaticResource NavigationRow}" />
+          <alder:AlderSidebar.Footer>
+            <alder:AlderUserMenu HorizontalAlignment="Stretch" MenuPlacement="TopEdgeAlignedLeft"
+                                Title="{Binding AccountName}" Description="{Binding AccountEmail}" Initials="{Binding AccountInitials}"
+                                ItemsSource="{Binding AccountActions}" ItemContainerTheme="{StaticResource AccountAction}"
+                                ShowThemeSwitcher="True" ThemeMode="{Binding ThemeMode, Mode=TwoWay}" AutoApplyTheme="False"
+                                ShowLogOut="True" ShowLogOutSeparator="True" LogOutCommand="{Binding LogOutCommand}" />
+          </alder:AlderSidebar.Footer>
+        </alder:AlderSidebar>
+      </alder:AlderSidebarHost.Sidebar>
+
+      <alder:AlderSidebarHost.Navbar>
+        <alder:AlderTextBlock Text="{Binding SelectedPage?.Title}" FontWeight="SemiBold" VerticalAlignment="Center" />
+      </alder:AlderSidebarHost.Navbar>
+
+      <StackPanel Spacing="8">
+        <alder:AlderTextBlock Text="{Binding SelectedPage?.Title}" FontSize="24" FontWeight="SemiBold" />
+        <alder:AlderTextBlock Text="{Binding SelectedPage?.Description}" TextWrapping="Wrap" />
+        <alder:AlderTextBlock Text="{Binding Notice}" Foreground="{DynamicResource AlderMuted}" />
+      </StackPanel>
+    </alder:AlderSidebarHost>
+  </ThemeVariantScope>
+</UserControl>

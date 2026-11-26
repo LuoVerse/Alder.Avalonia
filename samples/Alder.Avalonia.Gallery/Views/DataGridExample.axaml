@@ -1,0 +1,1645 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.DataGridExample" x:DataType="vm:DataGridViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="GridStatus" x:DataType="vm:DataGridDemoRow">
+      <alder:AlderChip Size="Small" Variant="Soft" Color="{CompiledBinding Color}" Content="{CompiledBinding Status}" HorizontalAlignment="Left" />
+    </DataTemplate>
+    <DataTemplate x:Key="GridPerson" x:DataType="vm:DataGridDemoRow">
+      <StackPanel Spacing="2" VerticalAlignment="Center">
+        <alder:AlderTextBlock Text="{CompiledBinding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+        <alder:AlderTextBlock Text="{CompiledBinding Detail}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextTrimming="CharacterEllipsis" />
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="GridAvatarPerson" x:DataType="vm:DataGridDemoRow">
+      <Grid ColumnDefinitions="28,*" ColumnSpacing="8" VerticalAlignment="Center">
+        <Border CornerRadius="14" Width="28" Height="28" Background="{DynamicResource AlderSurfaceSecondary}">
+          <alder:AlderTextBlock Text="{CompiledBinding Initials}" FontSize="10" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Border>
+        <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+          <alder:AlderTextBlock Text="{CompiledBinding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+          <alder:AlderTextBlock Text="{CompiledBinding Detail}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextTrimming="CharacterEllipsis" />
+        </StackPanel>
+      </Grid>
+    </DataTemplate>
+    <StreamGeometry x:Key="GridFolderIcon">M1 3 H7 L9 5 H15 V13 H1 Z</StreamGeometry>
+    <StreamGeometry x:Key="GridFileIcon">M3 1 H9 L13 5 V15 H3 Z</StreamGeometry>
+    <DataTemplate x:Key="GridFileName" x:DataType="vm:DataGridDemoRow">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <alder:AlderPathIcon Data="{StaticResource GridFolderIcon}" Width="14" Height="14" Foreground="{DynamicResource AlderStatusWarning}" IsVisible="{CompiledBinding IsFolder}" />
+        <alder:AlderPathIcon Data="{StaticResource GridFileIcon}" Width="13" Height="14" Foreground="{DynamicResource AlderMuted}" IsVisible="{CompiledBinding !IsFolder}" />
+        <alder:AlderTextBlock Text="{CompiledBinding Name}" TextTrimming="CharacterEllipsis" />
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="GridTaskPriority" x:DataType="vm:DataGridDemoRow">
+      <alder:AlderChip Size="Small" Variant="Soft" Color="{CompiledBinding RoleColor}" Content="{CompiledBinding Role}" />
+    </DataTemplate>
+    <DataTemplate x:Key="GridPriorityLabel" x:DataType="vm:DataGridPriority">
+      <alder:AlderChip Size="Small" Variant="Soft" Color="{CompiledBinding Color}" Content="{CompiledBinding Text}" />
+    </DataTemplate>
+    <DataTemplate x:Key="GridCompany" x:DataType="vm:DataGridDemoRow">
+      <StackPanel Orientation="Horizontal" Spacing="7">
+        <alder:AlderAvatar Width="18" Height="18" Fallback="{CompiledBinding CompanyMark}" />
+        <alder:AlderTextBlock Text="{CompiledBinding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="GridCategories" x:DataType="vm:DataGridDemoRow">
+      <StackPanel Orientation="Horizontal" Spacing="4">
+        <alder:AlderChip Size="Small" Variant="Soft" Color="Warning" Content="{CompiledBinding SecondaryTag}" />
+        <alder:AlderChip Size="Small" Variant="Soft" Color="{CompiledBinding RoleColor}" Content="{CompiledBinding Role}" />
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="GridCapacity" x:DataType="vm:DataGridDemoRow">
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <alder:AlderProgressCircle Diameter="15" StrokeThickness="1.75" Color="{CompiledBinding CapacityColor}"
+                                   Value="{CompiledBinding Capacity}" AutomationProperties.Name="{DynamicResource GalleryText.DataGridCapacity}" />
+        <alder:AlderTextBlock Text="{CompiledBinding Detail}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="GridRequests" x:DataType="vm:DataGridDemoRow">
+      <alder:AlderAreaChart Width="90" Height="36" HorizontalAlignment="Left" VerticalAlignment="Center"
+                            Categories="{CompiledBinding RequestCategories}" Series="{CompiledBinding RequestSeries}"
+                            ShowXAxis="False" ShowYAxis="False" ShowGrid="False" ShowTooltip="False" ShowHoverMarker="True"
+                            IsAnimationEnabled="False" ClipToBounds="True" Focusable="False" Padding="0,2,0,0"
+                            AutomationProperties.Name="{DynamicResource GalleryText.DataGridRequests}">
+        <alder:AlderAreaChart.OpacityMask>
+          <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+            <GradientStop Color="Transparent" Offset="0" />
+            <GradientStop Color="Black" Offset="0.1" />
+            <GradientStop Color="Black" Offset="0.9" />
+            <GradientStop Color="Transparent" Offset="1" />
+          </LinearGradientBrush>
+        </alder:AlderAreaChart.OpacityMask>
+      </alder:AlderAreaChart>
+    </DataTemplate>
+    <DataTemplate x:Key="GridProductName" x:DataType="vm:DataGridDemoRow">
+      <Grid ColumnDefinitions="40,*" ColumnSpacing="10">
+        <Border CornerRadius="8" Width="40" Height="40" Background="{DynamicResource AlderNeutral}">
+          <alder:AlderTextBlock Text="{CompiledBinding CompanyMark}" Foreground="{DynamicResource AlderMuted}"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Border>
+        <alder:AlderTextBlock Grid.Column="1" Text="{CompiledBinding Name}" VerticalAlignment="Center"
+                   FontWeight="Medium" TextTrimming="CharacterEllipsis" />
+      </Grid>
+    </DataTemplate>
+    <DataTemplate x:Key="GridRating" x:DataType="vm:DataGridDemoRow">
+      <StackPanel Orientation="Horizontal" AutomationProperties.Name="{CompiledBinding RatingLabel}">
+        <alder:AlderTextBlock Text="{CompiledBinding RatedStars}" Foreground="{DynamicResource AlderStatusWarning}" />
+        <alder:AlderTextBlock Text="{CompiledBinding UnratedStars}" Foreground="{DynamicResource AlderSeparator}" />
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="GridPaymentActions" x:DataType="vm:DataGridDemoRow">
+      <alder:AlderButton Theme="{StaticResource AlderDataGridRowActionsButtonTheme}"
+                         AutomationProperties.Name="{DynamicResource GalleryText.DataGridActions}">
+        <alder:AlderButton.Flyout>
+          <alder:AlderDropdownFlyout MinMenuWidth="180">
+            <alder:AlderMenuItem Header="{DynamicResource GalleryText.DataGridCopyPaymentId}" Command="{CompiledBinding CopyPaymentIdAction}" CommandParameter="{CompiledBinding $self}">
+              <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconCopy}" /></MenuItem.Icon>
+            </alder:AlderMenuItem>
+            <alder:AlderMenuItem Header="{DynamicResource GalleryText.DataGridDetails}" Command="{CompiledBinding ViewAction}">
+              <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconEye}" /></MenuItem.Icon>
+            </alder:AlderMenuItem>
+            <alder:AlderMenuItem Header="{DynamicResource GalleryText.DataGridEditPayment}" Command="{CompiledBinding EditAction}">
+              <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconPencil}" /></MenuItem.Icon>
+            </alder:AlderMenuItem>
+            <alder:AlderMenuItem Header="{DynamicResource GalleryText.DataGridDelete}" Command="{CompiledBinding DeleteAction}" Classes="danger">
+              <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconTrash}" /></MenuItem.Icon>
+            </alder:AlderMenuItem>
+          </alder:AlderDropdownFlyout>
+        </alder:AlderButton.Flyout>
+      </alder:AlderButton>
+    </DataTemplate>
+    <DataTemplate x:Key="GridTeamActions" x:DataType="vm:DataGridDemoRow">
+      <alder:AlderButton Theme="{StaticResource AlderDataGridRowActionsButtonTheme}"
+                         AutomationProperties.Name="{DynamicResource GalleryText.DataGridActions}">
+        <alder:AlderButton.Flyout>
+          <alder:AlderDropdownFlyout>
+            <alder:AlderMenuItem Header="{DynamicResource GalleryText.DataGridView}" Command="{CompiledBinding ViewAction}">
+              <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconEye}" /></MenuItem.Icon>
+            </alder:AlderMenuItem>
+            <alder:AlderMenuItem Header="{DynamicResource GalleryText.DataGridEdit}" Command="{CompiledBinding EditAction}">
+              <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconPencil}" /></MenuItem.Icon>
+            </alder:AlderMenuItem>
+            <alder:AlderMenuItem Header="{DynamicResource GalleryText.DataGridDelete}" Command="{CompiledBinding DeleteAction}" Classes="danger">
+              <MenuItem.Icon><alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconTrash}" /></MenuItem.Icon>
+            </alder:AlderMenuItem>
+          </alder:AlderDropdownFlyout>
+        </alder:AlderButton.Flyout>
+      </alder:AlderButton>
+    </DataTemplate>
+    <DataTemplate x:Key="GridEditAction" x:DataType="vm:DataGridDemoRow">
+      <alder:AlderButton Size="Small" Variant="Ghost" Height="30" MinHeight="30" Padding="6,2" Content="{DynamicResource GalleryText.DataGridEdit}" Command="{CompiledBinding EditAction}" />
+    </DataTemplate>
+    <DataTemplate x:Key="GridNameEditor" x:DataType="vm:DataGridDemoRow">
+      <alder:AlderInput Text="{CompiledBinding Name, Mode=TwoWay}" Variant="Secondary" Height="30" FullWidth="True" Padding="5,4" Background="Transparent"
+                        AutomationProperties.Name="{DynamicResource GalleryText.DataGridFeature}" />
+    </DataTemplate>
+    <DataTemplate x:Key="GridPriorityEditor" x:DataType="vm:DataGridDemoRow">
+      <alder:AlderSelect ItemsSource="{CompiledBinding Priorities}" SelectedIndex="{CompiledBinding Priority, Mode=TwoWay}"
+                         Theme="{StaticResource AlderNavbarInlineSelectTheme}" Width="112" DropDownMinWidth="125"
+                         SelectionTemplate="{StaticResource GridPriorityLabel}" ItemTemplate="{StaticResource GridPriorityLabel}"
+                         AutomationProperties.Name="{DynamicResource GalleryText.DataGridPriority}" />
+    </DataTemplate>
+    <DataTemplate x:Key="GridPointsEditor" x:DataType="vm:DataGridDemoRow">
+      <alder:AlderNumberStepper Size="Small" Value="{CompiledBinding Points, Mode=TwoWay}"
+                             Minimum="0" Maximum="99" ClipValueToMinMax="True" FormatString="0" AutomationProperties.Name="{DynamicResource GalleryText.DataGridStoryPoints}" />
+    </DataTemplate>
+    <DataTemplate x:Key="GridEnabledEditor" x:DataType="vm:DataGridDemoRow">
+      <alder:AlderSwitch Theme="{StaticResource AlderSwitchTheme}" Size="Small" IsChecked="{CompiledBinding Enabled, Mode=TwoWay}"
+                    HorizontalAlignment="Center" AutomationProperties.Name="{DynamicResource GalleryText.DataGridEnabled}" />
+    </DataTemplate>
+  </UserControl.Resources>
+  <UserControl.Styles>
+    <Style Selector="TextBlock.grid-preview-title">
+      <Setter Property="FontSize" Value="18" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="TextBlock.grid-preview-note">
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleUsers" Title="{DynamicResource GalleryText.DataGridUsage}">
+      <g:ExampleCard.Preview>
+        <Border Padding="12,20" MinHeight="444">
+          <StackPanel Spacing="12" MaxWidth="896" VerticalAlignment="Center">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" VerticalAlignment="Center">
+                <StackPanel Spacing="4">
+                  <alder:AlderTextBlock Classes="grid-preview-title" Text="{DynamicResource GalleryText.DataGridUsers}" />
+                  <alder:AlderTextBlock Classes="grid-preview-note" Text="{DynamicResource GalleryText.DataGridUsersDescription}" />
+                </StackPanel>
+                <Panel Grid.Column="1" HorizontalAlignment="Right"><alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.DataGridAddUser}" Command="{CompiledBinding AddUser}" /></Panel>
+            </Grid>
+            <alder:AlderDataGrid ItemsSource="{CompiledBinding Users}" RowKeySelector="{CompiledBinding RowKey}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.DataGridUsage}" Variant="Secondary" MinRowHeight="45">
+              <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.DataGridName}" Width="1.15*" MinWidth="120" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Name}" />
+              <alder:AlderTableColumn Key="title" Header="{DynamicResource GalleryText.DataGridTitle}" Width="1.35*" MinWidth="125" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Role}" />
+              <alder:AlderTableColumn Key="email" Header="{DynamicResource GalleryText.DataGridEmail}" Width="1.65*" MinWidth="150" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Detail}" />
+              <alder:AlderTableColumn Key="role" Header="{DynamicResource GalleryText.DataGridRole}" Width="*" MinWidth="82" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Status}" />
+              <alder:AlderTableColumn Key="actions" Header="" Width="64" CellTemplate="{StaticResource GridEditAction}" />
+            </alder:AlderDataGrid>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var grid = new AlderDataGrid { Variant = TableVariant.Secondary, MinRowHeight = 45 };
+        grid.Bind(AlderDataGrid.ItemsSourceProperty, CompiledBinding.Create((DataGridViewModel model) => model.Users));
+        grid.Bind(AlderDataGrid.RowKeySelectorProperty, CompiledBinding.Create((DataGridViewModel model) => model.RowKey));
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "name",
+            Header = "Name",
+            Width = new GridLength(1.15, GridUnitType.Star),
+            MinWidth = 120,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Name)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "title",
+            Header = "Title",
+            Width = new GridLength(1.35, GridUnitType.Star),
+            MinWidth = 125,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Role)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "email",
+            Header = "Email",
+            Width = new GridLength(1.65, GridUnitType.Star),
+            MinWidth = 150,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Detail)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "role",
+            Header = "Role",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 82,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Status)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "actions",
+            Header = "Actions",
+            Width = new GridLength(64),
+            CellTemplate = (IDataTemplate)this.FindResource("GridEditAction")!
+        });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SamplePayments" Title="{DynamicResource GalleryText.DataGridPayments}">
+      <g:ExampleCard.Preview>
+        <Border Padding="12,20" MinHeight="450">
+          <StackPanel Spacing="12" MaxWidth="1020" VerticalAlignment="Center">
+            <alder:AlderDataGrid ItemsSource="{CompiledBinding Payments}" RowKeySelector="{CompiledBinding RowKey}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.DataGridPayments}" MinRowHeight="62" SelectionMode="Multiple" ShowSelectionCheckboxes="True" CanResizeColumns="True">
+              <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.DataGridCustomer}" Width="240" MinWidth="200" CanSort="True" SortComparison="{CompiledBinding CompareName}" CellTemplate="{StaticResource GridPerson}" />
+              <alder:AlderTableColumn Key="code" Header="{DynamicResource GalleryText.DataGridTransactionId}" Width="130" MinWidth="130" CanSort="True" SortComparison="{CompiledBinding CompareCode}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding Code}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.DataGridStatus}" Width="120" MinWidth="120" CanSort="True" SortComparison="{CompiledBinding CompareStatus}" CellTemplate="{StaticResource GridStatus}" />
+              <alder:AlderTableColumn Key="amount" Header="{DynamicResource GalleryText.DataGridAmount}" Width="110" MinWidth="110" HorizontalContentAlignment="Right" CanSort="True" SortComparison="{CompiledBinding CompareAmount}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding AmountLabel}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderTableColumn Key="fee" Header="{DynamicResource GalleryText.DataGridFee}" Width="90" MinWidth="90" HorizontalContentAlignment="Right" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding FeeLabel}" />
+              <alder:AlderTableColumn Key="net" Header="{DynamicResource GalleryText.DataGridNet}" Width="110" MinWidth="110" HorizontalContentAlignment="Right" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding NetLabel}" />
+              <alder:AlderTableColumn Key="paymentMethod" Header="{DynamicResource GalleryText.DataGridPaymentMethod}" Width="170" MinWidth="170" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Method}" />
+              <alder:AlderTableColumn Key="region" Header="{DynamicResource GalleryText.DataGridRegion}" Width="130" MinWidth="130" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Region}" />
+              <alder:AlderTableColumn Key="description" Header="{DynamicResource GalleryText.DataGridDescription}" Width="240" MinWidth="240" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Role}" />
+              <alder:AlderTableColumn Key="date" Header="{DynamicResource GalleryText.DataGridDate}" Width="120" MinWidth="120" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Date}" />
+              <alder:AlderTableColumn Key="actions" Header="" Width="75" CanUserResize="False" HorizontalContentAlignment="Center" Pin="End" CellTheme="{StaticResource AlderDataGridActionsCellTheme}" CellTemplate="{StaticResource GridPaymentActions}" />
+            </alder:AlderDataGrid>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var grid = new AlderDataGrid { MinRowHeight = 62, SelectionMode = TableSelectionMode.Multiple, ShowSelectionCheckboxes = true, CanResizeColumns = true };
+        grid.Bind(AlderDataGrid.ItemsSourceProperty, CompiledBinding.Create((DataGridViewModel model) => model.Payments));
+        grid.Bind(AlderDataGrid.RowKeySelectorProperty, CompiledBinding.Create((DataGridViewModel model) => model.RowKey));
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "name",
+            Header = "Customer",
+            Width = new GridLength(240),
+            MinWidth = 200,
+            CanSort = true,
+            SortComparison = viewModel.CompareName,
+            CellTemplate = (IDataTemplate)this.FindResource("GridPerson")!
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "code",
+            Header = "Transaction ID",
+            Width = new GridLength(130),
+            MinWidth = 130,
+            CanSort = true,
+            SortComparison = viewModel.CompareCode,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Code)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "status",
+            Header = "Status",
+            Width = new GridLength(120),
+            MinWidth = 120,
+            CanSort = true,
+            SortComparison = viewModel.CompareStatus,
+            CellTemplate = (IDataTemplate)this.FindResource("GridStatus")!
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "amount",
+            Header = "Amount",
+            Width = new GridLength(110),
+            MinWidth = 110,
+            HorizontalContentAlignment = HorizontalAlignment.Right,
+            CanSort = true,
+            SortComparison = viewModel.CompareAmount,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.AmountLabel)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "fee",
+            Header = "Fee",
+            Width = new GridLength(90),
+            MinWidth = 90,
+            HorizontalContentAlignment = HorizontalAlignment.Right,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.FeeLabel)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "net",
+            Header = "Net",
+            Width = new GridLength(110),
+            MinWidth = 110,
+            HorizontalContentAlignment = HorizontalAlignment.Right,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.NetLabel)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "paymentMethod",
+            Header = "Payment Method",
+            Width = new GridLength(170),
+            MinWidth = 170,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Method)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "region",
+            Header = "Region",
+            Width = new GridLength(130),
+            MinWidth = 130,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Region)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "description",
+            Header = "Description",
+            Width = new GridLength(240),
+            MinWidth = 240,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Role)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "date",
+            Header = "Date",
+            Width = new GridLength(120),
+            MinWidth = 120,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Date)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "actions",
+            Header = "Actions",
+            Width = new GridLength(75),
+            CanUserResize = false,
+            HorizontalContentAlignment = HorizontalAlignment.Center,
+            Pin = TableColumnPin.End,
+            CellTheme = (ControlTheme)this.FindResource("AlderDataGridActionsCellTheme")!,
+            CellTemplate = (IDataTemplate)this.FindResource("GridPaymentActions")!
+        });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleTeam" Title="{DynamicResource GalleryText.DataGridTeamMembers}">
+      <g:ExampleCard.Preview>
+        <Border Padding="12,20" MinHeight="670">
+          <StackPanel Spacing="12" MaxWidth="1020" VerticalAlignment="Center">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <alder:AlderTextBlock Classes="grid-preview-title" Text="{DynamicResource GalleryText.DataGridTeamMembers}" />
+                  <alder:AlderChip Size="Small" Content="{CompiledBinding TeamCount}" VerticalAlignment="Center" />
+                </StackPanel>
+                <Panel Grid.Column="1" HorizontalAlignment="Right"><alder:AlderButton Size="Small" Variant="Primary" Content="{DynamicResource GalleryText.DataGridAddMember}" Command="{CompiledBinding AddMember}" Icon="{DynamicResource AlderIconPlus}" /></Panel>
+            </Grid>
+            <WrapPanel ItemSpacing="6" LineSpacing="6" HorizontalAlignment="Left">
+              <alder:AlderSearchField Width="170" Variant="Secondary" PlaceholderText="{DynamicResource GalleryText.DataGridSearch}" Text="{CompiledBinding TeamSearch, Mode=TwoWay}" AutomationProperties.Name="{DynamicResource GalleryText.DataGridSearch}" />
+              <alder:AlderSelect ItemsSource="{CompiledBinding WorkerOptions}" SelectedIndex="{CompiledBinding WorkerFilter, Mode=TwoWay}" Variant="Secondary" Width="138" AutomationProperties.Name="{DynamicResource GalleryText.DataGridWorkerType}" />
+              <alder:AlderSelect ItemsSource="{CompiledBinding StatusOptions}" SelectedIndex="{CompiledBinding StatusFilter, Mode=TwoWay}" Variant="Secondary" Width="138" AutomationProperties.Name="{DynamicResource GalleryText.DataGridStatus}" />
+              <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.DataGridSort}" Command="{CompiledBinding SortTeam}" />
+              <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.DataGridColumns}">
+                <alder:AlderButton.Flyout>
+                  <alder:AlderPopover Placement="BottomEdgeAlignedLeft" ContentPadding="12" SurfaceCornerRadius="12">
+                    <StackPanel Spacing="8" MinWidth="120">
+                      <alder:AlderCheckBox Content="{DynamicResource GalleryText.DataGridCountry}" IsChecked="{CompiledBinding ShowTeamCountry, Mode=TwoWay}" />
+                      <alder:AlderCheckBox Content="{DynamicResource GalleryText.DataGridRole}" IsChecked="{CompiledBinding ShowTeamRole, Mode=TwoWay}" />
+                    </StackPanel>
+                  </alder:AlderPopover>
+                </alder:AlderButton.Flyout>
+              </alder:AlderButton>
+              <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetTeam}" />
+            </WrapPanel>
+            <alder:AlderDataGrid ItemsSource="{CompiledBinding TeamRows}" RowKeySelector="{CompiledBinding RowKey}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.DataGridTeamMembers}" Height="614" MinRowHeight="52" SortMode="External" SelectionMode="Multiple" ShowSelectionCheckboxes="True" CanResizeColumns="True"
+                                 SortDescriptor="{CompiledBinding TeamSort, Mode=TwoWay}"
+                                 SelectedKeys="{CompiledBinding TeamSelection, Mode=TwoWay}">
+              <alder:AlderTableColumn Key="code" Header="{DynamicResource GalleryText.DataGridWorkerId}" Width="122" MinWidth="100" CanSort="True" SortComparison="{CompiledBinding CompareCode}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding Code}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderTableColumn Key="externalId" Header="{DynamicResource GalleryText.DataGridExternalId}" Width="171" MinWidth="160" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Reference}" />
+              <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.DataGridMember}" Width="235" MinWidth="220" CanSort="True" SortComparison="{CompiledBinding CompareName}" CellTemplate="{StaticResource GridAvatarPerson}" />
+              <alder:AlderTableColumn Key="country" Header="{DynamicResource GalleryText.DataGridCountry}" Width="149" MinWidth="140" IsVisible="{CompiledBinding ShowTeamCountry}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding Region}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderTableColumn Key="role" Header="{DynamicResource GalleryText.DataGridRole}" Width="149" MinWidth="140" IsVisible="{CompiledBinding ShowTeamRole}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding Role}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderTableColumn Key="workerType" Header="{DynamicResource GalleryText.DataGridWorkerType}" Width="120" MinWidth="110" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Category}" />
+              <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.DataGridStatus}" Width="122" MinWidth="100" CanSort="True" SortComparison="{CompiledBinding CompareStatus}" CellTemplate="{StaticResource GridStatus}" />
+              <alder:AlderTableColumn Key="startDate" Header="{DynamicResource GalleryText.DataGridStartDate}" Width="160" MinWidth="150" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Date}" />
+              <alder:AlderTableColumn Key="teams" Header="{DynamicResource GalleryText.DataGridTeams}" Width="277" MinWidth="260" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Method}" />
+              <alder:AlderTableColumn Key="actions" Header="" Width="53" MinWidth="50" HorizontalContentAlignment="Center" CellTheme="{StaticResource AlderDataGridActionsCellTheme}" CellTemplate="{StaticResource GridTeamActions}" />
+              <alder:AlderDataGrid.Footer>
+                <alder:AlderPagination Size="Small" CurrentPage="{CompiledBinding TeamPage, Mode=TwoWay}" PageCount="{CompiledBinding TeamPageCount}" Summary="{CompiledBinding TeamSummary}" />
+              </alder:AlderDataGrid.Footer>
+            </alder:AlderDataGrid>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var grid = new AlderDataGrid { Height = 614, MinRowHeight = 52, SortMode = DataGridSortMode.External, SelectionMode = TableSelectionMode.Multiple, ShowSelectionCheckboxes = true, CanResizeColumns = true };
+        grid.Bind(AlderDataGrid.ItemsSourceProperty, CompiledBinding.Create((DataGridViewModel model) => model.TeamRows));
+        grid.Bind(AlderDataGrid.SelectedKeysProperty, CompiledBinding.Create((DataGridViewModel model) => model.TeamSelection, mode: BindingMode.TwoWay));
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((DataGridViewModel model) => model.ResetTeam));
+        grid.Bind(AlderDataGrid.RowKeySelectorProperty, CompiledBinding.Create((DataGridViewModel model) => model.RowKey));
+        grid.Bind(AlderDataGrid.SortDescriptorProperty, CompiledBinding.Create((DataGridViewModel model) => model.TeamSort, mode: BindingMode.TwoWay));
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "code",
+            Header = "Worker ID",
+            Width = new GridLength(122),
+            MinWidth = 100,
+            CanSort = true,
+            SortComparison = viewModel.CompareCode,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Code)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "externalId",
+            Header = "External Worker ID",
+            Width = new GridLength(171),
+            MinWidth = 160,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Reference)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "name",
+            Header = "Member",
+            Width = new GridLength(235),
+            MinWidth = 220,
+            CanSort = true,
+            SortComparison = viewModel.CompareName,
+            CellTemplate = (IDataTemplate)this.FindResource("GridAvatarPerson")!
+        });
+        var columnCountry = new AlderTableColumn
+        {
+            Key = "country",
+            Header = "Country",
+            Width = new GridLength(149),
+            MinWidth = 140,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Region)
+        };
+        columnCountry.Bind(TableViewColumn.IsVisibleProperty, CompiledBinding.Create((DataGridViewModel model) => model.ShowTeamCountry));
+        grid.Columns.Add(columnCountry);
+        var columnRole = new AlderTableColumn
+        {
+            Key = "role",
+            Header = "Role",
+            Width = new GridLength(149),
+            MinWidth = 140,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Role)
+        };
+        columnRole.Bind(TableViewColumn.IsVisibleProperty, CompiledBinding.Create((DataGridViewModel model) => model.ShowTeamRole));
+        grid.Columns.Add(columnRole);
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "workerType",
+            Header = "Worker Type",
+            Width = new GridLength(120),
+            MinWidth = 110,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Category)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "status",
+            Header = "Status",
+            Width = new GridLength(122),
+            MinWidth = 100,
+            CanSort = true,
+            SortComparison = viewModel.CompareStatus,
+            CellTemplate = (IDataTemplate)this.FindResource("GridStatus")!
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "startDate",
+            Header = "Start Date",
+            Width = new GridLength(160),
+            MinWidth = 150,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Date)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "teams",
+            Header = "Teams",
+            Width = new GridLength(277),
+            MinWidth = 260,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Method)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "actions",
+            Header = "Actions",
+            Width = new GridLength(53),
+            MinWidth = 50,
+            HorizontalContentAlignment = HorizontalAlignment.Center,
+            CellTheme = (ControlTheme)this.FindResource("AlderDataGridActionsCellTheme")!,
+            CellTemplate = (IDataTemplate)this.FindResource("GridTeamActions")!
+        });
+        var footer = new AlderPagination { Size = AlderSize.Small };
+        footer.Bind(AlderPagination.CurrentPageProperty, CompiledBinding.Create((DataGridViewModel model) => model.TeamPage, mode: BindingMode.TwoWay));
+        footer.Bind(AlderPagination.PageCountProperty, CompiledBinding.Create((DataGridViewModel model) => model.TeamPageCount));
+        footer.Bind(AlderPagination.SummaryProperty, CompiledBinding.Create((DataGridViewModel model) => model.TeamSummary));
+        grid.Footer = footer;
+
+        var preview = new StackPanel { Spacing = 12, Children = { reset, grid } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SamplePinned" Title="{DynamicResource GalleryText.DataGridPinnedColumns}">
+      <g:ExampleCard.Preview>
+        <Border Padding="12,20" MinHeight="612">
+          <StackPanel Spacing="12" MaxWidth="1020" VerticalAlignment="Center">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" VerticalAlignment="Center">
+                <alder:AlderTextBlock Classes="grid-preview-title" Text="{DynamicResource GalleryText.DataGridCompanies}" />
+                <Panel Grid.Column="1" HorizontalAlignment="Right"><WrapPanel ItemSpacing="6" LineSpacing="6" HorizontalAlignment="Right">
+              <alder:AlderSelect ItemsSource="{CompiledBinding CompanyOptions}" SelectedIndex="{CompiledBinding CompanyFilter, Mode=TwoWay}" Variant="Secondary" Width="138" AutomationProperties.Name="{DynamicResource GalleryText.DataGridFilter}" />
+              <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.DataGridSort}" Command="{CompiledBinding SortCompanies}" />
+              <alder:AlderSearchField Width="170" Variant="Secondary" PlaceholderText="{DynamicResource GalleryText.DataGridSearch}" Text="{CompiledBinding CompanySearch, Mode=TwoWay}" AutomationProperties.Name="{DynamicResource GalleryText.DataGridSearch}" />
+              <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetCompanies}" />
+            </WrapPanel></Panel>
+            </Grid>
+            <alder:AlderDataGrid ItemsSource="{CompiledBinding CompanyRows}" RowKeySelector="{CompiledBinding RowKey}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.DataGridPinnedColumns}" Height="553" MinRowHeight="40" SortMode="External" SelectionMode="Multiple" ShowSelectionCheckboxes="True"
+                                 SortDescriptor="{CompiledBinding CompanySort, Mode=TwoWay}"
+                                 SelectedKeys="{CompiledBinding CompanySelection, Mode=TwoWay}">
+              <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.DataGridCompany}" Width="154" Pin="Start" CanSort="True" SortComparison="{CompiledBinding CompareName}" CellTemplate="{StaticResource GridCompany}" />
+              <alder:AlderTableColumn Key="categories" Header="{DynamicResource GalleryText.DataGridCategories}" Width="230" CellTemplate="{StaticResource GridCategories}" />
+              <alder:AlderTableColumn Key="linkedIn" Header="{DynamicResource GalleryText.DataGridLinkedIn}" Width="166" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Detail}" />
+              <alder:AlderTableColumn Key="lastInteraction" Header="{DynamicResource GalleryText.DataGridLastInteraction}" Width="146" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Date}" />
+              <alder:AlderTableColumn Key="connection" Header="{DynamicResource GalleryText.DataGridConnection}" Width="159" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Status}" />
+              <alder:AlderTableColumn Key="count" Header="{DynamicResource GalleryText.DataGridFollowers}" Width="132" HorizontalContentAlignment="Right" Pin="End" CanSort="True" SortComparison="{CompiledBinding CompareCount}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding CountLabel}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderTableColumn Key="twitter" Header="{DynamicResource GalleryText.DataGridTwitter}" Width="124" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Reference}" />
+              <alder:AlderDataGrid.Footer>
+                <alder:AlderTextBlock Classes="grid-preview-note" Text="{CompiledBinding CompanySummary}" />
+              </alder:AlderDataGrid.Footer>
+            </alder:AlderDataGrid>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var grid = new AlderDataGrid { Height = 553, MinRowHeight = 40, SortMode = DataGridSortMode.External, SelectionMode = TableSelectionMode.Multiple, ShowSelectionCheckboxes = true };
+        grid.Bind(AlderDataGrid.ItemsSourceProperty, CompiledBinding.Create((DataGridViewModel model) => model.CompanyRows));
+        grid.Bind(AlderDataGrid.SelectedKeysProperty, CompiledBinding.Create((DataGridViewModel model) => model.CompanySelection, mode: BindingMode.TwoWay));
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((DataGridViewModel model) => model.ResetCompanies));
+        grid.Bind(AlderDataGrid.RowKeySelectorProperty, CompiledBinding.Create((DataGridViewModel model) => model.RowKey));
+        grid.Bind(AlderDataGrid.SortDescriptorProperty, CompiledBinding.Create((DataGridViewModel model) => model.CompanySort, mode: BindingMode.TwoWay));
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "name",
+            Header = "Company",
+            Width = new GridLength(154),
+            Pin = TableColumnPin.Start,
+            CanSort = true,
+            SortComparison = viewModel.CompareName,
+            CellTemplate = (IDataTemplate)this.FindResource("GridCompany")!
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "categories",
+            Header = "Categories",
+            Width = new GridLength(230),
+            CellTemplate = (IDataTemplate)this.FindResource("GridCategories")!
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "linkedIn",
+            Header = "LinkedIn",
+            Width = new GridLength(166),
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Detail)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "lastInteraction",
+            Header = "Last interaction",
+            Width = new GridLength(146),
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Date)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "connection",
+            Header = "Connection strength",
+            Width = new GridLength(159),
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Status)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "count",
+            Header = "Twitter followers",
+            Width = new GridLength(132),
+            HorizontalContentAlignment = HorizontalAlignment.Right,
+            Pin = TableColumnPin.End,
+            CanSort = true,
+            SortComparison = viewModel.CompareCount,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.CountLabel)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "twitter",
+            Header = "Twitter",
+            Width = new GridLength(124),
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Reference)
+        });
+
+        var preview = new StackPanel { Spacing = 12, Children = { reset, grid } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleTree" Title="{DynamicResource GalleryText.DataGridExpandableRows}">
+      <g:ExampleCard.Preview>
+        <Border Padding="12,20" MinHeight="420">
+          <StackPanel Spacing="12" MaxWidth="768" VerticalAlignment="Center">
+            <alder:AlderButton Size="Small" Variant="Secondary" HorizontalAlignment="Right" Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetTree}" />
+            <alder:AlderDataGrid ItemsSource="{CompiledBinding TreeRows}" RowKeySelector="{CompiledBinding RowKey}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.DataGridExpandableRows}" MinRowHeight="48" TreeColumnKey="name"
+                                 ChildrenSelector="{CompiledBinding RowChildren}"
+                                 ExpandedKeys="{CompiledBinding ExpandedKeys, Mode=TwoWay}"
+                                 SortDescriptor="{CompiledBinding TreeSort, Mode=TwoWay}">
+              <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.DataGridName}" Width="2*" MinWidth="165" CanSort="True" SortComparison="{CompiledBinding CompareName}" CellTemplate="{StaticResource GridFileName}" />
+              <alder:AlderTableColumn Key="type" Header="{DynamicResource GalleryText.DataGridType}" Width="*" MinWidth="90" CellTemplate="{StaticResource GridStatus}" />
+              <alder:AlderTableColumn Key="size" Header="{DynamicResource GalleryText.DataGridSize}" Width="*" MinWidth="95" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Detail}" />
+              <alder:AlderTableColumn Key="dateModified" Header="{DynamicResource GalleryText.DataGridDateModified}" Width="1.35*" MinWidth="115" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Date}" />
+            </alder:AlderDataGrid>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var grid = new AlderDataGrid { MinRowHeight = 48, TreeColumnKey = "name" };
+        grid.Bind(AlderDataGrid.ItemsSourceProperty, CompiledBinding.Create((DataGridViewModel model) => model.TreeRows));
+        grid.Bind(AlderDataGrid.SortDescriptorProperty, CompiledBinding.Create((DataGridViewModel model) => model.TreeSort, mode: BindingMode.TwoWay));
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((DataGridViewModel model) => model.ResetTree));
+        grid.Bind(AlderDataGrid.RowKeySelectorProperty, CompiledBinding.Create((DataGridViewModel model) => model.RowKey));
+        grid.Bind(AlderDataGrid.ChildrenSelectorProperty, CompiledBinding.Create((DataGridViewModel model) => model.RowChildren));
+        grid.Bind(AlderDataGrid.ExpandedKeysProperty, CompiledBinding.Create((DataGridViewModel model) => model.ExpandedKeys, mode: BindingMode.TwoWay));
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "name",
+            Header = "Name",
+            Width = new GridLength(2, GridUnitType.Star),
+            MinWidth = 165,
+            CanSort = true,
+            SortComparison = viewModel.CompareName,
+            CellTemplate = (IDataTemplate)this.FindResource("GridFileName")!
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "type",
+            Header = "Type",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 90,
+            CellTemplate = (IDataTemplate)this.FindResource("GridStatus")!
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "size",
+            Header = "Size",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 95,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Detail)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "dateModified",
+            Header = "Date Modified",
+            Width = new GridLength(1.35, GridUnitType.Star),
+            MinWidth = 115,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Date)
+        });
+
+        var preview = new StackPanel { Spacing = 12, Children = { reset, grid } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleEditable" Title="{DynamicResource GalleryText.DataGridEditableCells}">
+      <g:ExampleCard.Preview>
+        <Border Padding="12,20" MinHeight="552">
+          <StackPanel Spacing="12" MaxWidth="768" VerticalAlignment="Center">
+            <alder:AlderButton Size="Small" Variant="Secondary" HorizontalAlignment="Right" Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetFeatures}" />
+            <StackPanel Spacing="4">
+              <alder:AlderTextBlock Classes="grid-preview-title" Text="{DynamicResource GalleryText.DataGridFeatureFlags}" />
+              <alder:AlderTextBlock Classes="grid-preview-note" Text="{DynamicResource GalleryText.DataGridEditDescription}" />
+            </StackPanel>
+            <alder:AlderDataGrid ItemsSource="{CompiledBinding Features}" RowKeySelector="{CompiledBinding RowKey}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.DataGridEditableCells}" MinRowHeight="57">
+              <alder:AlderTableColumn Key="feature" Header="{DynamicResource GalleryText.DataGridFeature}" Width="1.6*" MinWidth="142" CellTemplate="{StaticResource GridNameEditor}" />
+              <alder:AlderTableColumn Key="priority" Header="{DynamicResource GalleryText.DataGridPriority}" Width="1*" MinWidth="105" CellTemplate="{StaticResource GridPriorityEditor}" />
+              <alder:AlderTableColumn Key="storyPoints" Header="{DynamicResource GalleryText.DataGridStoryPoints}" Width="1*" MinWidth="110" HorizontalContentAlignment="Center" CellTemplate="{StaticResource GridPointsEditor}" />
+              <alder:AlderTableColumn Key="enabled" Header="{DynamicResource GalleryText.DataGridEnabled}" Width="*" MinWidth="84" CellTemplate="{StaticResource GridEnabledEditor}" />
+              <alder:AlderDataGrid.Footer>
+                <alder:AlderTextBlock Classes="grid-preview-note" Text="{CompiledBinding FeatureSummary}" />
+              </alder:AlderDataGrid.Footer>
+            </alder:AlderDataGrid>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var grid = new AlderDataGrid { MinRowHeight = 57 };
+        grid.Bind(AlderDataGrid.ItemsSourceProperty, CompiledBinding.Create((DataGridViewModel model) => model.Features));
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((DataGridViewModel model) => model.ResetFeatures));
+        grid.Bind(AlderDataGrid.RowKeySelectorProperty, CompiledBinding.Create((DataGridViewModel model) => model.RowKey));
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "feature",
+            Header = "Feature",
+            Width = new GridLength(1.6, GridUnitType.Star),
+            MinWidth = 142,
+            CellTemplate = (IDataTemplate)this.FindResource("GridNameEditor")!
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "priority",
+            Header = "Priority",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 105,
+            CellTemplate = (IDataTemplate)this.FindResource("GridPriorityEditor")!
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "storyPoints",
+            Header = "Story Points",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 110,
+            HorizontalContentAlignment = HorizontalAlignment.Center,
+            CellTemplate = new FuncDataTemplate<DataGridDemoRow>((_, _) =>
+            {
+                var stepper = new AlderNumberStepper
+                {
+                    Size = AlderSize.Small, Minimum = 0, Maximum = 99, FormatString = "0"
+                };
+                stepper.Bind(NumericUpDown.ValueProperty,
+                    CompiledBinding.Create((DataGridDemoRow row) => row.Points, mode: BindingMode.TwoWay));
+                AutomationProperties.SetName(stepper, "Story Points");
+                return stepper;
+            })
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "enabled",
+            Header = "Enabled",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 84,
+            CellTemplate = (IDataTemplate)this.FindResource("GridEnabledEditor")!
+        });
+
+        var preview = new StackPanel { Spacing = 12, Children = { reset, grid } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleReorder" Title="{DynamicResource GalleryText.DataGridDragAndDrop}">
+      <g:ExampleCard.Preview>
+        <Border Padding="12,20" MinHeight="522">
+          <StackPanel Spacing="12" MaxWidth="768" VerticalAlignment="Center">
+            <alder:AlderTextBlock Classes="grid-preview-note" Text="{DynamicResource GalleryText.DataGridReorderInstructions}" />
+            <alder:AlderButton Size="Small" Variant="Secondary" HorizontalAlignment="Right" Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetReorder}" />
+            <alder:AlderDataGrid ItemsSource="{CompiledBinding Tasks}" RowKeySelector="{CompiledBinding RowKey}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.DataGridDragAndDrop}" MinRowHeight="48" CanReorderRows="True"
+                                 ReorderCommand="{CompiledBinding Reorder}">
+              <alder:AlderTableColumn Key="task" Header="{DynamicResource GalleryText.DataGridTask}" Width="2*" MinWidth="170" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Name}" />
+              <alder:AlderTableColumn Key="priority" Header="{DynamicResource GalleryText.DataGridPriority}" Width="*" MinWidth="90" CellTemplate="{StaticResource GridTaskPriority}" />
+              <alder:AlderTableColumn Key="assignee" Header="{DynamicResource GalleryText.DataGridAssignee}" Width="*" MinWidth="90" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Detail}" />
+              <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.DataGridStatus}" Width="*" MinWidth="104" CellTemplate="{StaticResource GridStatus}" />
+            </alder:AlderDataGrid>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var grid = new AlderDataGrid { MinRowHeight = 48, CanReorderRows = true };
+        grid.Bind(AlderDataGrid.ItemsSourceProperty, CompiledBinding.Create((DataGridViewModel model) => model.Tasks));
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((DataGridViewModel model) => model.ResetReorder));
+        grid.Bind(AlderDataGrid.RowKeySelectorProperty, CompiledBinding.Create((DataGridViewModel model) => model.RowKey));
+        grid.Bind(AlderDataGrid.ReorderCommandProperty, CompiledBinding.Create((DataGridViewModel model) => model.Reorder));
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "task",
+            Header = "Task",
+            Width = new GridLength(2, GridUnitType.Star),
+            MinWidth = 170,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Name)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "priority",
+            Header = "Priority",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 90,
+            CellTemplate = (IDataTemplate)this.FindResource("GridTaskPriority")!
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "assignee",
+            Header = "Assignee",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 90,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Detail)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "status",
+            Header = "Status",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 104,
+            CellTemplate = (IDataTemplate)this.FindResource("GridStatus")!
+        });
+
+        var preview = new StackPanel { Spacing = 12, Children = { reset, grid } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleServers" Title="{DynamicResource GalleryText.DataGridServers}">
+      <g:ExampleCard.Preview>
+        <Border Padding="12,20" MinHeight="550">
+          <StackPanel Spacing="12" MaxWidth="1020" VerticalAlignment="Center">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <alder:AlderTextBlock Classes="grid-preview-title" Text="{DynamicResource GalleryText.DataGridServers}" />
+                  <alder:AlderChip Size="Small" Content="{CompiledBinding ServerCount}" VerticalAlignment="Center" />
+                </StackPanel>
+                <Panel Grid.Column="1" HorizontalAlignment="Right"><WrapPanel ItemSpacing="6" LineSpacing="6" HorizontalAlignment="Right">
+              <alder:AlderSelect ItemsSource="{CompiledBinding StatusOptions}" SelectedIndex="{CompiledBinding ServerFilter, Mode=TwoWay}" Variant="Secondary" Width="138" AutomationProperties.Name="{DynamicResource GalleryText.DataGridFilter}" />
+              <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.DataGridSort}" Command="{CompiledBinding SortServers}" />
+              <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.DataGridColumns}">
+                <alder:AlderButton.Flyout>
+                  <alder:AlderPopover Placement="BottomEdgeAlignedLeft" ContentPadding="12" SurfaceCornerRadius="12">
+                    <StackPanel Spacing="8" MinWidth="120">
+                      <alder:AlderCheckBox Content="{DynamicResource GalleryText.DataGridRegion}" IsChecked="{CompiledBinding ShowServerRegion, Mode=TwoWay}" />
+                      <alder:AlderCheckBox Content="{DynamicResource GalleryText.DataGridCost}" IsChecked="{CompiledBinding ShowServerCost, Mode=TwoWay}" />
+                    </StackPanel>
+                  </alder:AlderPopover>
+                </alder:AlderButton.Flyout>
+              </alder:AlderButton>
+              <alder:AlderSearchField Width="170" Variant="Secondary" PlaceholderText="{DynamicResource GalleryText.DataGridSearch}" Text="{CompiledBinding ServerSearch, Mode=TwoWay}" AutomationProperties.Name="{DynamicResource GalleryText.DataGridSearch}" />
+              <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetServers}" />
+            </WrapPanel></Panel>
+            </Grid>
+            <alder:AlderDataGrid ItemsSource="{CompiledBinding Servers}" RowKeySelector="{CompiledBinding RowKey}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.DataGridServers}" MinRowHeight="61" SortMode="External" SelectionMode="Multiple" ShowSelectionCheckboxes="True"
+                                 SortDescriptor="{CompiledBinding ServerSort, Mode=TwoWay}"
+                                 SelectedKeys="{CompiledBinding ServerSelection, Mode=TwoWay}">
+              <alder:AlderTableColumn Key="code" Header="{DynamicResource GalleryText.DataGridClusterId}" Width="1.2*" MinWidth="113" CanSort="True" SortComparison="{CompiledBinding CompareCode}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding Code}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderTableColumn Key="count" Header="{DynamicResource GalleryText.DataGridInstances}" Width="*" HorizontalContentAlignment="Right" MinWidth="89" CanSort="True" SortComparison="{CompiledBinding CompareCount}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding CountLabel}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.DataGridStatus}" Width="*" MinWidth="104" CanSort="True" SortComparison="{CompiledBinding CompareStatus}" CellTemplate="{StaticResource GridStatus}" />
+              <alder:AlderTableColumn Key="region" Header="{DynamicResource GalleryText.DataGridRegion}" Width="1.25*" MinWidth="116" IsVisible="{CompiledBinding ShowServerRegion}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding Region}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderTableColumn Key="capacity" Header="{DynamicResource GalleryText.DataGridCapacity}" Width="*" MinWidth="94" CellTemplate="{StaticResource GridCapacity}" />
+              <alder:AlderTableColumn Key="amount" Header="{DynamicResource GalleryText.DataGridCost}" Width="*" HorizontalContentAlignment="Right" MinWidth="100" IsVisible="{CompiledBinding ShowServerCost}" CanSort="True" SortComparison="{CompiledBinding CompareAmount}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding AmountLabel}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderTableColumn Key="requests" Header="{DynamicResource GalleryText.DataGridRequests}" Width="1.35*" MinWidth="114" CellTemplate="{StaticResource GridRequests}" />
+            </alder:AlderDataGrid>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var grid = new AlderDataGrid { MinRowHeight = 61, SortMode = DataGridSortMode.External, SelectionMode = TableSelectionMode.Multiple, ShowSelectionCheckboxes = true };
+        grid.Bind(AlderDataGrid.ItemsSourceProperty, CompiledBinding.Create((DataGridViewModel model) => model.Servers));
+        grid.Bind(AlderDataGrid.SelectedKeysProperty, CompiledBinding.Create((DataGridViewModel model) => model.ServerSelection, mode: BindingMode.TwoWay));
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((DataGridViewModel model) => model.ResetServers));
+        grid.Bind(AlderDataGrid.RowKeySelectorProperty, CompiledBinding.Create((DataGridViewModel model) => model.RowKey));
+        grid.Bind(AlderDataGrid.SortDescriptorProperty, CompiledBinding.Create((DataGridViewModel model) => model.ServerSort, mode: BindingMode.TwoWay));
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "code",
+            Header = "Cluster ID",
+            Width = new GridLength(1.2, GridUnitType.Star),
+            MinWidth = 113,
+            CanSort = true,
+            SortComparison = viewModel.CompareCode,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Code)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "count",
+            Header = "Instances",
+            Width = new GridLength(1, GridUnitType.Star),
+            HorizontalContentAlignment = HorizontalAlignment.Right,
+            MinWidth = 89,
+            CanSort = true,
+            SortComparison = viewModel.CompareCount,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.CountLabel)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "status",
+            Header = "Status",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 104,
+            CanSort = true,
+            SortComparison = viewModel.CompareStatus,
+            CellTemplate = (IDataTemplate)this.FindResource("GridStatus")!
+        });
+        var columnRegion = new AlderTableColumn
+        {
+            Key = "region",
+            Header = "Region",
+            Width = new GridLength(1.25, GridUnitType.Star),
+            MinWidth = 116,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Region)
+        };
+        columnRegion.Bind(TableViewColumn.IsVisibleProperty, CompiledBinding.Create((DataGridViewModel model) => model.ShowServerRegion));
+        grid.Columns.Add(columnRegion);
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "capacity",
+            Header = "Capacity",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 94,
+            CellTemplate = (IDataTemplate)this.FindResource("GridCapacity")!
+        });
+        var columnCost = new AlderTableColumn
+        {
+            Key = "amount",
+            Header = "Cost",
+            Width = new GridLength(1, GridUnitType.Star),
+            HorizontalContentAlignment = HorizontalAlignment.Right,
+            MinWidth = 100,
+            CanSort = true,
+            SortComparison = viewModel.CompareAmount,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.AmountLabel)
+        };
+        columnCost.Bind(TableViewColumn.IsVisibleProperty, CompiledBinding.Create((DataGridViewModel model) => model.ShowServerCost));
+        grid.Columns.Add(columnCost);
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "requests",
+            Header = "Requests",
+            Width = new GridLength(1.35, GridUnitType.Star),
+            MinWidth = 114,
+            CellTemplate = (IDataTemplate)this.FindResource("GridRequests")!
+        });
+
+        var preview = new StackPanel { Spacing = 12, Children = { reset, grid } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleBulk" Title="{DynamicResource GalleryText.DataGridBulkActions}">
+      <g:ExampleCard.Preview>
+        <Border Padding="12,20" MinHeight="510">
+          <StackPanel Spacing="12" MaxWidth="896" VerticalAlignment="Center">
+            <alder:AlderButton Size="Small" Variant="Secondary" HorizontalAlignment="Right" Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetBulk}" />
+            <alder:AlderDataGrid ItemsSource="{CompiledBinding Employees}" RowKeySelector="{CompiledBinding RowKey}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.DataGridBulkActions}" MinRowHeight="52" SelectionMode="Multiple" ShowSelectionCheckboxes="True"
+                                 SelectedKeys="{CompiledBinding BulkSelection, Mode=TwoWay}"
+                                 SortDescriptor="{CompiledBinding BulkSort, Mode=TwoWay}">
+              <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.DataGridEmployee}" Width="2*" MinWidth="206" CanSort="True" SortComparison="{CompiledBinding CompareName}" CellTemplate="{StaticResource GridAvatarPerson}" />
+              <alder:AlderTableColumn Key="department" Header="{DynamicResource GalleryText.DataGridDepartment}" Width="1.25*" MinWidth="108" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Role}" />
+              <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.DataGridStatus}" Width="1*" MinWidth="95" CanSort="True" SortComparison="{CompiledBinding CompareStatus}" CellTemplate="{StaticResource GridStatus}" />
+              <alder:AlderTableColumn Key="joined" Header="{DynamicResource GalleryText.DataGridJoined}" Width="1.25*" MinWidth="112" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Date}" />
+            </alder:AlderDataGrid>
+            <Border IsVisible="{CompiledBinding HasBulkSelection}" Background="{DynamicResource AlderSurfaceSecondary}" CornerRadius="12" Padding="12,8" HorizontalAlignment="Center">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <alder:AlderTextBlock VerticalAlignment="Center" FontWeight="SemiBold" Text="{CompiledBinding BulkSummary}" />
+                <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.DataGridActivate}" Command="{CompiledBinding BulkActivate}" />
+                <alder:AlderButton Size="Small" Variant="DangerSoft" Content="{DynamicResource GalleryText.DataGridRemove}" Command="{CompiledBinding BulkRemove}" />
+                <alder:AlderButton Size="Small" Variant="Ghost" Content="{DynamicResource GalleryText.DataGridClear}" Command="{CompiledBinding ClearSelection}" />
+              </StackPanel>
+            </Border>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var grid = new AlderDataGrid { MinRowHeight = 52, SelectionMode = TableSelectionMode.Multiple, ShowSelectionCheckboxes = true };
+        grid.Bind(AlderDataGrid.ItemsSourceProperty, CompiledBinding.Create((DataGridViewModel model) => model.Employees));
+        grid.Bind(AlderDataGrid.SortDescriptorProperty, CompiledBinding.Create((DataGridViewModel model) => model.BulkSort, mode: BindingMode.TwoWay));
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((DataGridViewModel model) => model.ResetBulk));
+        grid.Bind(AlderDataGrid.RowKeySelectorProperty, CompiledBinding.Create((DataGridViewModel model) => model.RowKey));
+        grid.Bind(AlderDataGrid.SelectedKeysProperty, CompiledBinding.Create((DataGridViewModel model) => model.BulkSelection, mode: BindingMode.TwoWay));
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "name",
+            Header = "Employee",
+            Width = new GridLength(2, GridUnitType.Star),
+            MinWidth = 206,
+            CanSort = true,
+            SortComparison = viewModel.CompareName,
+            CellTemplate = (IDataTemplate)this.FindResource("GridAvatarPerson")!
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "department",
+            Header = "Department",
+            Width = new GridLength(1.25, GridUnitType.Star),
+            MinWidth = 108,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Role)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "status",
+            Header = "Status",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 95,
+            CanSort = true,
+            SortComparison = viewModel.CompareStatus,
+            CellTemplate = (IDataTemplate)this.FindResource("GridStatus")!
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "joined",
+            Header = "Joined",
+            Width = new GridLength(1.25, GridUnitType.Star),
+            MinWidth = 112,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Date)
+        });
+        var activate = new AlderButton { Content = "Activate", Command = viewModel.BulkActivate };
+        var remove = new AlderButton { Content = "Remove", Command = viewModel.BulkRemove };
+        var clear = new AlderButton { Content = "Clear", Command = viewModel.ClearSelection };
+
+        var actions = new WrapPanel { ItemSpacing = 8, LineSpacing = 8, Children = { activate, remove, clear } };
+        actions.Bind(Visual.IsVisibleProperty, CompiledBinding.Create((DataGridViewModel model) => model.HasBulkSelection));
+        var preview = new StackPanel { Spacing = 12, Children = { reset, grid, actions } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleFooter" Title="{DynamicResource GalleryText.DataGridWithFooter}">
+      <g:ExampleCard.Preview>
+        <Border Padding="12,20" MinHeight="390">
+          <StackPanel Spacing="12" MaxWidth="896" VerticalAlignment="Center">
+            <alder:AlderDataGrid ItemsSource="{CompiledBinding InvoiceRows}" RowKeySelector="{CompiledBinding RowKey}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.DataGridWithFooter}" MinRowHeight="45">
+              <alder:AlderTableColumn Key="code" Header="{DynamicResource GalleryText.DataGridInvoice}" Width="*" MinWidth="112" CanSort="True" SortComparison="{CompiledBinding CompareCode}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding Code}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.DataGridCustomer}" Width="1.45*" MinWidth="142" CanSort="True" SortComparison="{CompiledBinding CompareName}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding Name}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderTableColumn Key="date" Header="{DynamicResource GalleryText.DataGridDate}" Width="*" MinWidth="108" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Date}" />
+              <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.DataGridStatus}" Width="*" MinWidth="95" CellTemplate="{StaticResource GridStatus}" />
+              <alder:AlderTableColumn Key="amount" Header="{DynamicResource GalleryText.DataGridAmount}" Width="*" HorizontalContentAlignment="Right" MinWidth="100" CanSort="True" SortComparison="{CompiledBinding CompareAmount}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding AmountLabel}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderDataGrid.Footer>
+                <alder:AlderPagination Size="Small" CurrentPage="{CompiledBinding InvoicePage, Mode=TwoWay}" PageCount="3" Summary="{CompiledBinding InvoiceSummary}" />
+              </alder:AlderDataGrid.Footer>
+            </alder:AlderDataGrid>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var grid = new AlderDataGrid { MinRowHeight = 45 };
+        grid.Bind(AlderDataGrid.ItemsSourceProperty, CompiledBinding.Create((DataGridViewModel model) => model.InvoiceRows));
+        grid.Bind(AlderDataGrid.RowKeySelectorProperty, CompiledBinding.Create((DataGridViewModel model) => model.RowKey));
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "code",
+            Header = "Invoice",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 112,
+            CanSort = true,
+            SortComparison = viewModel.CompareCode,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Code)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "name",
+            Header = "Customer",
+            Width = new GridLength(1.45, GridUnitType.Star),
+            MinWidth = 142,
+            CanSort = true,
+            SortComparison = viewModel.CompareName,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Name)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "date",
+            Header = "Date",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 108,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Date)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "status",
+            Header = "Status",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 95,
+            CellTemplate = (IDataTemplate)this.FindResource("GridStatus")!
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "amount",
+            Header = "Amount",
+            Width = new GridLength(1, GridUnitType.Star),
+            HorizontalContentAlignment = HorizontalAlignment.Right,
+            MinWidth = 100,
+            CanSort = true,
+            SortComparison = viewModel.CompareAmount,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.AmountLabel)
+        });
+        var footer = new AlderPagination { Size = AlderSize.Small, PageCount = 3 };
+        footer.Bind(AlderPagination.CurrentPageProperty, CompiledBinding.Create((DataGridViewModel model) => model.InvoicePage, mode: BindingMode.TwoWay));
+        footer.Bind(AlderPagination.SummaryProperty, CompiledBinding.Create((DataGridViewModel model) => model.InvoiceSummary));
+        grid.Footer = footer;
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleEmpty" Title="{DynamicResource GalleryText.DataGridEmptyState}">
+      <g:ExampleCard.Preview>
+        <Border Padding="12,20" MinHeight="456">
+          <StackPanel Spacing="12" MaxWidth="896" VerticalAlignment="Center">
+            <alder:AlderTextBlock Classes="grid-preview-title" Text="{DynamicResource GalleryText.DataGridProjects}" />
+            <alder:AlderDataGrid ItemsSource="{CompiledBinding EmptyProjects}" RowKeySelector="{CompiledBinding RowKey}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.DataGridEmptyState}" Height="370">
+              <alder:AlderTableColumn Key="project" Header="{DynamicResource GalleryText.DataGridProject}" Width="1.6*" MinWidth="110" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Name}" />
+              <alder:AlderTableColumn Key="owner" Header="{DynamicResource GalleryText.DataGridOwner}" Width="*" MinWidth="88" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Detail}" />
+              <alder:AlderTableColumn Key="files" Header="{DynamicResource GalleryText.DataGridFiles}" Width="*" HorizontalContentAlignment="Right" MinWidth="74" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding CountLabel}" />
+              <alder:AlderTableColumn Key="lastUpdated" Header="{DynamicResource GalleryText.DataGridLastUpdated}" Width="1.3*" MinWidth="114" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Date}" />
+              <alder:AlderDataGrid.EmptyContent>
+                <StackPanel Spacing="10" HorizontalAlignment="Center" MaxWidth="470">
+                  <alder:AlderPathIcon Data="{DynamicResource AlderIconPlus}" Width="22" Height="22" Foreground="{DynamicResource AlderMuted}" HorizontalAlignment="Center" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.DataGridNoProjects}" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                  <alder:AlderTextBlock Classes="grid-preview-note" Text="{DynamicResource GalleryText.DataGridNoProjectsDescription}" TextAlignment="Center" />
+                  <Panel HorizontalAlignment="Center"><alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.DataGridCreateProject}" Command="{CompiledBinding CreateProject}" Icon="{DynamicResource AlderIconPlus}" /></Panel>
+                </StackPanel>
+              </alder:AlderDataGrid.EmptyContent>
+            </alder:AlderDataGrid>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var grid = new AlderDataGrid { Height = 370 };
+        grid.Bind(AlderDataGrid.ItemsSourceProperty, CompiledBinding.Create((DataGridViewModel model) => model.EmptyProjects));
+        grid.Bind(AlderDataGrid.RowKeySelectorProperty, CompiledBinding.Create((DataGridViewModel model) => model.RowKey));
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "project",
+            Header = "Project",
+            Width = new GridLength(1.6, GridUnitType.Star),
+            MinWidth = 110,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Name)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "owner",
+            Header = "Owner",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 88,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Detail)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "files",
+            Header = "Files",
+            Width = new GridLength(1, GridUnitType.Star),
+            HorizontalContentAlignment = HorizontalAlignment.Right,
+            MinWidth = 74,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.CountLabel)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "lastUpdated",
+            Header = "Last Updated",
+            Width = new GridLength(1.3, GridUnitType.Star),
+            MinWidth = 114,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Date)
+        });
+        grid.EmptyContent = new AlderButton { Content = "Create Project", Command = viewModel.CreateProject };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleAsync" Title="{DynamicResource GalleryText.DataGridAsyncLoading}">
+      <g:ExampleCard.Preview>
+        <Border Padding="12,20" MinHeight="506">
+          <StackPanel Spacing="12" MaxWidth="896" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <alder:AlderTextBlock Classes="grid-preview-title" Text="{DynamicResource GalleryText.DataGridInvoices}" />
+              <alder:AlderChip Size="Small" Content="{CompiledBinding AsyncSummary}" VerticalAlignment="Center" />
+            </StackPanel>
+            <alder:AlderDataGrid ItemsSource="{CompiledBinding AsyncInvoices}" RowKeySelector="{CompiledBinding RowKey}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.DataGridAsyncLoading}" Height="404" RowHeight="52"
+                                 IsLoading="{CompiledBinding IsLoading}"
+                                 HasMoreItems="{CompiledBinding HasMoreInvoices}"
+                                 LoadMoreCommand="{CompiledBinding LoadMore}">
+              <alder:AlderTableColumn Key="invoice" Header="{DynamicResource GalleryText.DataGridInvoice}" Width="*" MinWidth="105" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Code}" />
+              <alder:AlderTableColumn Key="client" Header="{DynamicResource GalleryText.DataGridClient}" Width="1.5*" MinWidth="150" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Name}" />
+              <alder:AlderTableColumn Key="amount" Header="{DynamicResource GalleryText.DataGridAmount}" Width="*" HorizontalContentAlignment="Right" MinWidth="108" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding AmountLabel}" />
+              <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.DataGridStatus}" Width="*" MinWidth="106" CellTemplate="{StaticResource GridStatus}" />
+              <alder:AlderTableColumn Key="issued" Header="{DynamicResource GalleryText.DataGridIssued}" Width="1.2*" MinWidth="110" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Date}" />
+            </alder:AlderDataGrid>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var grid = new AlderDataGrid { Height = 404, RowHeight = 52 };
+        grid.Bind(AlderDataGrid.ItemsSourceProperty, CompiledBinding.Create((DataGridViewModel model) => model.AsyncInvoices));
+        grid.Bind(AlderDataGrid.RowKeySelectorProperty, CompiledBinding.Create((DataGridViewModel model) => model.RowKey));
+        grid.Bind(AlderDataGrid.IsLoadingProperty, CompiledBinding.Create((DataGridViewModel model) => model.IsLoading));
+        grid.Bind(AlderDataGrid.HasMoreItemsProperty, CompiledBinding.Create((DataGridViewModel model) => model.HasMoreInvoices));
+        grid.Bind(AlderDataGrid.LoadMoreCommandProperty, CompiledBinding.Create((DataGridViewModel model) => model.LoadMore));
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "invoice",
+            Header = "Invoice",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 105,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Code)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "client",
+            Header = "Client",
+            Width = new GridLength(1.5, GridUnitType.Star),
+            MinWidth = 150,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Name)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "amount",
+            Header = "Amount",
+            Width = new GridLength(1, GridUnitType.Star),
+            HorizontalContentAlignment = HorizontalAlignment.Right,
+            MinWidth = 108,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.AmountLabel)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "status",
+            Header = "Status",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 106,
+            CellTemplate = (IDataTemplate)this.FindResource("GridStatus")!
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "issued",
+            Header = "Issued",
+            Width = new GridLength(1.2, GridUnitType.Star),
+            MinWidth = 110,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Date)
+        });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSticky" Title="{DynamicResource GalleryText.DataGridStickyHeader}">
+      <g:ExampleCard.Preview>
+        <Border Padding="12,20" MinHeight="368">
+          <StackPanel Spacing="12" MaxWidth="1020" VerticalAlignment="Center">
+            <alder:AlderDataGrid ItemsSource="{CompiledBinding Payments}" RowKeySelector="{CompiledBinding RowKey}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.DataGridStickyHeader}" Height="324" HeadingHeight="36" MinRowHeight="62" SelectionMode="Multiple" ShowSelectionCheckboxes="True" CanResizeColumns="True">
+              <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.DataGridCustomer}" Width="240" MinWidth="200" CanSort="True" SortComparison="{CompiledBinding CompareName}" CellTemplate="{StaticResource GridPerson}" />
+              <alder:AlderTableColumn Key="code" Header="{DynamicResource GalleryText.DataGridTransactionId}" Width="130" MinWidth="130" CanSort="True" SortComparison="{CompiledBinding CompareCode}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding Code}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.DataGridStatus}" Width="120" MinWidth="120" CanSort="True" SortComparison="{CompiledBinding CompareStatus}" CellTemplate="{StaticResource GridStatus}" />
+              <alder:AlderTableColumn Key="amount" Header="{DynamicResource GalleryText.DataGridAmount}" Width="110" MinWidth="110" HorizontalContentAlignment="Right" CanSort="True" SortComparison="{CompiledBinding CompareAmount}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding AmountLabel}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderTableColumn Key="fee" Header="{DynamicResource GalleryText.DataGridFee}" Width="90" MinWidth="90" HorizontalContentAlignment="Right" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding FeeLabel}" />
+              <alder:AlderTableColumn Key="net" Header="{DynamicResource GalleryText.DataGridNet}" Width="110" MinWidth="110" HorizontalContentAlignment="Right" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding NetLabel}" />
+              <alder:AlderTableColumn Key="paymentMethod" Header="{DynamicResource GalleryText.DataGridPaymentMethod}" Width="170" MinWidth="170" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Method}" />
+              <alder:AlderTableColumn Key="region" Header="{DynamicResource GalleryText.DataGridRegion}" Width="130" MinWidth="130" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Region}" />
+              <alder:AlderTableColumn Key="description" Header="{DynamicResource GalleryText.DataGridDescription}" Width="240" MinWidth="240" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Role}" />
+              <alder:AlderTableColumn Key="date" Header="{DynamicResource GalleryText.DataGridDate}" Width="120" MinWidth="120" x:DataType="vm:DataGridDemoRow" Binding="{CompiledBinding Date}" />
+              <alder:AlderTableColumn Key="actions" Header="" Width="75" CanUserResize="False" HorizontalContentAlignment="Center" Pin="End" CellTheme="{StaticResource AlderDataGridActionsCellTheme}" CellTemplate="{StaticResource GridPaymentActions}" />
+            </alder:AlderDataGrid>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var grid = new AlderDataGrid { Height = 324, HeadingHeight = 36, MinRowHeight = 62, SelectionMode = TableSelectionMode.Multiple, ShowSelectionCheckboxes = true, CanResizeColumns = true };
+        grid.Bind(AlderDataGrid.ItemsSourceProperty, CompiledBinding.Create((DataGridViewModel model) => model.Payments));
+        grid.Bind(AlderDataGrid.RowKeySelectorProperty, CompiledBinding.Create((DataGridViewModel model) => model.RowKey));
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "name",
+            Header = "Customer",
+            Width = new GridLength(240),
+            MinWidth = 200,
+            CanSort = true,
+            SortComparison = viewModel.CompareName,
+            CellTemplate = (IDataTemplate)this.FindResource("GridPerson")!
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "code",
+            Header = "Transaction ID",
+            Width = new GridLength(130),
+            MinWidth = 130,
+            CanSort = true,
+            SortComparison = viewModel.CompareCode,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Code)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "status",
+            Header = "Status",
+            Width = new GridLength(120),
+            MinWidth = 120,
+            CanSort = true,
+            SortComparison = viewModel.CompareStatus,
+            CellTemplate = (IDataTemplate)this.FindResource("GridStatus")!
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "amount",
+            Header = "Amount",
+            Width = new GridLength(110),
+            MinWidth = 110,
+            HorizontalContentAlignment = HorizontalAlignment.Right,
+            CanSort = true,
+            SortComparison = viewModel.CompareAmount,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.AmountLabel)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "fee",
+            Header = "Fee",
+            Width = new GridLength(90),
+            MinWidth = 90,
+            HorizontalContentAlignment = HorizontalAlignment.Right,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.FeeLabel)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "net",
+            Header = "Net",
+            Width = new GridLength(110),
+            MinWidth = 110,
+            HorizontalContentAlignment = HorizontalAlignment.Right,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.NetLabel)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "paymentMethod",
+            Header = "Payment Method",
+            Width = new GridLength(170),
+            MinWidth = 170,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Method)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "region",
+            Header = "Region",
+            Width = new GridLength(130),
+            MinWidth = 130,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Region)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "description",
+            Header = "Description",
+            Width = new GridLength(240),
+            MinWidth = 240,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Role)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "date",
+            Header = "Date",
+            Width = new GridLength(120),
+            MinWidth = 120,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Date)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "actions",
+            Header = "Actions",
+            Width = new GridLength(75),
+            CanUserResize = false,
+            HorizontalContentAlignment = HorizontalAlignment.Center,
+            Pin = TableColumnPin.End,
+            CellTheme = (ControlTheme)this.FindResource("AlderDataGridActionsCellTheme")!,
+            CellTemplate = (IDataTemplate)this.FindResource("GridPaymentActions")!
+        });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleVirtual" Title="{DynamicResource GalleryText.DataGridVirtualized}">
+      <g:ExampleCard.Preview>
+        <Border Padding="12,20" MinHeight="716">
+          <StackPanel Spacing="12" MaxWidth="1020" VerticalAlignment="Center">
+            <Border Container.Name="ProductFilters" Container.Sizing="Width">
+              <Border.Styles>
+                <Style Selector="WrapPanel.product-filters">
+                  <Setter Property="Grid.Column" Value="1" />
+                  <Setter Property="HorizontalAlignment" Value="Right" />
+                </Style>
+                <ContainerQuery Name="ProductFilters" Query="max-width:700">
+                  <Style Selector="WrapPanel.product-filters">
+                    <Setter Property="Grid.Column" Value="0" />
+                    <Setter Property="Grid.Row" Value="1" />
+                    <Setter Property="HorizontalAlignment" Value="Left" />
+                  </Style>
+                </ContainerQuery>
+              </Border.Styles>
+              <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="4">
+                <alder:AlderSegment Size="Small" HorizontalAlignment="Left" SelectedKey="{CompiledBinding StockFilter, Mode=TwoWay}"
+                                    AutomationProperties.Name="{DynamicResource GalleryText.DataGridStock}">
+                  <alder:AlderSegmentItem Key="all" Content="{DynamicResource GalleryText.DataGridAll}" />
+                  <alder:AlderSegmentItem Key="in" Content="{DynamicResource GalleryText.DataGridInStock}" />
+                  <alder:AlderSegmentItem Key="out" Content="{DynamicResource GalleryText.DataGridOutOfStock}" />
+                  <alder:AlderSegmentItem Key="low" Content="{DynamicResource GalleryText.DataGridLowStock}" />
+                </alder:AlderSegment>
+                <WrapPanel Classes="product-filters" ItemSpacing="6" LineSpacing="6">
+                  <alder:AlderSearchField Width="236" PlaceholderText="{DynamicResource GalleryText.DataGridSearch}"
+                                          Text="{CompiledBinding ProductSearch, Mode=TwoWay}" AutomationProperties.Name="{DynamicResource GalleryText.DataGridSearch}" />
+                  <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetProducts}" />
+                </WrapPanel>
+              </Grid>
+            </Border>
+            <alder:AlderDataGrid ItemsSource="{CompiledBinding ProductRows}" RowKeySelector="{CompiledBinding RowKey}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.DataGridVirtualized}" Height="644" HeadingHeight="37" RowHeight="58" Virtualized="True" SelectionMode="Multiple" ShowSelectionCheckboxes="True"
+                                 SelectedKeys="{CompiledBinding ProductSelection, Mode=TwoWay}"
+                                 SortDescriptor="{CompiledBinding ProductSort, Mode=TwoWay}">
+              <alder:AlderTableColumn Key="name" Header="{DynamicResource GalleryText.DataGridProduct}" Width="3*" MinWidth="216" CanSort="True" SortComparison="{CompiledBinding CompareName}" CellTemplate="{StaticResource GridProductName}" />
+              <alder:AlderTableColumn Key="code" Header="{DynamicResource GalleryText.DataGridSku}" Width="1*" MinWidth="95" CanSort="True" SortComparison="{CompiledBinding CompareCode}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding Code}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderTableColumn Key="status" Header="{DynamicResource GalleryText.DataGridStatus}" Width="1.4*" MinWidth="108" CanSort="True" SortComparison="{CompiledBinding CompareStatus}" CellTemplate="{StaticResource GridStatus}" />
+              <alder:AlderTableColumn Key="count" Header="{DynamicResource GalleryText.DataGridStock}" Width="1*" HorizontalContentAlignment="Right" MinWidth="88" CanSort="True" SortComparison="{CompiledBinding CompareCount}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding CountLabel}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderTableColumn Key="amount" Header="{DynamicResource GalleryText.DataGridPrice}" Width="1*" HorizontalContentAlignment="Right" MinWidth="86" CanSort="True" SortComparison="{CompiledBinding CompareAmount}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding PriceLabel}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderTableColumn Key="cost" Header="{DynamicResource GalleryText.DataGridCost}" Width="1*" HorizontalContentAlignment="Right" MinWidth="85" CanSort="True" SortComparison="{CompiledBinding CompareCost}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding CostLabel}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderTableColumn Key="rating" Header="{DynamicResource GalleryText.DataGridRating}" Width="1*" MinWidth="90" CanSort="True" SortComparison="{CompiledBinding CompareRating}" CellTemplate="{StaticResource GridRating}" />
+              <alder:AlderTableColumn Key="sales" Header="{DynamicResource GalleryText.DataGridSales}" Width="1*" HorizontalContentAlignment="Right" MinWidth="80" CanSort="True" SortComparison="{CompiledBinding CompareSales}">
+                <alder:AlderTableColumn.CellTemplate>
+                  <DataTemplate x:DataType="vm:DataGridDemoRow">
+                    <alder:AlderTextBlock Text="{CompiledBinding SalesLabel}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </alder:AlderTableColumn.CellTemplate>
+              </alder:AlderTableColumn>
+              <alder:AlderDataGrid.Footer>
+                <alder:AlderTextBlock Classes="grid-preview-note" Text="{CompiledBinding ProductSummary}" />
+              </alder:AlderDataGrid.Footer>
+            </alder:AlderDataGrid>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var grid = new AlderDataGrid { Height = 644, HeadingHeight = 37, RowHeight = 58, Virtualized = true, SelectionMode = TableSelectionMode.Multiple, ShowSelectionCheckboxes = true };
+        grid.Bind(AlderDataGrid.ItemsSourceProperty, CompiledBinding.Create((DataGridViewModel model) => model.ProductRows));
+        grid.Bind(AlderDataGrid.SelectedKeysProperty, CompiledBinding.Create((DataGridViewModel model) => model.ProductSelection, mode: BindingMode.TwoWay));
+        grid.Bind(AlderDataGrid.SortDescriptorProperty, CompiledBinding.Create((DataGridViewModel model) => model.ProductSort, mode: BindingMode.TwoWay));
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary };
+        reset.Bind(Button.CommandProperty, CompiledBinding.Create((DataGridViewModel model) => model.ResetProducts));
+        grid.Bind(AlderDataGrid.RowKeySelectorProperty, CompiledBinding.Create((DataGridViewModel model) => model.RowKey));
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "name",
+            Header = "Product",
+            Width = new GridLength(3, GridUnitType.Star),
+            MinWidth = 216,
+            CanSort = true,
+            SortComparison = viewModel.CompareName,
+            CellTemplate = (IDataTemplate)this.FindResource("GridProductName")!
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "code",
+            Header = "Sku",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 95,
+            CanSort = true,
+            SortComparison = viewModel.CompareCode,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.Code)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "status",
+            Header = "Status",
+            Width = new GridLength(1.4, GridUnitType.Star),
+            MinWidth = 108,
+            CanSort = true,
+            SortComparison = viewModel.CompareStatus,
+            CellTemplate = (IDataTemplate)this.FindResource("GridStatus")!
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "count",
+            Header = "Stock",
+            Width = new GridLength(1, GridUnitType.Star),
+            HorizontalContentAlignment = HorizontalAlignment.Right,
+            MinWidth = 88,
+            CanSort = true,
+            SortComparison = viewModel.CompareCount,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.CountLabel)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "amount",
+            Header = "Price",
+            Width = new GridLength(1, GridUnitType.Star),
+            HorizontalContentAlignment = HorizontalAlignment.Right,
+            MinWidth = 86,
+            CanSort = true,
+            SortComparison = viewModel.CompareAmount,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.PriceLabel)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "cost",
+            Header = "Cost",
+            Width = new GridLength(1, GridUnitType.Star),
+            HorizontalContentAlignment = HorizontalAlignment.Right,
+            MinWidth = 85,
+            CanSort = true,
+            SortComparison = viewModel.CompareCost,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.CostLabel)
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "rating",
+            Header = "Rating",
+            Width = new GridLength(1, GridUnitType.Star),
+            MinWidth = 90,
+            CanSort = true,
+            SortComparison = viewModel.CompareRating,
+            CellTemplate = (IDataTemplate)this.FindResource("GridRating")!
+        });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Key = "sales",
+            Header = "Sales",
+            Width = new GridLength(1, GridUnitType.Star),
+            HorizontalContentAlignment = HorizontalAlignment.Right,
+            MinWidth = 80,
+            CanSort = true,
+            SortComparison = viewModel.CompareSales,
+            Binding = CompiledBinding.Create((DataGridDemoRow row) => row.SalesLabel)
+        });
+        var stockFilters = new AlderSegment
+        {
+            Size = AlderSegmentSize.Small,
+            Items =
+            {
+                new AlderSegmentItem { Key = "all", Content = "All" },
+                new AlderSegmentItem { Key = "in", Content = "In Stock" },
+                new AlderSegmentItem { Key = "out", Content = "Out of Stock" },
+                new AlderSegmentItem { Key = "low", Content = "Low Stock" }
+            }
+        };
+        stockFilters.Bind(AlderSegment.SelectedKeyProperty, CompiledBinding.Create((DataGridViewModel model) => model.StockFilter, mode: BindingMode.TwoWay));
+        var summary = new AlderTextBlock();
+        summary.Bind(TextBlock.TextProperty, CompiledBinding.Create((DataGridViewModel model) => model.ProductSummary));
+        grid.Footer = summary;
+
+        var search = new AlderSearchField { Width = 236, PlaceholderText = "Search" };
+        search.Bind(AlderSearchField.TextProperty, CompiledBinding.Create((DataGridViewModel model) => model.ProductSearch, mode: BindingMode.TwoWay));
+        var filters = new WrapPanel { ItemSpacing = 6, LineSpacing = 6, Children = { stockFilters, search, reset } };
+        var preview = new StackPanel { Spacing = 12, Children = { filters, grid } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

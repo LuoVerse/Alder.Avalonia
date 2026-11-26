@@ -1,0 +1,92 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:c="using:Avalonia.Data.Converters">
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderSurfaceTertiary" Color="#EAEAEB" />
+      <SolidColorBrush x:Key="AlderSeparatorSecondary" Color="#D8D8D8" />
+      <SolidColorBrush x:Key="AlderSeparatorTertiary" Color="#CDCDCE" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderSurfaceTertiary" Color="#262728" />
+      <SolidColorBrush x:Key="AlderSeparatorSecondary" Color="#343437" />
+      <SolidColorBrush x:Key="AlderSeparatorTertiary" Color="#3C3C3F" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+
+  <ControlTheme x:Key="{x:Type alder:AlderSurface}" TargetType="alder:AlderSurface">
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid>
+          <alder:SurfaceFill ClipToBounds="False" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
+                         BorderThickness="{TemplateBinding BorderThickness}" BoxShadow="{TemplateBinding BoxShadow}" />
+          <Border CornerRadius="{TemplateBinding CornerRadius}" Padding="{TemplateBinding Padding}" BackgroundSizing="OuterBorderEdge"
+                  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+          </Border>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Variant=Transparent]"><Setter Property="Background" Value="Transparent" /></Style>
+    <Style Selector="^[Variant=Secondary]"><Setter Property="Background" Value="{DynamicResource AlderSurfaceSecondary}" /></Style>
+    <Style Selector="^[Variant=Tertiary]"><Setter Property="Background" Value="{DynamicResource AlderSurfaceTertiary}" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderCard}" TargetType="alder:AlderCard" BasedOn="{StaticResource {x:Type alder:AlderSurface}}">
+    <Setter Property="CornerRadius" Value="24" />
+    <Setter Property="Padding" Value="16" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldShadow}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid>
+          <alder:SurfaceFill ClipToBounds="False" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
+                         BorderThickness="{TemplateBinding BorderThickness}" BoxShadow="{TemplateBinding BoxShadow}" />
+          <Border CornerRadius="{TemplateBinding CornerRadius}" Padding="{TemplateBinding Padding}" BackgroundSizing="OuterBorderEdge"
+                  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+            <alder:CardSlotsPanel Name="CardSlots" Orientation="{TemplateBinding Orientation}" Spacing="{TemplateBinding Spacing}">
+              <StackPanel Name="CardHeader" IsVisible="{TemplateBinding HasHeader}">
+                <ContentPresenter Name="CustomHeader" Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}" />
+                <alder:AlderTextBlock Name="CardTitle" Text="{TemplateBinding Title}" FontWeight="Medium" LineHeight="24"
+                           AutomationProperties.HeadingLevel="3" TextWrapping="Wrap"
+                           IsVisible="{CompiledBinding #CardTitle.Text, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+                <alder:AlderTextBlock Name="CardDescription" Text="{TemplateBinding Description}" Foreground="{DynamicResource AlderMuted}"
+                           LineHeight="20" TextWrapping="Wrap"
+                           IsVisible="{CompiledBinding #CardDescription.Text, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+              </StackPanel>
+              <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+              <ContentPresenter Name="CardFooter" Content="{TemplateBinding Footer}" ContentTemplate="{TemplateBinding FooterTemplate}" />
+            </alder:CardSlotsPanel>
+          </Border>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Variant=Transparent]"><Setter Property="BoxShadow" Value="none" /></Style>
+    <Style Selector="^ /template/ ContentPresenter#CustomHeader:empty, ^ /template/ ContentPresenter#PART_ContentPresenter:empty,
+                     ^ /template/ ContentPresenter#CardFooter:empty"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^[Orientation=Horizontal] /template/ StackPanel#CardHeader">
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="^[Orientation=Horizontal] /template/ ContentPresenter#CardFooter">
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderSeparator}" TargetType="alder:AlderSeparator">
+    <Setter Property="Background" Value="{DynamicResource AlderSeparator}" />
+    <Setter Property="IsHitTestVisible" Value="False" />
+    <Style Selector="^[Variant=Secondary]"><Setter Property="Background" Value="{DynamicResource AlderSeparatorSecondary}" /></Style>
+    <Style Selector="^[Variant=Tertiary]"><Setter Property="Background" Value="{DynamicResource AlderSeparatorTertiary}" /></Style>
+    <Style Selector="^[IsDecorative=True]"><Setter Property="AutomationProperties.AccessibilityView" Value="Raw" /></Style>
+  </ControlTheme>
+</ResourceDictionary>

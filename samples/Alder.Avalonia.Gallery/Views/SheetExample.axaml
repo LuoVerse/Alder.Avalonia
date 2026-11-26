@@ -1,0 +1,149 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             xmlns:conv="using:Avalonia.Data.Converters"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             x:Class="Alder.Avalonia.Gallery.Views.SheetExample" x:DataType="vm:SheetViewModel">
+  <Design.DataContext><vm:SheetViewModel /></Design.DataContext>
+  <StackPanel Spacing="24">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton HorizontalAlignment="Center" Variant="Secondary"
+                           Command="{CompiledBinding OpenScenarioCommand}" CommandParameter="Basic"
+                           Content="{DynamicResource GalleryText.OverlayOpenSheet}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var openSheet = ReactiveCommand.CreateFromTask(async () =>
+        {
+            var cancel = new AlderButton { Content = "Cancel", Variant = ButtonVariant.Secondary };
+            cancel.Click += (_, _) => Dialog.Close(cancel, DialogResult.Cancel);
+            var confirm = new AlderButton { Content = "Confirm", Variant = ButtonVariant.Secondary };
+            confirm.Click += (_, _) => Dialog.Close(confirm, DialogResult.OK);
+            await Sheet.ShowAsync("Drag the handle down to close, or use the close button.",
+                new SheetOptions
+                {
+                    Title = "Sheet Title", MaxWidth = 420,
+                    Footer = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, Children = { cancel, confirm } }
+                });
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSheetEdges" Title="{DynamicResource GalleryText.SheetEdges}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="8" LineSpacing="8" HorizontalAlignment="Center">
+          <alder:AlderButton Command="{CompiledBinding OpenEdgeCommand}" CommandParameter="{x:Static DrawerPlacement.Bottom}" Content="{DynamicResource GalleryText.DrawerBottom}" />
+          <alder:AlderButton Command="{CompiledBinding OpenEdgeCommand}" CommandParameter="{x:Static DrawerPlacement.Top}" Variant="Secondary" Content="{DynamicResource GalleryText.DrawerTop}" />
+          <alder:AlderButton Command="{CompiledBinding OpenEdgeCommand}" CommandParameter="{x:Static DrawerPlacement.Left}" Variant="Secondary" Content="{DynamicResource GalleryText.DrawerLeft}" />
+          <alder:AlderButton Command="{CompiledBinding OpenEdgeCommand}" CommandParameter="{x:Static DrawerPlacement.Right}" Variant="Secondary" Content="{DynamicResource GalleryText.DrawerRight}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.Feedback>
+        <alder:AlderTextBlock Text="{CompiledBinding Feedback}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"
+                   Foreground="{DynamicResource AlderMuted}" IsVisible="{CompiledBinding Feedback, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+      </gallery:ExampleCard.Feedback>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var result = await Sheet.ShowAsync(detailsView, new SheetOptions
+        {
+            Title = "Workspace activity",
+            Placement = DrawerPlacement.Right,
+            Buttons = DialogButtons.OKCancel,
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSheetSnap" Title="{DynamicResource GalleryText.SheetSnap}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton Command="{CompiledBinding OpenSnapCommand}" Content="{DynamicResource GalleryText.SheetOpenSnap}" HorizontalAlignment="Center" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        await Sheet.ShowAsync(activityView, new SheetOptions
+        {
+            Title = "Workspace activity",
+            IsDetached = true,
+            SnapPoints = new[] { .38, .68 },
+            Extent = 600,
+            MaxWidth = 520,
+            Backdrop = DialogBackdrop.Blur,
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSheetNested" Title="{DynamicResource GalleryText.SheetNested}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderButton Command="{CompiledBinding OpenNestedCommand}" Content="{DynamicResource GalleryText.SheetOpenParent}" HorizontalAlignment="Center" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        // Call from the details command while the parent sheet is open.
+        await Sheet.ShowAsync("A recent workspace event.", new SheetOptions
+        {
+            Title = "Activity details",
+            IsDetached = true,
+            MaxWidth = 360,
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSheetBackdrops" Title="{DynamicResource GalleryText.OverlayBackdrops}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogBackdrop.Opaque}" Content="{DynamicResource GalleryText.OverlayBackdropOpaque}" />
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogBackdrop.Blur}" Content="{DynamicResource GalleryText.OverlayBackdropBlur}" />
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="{x:Static alder:DialogBackdrop.Transparent}" Content="{DynamicResource GalleryText.OverlayBackdropTransparent}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        await Sheet.ShowAsync(content, new SheetOptions { Backdrop = DialogBackdrop.Transparent });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSheetGesture" Title="{DynamicResource GalleryText.OverlaySnapVariants}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="SnapSequential" Content="{DynamicResource GalleryText.OverlaySnapSequential}" />
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="SnapFade" Content="{DynamicResource GalleryText.OverlaySnapFade}" />
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="HandleOnly" Content="{DynamicResource GalleryText.OverlayHandleOnly}" />
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="InitialSnap" Content="{DynamicResource GalleryText.OverlayInitialSnap}" />
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="LockedSheet" Content="{DynamicResource GalleryText.OverlayLockedSheet}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        await Sheet.ShowAsync(content, new SheetOptions
+        {
+            SnapPoints = new double[] { 250, .68 },
+            InitialSnapPoint = .68,
+            FadeBackdropAfterLastSnap = true,
+            DragFromHandleOnly = true,
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSheetDetached" Title="{DynamicResource GalleryText.OverlayDetachedSheet}">
+      <gallery:ExampleCard.Preview>
+          <alder:AlderButton HorizontalAlignment="Center" Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="Detached" Content="{DynamicResource GalleryText.OverlayDetachedSheet}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        await Sheet.ShowAsync(content, new SheetOptions
+        {
+            Title = "Workspace activity", MaxWidth = 420, IsDetached = true,
+            Footer = actions,
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSheetContent" Title="{DynamicResource GalleryText.OverlayContentStyles}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="Scrollable" Content="{DynamicResource GalleryText.OverlayScrollable}" />
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="Form" Content="{DynamicResource GalleryText.OverlayForm}" />
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="Picker" Content="{DynamicResource GalleryText.OverlayPicker}" />
+            <alder:AlderButton Command="{CompiledBinding OpenScenarioCommand}" Variant="Secondary" CommandParameter="CustomClose" Content="{DynamicResource GalleryText.OverlayCustomClose}" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.Feedback>
+        <alder:AlderTextBlock Text="{CompiledBinding PickerFeedback}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"
+                   Foreground="{DynamicResource AlderMuted}" IsVisible="{CompiledBinding PickerFeedback, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+      </gallery:ExampleCard.Feedback>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var result = await Sheet.ShowAsync<ProjectEditorView>(editor, new SheetOptions
+        {
+            Title = "Edit project", Placement = DrawerPlacement.Right, Extent = 400, ShowHandle = false,
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

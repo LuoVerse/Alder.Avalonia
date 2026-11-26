@@ -1,0 +1,195 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="using:Alder.Avalonia.Controls"
+             xmlns:c="using:Avalonia.Data.Converters"
+             xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.PromptSuggestionExample" x:DataType="vm:AiExampleViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleDefault" Classes="flush-preview" Title="{DynamicResource GalleryText.AiDefault}">
+      <g:ExampleCard.Preview>
+        <Border Container.Name="PromptSuggestionHost" Container.Sizing="Width">
+          <Border.DataContext><vm:AiExampleViewModel /></Border.DataContext>
+          <Border.Styles>
+            <Style Selector="Border.suggestion-content"><Setter Property="Padding" Value="16,24" /></Style>
+            <Style Selector="UniformGrid.suggestion-items"><Setter Property="Columns" Value="1" /></Style>
+            <ContainerQuery Name="PromptSuggestionHost" Query="min-width:624">
+              <Style Selector="Border.suggestion-content"><Setter Property="Padding" Value="32,24" /></Style>
+              <Style Selector="UniformGrid.suggestion-items"><Setter Property="Columns" Value="2" /></Style>
+            </ContainerQuery>
+          </Border.Styles>
+          <Border Classes="suggestion-content" MinHeight="360">
+            <StackPanel Spacing="32" MaxWidth="960" VerticalAlignment="Center">
+              <StackPanel Spacing="8">
+                <a:AlderTextBlock Text="{DynamicResource GalleryText.AiWhy}" FontSize="24" LineHeight="32" FontWeight="SemiBold"
+                                  TextWrapping="Wrap" Foreground="{DynamicResource AlderInk}" />
+                <a:AlderTextBlock Text="{DynamicResource GalleryText.AiSuggestionDetail}" FontSize="14" LineHeight="20"
+                                  TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" MaxWidth="640" HorizontalAlignment="Left" />
+              </StackPanel>
+              <UniformGrid Classes="suggestion-items" ColumnSpacing="8" RowSpacing="8">
+                <a:AlderPromptSuggestion Content="{DynamicResource GalleryText.AiDraft}"
+                                         Command="{CompiledBinding Suggest}" CommandParameter="{DynamicResource GalleryText.AiDraft}" />
+                <a:AlderPromptSuggestion Content="{DynamicResource GalleryText.AiSummarize}"
+                                         Command="{CompiledBinding Suggest}" CommandParameter="{DynamicResource GalleryText.AiSummarize}" />
+                <a:AlderPromptSuggestion Content="{DynamicResource GalleryText.AiPlan}"
+                                         Command="{CompiledBinding Suggest}" CommandParameter="{DynamicResource GalleryText.AiPlan}" />
+                <a:AlderPromptSuggestion Content="{DynamicResource GalleryText.AiReply}"
+                                         Command="{CompiledBinding Suggest}" CommandParameter="{DynamicResource GalleryText.AiReply}" />
+                <a:AlderPromptSuggestion Content="{DynamicResource GalleryText.AiBrainstorm}"
+                                         Command="{CompiledBinding Suggest}" CommandParameter="{DynamicResource GalleryText.AiBrainstorm}" />
+                <a:AlderPromptSuggestion Content="{DynamicResource GalleryText.AiExplain}"
+                                         Command="{CompiledBinding Suggest}" CommandParameter="{DynamicResource GalleryText.AiExplain}" />
+              </UniformGrid>
+              <a:AlderTextBlock Text="{CompiledBinding Draft}" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}"
+                                IsVisible="{CompiledBinding Draft, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+            </StackPanel>
+          </Border>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel();
+
+        AlderTextBlock Text(string key, double fontSize, double lineHeight, bool heading = false)
+        {
+            var text = new AlderTextBlock
+            {
+                FontSize = fontSize, LineHeight = lineHeight, TextWrapping = TextWrapping.Wrap,
+                FontWeight = heading ? FontWeight.SemiBold : FontWeight.Normal
+            };
+            text[!TextBlock.TextProperty] = new DynamicResourceExtension($"GalleryText.{key}");
+            text[!TextBlock.ForegroundProperty] = new DynamicResourceExtension(heading ? "AlderInk" : "AlderMuted");
+            return text;
+        }
+
+        var description = Text("AiSuggestionDetail", 14, 20);
+        description.MaxWidth = 640;
+        description.HorizontalAlignment = HorizontalAlignment.Left;
+        var header = new StackPanel { Spacing = 8, Children = { Text("AiWhy", 24, 32, heading: true), description } };
+        var items = new UniformGrid { Columns = 1, ColumnSpacing = 8, RowSpacing = 8 };
+        foreach (var key in new[] { "AiDraft", "AiSummarize", "AiPlan", "AiReply", "AiBrainstorm", "AiExplain" })
+        {
+            var item = new AlderPromptSuggestion { Command = model.Suggest };
+            item[!ContentControl.ContentProperty] = new DynamicResourceExtension($"GalleryText.{key}");
+            item[!Button.CommandParameterProperty] = new DynamicResourceExtension($"GalleryText.{key}");
+            items.Children.Add(item);
+        }
+
+        var draft = new AlderTextBlock { TextWrapping = TextWrapping.Wrap };
+        draft[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        draft.Bind(TextBlock.TextProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.Draft));
+        draft.Bind(Visual.IsVisibleProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.Draft,
+            converter: StringConverters.IsNotNullOrEmpty));
+        var content = new Border
+        {
+            Padding = new Thickness(16, 24), MinHeight = 360,
+            Child = new StackPanel { Spacing = 32, MaxWidth = 960, VerticalAlignment = VerticalAlignment.Center,
+                Children = { header, items, draft } }
+        };
+        var preview = new Border { DataContext = model, Child = content };
+        preview.SizeChanged += (_, args) =>
+        {
+            bool wide = args.NewSize.Width >= 624;
+            content.Padding = new Thickness(wide ? 32 : 16, 24);
+            items.Columns = wide ? 2 : 1;
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleCards" Classes="flush-preview" Title="{DynamicResource GalleryText.AiVariantCards}">
+      <g:ExampleCard.Preview>
+        <Border Container.Name="PromptSuggestionHost" Container.Sizing="Width">
+          <Border.DataContext><vm:AiExampleViewModel /></Border.DataContext>
+          <Border.Styles>
+            <Style Selector="Border.suggestion-content"><Setter Property="Padding" Value="16,24" /></Style>
+            <Style Selector="UniformGrid.suggestion-items"><Setter Property="Columns" Value="1" /></Style>
+            <ContainerQuery Name="PromptSuggestionHost" Query="min-width:624">
+              <Style Selector="Border.suggestion-content"><Setter Property="Padding" Value="32,24" /></Style>
+              <Style Selector="UniformGrid.suggestion-items"><Setter Property="Columns" Value="2" /></Style>
+            </ContainerQuery>
+          </Border.Styles>
+          <Border Classes="suggestion-content" MinHeight="360">
+            <StackPanel Spacing="32" MaxWidth="960" VerticalAlignment="Center">
+              <StackPanel Spacing="8">
+                <a:AlderTextBlock Text="{DynamicResource GalleryText.AiStarter}" FontSize="24" LineHeight="32" FontWeight="SemiBold"
+                                  TextWrapping="Wrap" Foreground="{DynamicResource AlderInk}" />
+                <a:AlderTextBlock Text="{DynamicResource GalleryText.AiStarterDetail}" FontSize="14" LineHeight="20"
+                                  TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" MaxWidth="640" HorizontalAlignment="Left" />
+              </StackPanel>
+              <StackPanel Spacing="12">
+                <StackPanel Spacing="4">
+                  <a:AlderTextBlock Text="{DynamicResource GalleryText.AiAtWork}" FontSize="18" LineHeight="28" FontWeight="SemiBold"
+                                    TextWrapping="Wrap" Foreground="{DynamicResource AlderInk}" />
+                  <a:AlderTextBlock Text="{DynamicResource GalleryText.AiAtWorkHint}" FontSize="14" LineHeight="20"
+                                    TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" />
+                </StackPanel>
+                <UniformGrid Classes="suggestion-items" ColumnSpacing="12" RowSpacing="12">
+                  <a:AlderPromptSuggestion Appearance="Card" Content="{DynamicResource GalleryText.AiWeekly}"
+                                           Description="{DynamicResource GalleryText.AiWeeklyDetail}"
+                                           Command="{CompiledBinding Suggest}" CommandParameter="{DynamicResource GalleryText.AiWeekly}" />
+                  <a:AlderPromptSuggestion Appearance="Card" Content="{DynamicResource GalleryText.AiMeeting}"
+                                           Description="{DynamicResource GalleryText.AiMeetingDetail}"
+                                           Command="{CompiledBinding Suggest}" CommandParameter="{DynamicResource GalleryText.AiMeeting}" />
+                  <a:AlderPromptSuggestion Appearance="Card" Content="{DynamicResource GalleryText.AiMilestones}"
+                                           Description="{DynamicResource GalleryText.AiMilestonesDetail}"
+                                           Command="{CompiledBinding Suggest}" CommandParameter="{DynamicResource GalleryText.AiMilestones}" />
+                </UniformGrid>
+              </StackPanel>
+              <a:AlderTextBlock Text="{CompiledBinding Draft}" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}"
+                                IsVisible="{CompiledBinding Draft, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+            </StackPanel>
+          </Border>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel();
+
+        AlderTextBlock Text(string key, double fontSize, double lineHeight, bool heading = false)
+        {
+            var text = new AlderTextBlock
+            {
+                FontSize = fontSize, LineHeight = lineHeight, TextWrapping = TextWrapping.Wrap,
+                FontWeight = heading ? FontWeight.SemiBold : FontWeight.Normal
+            };
+            text[!TextBlock.TextProperty] = new DynamicResourceExtension($"GalleryText.{key}");
+            text[!TextBlock.ForegroundProperty] = new DynamicResourceExtension(heading ? "AlderInk" : "AlderMuted");
+            return text;
+        }
+
+        var description = Text("AiStarterDetail", 14, 20);
+        description.MaxWidth = 640;
+        description.HorizontalAlignment = HorizontalAlignment.Left;
+        var header = new StackPanel { Spacing = 8, Children = { Text("AiStarter", 24, 32, heading: true), description } };
+        var groupHeader = new StackPanel { Spacing = 4,
+            Children = { Text("AiAtWork", 18, 28, heading: true), Text("AiAtWorkHint", 14, 20) } };
+        var items = new UniformGrid { Columns = 1, ColumnSpacing = 12, RowSpacing = 12 };
+        foreach (var key in new[] { "AiWeekly", "AiMeeting", "AiMilestones" })
+        {
+            var item = new AlderPromptSuggestion { Appearance = PromptSuggestionAppearance.Card, Command = model.Suggest };
+            item[!ContentControl.ContentProperty] = new DynamicResourceExtension($"GalleryText.{key}");
+            item[!AlderPromptSuggestion.DescriptionProperty] = new DynamicResourceExtension($"GalleryText.{key}Detail");
+            item[!Button.CommandParameterProperty] = new DynamicResourceExtension($"GalleryText.{key}");
+            items.Children.Add(item);
+        }
+
+        var group = new StackPanel { Spacing = 12, Children = { groupHeader, items } };
+        var draft = new AlderTextBlock { TextWrapping = TextWrapping.Wrap };
+        draft[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        draft.Bind(TextBlock.TextProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.Draft));
+        draft.Bind(Visual.IsVisibleProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.Draft,
+            converter: StringConverters.IsNotNullOrEmpty));
+        var content = new Border
+        {
+            Padding = new Thickness(16, 24), MinHeight = 360,
+            Child = new StackPanel { Spacing = 32, MaxWidth = 960, VerticalAlignment = VerticalAlignment.Center,
+                Children = { header, group, draft } }
+        };
+        var preview = new Border { DataContext = model, Child = content };
+        preview.SizeChanged += (_, args) =>
+        {
+            bool wide = args.NewSize.Width >= 624;
+            content.Padding = new Thickness(wide ? 32 : 16, 24);
+            items.Columns = wide ? 2 : 1;
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

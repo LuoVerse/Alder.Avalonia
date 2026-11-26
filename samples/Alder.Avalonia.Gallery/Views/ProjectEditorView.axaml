@@ -1,0 +1,23 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.ProjectEditorView"
+             ClipToBounds="False"
+             x:DataType="vm:ProjectEditorViewModel">
+  <StackPanel Spacing="12">
+    <alder:AlderTextBlock Text="{DynamicResource GalleryText.DialogProjectDescription}" TextWrapping="Wrap" />
+    <StackPanel Spacing="6">
+      <alder:AlderLabel Content="{DynamicResource GalleryText.DialogProjectName}" Theme="{StaticResource AlderLabelTheme}"
+             Target="{CompiledBinding #ProjectNameInput}" />
+      <alder:AlderInput x:Name="ProjectNameInput" FullWidth="True"
+                   Text="{CompiledBinding ProjectName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+    </StackPanel>
+    <WrapPanel HorizontalAlignment="Right" ItemSpacing="8" LineSpacing="8" Margin="0,8,0,0">
+      <alder:AlderButton x:Name="CancelEdit" Variant="Secondary" Command="{CompiledBinding CancelCommand}"
+                    Content="{DynamicResource AlderText.Dialog.Cancel}" />
+      <alder:AlderButton x:Name="SaveEdit" Command="{CompiledBinding SaveCommand}" IsEnabled="{CompiledBinding CanSave}"
+                    Content="{DynamicResource GalleryText.DialogSave}" />
+    </WrapPanel>
+  </StackPanel>
+</UserControl>

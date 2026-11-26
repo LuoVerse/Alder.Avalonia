@@ -1,0 +1,35 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <StreamGeometry x:Key="GalleryNavHomeIcon">F0 M1,7 L8,1 L15,7 L14,8.2 L13.5,7.8 V14.5 H2.5 V7.8 L2,8.2 Z M4,6.5 V13 H6 V9 H10 V13 H12 V6.5 L8,3 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavButtonIcon">F0 M3,3 H13 Q15,3 15,5 V11 Q15,13 13,13 H3 Q1,13 1,11 V5 Q1,3 3,3 Z M2.5,5 V11 Q2.5,11.5 3,11.5 H13 Q13.5,11.5 13.5,11 V5 Q13.5,4.5 13,4.5 H3 Q2.5,4.5 2.5,5 Z M5,7.25 H11 V8.75 H5 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavToggleIcon">F0 M5.5,3.5 H10.5 A4.5,4.5 0 0 1 10.5,12.5 H5.5 A4.5,4.5 0 0 1 5.5,3.5 Z M5.5,5 A3,3 0 0 0 5.5,11 H10.5 A3,3 0 0 0 10.5,5 Z M10.5,6 A2,2 0 1 1 10.5,10 A2,2 0 0 1 10.5,6 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavCheckboxIcon">F0 M3,1.5 H13 Q14.5,1.5 14.5,3 V13 Q14.5,14.5 13,14.5 H3 Q1.5,14.5 1.5,13 V3 Q1.5,1.5 3,1.5 Z M3,3 V13 H13 V3 Z M4.2,8 L5.2,6.9 L7.1,8.7 L10.9,5 L11.9,6.1 L7.1,10.8 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavInputIcon">F0 M2.5,3 H13.5 Q15,3 15,4.5 V11.5 Q15,13 13.5,13 H2.5 Q1,13 1,11.5 V4.5 Q1,3 2.5,3 Z M2.5,4.5 V11.5 H13.5 V4.5 Z M5,5.5 H6.5 V10.5 H5 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavAccordionIcon">F0 M1,2 H15 V14 H1 Z M2.5,3.5 V6 H13.5 V3.5 Z M2.5,7.5 V9.5 H13.5 V7.5 Z M2.5,11 V12.5 H13.5 V11 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavBreadcrumbsIcon">M1,7.25 H4 V8.75 H1 Z M5.5,5 L6.6,4 L10,8 L6.6,12 L5.5,11 L8,8 Z M10.5,5 L11.6,4 L15,8 L11.6,12 L10.5,11 L13,8 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavDisclosureIcon">M2,3 H14 V4.5 H2 Z M5,7 L6,6 L8,8 L10,6 L11,7 L8,10 Z M2,12 H14 V13.5 H2 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavNavbarIcon">F0 M1,2 H15 V14 H1 Z M2.5,3.5 V6 H13.5 V3.5 Z M2.5,7.5 V12.5 H13.5 V7.5 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavPaginationIcon">M1,6 L2,5 L4,7 L2,9 L1,8 L2,7 Z M6,5 H10 V9 H6 Z M12,6 L13,5 L15,7 L13,9 L12,8 L13,7 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavSegmentIcon">F0 M5,3.5 H11 A4.5,4.5 0 0 1 11,12.5 H5 A4.5,4.5 0 0 1 5,3.5 Z M8,5 V11 H11 A3,3 0 0 0 11,5 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavStepperIcon">F0 M3,1.5 A1.5,1.5 0 1 1 3,4.5 A1.5,1.5 0 0 1 3,1.5 Z M3,6.5 A1.5,1.5 0 1 1 3,9.5 A1.5,1.5 0 0 1 3,6.5 Z M3,11.5 A1.5,1.5 0 1 1 3,14.5 A1.5,1.5 0 0 1 3,11.5 Z M2.25,4.5 H3.75 V6.5 H2.25 Z M2.25,9.5 H3.75 V11.5 H2.25 Z M7,2.25 H14.5 V3.75 H7 Z M7,7.25 H12 V8.75 H7 Z M7,12.25 H14.5 V13.75 H7 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavTabsIcon">F0 M1,3 H7 V5 H15 V14 H1 Z M2.5,4.5 V12.5 H13.5 V6.5 H5.5 V4.5 Z M8,3 H14 V4 H8 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavDialogIcon">F0 M2.5,2 H13.5 Q15,2 15,3.5 V12.5 Q15,14 13.5,14 H2.5 Q1,14 1,12.5 V3.5 Q1,2 2.5,2 Z M2.5,3.5 V12.5 H13.5 V3.5 Z M4.5,6 H11.5 V7.5 H4.5 Z M7.5,9 H11.5 V10.5 H7.5 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavSliderIcon">M1,7.25 H5 V8.75 H1 Z M10,7.25 H15 V8.75 H10 Z M7.5,5 A3,3 0 1 1 7.5,11 A3,3 0 0 1 7.5,5 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavProgressIcon">F0 M4,5 H12 A3,3 0 0 1 12,11 H4 A3,3 0 0 1 4,5 Z M8,6.5 V9.5 H12 A1.5,1.5 0 0 0 12,6.5 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavSkeletonIcon">M1.5,3 H14.5 V4.5 H1.5 Z M1.5,7.25 H11 V8.75 H1.5 Z M1.5,11.5 H8 V13 H1.5 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavCardIcon">F0 M1,2 H15 V14 H1 Z M2.5,3.5 V12.5 H13.5 V3.5 Z M4.5,5.5 H11.5 V7 H4.5 Z M4.5,9 H9.75 V10.5 H4.5 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavSeparatorIcon">M4,3 H12 V4.5 H4 Z M1,7.25 H15 V8.75 H1 Z M4,11.5 H12 V13 H4 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavSelectIcon">M1.5,3 H10 V4.5 H1.5 Z M1.5,7.25 H8 V8.75 H1.5 Z M1.5,11.5 H10 V13 H1.5 Z M10,7 L11,6 L12.5,7.5 L14,6 L15,7 L12.5,9.5 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavKeyboardIcon">F0 M1,3 H15 V13 H1 Z M2.5,4.5 V11.5 H13.5 V4.5 Z M4,6 H5.5 V7.5 H4 Z M7.25,6 H8.75 V7.5 H7.25 Z M10.5,6 H12 V7.5 H10.5 Z M4,9 H12 V10 H4 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavDataGridIcon">F0 M1,2 H15 V14 H1 Z M2.5,3.5 V6 H13.5 V3.5 Z M2.5,7.5 V12.5 H4.5 V7.5 Z M6,7.5 V9.4 H10 V7.5 Z M6,10.8 V12.5 H10 V10.8 Z M11.5,7.5 V12.5 H13.5 V7.5 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavTableIcon">F0 M1,2 H15 V14 H1 Z M2.5,3.5 V6 H13.5 V3.5 Z M2.5,7.5 V9.5 H7.25 V7.5 Z M8.75,7.5 V9.5 H13.5 V7.5 Z M2.5,11 V12.5 H7.25 V11 Z M8.75,11 V12.5 H13.5 V11 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavigationColorIcon">F0 M8,1 C5.2,4.5 3.3,6.8 3.3,9.8 A4.7,4.7 0 0 0 12.7,9.8 C12.7,6.8 10.8,4.5 8,1 Z M8,3.3 C6,6 4.9,7.7 4.9,9.8 A3.1,3.1 0 0 0 11.1,9.8 C11.1,7.7 10,6 8,3.3 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavColorPickerIcon">F0 M9.6,2.5 L10.6,1.5 Q12,0.2 13.4,1.5 L14.5,2.6 Q15.8,4 14.5,5.4 L13.5,6.4 L14.4,7.3 L13.3,8.4 L12.6,7.7 L6.8,13.5 L1,15 L2.5,9.2 L8.3,3.4 L7.6,2.7 L8.7,1.6 Z M9.4,4.5 L3.8,10.1 L3.1,12.9 L5.9,12.2 L11.5,6.6 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavSwatchIcon">F0 M3.5,1.5 H12.5 Q14.5,1.5 14.5,3.5 V12.5 Q14.5,14.5 12.5,14.5 H3.5 Q1.5,14.5 1.5,12.5 V3.5 Q1.5,1.5 3.5,1.5 Z M3,3.5 V10 H13 V3.5 Q13,3 12.5,3 H3.5 Q3,3 3,3.5 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavSwatchesIcon">M1,1 H7 V7 H1 Z M9,1 H15 V7 H9 Z M1,9 H7 V15 H1 Z M9,9 H15 V15 H9 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavAreaChartIcon">F0 M2 2 H3.5 V12.5 H14 V14 H2 Z M5 11 L8.25 6.5 L10.4 8.1 L14 4 V11 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavBarChartIcon">M2 2 H3.5 V12.5 H14 V14 H2 Z M5 7 H7 V11 H5 Z M8.5 4 H10.5 V11 H8.5 Z M12 6 H14 V11 H12 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavLineChartIcon">M2 2 H3.5 V12.5 H14 V14 H2 Z M5 9 L8 6 L10.25 8.25 L13.2 4.3 L14.4 5.2 L10.4 10.5 L8 8.1 L6.05 10 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavPieChartIcon">M7.25 1.2 V8.75 H14.8 A6.9 6.9 0 1 1 7.25 1.2 Z M8.75 1.2 A6.9 6.9 0 0 1 14.8 7.25 H8.75 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavRadarChartIcon">F0 M8 1 L15 5 V11 L8 15 L1 11 V5 Z M8 2.65 L2.5 5.85 V10.15 L8 13.35 L13.5 10.15 V5.85 Z M8 4 L11.5 6 L11 10 L7 11 L4 9 L5 6 Z</StreamGeometry>
+  <StreamGeometry x:Key="GalleryNavRadialChartIcon">M3 12.7 A6.7 6.7 0 1 1 13 12.7 L11.85 11.65 A5.15 5.15 0 1 0 4.15 11.65 Z M7.25 8.75 L10.9 5.5 L11.9 6.55 L8.65 10.35 Z</StreamGeometry>
+</ResourceDictionary>

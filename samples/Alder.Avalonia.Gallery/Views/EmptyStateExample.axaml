@@ -1,0 +1,104 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.EmptyStateExample" x:DataType="vm:EmptyStateViewModel">
+  <StackPanel x:Name="Examples" Spacing="20">
+    <gallery:ExampleCard x:Name="Usage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderEmptyState Title="{DynamicResource GalleryText.EmptyStateProjects}"
+                               Description="{DynamicResource GalleryText.EmptyStateProjectsHint}" MaxWidth="420" MediaVariant="Icon">
+          <alder:AlderEmptyState.Media><alder:AlderPathIcon Width="20" Height="20" Data="{StaticResource AlderFileTreeFolderIcon}" /></alder:AlderEmptyState.Media>
+          <WrapPanel ItemSpacing="8" LineSpacing="8" HorizontalAlignment="Center">
+            <alder:AlderButton Size="Medium" Variant="Primary" Content="{DynamicResource GalleryText.EmptyStateCreate}" Command="{CompiledBinding Report}" CommandParameter="EmptyStateCreate" />
+            <alder:AlderButton Size="Medium" Variant="Outline" Content="{DynamicResource GalleryText.EmptyStateImport}" Command="{CompiledBinding Report}" CommandParameter="EmptyStateImport" />
+          </WrapPanel>
+        </alder:AlderEmptyState>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="Outline" Title="{DynamicResource GalleryText.EmptyStateOutline}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderEmptyState Title="{DynamicResource GalleryText.EmptyStateStorage}"
+                               Description="{DynamicResource GalleryText.EmptyStateStorageHint}" Variant="Outline" MaxWidth="420" MediaVariant="Icon">
+          <alder:AlderEmptyState.Media><alder:AlderPathIcon Width="20" Height="20" Data="{StaticResource AlderIconArrowUp}" /></alder:AlderEmptyState.Media>
+          <alder:AlderButton Size="Small" Variant="Outline" Content="{DynamicResource GalleryText.EmptyStateUpload}" Command="{CompiledBinding Report}" CommandParameter="EmptyStateUpload" />
+        </alder:AlderEmptyState>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="Sizes" Title="{DynamicResource GalleryText.Sizes}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="12" LineSpacing="12" HorizontalAlignment="Center">
+          <alder:AlderEmptyState Title="{DynamicResource GalleryText.EmptyStateProjects}"
+                                 Description="{DynamicResource GalleryText.EmptyStateProjectsHint}" Variant="Outline" Size="Small" Width="306" MediaVariant="Icon">
+            <alder:AlderEmptyState.Media><alder:AlderPathIcon Width="20" Height="20" Data="{StaticResource AlderFileTreeFolderIcon}" /></alder:AlderEmptyState.Media>
+            <WrapPanel ItemSpacing="8" LineSpacing="8" HorizontalAlignment="Center">
+              <alder:AlderButton Size="Small" Variant="Primary" Content="{DynamicResource GalleryText.EmptyStateCreate}" Command="{CompiledBinding Report}" CommandParameter="EmptyStateCreate" />
+              <alder:AlderButton Size="Small" Variant="Outline" Content="{DynamicResource GalleryText.EmptyStateImport}" Command="{CompiledBinding Report}" CommandParameter="EmptyStateImport" />
+            </WrapPanel>
+          </alder:AlderEmptyState>
+          <alder:AlderEmptyState Title="{DynamicResource GalleryText.EmptyStateProjects}"
+                                 Description="{DynamicResource GalleryText.EmptyStateProjectsHint}" Variant="Outline" Size="Medium" Width="306" MediaVariant="Icon">
+            <alder:AlderEmptyState.Media><alder:AlderPathIcon Width="20" Height="20" Data="{StaticResource AlderFileTreeFolderIcon}" /></alder:AlderEmptyState.Media>
+            <WrapPanel Margin="-24,0" ItemSpacing="8" LineSpacing="8" HorizontalAlignment="Center">
+              <alder:AlderButton Size="Medium" Variant="Primary" Content="{DynamicResource GalleryText.EmptyStateCreate}" Command="{CompiledBinding Report}" CommandParameter="EmptyStateCreate" />
+              <alder:AlderButton Size="Medium" Variant="Outline" Content="{DynamicResource GalleryText.EmptyStateImport}" Command="{CompiledBinding Report}" CommandParameter="EmptyStateImport" />
+            </WrapPanel>
+          </alder:AlderEmptyState>
+          <alder:AlderEmptyState Title="{DynamicResource GalleryText.EmptyStateProjects}"
+                                 Description="{DynamicResource GalleryText.EmptyStateProjectsHint}" Variant="Outline" Size="Large" Width="306" MediaVariant="Icon">
+            <alder:AlderEmptyState.Media><alder:AlderPathIcon Width="20" Height="20" Data="{StaticResource AlderFileTreeFolderIcon}" /></alder:AlderEmptyState.Media>
+            <WrapPanel Margin="-32,0" ItemSpacing="8" LineSpacing="8" HorizontalAlignment="Center">
+              <alder:AlderButton Size="Large" Variant="Primary" Content="{DynamicResource GalleryText.EmptyStateCreate}" Command="{CompiledBinding Report}" CommandParameter="EmptyStateCreate" />
+              <alder:AlderButton Size="Large" Variant="Outline" Content="{DynamicResource GalleryText.EmptyStateImport}" Command="{CompiledBinding Report}" CommandParameter="EmptyStateImport" />
+            </WrapPanel>
+          </alder:AlderEmptyState>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="Minimal" Title="{DynamicResource GalleryText.EmptyStateMinimal}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderEmptyState Title="{DynamicResource GalleryText.EmptyStateNothing}"
+                               Description="{DynamicResource GalleryText.EmptyStateNothingHint}" MaxWidth="420">
+        </alder:AlderEmptyState>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="Avatar" Title="{DynamicResource GalleryText.EmptyStateWithAvatar}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderEmptyState Title="{DynamicResource GalleryText.EmptyStateOffline}"
+                               Description="{DynamicResource GalleryText.EmptyStateOfflineHint}" MaxWidth="420">
+          <alder:AlderEmptyState.Media><alder:AlderAvatar Width="46" Height="46" Fallback="AP" /></alder:AlderEmptyState.Media>
+          <alder:AlderButton Size="Medium" Variant="Secondary" Content="{DynamicResource GalleryText.EmptyStateMessage}" Command="{CompiledBinding Report}" CommandParameter="EmptyStateMessage" />
+        </alder:AlderEmptyState>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="AvatarGroup" Title="{DynamicResource GalleryText.EmptyStateWithAvatarGroup}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderEmptyState Title="{DynamicResource GalleryText.EmptyStateTeam}"
+                               Description="{DynamicResource GalleryText.EmptyStateTeamHint}" MaxWidth="420">
+          <alder:AlderEmptyState.Media><alder:AlderAvatarGroup Size="Small"><alder:AlderAvatar Fallback="AP" /><alder:AlderAvatar Fallback="JT" /><alder:AlderAvatar Fallback="RK" /></alder:AlderAvatarGroup></alder:AlderEmptyState.Media>
+          <alder:AlderButton Size="Small" Variant="Primary" Icon="{StaticResource AlderIconPlus}"
+                             Content="{DynamicResource GalleryText.EmptyStateInvite}" Command="{CompiledBinding Report}" CommandParameter="EmptyStateInvite" />
+        </alder:AlderEmptyState>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="FilledSurface" Title="{DynamicResource GalleryText.EmptyStateWithBackground}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderEmptyState Title="{DynamicResource GalleryText.EmptyStateNotifications}"
+                               Description="{DynamicResource GalleryText.EmptyStateNotificationsHint}" Variant="Filled" MaxWidth="420" MediaVariant="Icon">
+          <alder:AlderEmptyState.Media><alder:AlderPathIcon Width="20" Height="20" Data="{StaticResource AlderIconBell}" /></alder:AlderEmptyState.Media>
+          <alder:AlderButton Size="Medium" Variant="Outline" Content="{DynamicResource GalleryText.EmptyStateRefresh}" Command="{CompiledBinding Report}" CommandParameter="EmptyStateRefresh" />
+        </alder:AlderEmptyState>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="FullHeight" Title="{DynamicResource GalleryText.EmptyStateFullHeight}">
+      <gallery:ExampleCard.Preview>
+        <Border Height="370" MaxWidth="480" BorderThickness="1" BorderBrush="{DynamicResource AlderBorder}" CornerRadius="16">
+          <alder:AlderEmptyState Title="{DynamicResource GalleryText.EmptyStateNoResults}"
+                                 Description="{DynamicResource GalleryText.EmptyStateNoResultsHint}" MaxWidth="420" MediaVariant="Icon">
+            <alder:AlderEmptyState.Media><alder:AlderPathIcon Width="20" Height="20" Data="{StaticResource AlderIconInfo}" /></alder:AlderEmptyState.Media>
+            <alder:AlderButton Size="Small" Variant="Outline" Content="{DynamicResource GalleryText.EmptyStateClearFilters}" Command="{CompiledBinding Report}" CommandParameter="EmptyStateClearFilters" />
+          </alder:AlderEmptyState>
+        </Border>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

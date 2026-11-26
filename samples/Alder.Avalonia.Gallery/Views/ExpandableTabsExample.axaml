@@ -1,0 +1,105 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             xmlns:conv="using:Avalonia.Data.Converters"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             x:Class="Alder.Avalonia.Gallery.Views.ExpandableTabsExample" x:DataType="vm:ExpandableTabsViewModel">
+  <Design.DataContext><vm:ExpandableTabsViewModel /></Design.DataContext>
+  <UserControl.Resources>
+    <gallery:IconResourceConverter x:Key="ExpandableMenuIcon" />
+    <ControlTheme x:Key="ExpandableMenuButton" TargetType="Button">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="FontWeight" Value="Medium" />
+      <Setter Property="MinHeight" Value="36" />
+      <Setter Property="Padding" Value="12,0" />
+      <Setter Property="CornerRadius" Value="12" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
+                            Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+        </ControlTemplate>
+      </Setter>
+      <Style Selector="^:pointerover:not(:disabled)"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
+      <Style Selector="^:pressed:not(:disabled)"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
+    </ControlTheme>
+    <DataTemplate x:Key="ExpandableMenu" x:DataType="vm:ExpandableTabMenu">
+      <alder:AlderItemsControl ItemsSource="{CompiledBinding Actions}">
+        <alder:AlderItemsControl.Styles>
+          <Style Selector="ItemsControl > ContentPresenter">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+          </Style>
+        </alder:AlderItemsControl.Styles>
+        <alder:AlderItemsControl.ItemsPanel>
+          <ItemsPanelTemplate><StackPanel Spacing="2" /></ItemsPanelTemplate>
+        </alder:AlderItemsControl.ItemsPanel>
+        <alder:AlderItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:ExpandableTabAction">
+            <alder:AlderButton Theme="{StaticResource ExpandableMenuButton}" AutomationProperties.Name="{CompiledBinding Caption}"
+                    Command="{CompiledBinding Activate}" CommandParameter="{CompiledBinding}">
+              <DockPanel LastChildFill="True">
+                <alder:AlderPathIcon DockPanel.Dock="Left" Width="16" Height="16" Margin="0,0,10,0"
+                          IsHitTestVisible="False" Foreground="{DynamicResource AlderMuted}"
+                          Data="{CompiledBinding IconKey, Converter={StaticResource ExpandableMenuIcon}}" />
+                <alder:AlderPathIcon DockPanel.Dock="Right" Data="{StaticResource AlderIconChevronRight}" Width="14" Height="14"
+                          Margin="8,0,0,0" Foreground="{DynamicResource AlderMuted}" />
+                <alder:AlderTextBlock Text="{CompiledBinding Caption}" TextTrimming="CharacterEllipsis" />
+              </DockPanel>
+            </alder:AlderButton>
+          </DataTemplate>
+        </alder:AlderItemsControl.ItemTemplate>
+      </alder:AlderItemsControl>
+    </DataTemplate>
+  </UserControl.Resources>
+  <gallery:ExampleCard x:Name="SampleExpandableTabs" Title="{DynamicResource GalleryText.ExpandableTabs}">
+    <gallery:ExampleCard.Preview>
+      <Grid MinHeight="290">
+        <alder:AlderExpandableTabs x:Name="ProjectTabs" ExpandedMinWidth="292" ExpandedMinHeight="274"
+                              SelectedIndex="{CompiledBinding SelectedIndex, Mode=TwoWay}"
+                              ContentTemplate="{StaticResource ExpandableMenu}"
+                              AutomationProperties.Name="{DynamicResource GalleryText.ExpandableTabs}">
+          <alder:AlderTabItem Header="{DynamicResource GalleryText.ExpandableProject}" Icon="{StaticResource AlderIconArrowUpRight}"
+                   Content="{CompiledBinding Project}" />
+          <alder:AlderTabItem Header="{DynamicResource GalleryText.ExpandableInbox}" Icon="{StaticResource AlderIconEnvelope}"
+                   Content="{CompiledBinding Inbox}" />
+          <alder:AlderTabItem Header="{DynamicResource GalleryText.ExpandableAutomation}" Icon="{StaticResource AlderIconGear}"
+                   Content="{CompiledBinding Automation}" />
+          <alder:AlderTabItem Header="{DynamicResource GalleryText.ExpandableLibrary}" Icon="{StaticResource AlderIconBookmark}"
+                   Content="{CompiledBinding Library}" />
+          <alder:AlderTabItem Header="{DynamicResource GalleryText.ExpandableStatus}" Icon="{StaticResource AlderIconCheck}"
+                   Content="{CompiledBinding Status}" />
+        </alder:AlderExpandableTabs>
+      </Grid>
+    </gallery:ExampleCard.Preview>
+    <gallery:ExampleCard.Feedback>
+      <alder:AlderTextBlock Text="{CompiledBinding ActionFeedback}" AutomationProperties.LiveSetting="Polite"
+                 TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}"
+                 IsVisible="{CompiledBinding ActionFeedback, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+    </gallery:ExampleCard.Feedback>
+    <gallery:ExampleCard.CSharpSource><![CDATA[
+      var tabs = new AlderExpandableTabs
+      {
+          ExpandedMinWidth = 292,
+          ExpandedMinHeight = 274,
+          ContentTemplate = (IDataTemplate)this.FindResource("ExpandableMenu")!,
+      };
+      tabs.Bind(AlderExpandableTabs.SelectedIndexProperty, CompiledBinding.Create(
+          (ExpandableTabsViewModel model) => model.SelectedIndex, mode: BindingMode.TwoWay));
+      var project = new AlderTabItem
+      {
+          Header = "Project",
+          Icon = (Geometry)this.FindResource("AlderIconArrowUpRight")!,
+      };
+      project.Bind(TabItem.ContentProperty, CompiledBinding.Create((ExpandableTabsViewModel model) => model.Project));
+      tabs.Items.Add(project);
+    ]]></gallery:ExampleCard.CSharpSource>
+  </gallery:ExampleCard>
+</UserControl>

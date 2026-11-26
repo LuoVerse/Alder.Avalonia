@@ -1,0 +1,264 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" xmlns:sys="using:System"
+             x:Class="Alder.Avalonia.Gallery.Views.NumberStepperExample" x:DataType="vm:NumberStepperViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="ItemCount" x:DataType="sys:Decimal">
+      <StackPanel Orientation="Horizontal" Spacing="3">
+        <alder:AlderTextBlock Text="{CompiledBinding}" FontWeight="SemiBold" />
+        <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormItems}" />
+      </StackPanel>
+    </DataTemplate>
+  </UserControl.Resources>
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <alder:AlderNumberStepper Value="1" Minimum="0" Maximum="10" HorizontalAlignment="Center" VerticalAlignment="Center" AutomationProperties.Name="{DynamicResource GalleryText.FormQuantity}" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderNumberStepper { Value = 1, Minimum = 0, Maximum = 10 };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGuests" Title="{DynamicResource GalleryText.FormGuestPicker}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <StackPanel Spacing="8" MaxWidth="350">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+              <StackPanel Spacing="8">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormAdults}" FontWeight="Medium" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormAdultHint}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+              </StackPanel>
+              <alder:AlderNumberStepper Value="2" Minimum="0" Maximum="10" Grid.Column="1" AutomationProperties.Name="{DynamicResource GalleryText.FormAdults}" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+              <StackPanel Spacing="8">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormChildren}" FontWeight="Medium" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormChildHint}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+              </StackPanel>
+              <alder:AlderNumberStepper Value="0" Minimum="0" Maximum="10" Grid.Column="1" AutomationProperties.Name="{DynamicResource GalleryText.FormChildren}" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+              <StackPanel Spacing="8">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormInfants}" FontWeight="Medium" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormInfantHint}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+              </StackPanel>
+              <alder:AlderNumberStepper Value="0" Minimum="0" Maximum="5" Grid.Column="1" AutomationProperties.Name="{DynamicResource GalleryText.FormInfants}" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+              <StackPanel Spacing="8">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormPets}" FontWeight="Medium" />
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormPetHint}" FontSize="12" Foreground="{DynamicResource AlderMuted}" />
+              </StackPanel>
+              <alder:AlderNumberStepper Value="0" Minimum="0" Maximum="4" Grid.Column="1" AutomationProperties.Name="{DynamicResource GalleryText.FormPets}" />
+            </Grid>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var adults = new AlderNumberStepper { Value = 2, Minimum = 0, Maximum = 10 };
+        var children = new AlderNumberStepper { Value = 0, Minimum = 0, Maximum = 10 };
+        AutomationProperties.SetName(adults, "Adults");
+        AutomationProperties.SetName(children, "Children");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSizes" Title="{DynamicResource GalleryText.Sizes}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <WrapPanel HorizontalAlignment="Center" ItemSpacing="14" LineSpacing="12">
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.Small}" FontWeight="Medium" />
+              <alder:AlderNumberStepper Value="1" Minimum="0" Size="Small" />
+            </StackPanel>
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.Medium}" FontWeight="Medium" />
+              <alder:AlderNumberStepper Value="1" Minimum="0" Size="Medium" />
+            </StackPanel>
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.Large}" FontWeight="Medium" />
+              <alder:AlderNumberStepper Value="1" Minimum="0" Size="Large" />
+            </StackPanel>
+          </WrapPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var small = new AlderNumberStepper { Size = AlderSize.Small, Value = 1 };
+        var medium = new AlderNumberStepper { Size = AlderSize.Medium, Value = 1 };
+        var large = new AlderNumberStepper { Size = AlderSize.Large, Value = 1 };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleLimits" Title="{DynamicResource GalleryText.FormStepperLimits}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <WrapPanel HorizontalAlignment="Center" ItemSpacing="14" LineSpacing="12">
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormStepperByFive}" FontWeight="Medium" />
+              <alder:AlderNumberStepper Value="5" Minimum="0" Maximum="25" Increment="5" />
+            </StackPanel>
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormStepperByTen}" FontWeight="Medium" />
+              <alder:AlderNumberStepper Value="-10" Minimum="-50" Maximum="50" Increment="10" />
+            </StackPanel>
+          </WrapPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderNumberStepper { Value = 5, Minimum = 0, Maximum = 25, Increment = 5 };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleFormats" Title="{DynamicResource GalleryText.FormStepperFormat}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <WrapPanel HorizontalAlignment="Center" ItemSpacing="14" LineSpacing="12">
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormUsd}" FontWeight="Medium" />
+              <alder:AlderNumberStepper Value="19.99" Increment=".01" Minimum="0" FormatString="'$'0.00" Width="150" />
+            </StackPanel>
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormPercent}" FontWeight="Medium" />
+              <alder:AlderNumberStepper Value=".5" Increment=".05" Minimum="0" Maximum="1" FormatString="P0" Width="120" />
+            </StackPanel>
+          </WrapPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var currency = new AlderNumberStepper { Value = 19.99m, Increment = .01m, Minimum = 0, FormatString = "'$'0.00" };
+        var percentage = new AlderNumberStepper { Value = .5m, Increment = .05m, Minimum = 0, Maximum = 1, FormatString = "P0" };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDirections" Title="{DynamicResource GalleryText.FormStepperReversed}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <WrapPanel HorizontalAlignment="Center" ItemSpacing="14" LineSpacing="12">
+            <alder:AlderNumberStepper Value="3" Minimum="0" IsReversed="True" DecreaseIcon="{DynamicResource AlderIconChevronDown}" IncreaseIcon="{DynamicResource AlderIconChevronUp}" />
+            <alder:AlderNumberStepper Value="3" Minimum="0" IsTextEditable="False" />
+          </WrapPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderNumberStepper { Value = 3, Minimum = 0, IsReversed = true };
+        stepper.IncreaseIcon = StreamGeometry.Parse("M0 8 L6 2 L12 8 L10.5 9.5 L6 5 L1.5 9.5 Z");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleCustom" Title="{DynamicResource GalleryText.FormStepperCustom}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <WrapPanel HorizontalAlignment="Center" ItemSpacing="14" LineSpacing="12">
+            <WrapPanel.Styles>
+              <Style Selector="alder|AlderNumberStepper.custom /template/ ButtonSpinner /template/ RepeatButton">
+                <Setter Property="Background" Value="{DynamicResource AlderSurfaceSecondary}" />
+                <Setter Property="Foreground" Value="{DynamicResource AlderAccent}" />
+              </Style>
+            </WrapPanel.Styles>
+            <alder:AlderNumberStepper Classes="custom" Width="150" Value="3" Minimum="0" ValueTemplate="{StaticResource ItemCount}" />
+            <alder:AlderNumberStepper Value="3" IsEnabled="False" />
+          </WrapPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderNumberStepper { Value = 3, Minimum = 0, Width = 150 };
+        stepper.ValueTemplate = new FuncDataTemplate<decimal>((value, _) => new AlderTextBlock { Text = $"{value} items" });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <StackPanel Spacing="8" HorizontalAlignment="Center">
+            <alder:AlderLabel Target="{CompiledBinding #ControlledStepper}" Content="{DynamicResource GalleryText.FormGuests}"/>
+            <alder:AlderNumberStepper x:Name="ControlledStepper" Value="{CompiledBinding Value, Mode=TwoWay}" Minimum="0" Maximum="10" />
+            <alder:AlderTextBlock Foreground="{DynamicResource AlderMuted}" Text="{DynamicResource GalleryText.FormStepperGuestHint}" />
+            <alder:AlderTextBlock Text="{CompiledBinding Summary}" />
+            <alder:AlderButton Size="Small" Variant="Secondary" HorizontalAlignment="Left" Command="{CompiledBinding Reset}" Content="{DynamicResource GalleryText.Reset}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderNumberStepper { Minimum = 0, Maximum = 10 };
+        stepper.Bind(NumericUpDown.ValueProperty,
+            CompiledBinding.Create((NumberStepperViewModel model) => model.Value, mode: BindingMode.TwoWay));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleLabel" Title="{DynamicResource GalleryText.FormStepperWithLabel}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <StackPanel Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderLabel x:Name="GuestsLabel" Content="{DynamicResource GalleryText.FormGuests}" Target="{CompiledBinding #GuestsStepper}" />
+            <alder:AlderNumberStepper x:Name="GuestsStepper" Minimum="0" Maximum="10" Value="2"
+                                      AutomationProperties.LabeledBy="{CompiledBinding #GuestsLabel}" />
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.FormStepperGuestHint}" Foreground="{DynamicResource AlderMuted}" FontSize="12" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var stepper = new AlderNumberStepper { Minimum = 0, Maximum = 10, Value = 2 };
+        var label = new AlderLabel { Target = stepper };
+        label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.FormGuests");
+        AutomationProperties.SetLabeledBy(stepper, label);
+        var hint = new AlderTextBlock { FontSize = 12 };
+        hint[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.FormStepperGuestHint");
+        hint[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        var preview = new StackPanel { Spacing = 4, Children = { label, stepper, hint } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleStep" Title="{DynamicResource GalleryText.FormStepperWithStep}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center" ItemSpacing="16">
+            <alder:AlderNumberStepper Value="10" Increment="5" Minimum="0" AutomationProperties.Name="{DynamicResource GalleryText.FormStepperByFive}" />
+            <alder:AlderNumberStepper Value="20" Increment="10" Minimum="0" AutomationProperties.Name="{DynamicResource GalleryText.FormStepperByTen}" />
+          </WrapPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var five = new AlderNumberStepper { Value = 10, Increment = 5, Minimum = 0 };
+        var ten = new AlderNumberStepper { Value = 20, Increment = 10, Minimum = 0 };
+        var preview = new WrapPanel { ItemSpacing = 16, Children = { five, ten } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <alder:AlderNumberStepper Value="3" Minimum="0" IsEnabled="False" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                      AutomationProperties.Name="{DynamicResource GalleryText.FormQuantity}" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new AlderNumberStepper { Value = 3, Minimum = 0, IsEnabled = false };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleIcons" Title="{DynamicResource GalleryText.FormStepperCustomIcons}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <alder:AlderNumberStepper Value="3" Minimum="0" DecreaseIcon="{DynamicResource AlderIconChevronDown}"
+                                    IncreaseIcon="{DynamicResource AlderIconChevronUp}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    AutomationProperties.Name="{DynamicResource GalleryText.FormQuantity}" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new AlderNumberStepper { Value = 3, Minimum = 0 };
+        preview[!AlderNumberStepper.DecreaseIconProperty] = new DynamicResourceExtension("AlderIconChevronDown");
+        preview[!AlderNumberStepper.IncreaseIconProperty] = new DynamicResourceExtension("AlderIconChevronUp");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleValue" Title="{DynamicResource GalleryText.FormStepperCustomValue}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <alder:AlderNumberStepper Value="3" Minimum="0" Width="134" ValueTemplate="{StaticResource ItemCount}"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    AutomationProperties.Name="{DynamicResource GalleryText.FormQuantity}" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new AlderNumberStepper { Value = 3, Minimum = 0, Width = 134 };
+        preview.ValueTemplate = new FuncDataTemplate<decimal>((value, _) =>
+        {
+            var number = new AlderTextBlock { Text = value.ToString(), FontWeight = FontWeight.SemiBold };
+            var unit = new AlderTextBlock();
+            unit[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.FormItems");
+            return new StackPanel { Orientation = Orientation.Horizontal, Spacing = 3, Children = { number, unit } };
+        });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

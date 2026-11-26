@@ -1,0 +1,59 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:a="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls" x:Class="Alder.Avalonia.Gallery.Views.ChatListViewExample">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleDefault" Title="{DynamicResource GalleryText.AiDefault}">
+      <g:ExampleCard.Preview>
+        <Border Padding="22,24" MinHeight="92">
+          <a:AlderChatListView MaxWidth="480" SelectionEnabled="False">
+            <a:AlderListViewItem Title="{DynamicResource GalleryText.AiLaunch}" Description="{DynamicResource GalleryText.AiLaunchPreview}" Action="{DynamicResource GalleryText.AiAgo}">
+              <a:AlderListViewItem.Icon>
+                <a:AlderPathIcon Width="16" Height="16" Foreground="{DynamicResource AlderMuted}" Data="{DynamicResource AlderAiChatGlyph}"/>
+              </a:AlderListViewItem.Icon>
+            </a:AlderListViewItem>
+            <a:AlderListViewItem Title="{DynamicResource GalleryText.AiCustomer}" Description="{DynamicResource GalleryText.AiCustomerPreview}" Action="{DynamicResource GalleryText.AiYesterday}">
+              <a:AlderListViewItem.Icon>
+                <a:AlderPathIcon Width="16" Height="16" Foreground="{DynamicResource AlderMuted}" Data="{DynamicResource AlderAiChatGlyph}"/>
+              </a:AlderListViewItem.Icon>
+            </a:AlderListViewItem>
+            <a:AlderListViewItem Title="{DynamicResource GalleryText.AiEditing}" Description="{DynamicResource GalleryText.AiEditingPreview}" Action="{DynamicResource GalleryText.AiMonday}">
+              <a:AlderListViewItem.Icon>
+                <a:AlderPathIcon Width="16" Height="16" Foreground="{DynamicResource AlderMuted}" Data="{DynamicResource AlderAiChatGlyph}"/>
+              </a:AlderListViewItem.Icon>
+            </a:AlderListViewItem>
+          </a:AlderChatListView>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var example = new AlderChatListView { MaxWidth = 480, SelectionEnabled = false };
+        example.Items.Add(new AlderListViewItem { Title = "Product launch planning",
+            Description = "Can you help me draft a launch checklist?", Action = "2h ago" });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleCompact" Title="{DynamicResource GalleryText.AiVariantCompact}">
+      <g:ExampleCard.Preview>
+        <Border Padding="22,24" MinHeight="92">
+          <a:AlderChatListView MaxWidth="280" Density="Compact" SelectionEnabled="False">
+            <a:AlderListViewItem Title="{DynamicResource GalleryText.AiLaunch}" Description="{DynamicResource GalleryText.AiLaunchPreview}" Action="{DynamicResource GalleryText.AiAgo}">
+              <a:AlderListViewItem.Icon>
+                <a:AlderPathIcon Width="16" Height="16" Foreground="{DynamicResource AlderMuted}" Data="{DynamicResource AlderAiChatGlyph}"/>
+              </a:AlderListViewItem.Icon>
+            </a:AlderListViewItem>
+            <a:AlderListViewItem Title="{DynamicResource GalleryText.AiCustomer}" Description="{DynamicResource GalleryText.AiCustomerPreview}" Action="{DynamicResource GalleryText.AiYesterday}">
+              <a:AlderListViewItem.Icon>
+                <a:AlderPathIcon Width="16" Height="16" Foreground="{DynamicResource AlderMuted}" Data="{DynamicResource AlderAiChatGlyph}"/>
+              </a:AlderListViewItem.Icon>
+            </a:AlderListViewItem>
+            <a:AlderListViewItem Title="{DynamicResource GalleryText.AiEditing}" Description="{DynamicResource GalleryText.AiEditingPreview}" Action="{DynamicResource GalleryText.AiMonday}">
+              <a:AlderListViewItem.Icon>
+                <a:AlderPathIcon Width="16" Height="16" Foreground="{DynamicResource AlderMuted}" Data="{DynamicResource AlderAiChatGlyph}"/>
+              </a:AlderListViewItem.Icon>
+            </a:AlderListViewItem>
+          </a:AlderChatListView>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var example = new AlderChatListView { MaxWidth = 280, Density = ChatListDensity.Compact, SelectionEnabled = false };
+        example.Items.Add(new AlderListViewItem { Title = "Product launch planning" });
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

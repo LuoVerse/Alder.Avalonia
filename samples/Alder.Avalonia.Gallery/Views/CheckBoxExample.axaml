@@ -1,0 +1,327 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.CheckBoxExample" x:DataType="vm:CheckBoxViewModel">
+  <UserControl.Styles>
+    <Style Selector="alder|AlderCheckBox">
+      <Setter Property="FontFamily" Value="fonts:Inter#Inter" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderCheckBox x:Name="BasicCheck" Content="{DynamicResource GalleryText.AcceptTermsAndConditions}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var checkBox = new AlderCheckBox { Content = "Accept terms and conditions" };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.Variants}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="20" LineSpacing="10">
+          <alder:AlderCheckBox x:Name="PrimaryCheck" Content="{DynamicResource GalleryText.PrimaryCheckbox}"
+                          Description="{DynamicResource GalleryText.StandardStylingWithDefaultBackground}" />
+          <Border Padding="12" CornerRadius="12" Background="{DynamicResource AlderSurface}">
+            <alder:AlderCheckBox x:Name="SecondaryCheck" Variant="Secondary" Content="{DynamicResource GalleryText.SecondaryCheckbox}"
+                            Description="{DynamicResource GalleryText.LowerEmphasisForUseOnASurface}" />
+          </Border>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var checkBox1 = new AlderCheckBox
+        {
+            Content = "Primary checkbox",
+            Description = "Standard styling with default background.",
+        };
+
+        var checkBox2 = new AlderCheckBox
+        {
+            Variant = CheckBoxVariant.Secondary,
+            Content = "Secondary checkbox",
+            Description = "Lower emphasis for use on a surface.",
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleRoundedIndicators" Title="{DynamicResource GalleryText.RoundedIndicators}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel>
+          <StackPanel.Styles>
+            <Style Selector="alder|AlderCheckBox.smallMark /template/ Viewbox#DefaultCheckMark">
+              <Setter Property="Width" Value="8" /><Setter Property="Height" Value="8" />
+            </Style>
+            <Style Selector="alder|AlderCheckBox.largeMark /template/ Viewbox#DefaultCheckMark">
+              <Setter Property="Width" Value="16" /><Setter Property="Height" Value="16" />
+            </Style>
+          </StackPanel.Styles>
+          <WrapPanel ItemSpacing="18" LineSpacing="8">
+            <alder:AlderCheckBox Classes="smallMark" IndicatorSize="12" IndicatorCornerRadius="6" Content="{DynamicResource GalleryText.Small}" />
+            <alder:AlderCheckBox IndicatorCornerRadius="8" Content="{DynamicResource GalleryText.Default}" />
+            <alder:AlderCheckBox IndicatorSize="20" IndicatorCornerRadius="10" Content="{DynamicResource GalleryText.Large}" />
+            <alder:AlderCheckBox Classes="largeMark" IndicatorSize="24" IndicatorCornerRadius="12" Content="{DynamicResource GalleryText.ExtraLarge}" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var checkBox1 = new AlderCheckBox
+        {
+            IndicatorSize = 12,
+            IndicatorCornerRadius = new CornerRadius(6),
+            Content = "Small",
+        };
+        checkBox1.Classes.Add("smallMark");
+
+        var checkBox2 = new AlderCheckBox
+        {
+            IndicatorCornerRadius = new CornerRadius(8),
+            Content = "Default",
+        };
+
+        var checkBox3 = new AlderCheckBox
+        {
+            IndicatorSize = 20,
+            IndicatorCornerRadius = new CornerRadius(10),
+            Content = "Large",
+        };
+
+        var checkBox4 = new AlderCheckBox
+        {
+            IndicatorSize = 24,
+            IndicatorCornerRadius = new CornerRadius(12),
+            Content = "Extra large",
+        };
+        checkBox4.Classes.Add("largeMark");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabledAndReadOnly" Title="{DynamicResource GalleryText.DisabledAndReadOnly}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="18" LineSpacing="8">
+          <alder:AlderCheckBox Content="{DynamicResource GalleryText.Disabled}" IsEnabled="False" />
+          <alder:AlderCheckBox Content="{DynamicResource GalleryText.Selected}" IsEnabled="False" IsChecked="True" />
+          <alder:AlderCheckBox x:Name="ReadOnlyCheck" Content="{DynamicResource GalleryText.ReadOnly}" IsReadOnly="True" IsChecked="True" />
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var checkBox1 = new AlderCheckBox { Content = "Disabled", IsEnabled = false };
+
+        var checkBox2 = new AlderCheckBox { Content = "Selected", IsEnabled = false, IsChecked = true };
+
+        var checkBox3 = new AlderCheckBox { Content = "Read-only", IsReadOnly = true, IsChecked = true };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleExternalLabel" Title="{DynamicResource GalleryText.ExternalLabel}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+          <alder:AlderCheckBox x:Name="ExternalCheck" VerticalAlignment="Center" AutomationProperties.LabeledBy="{Binding #ExternalLabel}" />
+          <alder:AlderLabel x:Name="ExternalLabel" Content="{DynamicResource GalleryText.EnableNotifications}" Target="{Binding #ExternalCheck}" Padding="0"
+                 Foreground="{DynamicResource AlderInk}" FontFamily="fonts:Inter#Inter" FontSize="14" FontWeight="Medium"
+                 Cursor="Hand" Tapped="OnExternalLabelTapped" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var checkBox = new AlderCheckBox();
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDescription" Title="{DynamicResource GalleryText.TemporalWithDescription}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderCheckBox Content="{DynamicResource GalleryText.EmailNotifications}"
+                            Description="{DynamicResource GalleryText.CheckBoxMentionDescription}" HorizontalAlignment="Center" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var checkbox = new AlderCheckBox
+        {
+            Content = "Email notifications",
+            Description = "Get notified when someone mentions you in a comment",
+            HorizontalAlignment = HorizontalAlignment.Center
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDefaultSelected" Title="{DynamicResource GalleryText.CheckBoxDefaultSelected}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderCheckBox Content="{DynamicResource GalleryText.CheckBoxEnableEmail}" IsChecked="True" HorizontalAlignment="Center" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var checkbox = new AlderCheckBox
+        {
+            Content = "Enable email notifications", IsChecked = true,
+            HorizontalAlignment = HorizontalAlignment.Center
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderCheckBox x:Name="ControlledCheck" Content="{DynamicResource GalleryText.EmailNotifications}"
+                        IsChecked="{Binding EmailEnabled, Mode=TwoWay}"
+                        Description="{Binding EmailStatus}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var checkBox = new AlderCheckBox { Content = "Email notifications" };
+        checkBox.Bind(AlderCheckBox.IsCheckedProperty, CompiledBinding.Create((CheckBoxViewModel model) => model.EmailEnabled, mode: BindingMode.TwoWay));
+        checkBox.Bind(AlderCheckBox.DescriptionProperty, CompiledBinding.Create((CheckBoxViewModel model) => model.EmailStatus));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleIndeterminate" Title="{DynamicResource GalleryText.Indeterminate}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderCheckBox x:Name="SelectAllCheck" Content="{DynamicResource GalleryText.SelectAll}" IsChecked="{Binding AllChannels, Mode=TwoWay}" />
+          <StackPanel Margin="28,0,0,0" Spacing="4">
+            <alder:AlderCheckBox x:Name="EmailChannel" Content="{DynamicResource GalleryText.Email}" IsChecked="{Binding EmailChannel, Mode=TwoWay}" />
+            <alder:AlderCheckBox x:Name="InAppChannel" Content="{DynamicResource GalleryText.InApp}" IsChecked="{Binding InAppChannel, Mode=TwoWay}" />
+          </StackPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var checkBox1 = new AlderCheckBox { Content = "Select all" };
+        checkBox1.Bind(AlderCheckBox.IsCheckedProperty, CompiledBinding.Create((CheckBoxViewModel model) => model.AllChannels, mode: BindingMode.TwoWay));
+
+        var checkBox2 = new AlderCheckBox { Content = "Email" };
+        checkBox2.Bind(AlderCheckBox.IsCheckedProperty, CompiledBinding.Create((CheckBoxViewModel model) => model.EmailChannel, mode: BindingMode.TwoWay));
+
+        var checkBox3 = new AlderCheckBox { Content = "In-app" };
+        checkBox3.Bind(AlderCheckBox.IsCheckedProperty, CompiledBinding.Create((CheckBoxViewModel model) => model.InAppChannel, mode: BindingMode.TwoWay));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleValidation" Title="{DynamicResource GalleryText.Validation}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="8">
+          <alder:AlderCheckBox x:Name="RequiredCheck" Content="{DynamicResource GalleryText.IAgreeToTheTerms}" IsRequired="True"
+                          IsChecked="{Binding TermsAccepted, Mode=TwoWay}" IsInvalid="{Binding IsTermsInvalid}"
+                          ErrorMessage="{DynamicResource GalleryText.YouMustAcceptTheTermsToContinue}" />
+          <alder:AlderButton x:Name="SubmitButton" Content="{DynamicResource GalleryText.Submit}" Size="Small" Command="{Binding Submit}" />
+          <alder:AlderTextBlock IsVisible="{Binding Submitted}" Classes="detail" Text="{DynamicResource GalleryText.PreferencesSubmitted}" AutomationProperties.LiveSetting="Polite" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var checkBox = new AlderCheckBox
+        {
+            Content = "I agree to the terms",
+            IsRequired = true,
+            ErrorMessage = "You must accept the terms to continue.",
+        };
+        checkBox.Bind(AlderCheckBox.IsCheckedProperty, CompiledBinding.Create((CheckBoxViewModel model) => model.TermsAccepted, mode: BindingMode.TwoWay));
+        checkBox.Bind(AlderCheckBox.IsInvalidProperty, CompiledBinding.Create((CheckBoxViewModel model) => model.IsTermsInvalid));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustomIndicators" Title="{DynamicResource GalleryText.CustomIndicators}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel>
+          <StackPanel.Styles>
+            <Style Selector="alder|AlderCheckBox.custom /template/ Border#SelectionFill">
+              <Setter Property="Background" Value="#7C3AED" />
+            </Style>
+            <Style Selector="alder|AlderCheckBox.custom:pointerover /template/ Border#SelectionFill">
+              <Setter Property="Background" Value="#8B5CF6" />
+            </Style>
+          </StackPanel.Styles>
+          <WrapPanel ItemSpacing="18" LineSpacing="8">
+            <alder:AlderCheckBox IsChecked="True" CheckedIcon="{StaticResource AlderIconHeartFill}" Content="{DynamicResource GalleryText.Heart}" />
+            <alder:AlderCheckBox IsChecked="True" CheckedIcon="{StaticResource AlderIconPlus}" Content="{DynamicResource GalleryText.Plus}" />
+            <alder:AlderCheckBox IsChecked="{x:Null}" IndeterminateIcon="{StaticResource AlderIconMinus}" Content="{DynamicResource GalleryText.Dash}" />
+            <alder:AlderCheckBox Classes="custom" IndicatorSize="20" IndicatorCornerRadius="4" IsChecked="True" Content="{DynamicResource GalleryText.CustomStyle}" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var checkBox1 = new AlderCheckBox
+        {
+            IsChecked = true,
+            CheckedIcon = (Geometry)this.FindResource("AlderIconHeartFill")!,
+            Content = "Heart",
+        };
+
+        var checkBox2 = new AlderCheckBox
+        {
+            IsChecked = true,
+            CheckedIcon = (Geometry)this.FindResource("AlderIconPlus")!,
+            Content = "Plus",
+        };
+
+        var checkBox3 = new AlderCheckBox
+        {
+            IsChecked = null,
+            IndeterminateIcon = (Geometry)this.FindResource("AlderIconMinus")!,
+            Content = "Dash",
+        };
+
+        var checkBox4 = new AlderCheckBox
+        {
+            IndicatorSize = 20,
+            IndicatorCornerRadius = new CornerRadius(4),
+            IsChecked = true,
+            Content = "Custom style",
+        };
+        checkBox4.Classes.Add("custom");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCheckboxGroup" Title="{DynamicResource GalleryText.CheckboxGroupTitle}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel HorizontalAlignment="Center" Spacing="8">
+          <alder:AlderLabel Content="{DynamicResource GalleryText.CheckboxGroupInterests}" />
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.CheckboxGroupHelp}" Foreground="{DynamicResource AlderMuted}" />
+          <alder:AlderCheckboxGroup AutomationProperties.Name="{DynamicResource GalleryText.CheckboxGroupInterests}"
+                                    AutomationProperties.HelpText="{DynamicResource GalleryText.CheckboxGroupHelp}">
+            <alder:AlderCheckBox alder:AlderChoiceGroup.Key="coding" Content="{DynamicResource GalleryText.CheckboxGroupCoding}"
+                                Description="{DynamicResource GalleryText.CheckboxGroupCodingDescription}" />
+            <alder:AlderCheckBox alder:AlderChoiceGroup.Key="design" Content="{DynamicResource GalleryText.CheckboxGroupDesign}"
+                                Description="{DynamicResource GalleryText.CheckboxGroupDesignDescription}" />
+            <alder:AlderCheckBox alder:AlderChoiceGroup.Key="writing" Content="{DynamicResource GalleryText.CheckboxGroupWriting}"
+                                Description="{DynamicResource GalleryText.CheckboxGroupWritingDescription}" />
+          </alder:AlderCheckboxGroup>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderCheckboxGroup();
+        AutomationProperties.SetName(group, "Select your interests");
+        foreach (var (key, label, description) in new[]
+        {
+            ("coding", "Coding", "Love building software"),
+            ("design", "Design", "Enjoy creating beautiful interfaces"),
+            ("writing", "Writing", "Passionate about content creation")
+        })
+        {
+            var option = new AlderCheckBox { Content = label, Description = description };
+            AlderChoiceGroup.SetKey(option, key);
+            group.Children.Add(option);
+        }
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleNotificationChannels" Title="{DynamicResource GalleryText.NotificationChannels}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="10">
+          <alder:AlderCheckboxGroup x:Name="Channels" IsRequired="True" Orientation="Horizontal" SelectedKeys="{CompiledBinding Channels}">
+            <alder:AlderCheckBox alder:AlderChoiceGroup.Key="mail" Content="{DynamicResource GalleryText.Email}" Classes="card" Theme="{StaticResource AlderCheckBoxTheme}" />
+            <alder:AlderCheckBox alder:AlderChoiceGroup.Key="inbox" Content="{DynamicResource GalleryText.InApp}" Classes="card" Theme="{StaticResource AlderCheckBoxTheme}" />
+          </alder:AlderCheckboxGroup>
+          <alder:AlderTextBlock IsVisible="{CompiledBinding #Channels.IsInvalid}" Foreground="{DynamicResource AlderDangerInk}" Text="{DynamicResource GalleryText.SelectAtLeastOneNotificationChannel}" />
+          <alder:AlderCheckBox IsThreeState="True" IsChecked="{x:Null}" Content="{DynamicResource GalleryText.IncludeSubItemsThreeState}" Theme="{StaticResource AlderCheckBoxTheme}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var checkboxGroup = new AlderCheckboxGroup
+        {
+            IsRequired = true,
+            Orientation = Orientation.Horizontal,
+        };
+        checkboxGroup.Bind(AlderCheckboxGroup.SelectedKeysProperty, CompiledBinding.Create((CheckBoxViewModel model) => model.Channels));
+
+        var checkBox1 = new AlderCheckBox
+        {
+            Content = "Email",
+            Theme = (ControlTheme)this.FindResource("AlderCheckBoxTheme")!,
+        };
+        AlderChoiceGroup.SetKey(checkBox1, "mail");
+        checkBox1.Classes.Add("card");
+        checkboxGroup.Children.Add(checkBox1);
+
+        var checkBox2 = new AlderCheckBox
+        {
+            Content = "In-app",
+            Theme = (ControlTheme)this.FindResource("AlderCheckBoxTheme")!,
+        };
+        AlderChoiceGroup.SetKey(checkBox2, "inbox");
+        checkBox2.Classes.Add("card");
+        checkboxGroup.Children.Add(checkBox2);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

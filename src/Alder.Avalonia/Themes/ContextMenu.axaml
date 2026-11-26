@@ -1,0 +1,138 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:conv="using:Avalonia.Controls.Converters"
+                    xmlns:c="using:Avalonia.Data.Converters">
+  <conv:PlatformKeyGestureConverter x:Key="AlderContextMenuKeyGestureConverter" />
+  <Thickness x:Key="AlderContextMenuShadowMargin">32,22,32,46</Thickness>
+
+  <ControlTheme x:Key="AlderContextMenuSurfaceTheme" TargetType="Border">
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="CornerRadius" Value="24" />
+    <Setter Property="Padding" Value="6" />
+    <Setter Property="BoxShadow" Value="{DynamicResource AlderToolbarShadow}" />
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderContextMenuSeparatorTheme" TargetType="alder:AlderSeparator">
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="Margin" Value="6,4" />
+    <Setter Property="Background" Value="{DynamicResource AlderSeparator}" />
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderContextMenuHeading}" TargetType="alder:AlderContextMenuHeading">
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="AutomationProperties.Name" Value="{Binding Text, RelativeSource={RelativeSource Self}, x:DataType=alder:AlderContextMenuHeading}" />
+    <Setter Property="AutomationProperties.ControlTypeOverride" Value="Text" />
+    <Setter Property="AutomationProperties.HeadingLevel" Value="2" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <alder:AlderTextBlock Padding="8,2" FontSize="12" LineHeight="16" FontWeight="Medium"
+                   Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" Text="{TemplateBinding Text}" />
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderContextMenuItemTheme" TargetType="MenuItem">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="Padding" Value="8,6" />
+    <Setter Property="MinHeight" Value="36" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="ItemContainerTheme" Value="{DynamicResource AlderContextMenuItemTheme}" />
+    <Setter Property="ItemsPanel">
+      <ItemsPanelTemplate><alder:AlderNavigationPanel /></ItemsPanelTemplate>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="PART_LayoutRoot" Background="{TemplateBinding Background}"
+                  CornerRadius="{TemplateBinding CornerRadius}" Padding="{TemplateBinding Padding}">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
+              <ContentPresenter Name="PART_IconPresenter" Content="{TemplateBinding Icon}" Margin="0,0,8,0"
+                                VerticalAlignment="Center" IsHitTestVisible="False"
+                                AutomationProperties.AccessibilityView="Raw" />
+              <ContentPresenter Name="PART_HeaderPresenter" Grid.Column="1" Content="{TemplateBinding Header}"
+                                ContentTemplate="{TemplateBinding HeaderTemplate}" VerticalAlignment="Center"
+                                RecognizesAccessKey="True" TextBlock.TextWrapping="Wrap" />
+              <alder:AlderTextBlock Name="PART_InputGestureText" Grid.Column="2" Margin="12,0,0,0"
+                         VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource AlderMuted}"
+                         FlowDirection="LeftToRight"
+                         Text="{TemplateBinding InputGesture, Converter={StaticResource AlderContextMenuKeyGestureConverter}}"
+                         IsVisible="{CompiledBinding InputGesture, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+              <alder:AlderPathIcon Name="Check" Grid.Column="3" Width="14" Height="14" Margin="8,0,0,0"
+                        VerticalAlignment="Center" FlowDirection="LeftToRight" Data="{StaticResource AlderIconCheck}" IsVisible="False"
+                        AutomationProperties.AccessibilityView="Raw" />
+              <alder:AlderPathIcon Name="Chevron" Grid.Column="4" Width="12" Height="12" Margin="8,0,0,0"
+                        VerticalAlignment="Center" Data="{StaticResource AlderIconChevronRight}"
+                        Foreground="{DynamicResource AlderMuted}" AutomationProperties.AccessibilityView="Raw" />
+            </Grid>
+          </Border>
+          <alder:AlderPopup Name="PART_Popup" Placement="Custom"
+                 CustomPopupPlacementCallback="{x:Static alder:ContextMenuPlacement.Submenu}"
+                 WindowManagerAddShadowHint="False" IsLightDismissEnabled="False" ShouldUseOverlayLayer="True"
+                 IsOpen="{TemplateBinding IsSubMenuOpen, Mode=TwoWay}">
+            <Border Theme="{StaticResource AlderContextMenuSurfaceTheme}" MinWidth="220" MaxWidth="320" MaxHeight="416"
+                    Margin="{StaticResource AlderContextMenuShadowMargin}">
+              <alder:AlderScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"
+                            MaxHeight="{CompiledBinding ClientSize.Height, RelativeSource={RelativeSource AncestorType=TopLevel, Tree=Visual}, Converter={x:Static alder:ContextMenuPlacement.ViewportHeight}}">
+                <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+              </alder:AlderScrollViewer>
+            </Border>
+          </alder:AlderPopup>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:not(:icon) /template/ ContentPresenter#PART_IconPresenter, ^:empty /template/ PathIcon#Chevron">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^:checked:toggle /template/ PathIcon#Check, ^:checked:radio /template/ PathIcon#Check">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^:selected /template/ Border#PART_LayoutRoot, ^:open /template/ Border#PART_LayoutRoot">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+    <Style Selector="^:pressed /template/ Border#PART_LayoutRoot">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
+    <Style Selector="^:disabled /template/ Border#PART_LayoutRoot"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^.danger"><Setter Property="Foreground" Value="{DynamicResource AlderDangerInk}" /></Style>
+    <Style Selector="^.danger:selected /template/ Border#PART_LayoutRoot">
+      <Setter Property="Background" Value="{DynamicResource AlderDangerSoft}" />
+    </Style>
+    <Style Selector="^:separator">
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="Template">
+        <ControlTemplate><alder:AlderSeparator Theme="{StaticResource AlderContextMenuSeparatorTheme}" /></ControlTemplate>
+      </Setter>
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderContextMenu}" TargetType="alder:AlderContextMenu">
+    <Setter Property="Focusable" Value="True" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <!-- Popup positioning excludes the child margin, while the overlay host clips to it. -->
+    <Setter Property="Margin" Value="{StaticResource AlderContextMenuShadowMargin}" />
+    <Setter Property="MinWidth" Value="220" />
+    <Setter Property="MaxWidth" Value="320" />
+    <Setter Property="MaxHeight" Value="416" />
+    <Setter Property="VerticalOffset" Value="2" />
+    <Setter Property="PlacementConstraintAdjustment" Value="FlipX,FlipY,SlideX,SlideY" />
+    <Setter Property="WindowManagerAddShadowHint" Value="False" />
+    <Setter Property="ItemContainerTheme" Value="{StaticResource AlderContextMenuItemTheme}" />
+    <Setter Property="ItemsPanel">
+      <ItemsPanelTemplate><alder:AlderNavigationPanel /></ItemsPanelTemplate>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="Surface" Theme="{StaticResource AlderContextMenuSurfaceTheme}">
+          <alder:AlderScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"
+                        MaxHeight="{CompiledBinding ClientSize.Height, RelativeSource={RelativeSource AncestorType=TopLevel, Tree=Visual}, Converter={x:Static alder:ContextMenuPlacement.ViewportHeight}}">
+            <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+          </alder:AlderScrollViewer>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+</ResourceDictionary>

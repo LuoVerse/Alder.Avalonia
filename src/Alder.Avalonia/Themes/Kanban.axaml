@@ -1,0 +1,149 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls" xmlns:conv="using:Avalonia.Data.Converters">
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderKanbanColumnBackground" Color="#66EBEBEC" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderKanbanColumnBackground" Color="#6627272A" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+  <x:String x:Key="AlderText.KanbanMove">Move card</x:String>
+  <StreamGeometry x:Key="AlderKanbanGrip">M4 3 A1 1 0 1 1 3.99 3 Z M9 3 A1 1 0 1 1 8.99 3 Z M4 7 A1 1 0 1 1 3.99 7 Z M9 7 A1 1 0 1 1 8.99 7 Z M4 11 A1 1 0 1 1 3.99 11 Z M9 11 A1 1 0 1 1 8.99 11 Z</StreamGeometry>
+  <ControlTheme x:Key="AlderKanbanAddButtonTheme" TargetType="alder:AlderButton"
+                BasedOn="{StaticResource {x:Type alder:AlderButton}}">
+    <Setter Property="Variant" Value="Outline" />
+    <Setter Property="Size" Value="Medium" />
+    <Setter Property="FullWidth" Value="True" />
+    <Setter Property="Padding" Value="16,0" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Icon" Value="{StaticResource AlderIconPlus}" />
+    <Style Selector="^[Variant=Outline] /template/ PathIcon#LeadingIcon">
+      <Setter Property="Margin" Value="0" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderKanbanDragPreviewTheme" TargetType="Border">
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="BoxShadow" Value="{DynamicResource AlderToolbarShadow}" />
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderKanbanHandle}" TargetType="alder:AlderKanbanHandle">
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.KanbanMove}" />
+    <Setter Property="Width" Value="24" /><Setter Property="Height" Value="24" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="Grip" Background="Transparent" CornerRadius="6">
+          <alder:AlderPathIcon Data="{StaticResource AlderKanbanGrip}" Width="12" Height="12" Foreground="{DynamicResource AlderMuted}" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover /template/ Border#Grip, ^:focus-visible /template/ Border#Grip">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderKanban}" TargetType="alder:AlderKanban">
+    <Setter Property="Focusable" Value="True" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="ItemsPanel"><ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="16" /></ItemsPanelTemplate></Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <alder:AlderScrollShadow Name="PART_ScrollViewer" Orientation="Horizontal" HideScrollBar="True"
+                                 Focusable="False" ShadowSize="22">
+          <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+        </alder:AlderScrollShadow>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Size=Small]">
+      <Setter Property="ItemsPanel"><ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="12" /></ItemsPanelTemplate></Setter>
+    </Style>
+    <Style Selector="^[Size=Large]">
+      <Setter Property="ItemsPanel"><ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="20" /></ItemsPanelTemplate></Setter>
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderKanbanColumn}" TargetType="alder:AlderKanbanColumn">
+    <Setter Property="Width" Value="280" />
+    <Setter Property="Background" Value="{DynamicResource AlderKanbanColumnBackground}" />
+    <Setter Property="IndicatorBrush" Value="{DynamicResource AlderAccent}" />
+    <Setter Property="ItemsPanel">
+      <ItemsPanelTemplate>
+        <alder:KanbanCardPanel Spacing="8" SlotBrush="{DynamicResource AlderSeparator}" />
+      </ItemsPanelTemplate>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid RowDefinitions="Auto,*" RowSpacing="8">
+          <Grid ColumnDefinitions="Auto,Auto,Auto,*" ColumnSpacing="7" Margin="5,2,5,4">
+            <Border Width="9" Height="9" CornerRadius="5" BorderBrush="{TemplateBinding IndicatorBrush}" BorderThickness="2"
+                    VerticalAlignment="Center" />
+            <ContentPresenter Name="PART_HeaderPresenter" Grid.Column="1" Content="{TemplateBinding Header}"
+               ContentTemplate="{TemplateBinding HeaderTemplate}" FontWeight="SemiBold" VerticalAlignment="Center" />
+            <alder:AlderTextBlock Grid.Column="2" Text="{TemplateBinding ItemCount}" FontSize="12"
+                       Foreground="{DynamicResource AlderMuted}" VerticalAlignment="Center" />
+            <ContentPresenter Grid.Column="3" HorizontalAlignment="Right" Content="{TemplateBinding HeaderAction}" />
+          </Grid>
+          <Panel Grid.Row="1">
+            <Border Name="ColumnSurface" Background="{TemplateBinding Background}" Padding="8" CornerRadius="16">
+              <Grid RowDefinitions="*,Auto" RowSpacing="6">
+                <alder:AlderScrollShadow Name="PART_CardsScroll" HideScrollBar="True" Focusable="False" ShadowSize="20">
+                  <StackPanel>
+                    <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+                    <ContentPresenter Name="ColumnEmpty" MinHeight="42" HorizontalContentAlignment="Center"
+                                      VerticalContentAlignment="Center" IsHitTestVisible="False" IsVisible="False"
+                                      Content="{TemplateBinding EmptyContent}" Foreground="{DynamicResource AlderMuted}" />
+                  </StackPanel>
+                </alder:AlderScrollShadow>
+                <alder:AlderButton Name="PART_AddButton" Grid.Row="1" Theme="{StaticResource AlderKanbanAddButtonTheme}"
+                   Command="{TemplateBinding AddCommand}" Content="{TemplateBinding AddLabel}"
+                   IsVisible="{CompiledBinding AddCommand, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+              </Grid>
+            </Border>
+            <Border Name="ColumnDropOutline" CornerRadius="16" BorderThickness="1"
+                    BorderBrush="{DynamicResource AlderAccent}" IsHitTestVisible="False" IsVisible="False" />
+          </Panel>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[ItemCount=0] /template/ ContentPresenter#ColumnEmpty"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^.kanban-has-slot /template/ ContentPresenter#ColumnEmpty"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^.kanban-drop-target /template/ Border#ColumnDropOutline"><Setter Property="IsVisible" Value="True" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderKanbanCard}" TargetType="alder:AlderKanbanCard">
+    <Setter Property="Padding" Value="12" />
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid>
+          <Border Name="CardSurface" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" Padding="{TemplateBinding Padding}">
+            <StackPanel Spacing="8">
+              <Border CornerRadius="8" ClipToBounds="True"
+                      IsVisible="{CompiledBinding ImageSource, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}">
+                <alder:AlderImage Source="{TemplateBinding ImageSource}" Height="128" Stretch="UniformToFill" />
+              </Border>
+              <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="4">
+                <ContentPresenter Name="PART_HeaderPresenter" Content="{TemplateBinding Header}" FontWeight="SemiBold"
+                                  VerticalAlignment="Center" ContentTemplate="{TemplateBinding HeaderTemplate}" />
+                <ContentPresenter Grid.Column="1" Content="{TemplateBinding Actions}" />
+                <alder:AlderKanbanHandle Grid.Column="2" IsVisible="{TemplateBinding CanDrag}" />
+              </Grid>
+              <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
+              <ContentPresenter Content="{TemplateBinding Footer}" />
+            </StackPanel>
+          </Border>
+          <Border Name="DropBefore" Height="2" VerticalAlignment="Top" Margin="0,-5,0,0" IsVisible="False" IsHitTestVisible="False"
+                  Background="{DynamicResource AlderAccent}" CornerRadius="1" />
+          <Border Name="DropAfter" Height="2" VerticalAlignment="Bottom" Margin="0,0,0,-5" IsVisible="False" IsHitTestVisible="False"
+                  Background="{DynamicResource AlderAccent}" CornerRadius="1" />
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover /template/ Border#CardSurface">
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldShadow}" />
+    </Style>
+    <Style Selector="^.kanban-drag-source"><Setter Property="Opacity" Value=".5" /></Style>
+    <Style Selector="^.kanban-drop-before /template/ Border#DropBefore"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^.kanban-drop-after /template/ Border#DropAfter"><Setter Property="IsVisible" Value="True" /></Style>
+  </ControlTheme>
+</ResourceDictionary>

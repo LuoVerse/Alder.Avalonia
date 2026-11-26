@@ -1,0 +1,191 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:c="using:Avalonia.Data.Converters">
+  <x:String x:Key="AlderText.CommandPalette">Command palette</x:String>
+  <x:String x:Key="AlderText.CommandSearch">Search commands…</x:String>
+  <x:String x:Key="AlderText.CommandEmpty">No matching commands</x:String>
+  <x:String x:Key="AlderText.CommandBack">Back to previous commands</x:String>
+  <x:String x:Key="AlderText.CommandDismiss">Close or go back</x:String>
+  <SolidColorBrush x:Key="AlderCommandBackdrop" Color="#80000000" />
+
+  <ControlTheme x:Key="AlderCommandClearButtonTheme" TargetType="Button"
+                BasedOn="{StaticResource AlderSearchClearButtonTheme}">
+    <Setter Property="KeyboardNavigation.IsTabStop" Value="False" />
+    <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="RenderTransform" Value="scale(0.67)" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderCommandSearchTheme" TargetType="alder:AlderSearchField"
+                BasedOn="{StaticResource {x:Type alder:AlderSearchField}}">
+    <Setter Property="FullWidth" Value="True" />
+    <Setter Property="Height" Value="44" />
+    <Setter Property="ClearButtonTheme" Value="{StaticResource AlderCommandClearButtonTheme}" />
+    <Setter Property="Padding" Value="16,0,0,0" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="CaretBrush" Value="{DynamicResource AlderAccent}" />
+    <Style Selector="^ /template/ Border#FieldSurface, ^:pointerover /template/ Border#FieldSurface">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BoxShadow" Value="none" />
+    </Style>
+    <Style Selector="^ /template/ ContentPresenter#FieldSuffix">
+      <Setter Property="MinWidth" Value="20" />
+      <Setter Property="Margin" Value="0,0,8,0" />
+    </Style>
+    <Style Selector="^ /template/ :is(ScrollViewer)#PART_ScrollViewer">
+      <Setter Property="Margin" Value="8,8" />
+    </Style>
+    <Style Selector="^ /template/ alder|InputFocusRing#FieldRing">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderCommandRowTheme" TargetType="ListBoxItem">
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <ContentPresenter Name="Row" Content="{TemplateBinding Content}"
+                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                          HorizontalContentAlignment="Stretch" Background="Transparent" CornerRadius="8" />
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:selected /template/ ContentPresenter#Row">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+    <Style Selector="^:pressed /template/ ContentPresenter#Row">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderCommand}" TargetType="alder:AlderCommand">
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="MaxWidth" Value="512" />
+    <Setter Property="MaxHeight" Value="356" />
+    <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.CommandPalette}" />
+    <Setter Property="Placeholder" Value="{DynamicResource AlderText.CommandSearch}" />
+    <Setter Property="EmptyContent" Value="{DynamicResource AlderText.CommandEmpty}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}"
+                ClipToBounds="True">
+          <Grid RowDefinitions="Auto,Auto,Auto,Auto,*,Auto">
+            <ContentPresenter Content="{TemplateBinding Header}" Margin="8,8,8,0"
+                              IsVisible="{CompiledBinding Header, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+            <Grid Grid.Row="1" ColumnDefinitions="Auto,*" ColumnSpacing="6" Margin="8,4,12,0"
+                  IsVisible="{CompiledBinding PageTitle, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}">
+              <alder:AlderButton x:Name="PART_Back" Size="Small" Variant="Ghost" IsIconOnly="True"
+                                MinHeight="24" MinWidth="24" Width="24" Height="24"
+                                Icon="{StaticResource AlderIconChevronLeft}"
+                                AutomationProperties.Name="{DynamicResource AlderText.CommandBack}" />
+              <alder:AlderTextBlock Grid.Column="1" Text="{TemplateBinding PageTitle}" VerticalAlignment="Center"
+                         FontWeight="SemiBold" TextWrapping="Wrap" />
+            </Grid>
+            <Border Grid.Row="2" BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="0,0,0,1">
+              <Grid ColumnDefinitions="*,Auto">
+                <alder:AlderSearchField x:Name="PART_Search" Theme="{StaticResource AlderCommandSearchTheme}"
+                                       PlaceholderText="{TemplateBinding Placeholder}" AutomationProperties.Name="{TemplateBinding Placeholder}"
+                                       Text="{CompiledBinding Query, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
+                <alder:AlderButton x:Name="PART_Dismiss" Grid.Column="1" Theme="{StaticResource AlderButtonTheme}"
+                        MinHeight="24" Height="24" Padding="8,0" Margin="12,0,16,0" CornerRadius="8"
+                        VerticalAlignment="Center" Content="Esc" FontSize="12" FontWeight="Normal"
+                        Background="{DynamicResource AlderNeutral}" Foreground="{DynamicResource AlderMuted}"
+                        AutomationProperties.Name="{DynamicResource AlderText.CommandDismiss}">
+                  <alder:AlderButton.IsVisible>
+                    <MultiBinding Converter="{x:Static c:BoolConverters.And}">
+                      <Binding Path="IsModal" RelativeSource="{RelativeSource TemplatedParent}" />
+                      <Binding Path="ShowDismissButton" RelativeSource="{RelativeSource TemplatedParent}" />
+                    </MultiBinding>
+                  </alder:AlderButton.IsVisible>
+                </alder:AlderButton>
+              </Grid>
+            </Border>
+            <ContentPresenter Grid.Row="3" Margin="16,4" Content="{TemplateBinding SearchFooter}"
+                              IsVisible="{CompiledBinding SearchFooter, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+            <Grid x:Name="PART_Body" Grid.Row="4" ColumnDefinitions="*,Auto">
+              <alder:AlderCommandList x:Name="PART_Results" Padding="6" AutoScrollToSelectedItem="False"
+                                    Background="Transparent" BorderThickness="0" Focusable="False"
+                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.IsScrollChainingEnabled="False"
+                                    AutomationProperties.Name="{DynamicResource AlderText.CommandPalette}"
+                                    ItemContainerTheme="{StaticResource AlderCommandRowTheme}">
+                <ListBox.ItemsPanel>
+                  <ItemsPanelTemplate><VirtualizingStackPanel /></ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                  <DataTemplate x:DataType="alder:AlderCommandRow">
+                    <Panel>
+                      <Panel.Styles>
+                        <Style Selector="TextBlock.commandGroup"><Setter Property="Margin" Value="12,6" /></Style>
+                        <Style Selector="TextBlock.commandGroup.afterGroup"><Setter Property="Margin" Value="12,10,12,6" /></Style>
+                      </Panel.Styles>
+                      <alder:AlderTextBlock IsVisible="{CompiledBinding IsHeading}" Text="{CompiledBinding Label}"
+                                 Classes="commandGroup" Classes.afterGroup="{CompiledBinding AfterGroup}"
+                                 TextWrapping="Wrap" FontSize="12" LineHeight="16"
+                                 FontWeight="Medium"
+                                 Foreground="{DynamicResource AlderMuted}" AutomationProperties.HeadingLevel="2" />
+                      <Grid IsVisible="{CompiledBinding IsAction}" Classes.unavailable="{CompiledBinding IsDisabledAction}"
+                            ColumnDefinitions="Auto,*,Auto,Auto" MinHeight="36" Margin="12,0">
+                        <Grid.Styles>
+                          <Style Selector="Grid.unavailable"><Setter Property="Opacity" Value=".5" /></Style>
+                        </Grid.Styles>
+                        <alder:AlderPathIcon Data="{CompiledBinding Icon}" Width="16" Height="16" Margin="0,0,10,0"
+                                  Foreground="{DynamicResource AlderMuted}"
+                                  IsVisible="{CompiledBinding Icon, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,8">
+                          <alder:AlderTextBlock Text="{CompiledBinding Label}" TextWrapping="Wrap" FontSize="14" LineHeight="20" />
+                          <alder:AlderTextBlock Text="{CompiledBinding Description}" TextWrapping="Wrap" FontSize="12" LineHeight="16"
+                                     Foreground="{DynamicResource AlderMuted}"
+                                     IsVisible="{CompiledBinding Description, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}" />
+                        </StackPanel>
+                        <Border Grid.Column="2" VerticalAlignment="Center" CornerRadius="8" Padding="6,2" MaxWidth="82" Margin="10,0,0,0"
+                                Background="{DynamicResource AlderSurfaceSecondary}"
+                                IsVisible="{CompiledBinding Shortcut, Converter={x:Static c:StringConverters.IsNotNullOrEmpty}}">
+                          <alder:AlderTextBlock Text="{CompiledBinding Shortcut}" FontSize="12" FlowDirection="LeftToRight" TextWrapping="Wrap"
+                                     Foreground="{DynamicResource AlderMuted}" />
+                        </Border>
+                        <alder:AlderPathIcon Grid.Column="3" Width="14" Height="14" Margin="10,0,0,0" Data="{StaticResource AlderIconChevronRight}"
+                                  Foreground="{DynamicResource AlderMuted}" IsVisible="{CompiledBinding IsPage}" />
+                      </Grid>
+                    </Panel>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </alder:AlderCommandList>
+              <ContentPresenter Content="{TemplateBinding EmptyContent}" IsVisible="{TemplateBinding IsEmpty}"
+                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="16,24"
+                                TextBlock.TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" FontSize="14"
+                                AutomationProperties.LiveSetting="Polite" />
+              <Border Grid.Column="1" BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1,0,0,0"
+                      Background="{DynamicResource AlderSurfaceSecondary}"
+                      IsVisible="{CompiledBinding PreviewTemplate, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}">
+                <alder:AlderScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                  <ContentPresenter Margin="12" Content="{TemplateBinding ActiveItem}"
+                                    ContentTemplate="{TemplateBinding PreviewTemplate}"
+                                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                </alder:AlderScrollViewer>
+              </Border>
+            </Grid>
+            <Grid Grid.Row="5" MinHeight="29"
+                  IsVisible="{CompiledBinding Footer, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}">
+              <Border Background="{DynamicResource AlderNeutral}" Opacity=".5" IsHitTestVisible="False" />
+              <Border BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="0,1,0,0" Padding="12,4">
+                <ContentPresenter Content="{TemplateBinding Footer}" TextBlock.TextWrapping="Wrap" LineHeight="16"
+                                  Foreground="{DynamicResource AlderMuted}" FontSize="12" />
+              </Border>
+            </Grid>
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Size=Small]">
+      <Setter Property="MaxWidth" Value="384" /><Setter Property="MaxHeight" Value="300" />
+    </Style>
+    <Style Selector="^[Size=Large]">
+      <Setter Property="MaxWidth" Value="576" /><Setter Property="MaxHeight" Value="440" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

@@ -1,0 +1,254 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             xmlns:conv="using:Avalonia.Data.Converters"
+             x:Class="Alder.Avalonia.Gallery.Views.TabsExample" x:DataType="vm:TabsViewModel">
+  <Design.DataContext><vm:TabsViewModel /></Design.DataContext>
+  <UserControl.Resources>
+    <DataTemplate x:Key="SectionHeader" x:DataType="vm:TabExampleItem">
+      <alder:AlderTextBlock Text="{CompiledBinding Title}" />
+    </DataTemplate>
+    <DataTemplate x:Key="SectionPanel" x:DataType="vm:TabExampleItem">
+      <StackPanel Spacing="5">
+        <alder:AlderTextBlock FontWeight="SemiBold" Text="{CompiledBinding Heading}"
+                   IsVisible="{CompiledBinding Heading, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+        <alder:AlderTextBlock Text="{CompiledBinding Body}" TextWrapping="Wrap" />
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="DocumentationHeader" x:DataType="vm:TabExampleItem">
+      <alder:AlderTextBlock Text="{CompiledBinding Title}" TextTrimming="CharacterEllipsis" />
+    </DataTemplate>
+    <DataTemplate x:Key="DocumentationPanel" x:DataType="vm:TabExampleItem">
+      <StackPanel Spacing="8">
+        <alder:AlderTextBlock Text="{CompiledBinding Body}" TextWrapping="Wrap" />
+        <alder:AlderLink ShowExternalIcon="True" Content="{CompiledBinding Title}" NavigateUri="{CompiledBinding Documentation}" />
+      </StackPanel>
+    </DataTemplate>
+  </UserControl.Resources>
+  <UserControl.Styles>
+    <Style Selector="alder|AlderTabs">
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="MaxWidth" Value="448" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderTabs SelectedIndex="{CompiledBinding SelectedIndex}" ItemsSource="{CompiledBinding Sections}"
+                    ItemTemplate="{StaticResource SectionHeader}" ContentTemplate="{StaticResource SectionPanel}"
+                    AutomationProperties.Name="{DynamicResource GalleryText.Tabs}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var tabs = new AlderTabs
+        {
+            ItemTemplate = (IDataTemplate)this.FindResource("SectionHeader")!,
+            ContentTemplate = (IDataTemplate)this.FindResource("SectionPanel")!,
+        };
+        tabs.Bind(AlderTabs.SelectedIndexProperty, CompiledBinding.Create((TabsViewModel model) => model.SelectedIndex));
+        tabs.Bind(AlderTabs.ItemsSourceProperty, CompiledBinding.Create((TabsViewModel model) => model.Sections));
+        AutomationProperties.SetName(tabs, "Tabs");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVertical" Title="{DynamicResource GalleryText.Vertical}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderTabs MaxWidth="512" TabStripPlacement="Left" ItemsSource="{CompiledBinding AccountSections}"
+                    ItemTemplate="{StaticResource SectionHeader}" ContentTemplate="{StaticResource SectionPanel}"
+                    AutomationProperties.Name="{DynamicResource GalleryText.Vertical}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var tabs = new AlderTabs
+        {
+            MaxWidth = 512,
+            TabStripPlacement = Dock.Left,
+            ItemTemplate = (IDataTemplate)this.FindResource("SectionHeader")!,
+            ContentTemplate = (IDataTemplate)this.FindResource("SectionPanel")!,
+        };
+        tabs.Bind(AlderTabs.ItemsSourceProperty, CompiledBinding.Create((TabsViewModel model) => model.AccountSections));
+        AutomationProperties.SetName(tabs, "Vertical");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleTabOverflow" Title="{DynamicResource GalleryText.TabOverflow}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderTabs MaxWidth="400" ItemsSource="{CompiledBinding OverflowSections}"
+                    ItemTemplate="{StaticResource SectionHeader}" ContentTemplate="{StaticResource SectionPanel}"
+                    AutomationProperties.Name="{DynamicResource GalleryText.TabOverflow}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var tabs = new AlderTabs
+        {
+            MaxWidth = 400,
+            ItemTemplate = (IDataTemplate)this.FindResource("SectionHeader")!,
+            ContentTemplate = (IDataTemplate)this.FindResource("SectionPanel")!,
+        };
+        tabs.Bind(AlderTabs.ItemsSourceProperty, CompiledBinding.Create((TabsViewModel model) => model.OverflowSections));
+        AutomationProperties.SetName(tabs, "Overflow");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleTabVerticalOverflow" Title="{DynamicResource GalleryText.TabVerticalOverflow}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderTabs MaxWidth="512" TabStripPlacement="Left" Height="116"
+                    ItemsSource="{CompiledBinding OverflowSections}"
+                    ItemTemplate="{StaticResource SectionHeader}" ContentTemplate="{StaticResource SectionPanel}" AutomationProperties.Name="{DynamicResource GalleryText.TabVerticalOverflow}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var tabs = new AlderTabs
+        {
+            MaxWidth = 512,
+            TabStripPlacement = Dock.Left,
+            Height = 116,
+            ItemTemplate = (IDataTemplate)this.FindResource("SectionHeader")!,
+            ContentTemplate = (IDataTemplate)this.FindResource("SectionPanel")!,
+        };
+        tabs.Bind(AlderTabs.ItemsSourceProperty, CompiledBinding.Create((TabsViewModel model) => model.OverflowSections));
+        AutomationProperties.SetName(tabs, "Vertical overflow");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabledState" Title="{DynamicResource GalleryText.DisabledState}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderTabs AutomationProperties.Name="{DynamicResource GalleryText.DisabledState}">
+          <alder:AlderTabItem Header="{DynamicResource GalleryText.TabActive}" Content="{DynamicResource GalleryText.TabActiveBody}" />
+          <alder:AlderTabItem Header="{DynamicResource GalleryText.Disabled}" IsEnabled="False" />
+          <alder:AlderTabItem Header="{DynamicResource GalleryText.TabAvailable}" Content="{DynamicResource GalleryText.TabAvailableBody}" />
+        </alder:AlderTabs>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var tabs = new AlderTabs();
+        AutomationProperties.SetName(tabs, "Disabled state");
+        tabs.Items.Add(new AlderTabItem { Header = "Active", Content = "This tab can be selected." });
+        tabs.Items.Add(new AlderTabItem { Header = "Disabled", IsEnabled = false });
+        tabs.Items.Add(new AlderTabItem { Header = "Available", Content = "This tab is also available." });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleTabSeparators" Title="{DynamicResource GalleryText.TabSeparators}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderTabs ShowSeparators="True" ItemsSource="{CompiledBinding Sections}"
+                    ItemTemplate="{StaticResource SectionHeader}" ContentTemplate="{StaticResource SectionPanel}"
+                    AutomationProperties.Name="{DynamicResource GalleryText.TabSeparators}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var tabs = new AlderTabs
+        {
+            ShowSeparators = true,
+            ItemTemplate = (IDataTemplate)this.FindResource("SectionHeader")!,
+            ContentTemplate = (IDataTemplate)this.FindResource("SectionPanel")!,
+        };
+        tabs.Bind(AlderTabs.ItemsSourceProperty, CompiledBinding.Create((TabsViewModel model) => model.Sections));
+        AutomationProperties.SetName(tabs, "With separators");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSecondaryVariant" Title="{DynamicResource GalleryText.SecondaryVariant}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderTabs Variant="Secondary" ItemsSource="{CompiledBinding Sections}"
+                    ItemTemplate="{StaticResource SectionHeader}" ContentTemplate="{StaticResource SectionPanel}"
+                    AutomationProperties.Name="{DynamicResource GalleryText.SecondaryVariant}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var tabs = new AlderTabs
+        {
+            Variant = AlderTabsVariant.Secondary,
+            ItemTemplate = (IDataTemplate)this.FindResource("SectionHeader")!,
+            ContentTemplate = (IDataTemplate)this.FindResource("SectionPanel")!,
+        };
+        tabs.Bind(AlderTabs.ItemsSourceProperty, CompiledBinding.Create((TabsViewModel model) => model.Sections));
+        AutomationProperties.SetName(tabs, "Secondary variant");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleTabSecondaryVertical" Title="{DynamicResource GalleryText.TabSecondaryVertical}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderTabs MaxWidth="512" Variant="Secondary" TabStripPlacement="Left"
+                    ItemsSource="{CompiledBinding AccountSections}"
+                    ItemTemplate="{StaticResource SectionHeader}" ContentTemplate="{StaticResource SectionPanel}" AutomationProperties.Name="{DynamicResource GalleryText.TabSecondaryVertical}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var tabs = new AlderTabs
+        {
+            MaxWidth = 512,
+            Variant = AlderTabsVariant.Secondary,
+            TabStripPlacement = Dock.Left,
+            ItemTemplate = (IDataTemplate)this.FindResource("SectionHeader")!,
+            ContentTemplate = (IDataTemplate)this.FindResource("SectionPanel")!,
+        };
+        tabs.Bind(AlderTabs.ItemsSourceProperty, CompiledBinding.Create((TabsViewModel model) => model.AccountSections));
+        AutomationProperties.SetName(tabs, "Secondary vertical");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleTabAlignment" Title="{DynamicResource GalleryText.TabAlignment}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderTabs MaxWidth="512" Variant="Secondary" HeaderAlignment="Start" TabStripPlacement="Left"
+                    ItemsSource="{CompiledBinding Preferences}"
+                    ItemTemplate="{StaticResource SectionHeader}" ContentTemplate="{StaticResource SectionPanel}" AutomationProperties.Name="{DynamicResource GalleryText.TabAlignment}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var tabs = new AlderTabs
+        {
+            MaxWidth = 512,
+            Variant = AlderTabsVariant.Secondary,
+            HeaderAlignment = AlderTabAlignment.Start,
+            TabStripPlacement = Dock.Left,
+            ItemTemplate = (IDataTemplate)this.FindResource("SectionHeader")!,
+            ContentTemplate = (IDataTemplate)this.FindResource("SectionPanel")!,
+        };
+        tabs.Bind(AlderTabs.ItemsSourceProperty, CompiledBinding.Create((TabsViewModel model) => model.Preferences));
+        AutomationProperties.SetName(tabs, "Start-aligned tabs");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleTabNavigation" Title="{DynamicResource GalleryText.TabNavigation}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderTabs ItemsSource="{CompiledBinding Documentation}" ItemTemplate="{StaticResource DocumentationHeader}"
+                    ContentTemplate="{StaticResource DocumentationPanel}" AutomationProperties.Name="{DynamicResource GalleryText.TabNavigation}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var tabs = new AlderTabs
+        {
+            ItemTemplate = (IDataTemplate)this.FindResource("DocumentationHeader")!,
+            ContentTemplate = (IDataTemplate)this.FindResource("DocumentationPanel")!,
+        };
+        tabs.Bind(AlderTabs.ItemsSourceProperty, CompiledBinding.Create((TabsViewModel model) => model.Documentation));
+        AutomationProperties.SetName(tabs, "Navigation with custom templates");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustomStyle" Title="{DynamicResource GalleryText.CustomStyle}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel>
+          <StackPanel.Styles>
+            <Style Selector="alder|AlderTabs.billing /template/ Border#Indicator">
+              <Setter Property="CornerRadius" Value="8" />
+              <Setter Property="BoxShadow" Value="none" />
+            </Style>
+            <Style Selector="alder|AlderTabs.billing > TabItem:selected">
+              <Setter Property="Foreground" Value="{DynamicResource AlderOnAccent}" />
+            </Style>
+            <Style Selector="alder|AlderTabs.billing > TabItem"><Setter Property="CornerRadius" Value="8" /></Style>
+            <Style Selector="alder|AlderTabs.billing > TabItem:pointerover:not(:selected)">
+              <Setter Property="Background" Value="{DynamicResource AlderSoft}" />
+              <Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" />
+              <Setter Property="Opacity" Value="1" />
+            </Style>
+          </StackPanel.Styles>
+          <alder:AlderTabs Classes="billing" MaxWidth="384" CornerRadius="12" BorderThickness="1" BorderBrush="{DynamicResource AlderSoft}"
+                      Background="{DynamicResource AlderSoftHoverTint}" IndicatorBrush="{DynamicResource AlderAccent}" Padding="8,16,8,8"
+                      AutomationProperties.Name="{DynamicResource GalleryText.DisclosureBilling}">
+            <alder:AlderTabItem Header="{DynamicResource GalleryText.Monthly}" Content="{DynamicResource GalleryText.TabMonthlyBody}" />
+            <alder:AlderTabItem Header="{DynamicResource GalleryText.Yearly}" Content="{DynamicResource GalleryText.TabYearlyBody}" />
+          </alder:AlderTabs>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var tabs = new AlderTabs
+        {
+            MaxWidth = 384,
+            CornerRadius = new CornerRadius(12),
+            BorderThickness = new Thickness(1),
+            BorderBrush = (IBrush)this.FindResource("AlderSoft")!,
+            Background = (IBrush)this.FindResource("AlderSoftHoverTint")!,
+            IndicatorBrush = (IBrush)this.FindResource("AlderAccent")!,
+            Padding = new Thickness(8, 16, 8, 8),
+        };
+        tabs.Classes.Add("billing");
+        AutomationProperties.SetName(tabs, "Billing");
+        tabs.Items.Add(new AlderTabItem { Header = "Monthly", Content = "Billed monthly. Cancel anytime." });
+        tabs.Items.Add(new AlderTabItem { Header = "Yearly", Content = "Billed once a year." });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

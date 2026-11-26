@@ -1,0 +1,370 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.AreaChartExample" x:DataType="vm:ChartViewModel">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+          <SolidColorBrush x:Key="GalleryChartSuccessInk" Color="#17693D" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+          <SolidColorBrush x:Key="GalleryChartSuccessInk" Color="#6DCD97" />
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+      <SolidColorBrush x:Key="GalleryChartSuccess" Color="#19A65B" />
+      <DataTemplate x:Key="ChartTotalTooltip" x:DataType="alder:AlderChartTooltipData">
+        <Border MinWidth="138" MaxWidth="250" Background="{DynamicResource AlderSurface}"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" CornerRadius="8"
+                Padding="11,8" BoxShadow="{DynamicResource AlderChartTooltipShadow}">
+          <StackPanel Spacing="5" TextElement.FontSize="12" TextElement.Foreground="{DynamicResource AlderInk}">
+            <alder:AlderTextBlock Text="{CompiledBinding Label}" Foreground="{DynamicResource AlderMuted}" FontWeight="Medium" />
+            <alder:AlderItemsControl ItemsSource="{CompiledBinding Entries}">
+              <alder:AlderItemsControl.ItemsPanel>
+                <ItemsPanelTemplate><StackPanel Spacing="4" /></ItemsPanelTemplate>
+              </alder:AlderItemsControl.ItemsPanel>
+              <alder:AlderItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="alder:AlderChartTooltipEntry">
+                  <Grid ColumnDefinitions="8,*,Auto" ColumnSpacing="7">
+                    <Ellipse Width="8" Height="8" VerticalAlignment="Center" Fill="{CompiledBinding Brush}" />
+                    <alder:AlderTextBlock Grid.Column="1" Text="{CompiledBinding Name}" Foreground="{DynamicResource AlderMuted}" />
+                    <alder:AlderTextBlock Grid.Column="2" Text="{CompiledBinding Value}" FontWeight="SemiBold" />
+                  </Grid>
+                </DataTemplate>
+              </alder:AlderItemsControl.ItemTemplate>
+            </alder:AlderItemsControl>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" Margin="0,3,0,0">
+              <Border Grid.ColumnSpan="2" BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="0,1,0,0" />
+              <alder:AlderTextBlock Margin="0,5,0,0" Text="{DynamicResource GalleryText.ChartTotal}" Foreground="{DynamicResource AlderMuted}" />
+              <alder:AlderTextBlock Grid.Column="1" Margin="0,5,0,0" Text="{CompiledBinding Total}" FontWeight="SemiBold" />
+            </Grid>
+          </StackPanel>
+        </Border>
+      </DataTemplate>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <StackPanel Spacing="24">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="520" Background="{DynamicResource AlderSurface}" CornerRadius="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}" Padding="16">
+          <StackPanel Spacing="12">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartMonthlyRevenue}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+            <alder:AlderAreaChart Categories="{CompiledBinding Months}" Series="{CompiledBinding Revenue}"
+                                  Height="200" AutomationProperties.Name="{DynamicResource GalleryText.ChartMonthlyRevenue}"
+                                  ValueFormat='"$"#,0' AxisValueFormat='"$"0,"k"' />
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var chart = new AlderAreaChart
+        {
+            Categories = viewModel.Months,
+            Series = viewModel.Revenue,
+            Height = 200,
+            ValueFormat = "\"$\"#,0",
+            AxisValueFormat = "\"$\"0,\"k\"",
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleMulti" Title="{DynamicResource GalleryText.ChartMultiArea}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="520" Background="{DynamicResource AlderSurface}" CornerRadius="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}" Padding="16">
+          <StackPanel Spacing="12">
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartTrafficSources}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+              <WrapPanel Grid.Column="1" HorizontalAlignment="Right" ItemSpacing="12" LineSpacing="4">
+                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                  <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries1}" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartOrganic}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                  <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries2}" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartPaid}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                </StackPanel>
+              </WrapPanel>
+            </Grid>
+            <StackPanel Spacing="3">
+              <alder:AlderTextBlock Text="{CompiledBinding SessionTotal}" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartSessions}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+            </StackPanel>
+            <alder:AlderAreaChart Categories="{CompiledBinding Months}" Series="{CompiledBinding Traffic}"
+                                  Height="200" AutomationProperties.Name="{DynamicResource GalleryText.ChartTrafficSources}"
+                                  AxisValueFormat='0,"k";-0,"k";0' />
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var chart = new AlderAreaChart
+        {
+            Categories = viewModel.Months,
+            Series = viewModel.Traffic,
+            Height = 200,
+            AxisValueFormat = "0,\"k\";-0,\"k\";0",
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleStacked" Title="{DynamicResource GalleryText.ChartStacked}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="600" Background="{DynamicResource AlderSurface}" CornerRadius="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}" Padding="16">
+          <StackPanel Spacing="12">
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartTrafficBreakdown}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+              <WrapPanel Grid.Column="1" HorizontalAlignment="Right" ItemSpacing="12" LineSpacing="4">
+                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                  <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries4}" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartOrganic}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                  <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries1}" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartPaid}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                  <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries3}" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartReferral}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                  <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries2}" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartDirect}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                </StackPanel>
+              </WrapPanel>
+            </Grid>
+            <alder:AlderAreaChart Categories="{CompiledBinding Months}" Series="{CompiledBinding TrafficBreakdown}"
+                                  Height="240" AutomationProperties.Name="{DynamicResource GalleryText.ChartTrafficBreakdown}"
+                                  IsStacked="true" AxisValueFormat='0,"k";-0,"k";0' />
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var chart = new AlderAreaChart
+        {
+            Categories = viewModel.Months,
+            Series = viewModel.TrafficBreakdown,
+            Height = 240,
+            IsStacked = true,
+            AxisValueFormat = "0,\"k\";-0,\"k\";0",
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSparkline" Title="{DynamicResource GalleryText.ChartSparkline}">
+      <gallery:ExampleCard.Preview>
+        <Border Container.Name="SparklineExamples" Container.Sizing="Width" MaxWidth="770">
+          <Border.Styles>
+            <Style Selector="Border.chartPreview1"><Setter Property="Grid.Column" Value="1" /></Style>
+            <Style Selector="Border.chartPreview2"><Setter Property="Grid.Column" Value="2" /></Style>
+            <ContainerQuery Name="SparklineExamples" Query="max-width:440">
+              <Style Selector="Border.chartPreview1">
+                <Setter Property="Grid.Row" Value="1" />
+                <Setter Property="Grid.Column" Value="0" />
+                <Setter Property="Grid.ColumnSpan" Value="3" />
+              </Style>
+              <Style Selector="Border.chartPreview2">
+                <Setter Property="Grid.Row" Value="2" />
+                <Setter Property="Grid.Column" Value="0" />
+                <Setter Property="Grid.ColumnSpan" Value="3" />
+              </Style>
+              <Style Selector="Border.chartPreview0"><Setter Property="Grid.ColumnSpan" Value="3" /></Style>
+            </ContainerQuery>
+          </Border.Styles>
+          <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+            <Border Classes="chartPreview0">
+              <StackPanel Spacing="6">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartRevenue}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                <alder:AlderAreaChart Categories="{CompiledBinding Months}" Series="{CompiledBinding KpiRevenue}"
+                                      Height="48" AutomationProperties.Name="{DynamicResource GalleryText.ChartRevenue}"
+                                      ShowGrid="false" ShowXAxis="false"
+                                      ShowYAxis="false" ShowTooltip="false"
+                                      Padding="0" />
+              </StackPanel>
+            </Border>
+            <Border Classes="chartPreview1">
+              <StackPanel Spacing="6">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartChurn}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                <alder:AlderAreaChart Categories="{CompiledBinding Months}" Series="{CompiledBinding KpiChurn}"
+                                      Height="48" AutomationProperties.Name="{DynamicResource GalleryText.ChartChurn}"
+                                      ShowGrid="false" ShowXAxis="false"
+                                      ShowYAxis="false" ShowTooltip="false"
+                                      Padding="0" />
+              </StackPanel>
+            </Border>
+            <Border Classes="chartPreview2">
+              <StackPanel Spacing="6">
+                <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartUsers}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                <alder:AlderAreaChart Categories="{CompiledBinding Months}" Series="{CompiledBinding KpiUsers}"
+                                      Height="48" AutomationProperties.Name="{DynamicResource GalleryText.ChartUsers}"
+                                      ShowGrid="false" ShowXAxis="false"
+                                      ShowYAxis="false" ShowTooltip="false"
+                                      Padding="0" />
+              </StackPanel>
+            </Border>
+          </Grid>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        AlderAreaChart CreateSparkline(IReadOnlyList<AlderChartSeries> series) => new()
+        {
+            Categories = viewModel.Months,
+            Series = series,
+            Height = 48,
+            ShowGrid = false,
+            ShowXAxis = false,
+            ShowYAxis = false,
+            ShowTooltip = false,
+            Padding = new Thickness(0),
+        };
+
+        var revenue = CreateSparkline(viewModel.KpiRevenue);
+        var churn = CreateSparkline(viewModel.KpiChurn);
+        var users = CreateSparkline(viewModel.KpiUsers);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleKpi" Title="{DynamicResource GalleryText.ChartAreaKpi}">
+      <gallery:ExampleCard.Preview>
+        <Border Container.Name="KpiAreaExamples" Container.Sizing="Width" MaxWidth="770">
+          <Border.Styles>
+            <Style Selector="Border.chartPreview1"><Setter Property="Grid.Column" Value="1" /></Style>
+            <Style Selector="Border.chartPreview2"><Setter Property="Grid.Row" Value="1" /></Style>
+            <ContainerQuery Name="KpiAreaExamples" Query="max-width:585">
+              <Style Selector="Border.chartPreview1">
+                <Setter Property="Grid.Row" Value="1" />
+                <Setter Property="Grid.Column" Value="0" />
+                <Setter Property="Grid.ColumnSpan" Value="2" />
+              </Style>
+              <Style Selector="Border.chartPreview2">
+                <Setter Property="Grid.Row" Value="2" />
+                <Setter Property="Grid.Column" Value="0" />
+                <Setter Property="Grid.ColumnSpan" Value="2" />
+              </Style>
+              <Style Selector="Border.chartPreview0"><Setter Property="Grid.ColumnSpan" Value="2" /></Style>
+            </ContainerQuery>
+          </Border.Styles>
+          <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+            <Border Classes="chartPreview0">
+              <Border MaxWidth="400" Background="{DynamicResource AlderSurface}" CornerRadius="16"
+                      BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}" Padding="16">
+                <StackPanel Spacing="12">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartTotalRevenue}" FontSize="14" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                  <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                    <StackPanel Spacing="4" VerticalAlignment="Bottom">
+                      <alder:AlderTextBlock Text="{CompiledBinding RevenueTotal}" FontSize="27" FontWeight="SemiBold" TextWrapping="Wrap" />
+                      <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+                        <alder:AlderTextBlock Text="↑ 4.2%" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource GalleryChartSuccessInk}" />
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartLast30Days}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                      </StackPanel>
+                    </StackPanel>
+                    <alder:AlderAreaChart Grid.Column="1" Categories="{CompiledBinding Months}" Series="{CompiledBinding KpiRevenue}"
+                                          Height="70" AutomationProperties.Name="{DynamicResource GalleryText.ChartTotalRevenue}"
+                                          ShowGrid="false" ShowXAxis="false"
+                                          ShowYAxis="false" ShowTooltip="false"
+                                          Padding="0" />
+                  </Grid>
+                </StackPanel>
+              </Border>
+            </Border>
+            <Border Classes="chartPreview1">
+              <Border MaxWidth="400" Background="{DynamicResource AlderSurface}" CornerRadius="16"
+                      BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}" Padding="16">
+                <StackPanel Spacing="12">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartBounceRate}" FontSize="14" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                  <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                    <StackPanel Spacing="4" VerticalAlignment="Bottom">
+                      <alder:AlderTextBlock Text="{CompiledBinding BounceRate}" FontSize="27" FontWeight="SemiBold" TextWrapping="Wrap" />
+                      <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+                        <alder:AlderTextBlock Text="↓ 5.1%" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource AlderDangerInk}" />
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartLast7Days}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                      </StackPanel>
+                    </StackPanel>
+                    <alder:AlderAreaChart Grid.Column="1" Categories="{CompiledBinding Months}" Series="{CompiledBinding KpiChurn}"
+                                          Height="70" AutomationProperties.Name="{DynamicResource GalleryText.ChartBounceRate}"
+                                          ShowGrid="false" ShowXAxis="false"
+                                          ShowYAxis="false" ShowTooltip="false"
+                                          Padding="0" />
+                  </Grid>
+                </StackPanel>
+              </Border>
+            </Border>
+            <Border Classes="chartPreview2">
+              <Border MaxWidth="400" Background="{DynamicResource AlderSurface}" CornerRadius="16"
+                      BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}" Padding="16">
+                <StackPanel Spacing="12">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartActiveUsers}" FontSize="14" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                  <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                    <StackPanel Spacing="4" VerticalAlignment="Bottom">
+                      <alder:AlderTextBlock Text="{CompiledBinding UserTotal}" FontSize="27" FontWeight="SemiBold" TextWrapping="Wrap" />
+                      <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+                        <alder:AlderTextBlock Text="↑ 8.7%" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource GalleryChartSuccessInk}" />
+                        <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartThisMonth}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                      </StackPanel>
+                    </StackPanel>
+                    <alder:AlderAreaChart Grid.Column="1" Categories="{CompiledBinding Months}" Series="{CompiledBinding KpiUsers}"
+                                          Height="70" AutomationProperties.Name="{DynamicResource GalleryText.ChartActiveUsers}"
+                                          ShowGrid="false" ShowXAxis="false"
+                                          ShowYAxis="false" ShowTooltip="false"
+                                          Padding="0" />
+                  </Grid>
+                </StackPanel>
+              </Border>
+            </Border>
+          </Grid>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        AlderAreaChart CreateSparkline(IReadOnlyList<AlderChartSeries> series) => new()
+        {
+            Categories = viewModel.Months,
+            Series = series,
+            Height = 70,
+            ShowGrid = false,
+            ShowXAxis = false,
+            ShowYAxis = false,
+            ShowTooltip = false,
+            Padding = new Thickness(0),
+        };
+
+        var revenue = CreateSparkline(viewModel.KpiRevenue);
+        var churn = CreateSparkline(viewModel.KpiChurn);
+        var users = CreateSparkline(viewModel.KpiUsers);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustomTooltip" Title="{DynamicResource GalleryText.ChartCustomTooltip}">
+      <gallery:ExampleCard.Preview>
+        <Border MaxWidth="520" Background="{DynamicResource AlderSurface}" CornerRadius="16"
+                BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="1" BoxShadow="{DynamicResource AlderFieldShadow}" Padding="16">
+          <StackPanel Spacing="12">
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartSessions}" FontSize="16" FontWeight="Medium" TextWrapping="Wrap" />
+              <WrapPanel Grid.Column="1" HorizontalAlignment="Right" ItemSpacing="12" LineSpacing="4">
+                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                  <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries1}" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartOrganic}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                  <Ellipse Width="9" Height="9" Fill="{DynamicResource AlderChartSeries2}" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChartPaid}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+                </StackPanel>
+              </WrapPanel>
+            </Grid>
+            <alder:AlderAreaChart Categories="{CompiledBinding Months}" Series="{CompiledBinding Traffic}"
+                                  Height="200" AutomationProperties.Name="{DynamicResource GalleryText.ChartSessions}"
+                                  TooltipTemplate="{StaticResource ChartTotalTooltip}" IsTooltipPinnedToTop="True" AxisValueFormat='0,"k";-0,"k";0' />
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var chart = new AlderAreaChart
+        {
+            Categories = viewModel.Months,
+            Series = viewModel.Traffic,
+            Height = 200,
+            TooltipTemplate = (IDataTemplate)this.FindResource("ChartTotalTooltip"),
+            IsTooltipPinnedToTop = true,
+            AxisValueFormat = "0,\"k\";-0,\"k\";0",
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

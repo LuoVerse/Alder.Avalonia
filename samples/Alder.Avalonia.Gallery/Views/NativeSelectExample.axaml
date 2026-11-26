@@ -1,0 +1,201 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.NativeSelectExample" x:DataType="vm:FormSelectViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <WrapPanel HorizontalAlignment="Center" ItemSpacing="14" LineSpacing="12">
+            <alder:AlderNativeSelect Width="220" ItemsSource="{CompiledBinding Statuses}" PlaceholderText="{DynamicResource GalleryText.FormSelectStatus}" AutomationProperties.Name="{DynamicResource GalleryText.FormSelectStatus}" />
+          </WrapPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var select = new AlderNativeSelect { ItemsSource = model.Statuses, Width = 220, PlaceholderText = "Select status" };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleForm" Title="{DynamicResource GalleryText.HomeFormsAndNavigation}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <WrapPanel HorizontalAlignment="Center" ItemSpacing="14" LineSpacing="12">
+            <alder:AlderNativeSelect ItemsSource="{CompiledBinding Countries}" Width="210" Label="{DynamicResource GalleryText.FormSelectCountry}" PlaceholderText="{DynamicResource GalleryText.FormSelectCountry}" IsRequired="True" />
+            <alder:AlderNativeSelect ItemsSource="{CompiledBinding Roles}" Width="160" Label="{DynamicResource GalleryText.FormSelectRole}" SelectedIndex="0" Indicator="{DynamicResource AlderIconChevronsExpandVertical}" />
+          </WrapPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var icon = StreamGeometry.Parse("M1 4 L7 10 L13 4 L11.5 2.5 L7 7 L2.5 2.5 Z");
+        var country = new AlderNativeSelect { ItemsSource = model.Countries, Label = "Country", IsRequired = true };
+        var role = new AlderNativeSelect { ItemsSource = model.Roles, Label = "Role", Indicator = icon };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleLabel" Title="{DynamicResource GalleryText.NativeSelectLabel}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <WrapPanel HorizontalAlignment="Center" ItemSpacing="14" LineSpacing="12">
+            <alder:AlderNativeSelect ItemsSource="{CompiledBinding Statuses}" Width="220" Label="{DynamicResource GalleryText.FormSelectStatusLabel}" PlaceholderText="{DynamicResource GalleryText.FormSelectStatus}" Description="{DynamicResource GalleryText.FormStatusHint}" IsRequired="True" />
+          </WrapPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var select = new AlderNativeSelect { ItemsSource = model.Statuses, Label = "Status", Description = "Choose the current task status.", IsRequired = true };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDescription" Title="{DynamicResource GalleryText.NativeSelectDescription}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <alder:AlderNativeSelect MaxWidth="220" FullWidth="True" VerticalAlignment="Center"
+                                  ItemsSource="{CompiledBinding Statuses}" PlaceholderText="{DynamicResource GalleryText.FormSelectStatus}" Label="{DynamicResource GalleryText.FormSelectStatusLabel}" Description="{DynamicResource GalleryText.FormStatusHint}" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new AlderNativeSelect { ItemsSource = model.Statuses, FullWidth = true, MaxWidth = 220 };
+        preview[!AlderNativeSelect.PlaceholderTextProperty] = new DynamicResourceExtension("GalleryText.FormSelectStatus");
+        preview[!AlderNativeSelect.LabelProperty] = new DynamicResourceExtension("GalleryText.FormSelectStatusLabel");
+        preview[!AlderNativeSelect.DescriptionProperty] = new DynamicResourceExtension("GalleryText.FormStatusHint");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.Variants}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <StackPanel Spacing="8" MaxWidth="440">
+            <WrapPanel HorizontalAlignment="Center" ItemSpacing="14" LineSpacing="12">
+              <alder:AlderNativeSelect ItemsSource="{CompiledBinding Statuses}" Width="160" Variant="Primary" PlaceholderText="{DynamicResource GalleryText.FormSelectStatus}" />
+              <alder:AlderNativeSelect ItemsSource="{CompiledBinding Statuses}" Width="160" Variant="Secondary" PlaceholderText="{DynamicResource GalleryText.FormSelectStatus}" />
+            </WrapPanel>
+            <alder:AlderNativeSelect ItemsSource="{CompiledBinding Statuses}" Label="{DynamicResource GalleryText.FormSelectStatus}" PlaceholderText="{DynamicResource GalleryText.FormSelectStatus}" FullWidth="True" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var primary = new AlderNativeSelect { ItemsSource = model.Statuses };
+        var secondary = new AlderNativeSelect { ItemsSource = model.Statuses, Variant = InputVariant.Secondary };
+        var fullWidth = new AlderNativeSelect { ItemsSource = model.Statuses, FullWidth = true };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleFullWidth" Title="{DynamicResource GalleryText.FullWidth}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <alder:AlderNativeSelect MaxWidth="400" FullWidth="True" VerticalAlignment="Center"
+                                  ItemsSource="{CompiledBinding Statuses}" PlaceholderText="{DynamicResource GalleryText.FormSelectStatus}" Label="{DynamicResource GalleryText.FormSelectStatusLabel}" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new AlderNativeSelect { ItemsSource = model.Statuses, FullWidth = true, MaxWidth = 400 };
+        preview[!AlderNativeSelect.PlaceholderTextProperty] = new DynamicResourceExtension("GalleryText.FormSelectStatus");
+        preview[!AlderNativeSelect.LabelProperty] = new DynamicResourceExtension("GalleryText.FormSelectStatusLabel");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleGroups" Title="{DynamicResource GalleryText.FormOptionGroups}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <WrapPanel HorizontalAlignment="Center" ItemSpacing="14" LineSpacing="12">
+            <alder:AlderNativeSelect ItemsSource="{CompiledBinding Departments}" Width="220" PlaceholderText="{DynamicResource GalleryText.FormSelectDepartment}" AutomationProperties.Name="{DynamicResource GalleryText.FormSelectDepartment}" />
+            <alder:AlderNativeSelect ItemsSource="{CompiledBinding Animals}" Width="180" PlaceholderText="{DynamicResource GalleryText.FormSelectAnimal}" AutomationProperties.Name="{DynamicResource GalleryText.FormSelectAnimal}" />
+          </WrapPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var options = new[]
+        {
+            new AlderPickerOption { Text = "Frontend", Group = "Engineering" },
+            new AlderPickerOption { Text = "Backend", Group = "Engineering" },
+            new AlderPickerOption { Text = "Sales", Group = "Business", IsEnabled = false }
+        };
+        var select = new AlderNativeSelect { ItemsSource = options };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDisabledOptions" Title="{DynamicResource GalleryText.NativeSelectDisabledOptions}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <alder:AlderNativeSelect MaxWidth="220" FullWidth="True" VerticalAlignment="Center"
+                                  ItemsSource="{CompiledBinding Animals}" PlaceholderText="{DynamicResource GalleryText.FormSelectAnimal}" Label="{DynamicResource GalleryText.AutocompleteAnimal}" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new AlderNativeSelect { ItemsSource = model.Animals, FullWidth = true, MaxWidth = 220 };
+        preview[!AlderNativeSelect.PlaceholderTextProperty] = new DynamicResourceExtension("GalleryText.FormSelectAnimal");
+        preview[!AlderNativeSelect.LabelProperty] = new DynamicResourceExtension("GalleryText.AutocompleteAnimal");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.NativeSelectDisabled}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <alder:AlderNativeSelect MaxWidth="220" FullWidth="True" VerticalAlignment="Center"
+                                  ItemsSource="{CompiledBinding Statuses}" PlaceholderText="{DynamicResource GalleryText.FormSelectStatus}" Label="{DynamicResource GalleryText.FormSelectStatusLabel}" IsEnabled="False" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new AlderNativeSelect { ItemsSource = model.Statuses, FullWidth = true, MaxWidth = 220, IsEnabled = false };
+        preview[!AlderNativeSelect.PlaceholderTextProperty] = new DynamicResourceExtension("GalleryText.FormSelectStatus");
+        preview[!AlderNativeSelect.LabelProperty] = new DynamicResourceExtension("GalleryText.FormSelectStatusLabel");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleInvalid" Title="{DynamicResource GalleryText.FormInvalidDisabled}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <WrapPanel HorizontalAlignment="Center" ItemSpacing="14" LineSpacing="12">
+            <alder:AlderNativeSelect ItemsSource="{CompiledBinding Statuses}" Width="200" Label="{DynamicResource GalleryText.FormSelectStatus}" PlaceholderText="{DynamicResource GalleryText.FormSelectStatus}" IsInvalid="True" ErrorText="{DynamicResource GalleryText.FormSelectError}" />
+            <alder:AlderNativeSelect ItemsSource="{CompiledBinding Statuses}" Width="180" Label="{DynamicResource GalleryText.FormSelectStatus}" SelectedIndex="2" IsEnabled="False" />
+          </WrapPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var invalid = new AlderNativeSelect { ItemsSource = model.Statuses, IsInvalid = true, ErrorText = "Select a status to continue." };
+        var disabled = new AlderNativeSelect { ItemsSource = model.Statuses, IsEnabled = false, SelectedIndex = 2 };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <StackPanel Spacing="8" HorizontalAlignment="Center">
+            <alder:AlderNativeSelect ItemsSource="{CompiledBinding States}" Width="220" Label="{DynamicResource GalleryText.FormSelectStatus}" SelectedIndex="{CompiledBinding StateIndex, Mode=TwoWay}" />
+            <alder:AlderTextBlock Text="{CompiledBinding StateSummary}" Foreground="{DynamicResource AlderMuted}" />
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var select = new AlderNativeSelect { ItemsSource = model.States };
+        select.Bind(SelectingItemsControl.SelectedIndexProperty,
+            CompiledBinding.Create((FormSelectViewModel model) => model.StateIndex, mode: BindingMode.TwoWay));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleIndicator" Title="{DynamicResource GalleryText.NativeSelectCustomIndicator}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <alder:AlderNativeSelect MaxWidth="220" FullWidth="True" VerticalAlignment="Center"
+                                  ItemsSource="{CompiledBinding Priorities}" PlaceholderText="{DynamicResource GalleryText.FormSelectPriorityPlaceholder}" Label="{DynamicResource GalleryText.FormSelectPriorityLabel}" Indicator="{DynamicResource AlderIconChevronsExpandVertical}" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var preview = new AlderNativeSelect { ItemsSource = model.Priorities, FullWidth = true, MaxWidth = 220 };
+        preview[!AlderNativeSelect.PlaceholderTextProperty] = new DynamicResourceExtension("GalleryText.FormSelectPriorityPlaceholder");
+        preview[!AlderNativeSelect.LabelProperty] = new DynamicResourceExtension("GalleryText.FormSelectPriorityLabel");
+        preview[!AlderNativeSelect.IndicatorProperty] = new DynamicResourceExtension("AlderIconChevronsExpandVertical");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SamplePopupThemes" Title="{DynamicResource GalleryText.FormPopupTheme}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="164">
+          <WrapPanel HorizontalAlignment="Center" ItemSpacing="14" LineSpacing="12">
+            <ThemeVariantScope RequestedThemeVariant="Light">
+              <Border CornerRadius="12" Background="{DynamicResource AlderSurfaceSecondary}" Padding="18">
+                <alder:AlderNativeSelect ItemsSource="{CompiledBinding Statuses}" Width="164" PlaceholderText="{DynamicResource GalleryText.FormSelectStatus}" Label="{DynamicResource GalleryText.FormThemeLight}" />
+              </Border>
+            </ThemeVariantScope>
+            <ThemeVariantScope RequestedThemeVariant="Dark">
+              <Border CornerRadius="12" Background="{DynamicResource AlderSurfaceSecondary}" Padding="18">
+                <alder:AlderNativeSelect ItemsSource="{CompiledBinding Statuses}" Width="164" PlaceholderText="{DynamicResource GalleryText.FormSelectStatus}" Label="{DynamicResource GalleryText.FormThemeDark}" />
+              </Border>
+            </ThemeVariantScope>
+          </WrapPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var select = new AlderNativeSelect { ItemsSource = model.Statuses };
+        var scope = new ThemeVariantScope { RequestedThemeVariant = ThemeVariant.Dark, Child = select };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

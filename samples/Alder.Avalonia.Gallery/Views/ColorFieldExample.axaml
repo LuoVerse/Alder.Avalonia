@@ -1,0 +1,150 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" x:Class="Alder.Avalonia.Gallery.Views.ColorFieldExample"
+             x:DataType="vm:ColorsViewModel" FontFamily="fonts:Inter#Inter">
+  <Design.DataContext><vm:ColorsViewModel /></Design.DataContext>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="4" Width="280" HorizontalAlignment="Center">
+          <alder:AlderLabel Content="{DynamicResource GalleryText.ColorFieldLabel}" Target="{Binding #HexField}" Theme="{StaticResource AlderLabelTheme}" />
+          <alder:AlderColorField x:Name="HexField" Value="{Binding Color, Mode=TwoWay}" FullWidth="True"
+                            AutomationProperties.Name="{DynamicResource GalleryText.ColorValue}">
+            <alder:AlderColorField.Prefix>
+              <alder:AlderColorSwatch Size="ExtraSmall" Color="{Binding Color, Converter={x:Static alder:AlderColorRendering.ToColor}}" />
+            </alder:AlderColorField.Prefix>
+          </alder:AlderColorField>
+          <alder:AlderTextBlock Foreground="{DynamicResource AlderDangerInk}" TextWrapping="Wrap" FontSize="12"
+                     AutomationProperties.LiveSetting="Polite" IsVisible="{Binding #HexField.HasInvalidInput}"
+                     Text="{Binding #HexField.ValidationMessage}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var field = new AlderColorField { FullWidth = true };
+        var swatch = new AlderColorSwatch { Size = ColorSwatchSize.ExtraSmall };
+        field.Prefix = swatch;
+        field.Bind(AlderColorField.ValueProperty, CompiledBinding.Create((ColorsViewModel model) => model.Color, mode: BindingMode.TwoWay));
+        swatch.Bind(AlderColorSwatch.ColorProperty, CompiledBinding.Create((ColorsViewModel model) => model.Color, converter: AlderColorRendering.ToColor));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleColorChannelInput" Title="{DynamicResource GalleryText.ColorChannelInput}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="4">
+          <alder:AlderLabel Content="{DynamicResource GalleryText.ColorHue}" Target="{Binding #HueField}" Theme="{StaticResource AlderLabelTheme}" />
+          <alder:AlderColorField x:Name="HueField" Channel="Hue" Suffix="°" Culture="{DynamicResource GalleryCulture}"
+                            AutomationProperties.Name="{DynamicResource GalleryText.ColorHue}"
+                            Value="{Binding Color, Mode=TwoWay}" />
+          <alder:AlderTextBlock Foreground="{DynamicResource AlderDangerInk}" TextWrapping="Wrap" FontSize="12" MaxWidth="216"
+                     AutomationProperties.LiveSetting="Polite" IsVisible="{Binding #HueField.HasInvalidInput}"
+                     Text="{Binding #HueField.ValidationMessage}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var field = new AlderColorField { Channel = ColorChannel.Hue, Suffix = "°", Culture = CultureInfo.CurrentCulture };
+        field.Bind(AlderColorField.ValueProperty, CompiledBinding.Create((ColorsViewModel model) => model.Color, mode: BindingMode.TwoWay));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVariant" Title="{DynamicResource GalleryText.Variants}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:ColorsViewModel /></Border.DataContext>
+          <alder:AlderColorField Value="{CompiledBinding Color, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="280" Variant="Secondary" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new ColorsViewModel();
+        var control = new AlderColorField { DataContext = model, Width = 280, Variant = InputVariant.Secondary };
+        control.Bind(AlderColorField.ValueProperty, CompiledBinding.Create((ColorsViewModel vm) => vm.Color, mode: BindingMode.TwoWay));
+        var preview = control;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSurface" Title="{DynamicResource GalleryText.ColorDemoWithinSurface}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:ColorsViewModel /></Border.DataContext>
+          <Border Padding="16" CornerRadius="16" HorizontalAlignment="Center" Background="{DynamicResource AlderSurface}">
+            <alder:AlderColorField Value="{CompiledBinding Color, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="280" Variant="Secondary" />
+          </Border>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new ColorsViewModel();
+        var control = new AlderColorField { DataContext = model, Width = 280, Variant = InputVariant.Secondary };
+        control.Bind(AlderColorField.ValueProperty, CompiledBinding.Create((ColorsViewModel vm) => vm.Color, mode: BindingMode.TwoWay));
+        var preview = new Border { Padding = new Thickness(16), CornerRadius = new CornerRadius(16), Child = control };
+        preview[!Border.BackgroundProperty] = new DynamicResourceExtension("AlderSurface");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleRequired" Title="{DynamicResource GalleryText.ColorDemoRequired}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:ColorsViewModel /></Border.DataContext>
+          <alder:AlderColorField Value="{CompiledBinding Color, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="280" IsRequired="True" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new ColorsViewModel();
+        var control = new AlderColorField { DataContext = model, Width = 280, IsRequired = true };
+        control.Bind(AlderColorField.ValueProperty, CompiledBinding.Create((ColorsViewModel vm) => vm.Color, mode: BindingMode.TwoWay));
+        var preview = control;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:ColorsViewModel /></Border.DataContext>
+          <alder:AlderColorField Value="{CompiledBinding Color, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="280" IsEnabled="False" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new ColorsViewModel();
+        var control = new AlderColorField { DataContext = model, Width = 280, IsEnabled = false };
+        control.Bind(AlderColorField.ValueProperty, CompiledBinding.Create((ColorsViewModel vm) => vm.Color, mode: BindingMode.TwoWay));
+        var preview = control;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleFullWidth" Title="{DynamicResource GalleryText.FullWidth}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:ColorsViewModel /></Border.DataContext>
+          <alder:AlderColorField Value="{CompiledBinding Color, Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Center" MaxWidth="400" FullWidth="True" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new ColorsViewModel();
+        var control = new AlderColorField { DataContext = model, MaxWidth = 400, FullWidth = true };
+        control.Bind(AlderColorField.ValueProperty, CompiledBinding.Create((ColorsViewModel vm) => vm.Color, mode: BindingMode.TwoWay));
+        var preview = control;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleInvalid" Title="{DynamicResource GalleryText.ColorDemoInvalid}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:ColorsViewModel /></Border.DataContext>
+          <alder:AlderColorField Value="{CompiledBinding Color, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="280" ValidationMessage="{DynamicResource GalleryText.ColorDemoInvalidHint}" IsInvalid="True" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new ColorsViewModel();
+        var control = new AlderColorField { DataContext = model, Width = 280, IsInvalid = true };
+        control.Bind(AlderColorField.ValueProperty, CompiledBinding.Create((ColorsViewModel vm) => vm.Color, mode: BindingMode.TwoWay));
+        control[!AlderColorField.ValidationMessageProperty] = new DynamicResourceExtension("GalleryText.ColorDemoInvalidHint");
+        var preview = control;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="16,20" MinHeight="120">
+          <Border.DataContext><vm:ColorsViewModel /></Border.DataContext>
+          <alder:AlderColorField Value="{CompiledBinding Color, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="280" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new ColorsViewModel();
+        var control = new AlderColorField { DataContext = model, Width = 280 };
+        control.Bind(AlderColorField.ValueProperty, CompiledBinding.Create((ColorsViewModel vm) => vm.Color, mode: BindingMode.TwoWay));
+        var preview = control;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

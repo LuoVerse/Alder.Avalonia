@@ -1,0 +1,142 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls" xmlns:conv="using:Avalonia.Data.Converters">
+  <ControlTheme x:Key="{x:Type alder:AlderRadioButtonGroupItem}" TargetType="alder:AlderRadioButtonGroupItem">
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="SelectionBrush" Value="{DynamicResource AlderAccent}" />
+    <Setter Property="Padding" Value="20,16" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Top" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="AutomationProperties.HelpText" Value="{CompiledBinding Description, RelativeSource={RelativeSource Self}}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Background="Transparent">
+          <Border Name="CardFace" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}" />
+          <Border Name="RippleClip" ClipToBounds="True" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+          <Border Name="SelectionRing" BorderBrush="{TemplateBinding SelectionBrush}" BorderThickness="2" IsVisible="False"
+                  CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+          <Border BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+            <Grid ColumnDefinitions="Auto,*" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+              <ContentPresenter Name="LeadingIcon" Content="{TemplateBinding Icon}" VerticalAlignment="Center" Margin="0,0,16,0"
+                                IsVisible="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+              <StackPanel Grid.Column="1">
+                <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  RecognizesAccessKey="True" MinHeight="20" />
+                <alder:AlderTextBlock Name="CardDescription" Text="{TemplateBinding Description}" TextWrapping="Wrap" FontSize="12" LineHeight="16"
+                           Foreground="{DynamicResource AlderMuted}"
+                           IsVisible="{CompiledBinding Description, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+                <ContentPresenter Content="{TemplateBinding Details}" Margin="0,8,0,0"
+                                  IsVisible="{CompiledBinding Details, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+              </StackPanel>
+            </Grid>
+          </Border>
+          <Panel Name="IndicatorSlot" Margin="0,13,17,0" HorizontalAlignment="Right"
+                 VerticalAlignment="{TemplateBinding IndicatorVerticalAlignment}"
+                 IsVisible="{TemplateBinding ShowIndicator}" IsHitTestVisible="False">
+            <Border Name="RadioIndicator" Width="16" Height="16" CornerRadius="8" Background="{DynamicResource AlderNeutral}"
+                    RenderTransform="scale(1)"
+                    IsVisible="{CompiledBinding Indicator, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNull}}">
+              <Border.Transitions>
+                <Transitions>
+                  <BrushTransition Property="Background" Duration="0:0:0.2" Easing="0,0,0.2,1" />
+                  <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1" Easing="0.4,0,0.2,1" />
+                </Transitions>
+              </Border.Transitions>
+              <Ellipse Name="RadioDot" Width="6" Height="6" Fill="{DynamicResource AlderOnAccent}"
+                       HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0" RenderTransform="scale(0.5)">
+                <Ellipse.Transitions>
+                  <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="0,0,0.2,1" />
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" Easing="0,0,0.2,1" />
+                  </Transitions>
+                </Ellipse.Transitions>
+              </Ellipse>
+            </Border>
+            <ContentPresenter Name="CustomIndicator" Content="{TemplateBinding Indicator}" Opacity="0"
+                              IsVisible="{CompiledBinding Indicator, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}"
+                              AutomationProperties.AccessibilityView="Raw">
+              <ContentPresenter.Transitions>
+                <Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="CubicEaseOut" /></Transitions>
+              </ContentPresenter.Transitions>
+            </ContentPresenter>
+          </Panel>
+          <Border Name="FocusRing" Margin="-4" IsVisible="False" IsHitTestVisible="False" BorderThickness="2"
+                  CornerRadius="{TemplateBinding CornerRadius}" BorderBrush="{DynamicResource AlderAccent}" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter > :is(TextBlock)">
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="LineHeight" Value="20" />
+    </Style>
+    <Style Selector="^[ShowIndicator=True][IndicatorVerticalAlignment=Top] /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Margin" Value="0,0,20,0" />
+    </Style>
+    <Style Selector="^[IndicatorVerticalAlignment=Center] /template/ Panel#IndicatorSlot">
+      <Setter Property="Margin" Value="0,0,16,0" />
+    </Style>
+    <Style Selector="^[IndicatorVerticalAlignment=Bottom] /template/ Panel#IndicatorSlot">
+      <Setter Property="Margin" Value="0,0,17,13" />
+    </Style>
+    <Style Selector="^:checked /template/ Border#SelectionRing"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:checked /template/ ContentPresenter#CustomIndicator"><Setter Property="Opacity" Value="1" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#FocusRing"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^.alder-invalid /template/ Border#CardFace">
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderDanger}" />
+    </Style>
+    <Style Selector="^:checked /template/ Border#RadioIndicator">
+      <Setter Property="Background" Value="{CompiledBinding SelectionBrush, RelativeSource={RelativeSource TemplatedParent}}" />
+    </Style>
+    <Style Selector="^:checked /template/ Ellipse#RadioDot">
+      <Setter Property="Opacity" Value="1" /><Setter Property="RenderTransform" Value="scale(1)" />
+    </Style>
+    <Style Selector="^:pressed /template/ Border#RadioIndicator">
+      <Setter Property="RenderTransform" Value="scale(0.95)" />
+    </Style>
+    <Style Selector="^[Variant=Inline]">
+      <Setter Property="Padding" Value="32,6,8,6" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="FontWeight" Value="Normal" />
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="^[Variant=Inline][ShowIndicator=False]">
+      <Setter Property="Padding" Value="8,6" />
+    </Style>
+    <Style Selector="^[Variant=Inline]:pointerover, ^[Variant=Inline]:checked">
+      <Setter Property="Background" Value="{DynamicResource AlderSurfaceSecondary}" />
+    </Style>
+    <Style Selector="^[Variant=Inline] /template/ Panel#IndicatorSlot">
+      <Setter Property="HorizontalAlignment" Value="Left" />
+      <Setter Property="VerticalAlignment" Value="Top" />
+      <Setter Property="Margin" Value="8,8,0,0" />
+    </Style>
+    <Style Selector="^[Variant=Inline] /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Margin" Value="0" />
+    </Style>
+    <Style Selector="^[Variant=Inline]:checked /template/ Border#SelectionRing">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^[Variant=Inline] /template/ TextBlock#CardDescription">
+      <Setter Property="FontWeight" Value="Normal" />
+    </Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value=".5" /><Setter Property="Cursor" Value="Arrow" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#RadioIndicator,
+                     ^[(alder|AlderMotion.Reduced)=True] /template/ Ellipse#RadioDot,
+                     ^[(alder|AlderMotion.Reduced)=True] /template/ ContentPresenter#CustomIndicator">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True]:pressed /template/ Border#RadioIndicator">
+      <Setter Property="RenderTransform" Value="scale(1)" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

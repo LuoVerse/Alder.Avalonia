@@ -1,0 +1,121 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.DropZoneExample" x:DataType="vm:DropZoneViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <alder:AlderDropZone MaxWidth="420" Description="{DynamicResource GalleryText.FormDropDefaultDescription}" MaxFileSize="50000000" FileTypeFilter="{CompiledBinding Assets}" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var zone = new AlderDropZone { MaxFileSize = 50_000_000, FileTypeFilter = model.Assets };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleList" Title="{DynamicResource GalleryText.FormDropFileList}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <alder:AlderDropZone MaxWidth="480" Title="{DynamicResource GalleryText.FormDropUploadAssets}" Description="{DynamicResource GalleryText.FormDropProgressDescription}"
+                              MaxFileSize="10000000" AllowMultiple="True" BrowseContent="{DynamicResource GalleryText.FormDropAddFiles}"
+                              Loaded="OnFileListLoaded" RetryRequested="OnRetryRequested" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var zone = new AlderDropZone { AllowMultiple = true, MaxFileSize = 10_000_000, MaxWidth = 480 };
+        zone[!AlderDropZone.TitleProperty] = new DynamicResourceExtension("GalleryText.FormDropUploadAssets");
+        zone[!AlderDropZone.DescriptionProperty] = new DynamicResourceExtension("GalleryText.FormDropProgressDescription");
+        zone[!AlderDropZone.BrowseContentProperty] = new DynamicResourceExtension("GalleryText.FormDropAddFiles");
+        zone.Loaded += async (_, _) =>
+        {
+            await model.LoadExampleFilesAsync(zone);
+            zone.FilesChanged += async (_, args) => await model.AnimateFilesAsync(zone, args.Added);
+        };
+        zone.RetryRequested += async (_, file) => await model.AnimateFilesAsync(zone, [file]);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleCompactFileList" Title="{DynamicResource GalleryText.FormDropCompact}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23">
+          <alder:AlderDropZone MaxWidth="480" ShowDropArea="False" IsFileListCompact="True" AllowMultiple="True"
+                               Loaded="OnFileListLoaded" RetryRequested="OnRetryRequested" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var zone = new AlderDropZone { MaxWidth = 480, ShowDropArea = false, IsFileListCompact = true, AllowMultiple = true };
+        zone.Loaded += async (_, _) => await model.LoadExampleFilesAsync(zone);
+        zone.RetryRequested += async (_, file) => await model.AnimateFilesAsync(zone, [file]);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleImages" Title="{DynamicResource GalleryText.FormDropImagesOnly}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <alder:AlderDropZone MaxWidth="480" Title="{DynamicResource GalleryText.FormDropImagesTitle}" Description="{DynamicResource GalleryText.FormDropImagesDescription}" BrowseContent="{DynamicResource GalleryText.FormDropSelectImages}" AllowMultiple="True" FileTypeFilter="{CompiledBinding Images}" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var zone = new AlderDropZone { FileTypeFilter = model.Images, AllowMultiple = true };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleLimits" Title="{DynamicResource GalleryText.FormDropLimits}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <alder:AlderDropZone MaxWidth="480" Title="{DynamicResource GalleryText.FormDropSizeTitle}" Description="{DynamicResource GalleryText.FormDropSizeDescription}" AllowMultiple="True" MaxFiles="3" MaxFileSize="5000000" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var zone = new AlderDropZone { AllowMultiple = true, MaxFiles = 3, MaxFileSize = 5_000_000 };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleMultiple" Title="{DynamicResource GalleryText.FormDropMultiple}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <alder:AlderDropZone MaxWidth="480" Title="{DynamicResource GalleryText.FormDropMultipleTitle}" Description="{DynamicResource GalleryText.FormDropMultipleDescription}" AllowMultiple="True" MaxFileSize="50000000" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var zone = new AlderDropZone { AllowMultiple = true, MaxFileSize = 50_000_000 };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <alder:AlderDropZone MaxWidth="480" Title="{DynamicResource GalleryText.FormDropUnavailableTitle}" Description="{DynamicResource GalleryText.FormDropUnavailableDetail}" IsEnabled="False" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var zone = new AlderDropZone { IsEnabled = false };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleIcon" Title="{DynamicResource GalleryText.FormDropCustomIcon}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <alder:AlderDropZone MaxWidth="480" Title="{DynamicResource GalleryText.FormDropPhotoTitle}" Description="{DynamicResource GalleryText.FormDropPhotoDescription}"
+                              BrowseContent="{DynamicResource GalleryText.FormDropSelectImages}" MaxFileSize="2000000" FileTypeFilter="{CompiledBinding Photos}">
+            <alder:AlderDropZone.Icon><alder:AlderPathIcon Width="34" Height="34" Data="{DynamicResource AlderIconAvatarPerson}" /></alder:AlderDropZone.Icon>
+          </alder:AlderDropZone>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var icon = StreamGeometry.Parse("M1 4 L7 10 L13 4 L11.5 2.5 L7 7 L2.5 2.5 Z");
+        var zone = new AlderDropZone { FileTypeFilter = model.Photos, MaxFileSize = 2_000_000, Icon = new AlderPathIcon { Data = icon } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleActions" Title="{DynamicResource GalleryText.FormDropCustomActions}">
+      <g:ExampleCard.Preview>
+        <Border Padding="18,23" MinHeight="120">
+          <alder:AlderDropZone x:Name="CustomZone" MaxWidth="480" ShowBrowseButton="False"
+                              FileTypeFilter="{CompiledBinding Documents}" AllowMultiple="True" MaxFileSize="25000000">
+            <alder:AlderDropZone.Actions>
+              <alder:AlderButton Content="{DynamicResource GalleryText.FormDropBrowseDevice}" Variant="Primary" Command="{CompiledBinding #CustomZone.BrowseCommand}" />
+            </alder:AlderDropZone.Actions>
+          </alder:AlderDropZone>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var zone = new AlderDropZone { ShowBrowseButton = false, AllowMultiple = true, FileTypeFilter = model.Documents };
+        zone.Actions = new AlderButton { Content = "Browse from your device", Command = zone.BrowseCommand };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

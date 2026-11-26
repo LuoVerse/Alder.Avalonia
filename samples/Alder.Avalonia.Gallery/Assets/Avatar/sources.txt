@@ -1,0 +1,6 @@
+HeroUI Avatar and AvatarGroup examples
+
+Avatar example portraits: green.jpg, purple.jpg, orange.jpg
+The blue and red portraits reuse the same assets bundled for the Card examples.
+
+The five portrait-N.jpg files are from the Avatar documentation examples.

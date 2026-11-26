@@ -1,0 +1,4 @@
+HeroUI Separator documentation, With Content example
+
+Original 3D icon images:
+bell-small.png, compass-small.png, mint-collective-small.png

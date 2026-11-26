@@ -1,0 +1,204 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.SurfaceExample" x:DataType="vm:LayoutViewModel">
+  <UserControl.Styles>
+    <Style Selector="Border.layoutPreview">
+      <Setter Property="TextElement.FontFamily" Value="fonts:Inter#Inter" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleBasic" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="layoutPreview" Padding="8,12" MinHeight="300">
+          <alder:AlderSurface HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="448" Padding="24" CornerRadius="24">
+            <StackPanel Spacing="12">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.SurfaceContent}" FontSize="16" LineHeight="24" TextWrapping="Wrap" FontWeight="SemiBold" AutomationProperties.HeadingLevel="3" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.SurfaceDefaultDescription}" FontSize="14" LineHeight="20" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" />
+            </StackPanel>
+          </alder:AlderSurface>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var description = new AlderTextBlock
+        {
+            Text = "This is a default surface variant. It uses bg-surface styling.",
+            FontSize = 14,
+            LineHeight = 20,
+            TextWrapping = TextWrapping.Wrap
+        };
+        description[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+
+        var surface = new AlderSurface
+        {
+            MaxWidth = 448,
+            Padding = new Thickness(24),
+            CornerRadius = new CornerRadius(24),
+            Content = new StackPanel
+            {
+                Spacing = 12,
+                Children =
+                {
+                    new AlderTextBlock { Text = "Surface Content", FontSize = 16, LineHeight = 24, FontWeight = FontWeight.SemiBold },
+                    description
+                }
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.Variants}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="layoutPreview" Padding="8,12" MinHeight="180">
+          <StackPanel Spacing="16" VerticalAlignment="Center">
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.Default}" FontSize="14" LineHeight="20" TextWrapping="Wrap" FontWeight="Medium" Foreground="{DynamicResource AlderMuted}" />
+              <alder:AlderSurface Variant="Default" Padding="24" CornerRadius="24">
+                <StackPanel Spacing="12">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.SurfaceContent}" FontSize="16" LineHeight="24" TextWrapping="Wrap" FontWeight="SemiBold" AutomationProperties.HeadingLevel="3" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.SurfaceDefaultDescription}" FontSize="14" LineHeight="20" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" />
+                </StackPanel>
+              </alder:AlderSurface>
+            </StackPanel>
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.Secondary}" FontSize="14" LineHeight="20" TextWrapping="Wrap" FontWeight="Medium" Foreground="{DynamicResource AlderMuted}" />
+              <alder:AlderSurface Variant="Secondary" Padding="24" CornerRadius="24">
+                <StackPanel Spacing="12">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.SurfaceContent}" FontSize="16" LineHeight="24" TextWrapping="Wrap" FontWeight="SemiBold" AutomationProperties.HeadingLevel="3" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.SurfaceSecondaryDescription}" FontSize="14" LineHeight="20" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" />
+                </StackPanel>
+              </alder:AlderSurface>
+            </StackPanel>
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.Tertiary}" FontSize="14" LineHeight="20" TextWrapping="Wrap" FontWeight="Medium" Foreground="{DynamicResource AlderMuted}" />
+              <alder:AlderSurface Variant="Tertiary" Padding="24" CornerRadius="24">
+                <StackPanel Spacing="12">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.SurfaceContent}" FontSize="16" LineHeight="24" TextWrapping="Wrap" FontWeight="SemiBold" AutomationProperties.HeadingLevel="3" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.SurfaceTertiaryDescription}" FontSize="14" LineHeight="20" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" />
+                </StackPanel>
+              </alder:AlderSurface>
+            </StackPanel>
+            <StackPanel Spacing="8">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.LayoutTransparent}" FontSize="14" LineHeight="20" TextWrapping="Wrap" FontWeight="Medium" Foreground="{DynamicResource AlderMuted}" />
+              <alder:AlderSurface Variant="Transparent" Padding="24" CornerRadius="23.5" BorderThickness="1" BorderBrush="{DynamicResource AlderBorder}">
+                <StackPanel Spacing="12">
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.SurfaceContent}" FontSize="16" LineHeight="24" TextWrapping="Wrap" FontWeight="SemiBold" AutomationProperties.HeadingLevel="3" />
+                  <alder:AlderTextBlock Text="{DynamicResource GalleryText.SurfaceTransparentDescription}" FontSize="14" LineHeight="20" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" />
+                </StackPanel>
+              </alder:AlderSurface>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var defaultSurface = new AlderSurface { Variant = SurfaceVariant.Default, Padding = new Thickness(24), CornerRadius = new CornerRadius(24) };
+        var secondarySurface = new AlderSurface { Variant = SurfaceVariant.Secondary, Padding = new Thickness(24), CornerRadius = new CornerRadius(24) };
+        var tertiarySurface = new AlderSurface { Variant = SurfaceVariant.Tertiary, Padding = new Thickness(24), CornerRadius = new CornerRadius(24) };
+        var transparentSurface = new AlderSurface
+        {
+            Variant = SurfaceVariant.Transparent,
+            Padding = new Thickness(24),
+            CornerRadius = new CornerRadius(23.5),
+            BorderThickness = new Thickness(1)
+        };
+        transparentSurface[!AlderSurface.BorderBrushProperty] = new DynamicResourceExtension("AlderBorder");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleForm" Title="{DynamicResource GalleryText.SurfaceWithForm}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="layoutPreview" Padding="8,12" MinHeight="180">
+          <alder:AlderSurface MaxWidth="320" VerticalAlignment="Center" Padding="24" CornerRadius="24">
+            <StackPanel Spacing="16">
+              <alder:AlderInput x:Name="SurfaceInput" Variant="Secondary" FullWidth="True"
+                           PlaceholderText="{DynamicResource GalleryText.SurfaceInputPlaceholder}"
+                           AutomationProperties.Name="{DynamicResource GalleryText.SurfaceInputPlaceholder}"
+                           Text="{CompiledBinding InputText, Mode=TwoWay}" />
+            <alder:AlderTextArea x:Name="SurfaceNotes" Variant="Secondary" FullWidth="True" Rows="2" Height="56" ResizeMode="Vertical"
+                              PlaceholderText="{DynamicResource GalleryText.SurfaceNotesPlaceholder}"
+                              AutomationProperties.Name="{DynamicResource GalleryText.SurfaceNotesPlaceholder}"
+                              Text="{CompiledBinding Notes, Mode=TwoWay}" />
+            </StackPanel>
+          </alder:AlderSurface>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var input = new AlderInput
+        {
+            Variant = InputVariant.Secondary,
+            FullWidth = true,
+            PlaceholderText = "Input with secondary variant"
+        };
+        var notes = new AlderTextArea
+        {
+            Variant = InputVariant.Secondary,
+            FullWidth = true,
+            Rows = 2,
+            Height = 56,
+            ResizeMode = TextAreaResize.Vertical,
+            PlaceholderText = "TextArea with secondary variant"
+        };
+        input.Bind(TextBox.TextProperty, CompiledBinding.Create((LayoutViewModel model) => model.InputText, mode: BindingMode.TwoWay));
+        notes.Bind(TextBox.TextProperty, CompiledBinding.Create((LayoutViewModel model) => model.Notes, mode: BindingMode.TwoWay));
+
+        var surface = new AlderSurface
+        {
+            MaxWidth = 320,
+            Padding = new Thickness(24),
+            CornerRadius = new CornerRadius(24),
+            Content = new StackPanel { Spacing = 16, Children = { input, notes } }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleCustom" Title="{DynamicResource GalleryText.CustomStyles}">
+      <gallery:ExampleCard.Preview>
+        <Border Classes="layoutPreview" Padding="8,12" MinHeight="180">
+          <alder:AlderSurface MaxWidth="384" Padding="16" CornerRadius="11.5" VerticalAlignment="Center"
+                         BorderThickness="1" BorderBrush="#260786F8" Background="{DynamicResource GalleryBillingSurface}">
+            <alder:AlderSurface.Resources>
+              <ResourceDictionary>
+                <ResourceDictionary.ThemeDictionaries>
+                  <ResourceDictionary x:Key="Light">
+                    <LinearGradientBrush x:Key="GalleryBillingSurface" StartPoint="0%,0%" EndPoint="7.16%,192.84%">
+                      <GradientStop Color="#EDF5FF" Offset="0" />
+                      <GradientStop Color="#FFFFFF" Offset="0.5" />
+                      <GradientStop Color="#EFEFF0" Offset="1" />
+                    </LinearGradientBrush>
+                  </ResourceDictionary>
+                  <ResourceDictionary x:Key="Dark">
+                    <LinearGradientBrush x:Key="GalleryBillingSurface" StartPoint="0%,0%" EndPoint="7.16%,192.84%">
+                      <GradientStop Color="#1A202C" Offset="0" />
+                      <GradientStop Color="#18181B" Offset="0.5" />
+                      <GradientStop Color="#232325" Offset="1" />
+                    </LinearGradientBrush>
+                  </ResourceDictionary>
+                </ResourceDictionary.ThemeDictionaries>
+              </ResourceDictionary>
+            </alder:AlderSurface.Resources>
+            <StackPanel>
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.SurfaceBillingOverview}" FontSize="14" LineHeight="20" TextWrapping="Wrap" FontWeight="SemiBold" AutomationProperties.HeadingLevel="3" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.SurfaceBillingDescription}" FontSize="14" LineHeight="20" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" />
+            </StackPanel>
+          </alder:AlderSurface>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var surface = new AlderSurface
+        {
+            MaxWidth = 384,
+            Padding = new Thickness(16),
+            CornerRadius = new CornerRadius(11.5),
+            BorderThickness = new Thickness(1),
+            BorderBrush = new SolidColorBrush(Color.Parse("#260786F8")),
+            Content = new StackPanel
+            {
+                Children =
+                {
+                    new AlderTextBlock { Text = "Billing overview", FontSize = 14, LineHeight = 20, FontWeight = FontWeight.SemiBold },
+                    new AlderTextBlock { Text = "View invoices and payment methods in one place.", FontSize = 14, LineHeight = 20, TextWrapping = TextWrapping.Wrap }
+                }
+            }
+        };
+        surface[!AlderSurface.BackgroundProperty] = new DynamicResourceExtension("GalleryBillingSurface");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,53 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:a="using:Avalonia.Automation"
+                    xmlns:c="using:Avalonia.Controls"
+                    xmlns:conv="using:Avalonia.Data.Converters">
+  <ControlTheme x:Key="AlderLabelTheme" TargetType="Label">
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="HorizontalContentAlignment" Value="Left" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="IsEnabled"
+            Value="{CompiledBinding Target?.IsEffectivelyEnabled, RelativeSource={RelativeSource Self}, TargetNullValue=True, FallbackValue=True}" />
+    <Setter Property="alder:AlderLabel.IsRequired"
+            Value="{CompiledBinding ((c:Control)Target)?.(a:AutomationProperties.IsRequiredForForm), RelativeSource={RelativeSource Self}, TargetNullValue=False, FallbackValue=False}" />
+    <Setter Property="alder:AlderLabel.IsInvalid">
+      <MultiBinding Converter="{x:Static conv:BoolConverters.Or}">
+        <Binding Path="((c:Control)Target)?.(c:DataValidationErrors.HasErrors)" RelativeSource="{RelativeSource Self}" TargetNullValue="False" FallbackValue="False" />
+        <Binding Path="((c:Control)Target)?.(alder:AlderLabel.IsInvalid)" RelativeSource="{RelativeSource Self}" TargetNullValue="False" FallbackValue="False" />
+      </MultiBinding>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}"
+                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                CornerRadius="{TemplateBinding CornerRadius}">
+          <Grid ColumnDefinitions="*,Auto" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}" RecognizesAccessKey="True"
+                              TextBlock.LineHeight="20" />
+            <alder:AlderTextBlock Grid.Column="1" Name="RequiredMark" Text="*" Margin="2,0,0,0" LineHeight="20"
+                       IsVisible="False" IsHitTestVisible="False" AutomationProperties.AccessibilityView="Raw"
+                       Foreground="{DynamicResource AlderDanger}" />
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[(alder|AlderLabel.IsRequired)=True] /template/ TextBlock#RequiredMark">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="^[(alder|AlderLabel.IsInvalid)=True]">
+      <Setter Property="Foreground" Value="{DynamicResource AlderDanger}" />
+    </Style>
+    <Style Selector="^:disabled">
+      <Setter Property="Opacity" Value="0.5" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderLabel}" TargetType="alder:AlderLabel" BasedOn="{StaticResource AlderLabelTheme}" />
+</ResourceDictionary>

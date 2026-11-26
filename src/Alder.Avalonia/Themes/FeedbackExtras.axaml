@@ -1,0 +1,133 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls">
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderRatingActive" Color="#F5A524" />
+      <SolidColorBrush x:Key="AlderRatingInactive" Color="#EAEAEB" />
+      <SolidColorBrush x:Key="AlderTrendSuccessSoft" Color="#2617C964" />
+      <SolidColorBrush x:Key="AlderTrendDangerSoft" Color="#26FF383C" />
+      <SolidColorBrush x:Key="AlderTrendNeutralSoft" Color="#80EBEBEC" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderRatingActive" Color="#F7B750" />
+      <SolidColorBrush x:Key="AlderRatingInactive" Color="#262728" />
+      <SolidColorBrush x:Key="AlderTrendSuccessSoft" Color="#1F17C964" />
+      <SolidColorBrush x:Key="AlderTrendDangerSoft" Color="#26DB3B3E" />
+      <SolidColorBrush x:Key="AlderTrendNeutralSoft" Color="#8027272A" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+
+  <StreamGeometry x:Key="AlderRatingStar">F0 M1.471 4.708 L5.414 4.44 L6.886 .773 C7.29 -.231 8.71 -.231 9.114 .773 L10.586 4.44 L14.529 4.708 C15.609 4.781 16.047 6.132 15.217 6.826 L12.185 9.36 L13.149 13.192 C13.413 14.242 12.263 15.076 11.347 14.502 L8 12.4 L4.653 14.501 C3.737 15.076 2.587 14.241 2.851 13.192 L3.815 9.36 L.783 6.826 C-.047 6.132 .392 4.781 1.471 4.708 Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderTrendUp">F0 M0 0 H24 V24 H0 Z M0 0 H24 V24 H0 Z M11 18 V7.41 L7.7 10.7 L6.3 9.3 L12 3.59 L17.7 9.3 L16.3 10.7 L13 7.41 V18 A1 1 0 0 1 11 18 Z</StreamGeometry>
+  <StreamGeometry x:Key="AlderTrendDown">F0 M0 0 H24 V24 H0 Z M0 0 H24 V24 H0 Z M11 6 V16.59 L7.7 13.3 L6.3 14.7 L12 20.41 L17.7 14.7 L16.3 13.3 L13 16.59 V6 A1 1 0 0 0 11 6 Z</StreamGeometry>
+  <x:String x:Key="AlderText.RatingLabel">Rating</x:String>
+  <x:String x:Key="AlderText.TrendUp">Up</x:String>
+  <x:String x:Key="AlderText.TrendDown">Down</x:String>
+  <x:String x:Key="AlderText.TrendNeutral">Steady</x:String>
+
+  <ControlTheme x:Key="{x:Type alder:AlderNumberValue}" TargetType="alder:AlderNumberValue">
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+          <ContentPresenter Name="Prefix" Content="{TemplateBinding Prefix}" VerticalAlignment="Center" />
+          <alder:AlderTextBlock Name="Number" Text="{TemplateBinding FormattedValue}" VerticalAlignment="Center" />
+          <ContentPresenter Name="ValuePresenter" IsVisible="False" Content="{TemplateBinding FormattedValue}"
+                            ContentTemplate="{TemplateBinding ValueTemplate}" VerticalAlignment="Center" />
+          <ContentPresenter Name="Suffix" Content="{TemplateBinding Suffix}" VerticalAlignment="Center" />
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ ContentPresenter#Prefix:empty, ^ /template/ ContentPresenter#Suffix:empty">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^:custom-value /template/ TextBlock#Number"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^:custom-value /template/ ContentPresenter#ValuePresenter"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^[TabularNumbers=True] /template/ TextBlock#Number"><Setter Property="FontFeatures" Value="tnum" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderTrendSurfaceTheme" TargetType="alder:AlderChip"
+                BasedOn="{StaticResource {x:Type alder:AlderChip}}">
+    <Style Selector="^[Variant=Soft][Color=Success]">
+      <Setter Property="Background" Value="{DynamicResource AlderTrendSuccessSoft}" />
+    </Style>
+    <Style Selector="^[Variant=Soft][Color=Danger]">
+      <Setter Property="Background" Value="{DynamicResource AlderTrendDangerSoft}" />
+    </Style>
+    <Style Selector="^[Variant=Soft][Color=Default]">
+      <Setter Property="Background" Value="{DynamicResource AlderTrendNeutralSoft}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderTrendChip}" TargetType="alder:AlderTrendChip">
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Indicator" Value="{DynamicResource AlderTrendUp}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <alder:AlderChip Name="TrendSurface" Size="{TemplateBinding Size}" Color="{TemplateBinding EffectiveColor}"
+                         Variant="{TemplateBinding Variant}" Icon="{TemplateBinding Indicator}"
+                         CornerRadius="{TemplateBinding CornerRadius}" Theme="{StaticResource AlderTrendSurfaceTheme}">
+          <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+            <ContentPresenter Name="Prefix" Content="{TemplateBinding Prefix}" VerticalAlignment="Center"
+                              Foreground="{CompiledBinding #TrendSurface.Foreground}" />
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}" VerticalAlignment="Center"
+                              Foreground="{CompiledBinding #TrendSurface.Foreground}" />
+            <ContentPresenter Name="Suffix" Content="{TemplateBinding Suffix}" VerticalAlignment="Center"
+                              Foreground="{DynamicResource AlderMuted}" />
+          </StackPanel>
+        </alder:AlderChip>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Trend=Down]"><Setter Property="Indicator" Value="{DynamicResource AlderTrendDown}" /></Style>
+    <Style Selector="^[Trend=Neutral]"><Setter Property="Indicator" Value="{x:Null}" /></Style>
+    <Style Selector="^[Size=Medium]"><Setter Property="CornerRadius" Value="12" /></Style>
+    <Style Selector="^[Size=Large]"><Setter Property="CornerRadius" Value="14" /></Style>
+    <Style Selector="^ /template/ ContentPresenter#Prefix:empty, ^ /template/ ContentPresenter#Suffix:empty">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^[Size=Small] /template/ alder|AlderChip#TrendSurface"><Setter Property="IconSize" Value="12" /></Style>
+    <Style Selector="^[Size=Medium] /template/ alder|AlderChip#TrendSurface"><Setter Property="IconSize" Value="14" /></Style>
+    <Style Selector="^[Size=Large] /template/ alder|AlderChip#TrendSurface"><Setter Property="IconSize" Value="16" /></Style>
+    <Style Selector="^[ShowIndicator=False] /template/ alder|AlderChip#TrendSurface"><Setter Property="Icon" Value="{x:Null}" /></Style>
+    <Style Selector="^[TabularNumbers=True] /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="TextBlock.FontFeatures" Value="tnum" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderRating}" TargetType="alder:AlderRating">
+    <Setter Property="Icon" Value="{DynamicResource AlderRatingStar}" />
+    <Setter Property="ActiveBrush" Value="{DynamicResource AlderRatingActive}" />
+    <Setter Property="InactiveBrush" Value="{DynamicResource AlderRatingInactive}" />
+    <Setter Property="Focusable" Value="True" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel Spacing="6">
+          <ContentPresenter Name="RatingLabel" Content="{TemplateBinding Label}" FontSize="14" FontWeight="Medium"
+                            TextBlock.LineHeight="20" />
+          <Panel HorizontalAlignment="Left">
+            <Border Background="Transparent">
+              <StackPanel Name="PART_Items" Orientation="Horizontal" />
+            </Border>
+            <alder:InputFocusRing Name="RatingFocus" CornerRadius="4" BoxShadow="{DynamicResource AlderFocusShadow}"
+                                  IsHitTestVisible="False" IsVisible="False" />
+          </Panel>
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ ContentPresenter#RatingLabel:empty"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^[IsReadOnly=True]"><Setter Property="Cursor" Value="Arrow" /><Setter Property="Focusable" Value="False" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Cursor" Value="Arrow" /><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^:focus-visible /template/ alder|InputFocusRing#RatingFocus"><Setter Property="IsVisible" Value="True" /></Style>
+  </ControlTheme>
+
+</ResourceDictionary>

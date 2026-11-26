@@ -1,0 +1,223 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:conv="using:Avalonia.Data.Converters">
+  <ControlTheme x:Key="AlderCalendarNavigationTheme" TargetType="Button">
+    <Setter Property="Width" Value="24" />
+    <Setter Property="Height" Value="24" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Transitions">
+      <Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="Face" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" RenderTransform="scale(1)">
+          <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" Padding="{TemplateBinding Padding}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ Border#Face">
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.1" Easing="0,0,0.2,1" />
+          <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25" Easing="0,0,0.2,1" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^:pointerover:not(:disabled) /template/ Border#Face"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
+    <Style Selector="^:pressed /template/ Border#Face"><Setter Property="RenderTransform" Value="scale(0.95)" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#Face"><Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^.years-open">
+      <Setter Property="Opacity" Value="0" />
+      <Setter Property="IsHitTestVisible" Value="False" />
+      <Setter Property="IsTabStop" Value="False" />
+      <Setter Property="AutomationProperties.AccessibilityView" Value="Raw" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True]"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#Face">
+      <Setter Property="Transitions" Value="{x:Null}" />
+      <Setter Property="RenderTransform" Value="scale(1)" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderCalendarHeadingTheme" TargetType="Button" BasedOn="{StaticResource AlderCalendarNavigationTheme}">
+    <Setter Property="Width" Value="NaN" />
+    <Setter Property="Height" Value="20" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="HorizontalContentAlignment" Value="Left" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Style Selector="^:pointerover /template/ Border#Face"><Setter Property="Background" Value="Transparent" /></Style>
+    <Style Selector="^:pressed /template/ Border#Face"><Setter Property="RenderTransform" Value="scale(1)" /></Style>
+    <Style Selector="^.expanded"><Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderCalendarYearTheme" TargetType="Button" BasedOn="{StaticResource AlderCalendarNavigationTheme}">
+    <Setter Property="Width" Value="NaN" />
+    <Setter Property="Height" Value="32" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Style Selector="^.current"><Setter Property="Foreground" Value="{DynamicResource AlderOnAccent}" /><Setter Property="Background" Value="{DynamicResource AlderAccent}" /></Style>
+    <Style Selector="^.current:pointerover /template/ Border#Face"><Setter Property="Background" Value="{DynamicResource AlderAccentHover}" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderCalendarDayTheme" TargetType="alder:AlderCalendarDayButton">
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="FontFeatures" Value="tnum" />
+    <Setter Property="Focusable" Value="True" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="VerticalAlignment" Value="Stretch" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Background="Transparent">
+          <Border Name="Track" Background="Transparent" />
+          <Panel Name="Day" Width="36" Height="36" RenderTransform="scale(1)">
+            <Ellipse Name="DayFill" Fill="{TemplateBinding Background}" IsHitTestVisible="False" />
+            <Ellipse Name="DayFocusRing" Margin="-4" Stroke="{DynamicResource AlderAccent}" StrokeThickness="2"
+                     IsVisible="False" IsHitTestVisible="False" />
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
+                              HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+            <Ellipse Name="Indicator" Width="4" Height="4" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                     Margin="0,0,0,4" Fill="{TemplateBinding Indicator}"
+                     IsVisible="{Binding Indicator, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+          </Panel>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ Panel#Day">
+      <Setter Property="Transitions">
+        <Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25" Easing="0,0,0.2,1" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^ /template/ Ellipse#DayFill">
+      <Setter Property="Transitions">
+        <Transitions><BrushTransition Property="Fill" Duration="0:0:0.12" Easing="0,0,0.2,1" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^ /template/ Border#Track">
+      <Setter Property="Transitions">
+        <Transitions><BrushTransition Property="Background" Duration="0:0:0.12" Easing="0,0,0.2,1" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^.today:not(.selected):not(.outside)"><Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" /><Setter Property="Background" Value="{DynamicResource AlderSoft}" /></Style>
+    <Style Selector="^:pointerover:not(.selected):not(.middle):not(.unavailable):not(:disabled) /template/ Ellipse#DayFill">
+      <Setter Property="Fill" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+    <Style Selector="^.today:pointerover:not(.selected):not(.middle):not(.unavailable):not(:disabled) /template/ Ellipse#DayFill"><Setter Property="Fill" Value="{DynamicResource AlderSoftHover}" /></Style>
+    <Style Selector="^:pressed:not(.unavailable) /template/ Panel#Day"><Setter Property="RenderTransform" Value="scale(0.95)" /></Style>
+    <Style Selector="^:focus-visible"><Setter Property="ZIndex" Value="1" /></Style>
+    <Style Selector="^:focus-visible /template/ Ellipse#DayFocusRing"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^.selected"><Setter Property="Foreground" Value="{DynamicResource AlderOnAccent}" /><Setter Property="Background" Value="{DynamicResource AlderAccent}" /></Style>
+    <Style Selector="^.selected:pressed /template/ Ellipse#DayFill"><Setter Property="Fill" Value="{DynamicResource AlderAccentHover}" /></Style>
+    <Style Selector="^.selected /template/ Ellipse#Indicator"><Setter Property="Fill" Value="{DynamicResource AlderOnAccent}" /></Style>
+    <Style Selector="^.range /template/ Border#Track"><Setter Property="Background" Value="{DynamicResource AlderSoft}" /></Style>
+    <Style Selector="^.range.left-edge /template/ Border#Track"><Setter Property="CornerRadius" Value="18,0,0,18" /></Style>
+    <Style Selector="^.range.right-edge /template/ Border#Track"><Setter Property="CornerRadius" Value="0,18,18,0" /></Style>
+    <Style Selector="^.range.left-edge.right-edge /template/ Border#Track"><Setter Property="CornerRadius" Value="18" /></Style>
+    <Style Selector="^.selected.invalid"><Setter Property="Background" Value="{DynamicResource AlderDanger}" /></Style>
+    <Style Selector="^.range.invalid /template/ Border#Track"><Setter Property="Background" Value="{DynamicResource AlderDangerSoft}" /></Style>
+    <Style Selector="^.selected, ^.range"><Setter Property="AutomationProperties.HelpText" Value="{DynamicResource AlderText.Selected}" /></Style>
+    <Style Selector="^.unavailable">
+      <Setter Property="Opacity" Value="0.5" />
+      <Setter Property="Cursor" Value="Arrow" />
+      <Setter Property="AutomationProperties.HelpText" Value="{DynamicResource AlderText.Unavailable}" />
+    </Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+    <Style Selector="^.outside"><Setter Property="Foreground" Value="{DynamicResource AlderMuted}" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Panel#Day, ^[(alder|AlderMotion.Reduced)=True] /template/ Ellipse#DayFill, ^[(alder|AlderMotion.Reduced)=True] /template/ Border#Track">
+      <Setter Property="Transitions" Value="{x:Null}" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Panel#Day"><Setter Property="RenderTransform" Value="scale(1)" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderCalendarTheme" TargetType="alder:AlderCalendarBase">
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="PreviousIcon" Value="{StaticResource AlderIconChevronLeft}" />
+    <Setter Property="NextIcon" Value="{StaticResource AlderIconChevronRight}" />
+    <Setter Property="AutomationProperties.ControlTypeOverride" Value="Calendar" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel Spacing="12">
+          <Grid ColumnDefinitions="*,Auto,Auto" Margin="2,0">
+            <alder:AlderButton Name="PART_Heading" Theme="{StaticResource AlderCalendarHeadingTheme}"
+                    Focusable="{TemplateBinding ShowYearPicker}" AutomationProperties.HelpText="{DynamicResource AlderText.ChooseYear}">
+              <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center" HorizontalAlignment="Left">
+                <alder:AlderTextBlock Name="PART_HeadingText" VerticalAlignment="Center" />
+                <Panel Width="12" Height="12" VerticalAlignment="Center" IsVisible="{TemplateBinding ShowYearPicker}">
+                  <alder:AlderPathIcon Name="PART_HeadingIcon" Data="{StaticResource AlderIconChevronRight}"
+                            Foreground="{DynamicResource AlderSoftInk}" Width="8" Height="8"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Panel>
+              </StackPanel>
+            </alder:AlderButton>
+            <alder:AlderButton Name="PART_Previous" Grid.Column="1" Theme="{StaticResource AlderCalendarNavigationTheme}"
+                    AutomationProperties.Name="{DynamicResource AlderText.PreviousPeriod}">
+              <alder:AlderPathIcon Width="11" Height="11" Data="{TemplateBinding PreviousIcon}" />
+            </alder:AlderButton>
+            <alder:AlderButton Name="PART_Next" Grid.Column="2" Theme="{StaticResource AlderCalendarNavigationTheme}"
+                    AutomationProperties.Name="{DynamicResource AlderText.NextPeriod}">
+              <alder:AlderPathIcon Width="11" Height="11" Data="{TemplateBinding NextIcon}" />
+            </alder:AlderButton>
+          </Grid>
+          <Panel>
+            <WrapPanel Name="PART_Months" ItemSpacing="18" LineSpacing="14">
+              <WrapPanel.Transitions><Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions></WrapPanel.Transitions>
+            </WrapPanel>
+            <alder:AlderListBox Name="PART_Years" Width="252" Height="235" HorizontalAlignment="Left" VerticalAlignment="Top" IsVisible="False"
+                     Background="Transparent" Foreground="{DynamicResource AlderInk}" Opacity="0"
+                     BorderThickness="0" Padding="0" AutomationProperties.Name="{DynamicResource AlderText.ChooseYear}">
+              <ListBox.Transitions><Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="0,0,0.2,1" /></Transitions></ListBox.Transitions>
+              <ListBox.Styles>
+                <Style Selector="ListBoxItem">
+                  <Setter Property="Focusable" Value="False" />
+                  <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                  <Setter Property="Template">
+                    <ControlTemplate>
+                      <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
+                    </ControlTemplate>
+                  </Setter>
+                </Style>
+              </ListBox.Styles>
+            </alder:AlderListBox>
+          </Panel>
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ PathIcon#PART_HeadingIcon">
+      <Setter Property="RenderTransform" Value="rotate(0deg)" />
+      <Setter Property="Transitions">
+        <Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^ /template/ PathIcon#PART_HeadingIcon.expanded"><Setter Property="RenderTransform" Value="rotate(90deg)" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ PathIcon#PART_HeadingIcon"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ WrapPanel#PART_Months, ^[(alder|AlderMotion.Reduced)=True] /template/ :is(ListBox)#PART_Years"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderCalendar}" TargetType="alder:AlderCalendar" BasedOn="{StaticResource AlderCalendarTheme}" />
+  <ControlTheme x:Key="{x:Type alder:AlderRangeCalendar}" TargetType="alder:AlderRangeCalendar" BasedOn="{StaticResource AlderCalendarTheme}" />
+</ResourceDictionary>

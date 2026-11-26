@@ -1,0 +1,399 @@
+<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.RangeCalendarExample" x:DataType="vm:RangeCalendarViewModel" FontFamily="fonts:Inter#Inter">
+  <Design.DataContext>
+    <vm:RangeCalendarViewModel />
+  </Design.DataContext>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <alder:AlderRangeCalendar HorizontalAlignment="Center" Culture="{DynamicResource GalleryCulture}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                          ShowYearPicker="False" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center, ShowYearPicker = false };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        var preview = calendar;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <alder:AlderRangeCalendar HorizontalAlignment="Center" Culture="{DynamicResource GalleryCulture}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                          Value="{CompiledBinding PreviewRange, Mode=TwoWay}"
+                          IsEnabled="False" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center, IsEnabled = false };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        calendar.Bind(AlderRangeCalendar.ValueProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewRange, mode: BindingMode.TwoWay));
+        var preview = calendar;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleReadOnly" Title="{DynamicResource GalleryText.CalendarReadOnly}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <alder:AlderRangeCalendar HorizontalAlignment="Center" Culture="{DynamicResource GalleryCulture}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                          Value="{CompiledBinding PreviewRange, Mode=TwoWay}"
+                          IsReadOnly="True" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center, IsReadOnly = true };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        calendar.Bind(AlderRangeCalendar.ValueProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewRange, mode: BindingMode.TwoWay));
+        var preview = calendar;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDefaultValue" Title="{DynamicResource GalleryText.CalendarDefaultValue}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <alder:AlderRangeCalendar HorizontalAlignment="Center" Culture="{DynamicResource GalleryCulture}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                          Value="{CompiledBinding PreviewRange, Mode=TwoWay}" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        calendar.Bind(AlderRangeCalendar.ValueProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewRange, mode: BindingMode.TwoWay));
+        var preview = calendar;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleYearPicker" Title="{DynamicResource GalleryText.CalendarYearPicker}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <alder:AlderRangeCalendar HorizontalAlignment="Center" Culture="{DynamicResource GalleryCulture}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                          ShowYearPicker="True" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center, ShowYearPicker = true };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        var preview = calendar;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.Controlled}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <StackPanel Spacing="8">
+            <alder:AlderRangeCalendar HorizontalAlignment="Center" Culture="{DynamicResource GalleryCulture}"
+                            AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                            Value="{CompiledBinding Stay, Mode=TwoWay}" />
+            <alder:AlderTextBlock Text="{CompiledBinding Summary}" Foreground="{DynamicResource AlderMuted}" HorizontalAlignment="Center" />
+          </StackPanel>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        calendar.Bind(AlderRangeCalendar.ValueProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.Stay, mode: BindingMode.TwoWay));
+        var selected = new AlderTextBlock { HorizontalAlignment = HorizontalAlignment.Center };
+        selected.Bind(TextBlock.TextProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.Summary));
+        var preview = new StackPanel { DataContext = model, Spacing = 8, Children = { calendar, selected } };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleBounds" Title="{DynamicResource GalleryText.CalendarBounds}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <alder:AlderRangeCalendar HorizontalAlignment="Center" Culture="{DynamicResource GalleryCulture}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                          Minimum="{CompiledBinding Minimum, Mode=OneWay}"
+                          Maximum="{CompiledBinding Maximum, Mode=OneWay}" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        calendar.Bind(AlderRangeCalendar.MinimumProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.Minimum));
+        calendar.Bind(AlderRangeCalendar.MaximumProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.Maximum));
+        var preview = calendar;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleUnavailable" Title="{DynamicResource GalleryText.CalendarUnavailable}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <alder:AlderRangeCalendar HorizontalAlignment="Center" Culture="{DynamicResource GalleryCulture}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                          IsDateUnavailable="{CompiledBinding Maintenance, Mode=OneWay}" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        calendar.Bind(AlderRangeCalendar.IsDateUnavailableProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.Maintenance));
+        var preview = calendar;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleFixedWeeks" Title="{DynamicResource GalleryText.CalendarWeeks}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <alder:AlderRangeCalendar HorizontalAlignment="Center" Culture="{DynamicResource GalleryCulture}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                          FixedWeeks="True" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center, FixedWeeks = true };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        var preview = calendar;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleWeek" Title="{DynamicResource GalleryText.CalendarWeekView}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <alder:AlderRangeCalendar HorizontalAlignment="Center" Culture="{DynamicResource GalleryCulture}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                          View="Week" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center, View = AlderCalendarView.Week };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        var preview = calendar;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDay" Title="{DynamicResource GalleryText.CalendarDayView}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <alder:AlderRangeCalendar HorizontalAlignment="Center" Culture="{DynamicResource GalleryCulture}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                          View="Day" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center, View = AlderCalendarView.Day };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        var preview = calendar;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleAnchor" Title="{DynamicResource GalleryText.CalendarUnavailableEnd}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <alder:AlderRangeCalendar HorizontalAlignment="Center" Culture="{DynamicResource GalleryCulture}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                          IsRangeEndUnavailable="{CompiledBinding StayLimit, Mode=OneWay}" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        calendar.Bind(AlderRangeCalendar.IsRangeEndUnavailableProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.StayLimit));
+        var preview = calendar;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleGaps" Title="{DynamicResource GalleryText.CalendarNonContiguous}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <alder:AlderRangeCalendar HorizontalAlignment="Center" Culture="{DynamicResource GalleryCulture}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                          IsDateUnavailable="{CompiledBinding Maintenance, Mode=OneWay}"
+                          AllowNonContiguousRanges="True" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center, AllowNonContiguousRanges = true };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        calendar.Bind(AlderRangeCalendar.IsDateUnavailableProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.Maintenance));
+        var preview = calendar;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleInvalid" Title="{DynamicResource GalleryText.CalendarInvalidState}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <alder:AlderRangeCalendar HorizontalAlignment="Center" Culture="{DynamicResource GalleryCulture}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                          Value="{CompiledBinding PreviewRange, Mode=TwoWay}"
+                          IsInvalid="True" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center, IsInvalid = true };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        calendar.Bind(AlderRangeCalendar.ValueProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewRange, mode: BindingMode.TwoWay));
+        var preview = calendar;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleFocused" Title="{DynamicResource GalleryText.CalendarFocusedValue}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <alder:AlderRangeCalendar HorizontalAlignment="Center" Culture="{DynamicResource GalleryCulture}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                          FocusedDate="{CompiledBinding FocusedExample, Mode=TwoWay}" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        calendar.Bind(AlderRangeCalendar.FocusedDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.FocusedExample, mode: BindingMode.TwoWay));
+        var preview = calendar;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleIndicators" Title="{DynamicResource GalleryText.CalendarIndicators}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <alder:AlderRangeCalendar HorizontalAlignment="Center" Culture="{DynamicResource GalleryCulture}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                          DateIndicator="{CompiledBinding Indicator, Mode=OneWay}" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        calendar.Bind(AlderRangeCalendar.DateIndicatorProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.Indicator));
+        var preview = calendar;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleNavigationIcons" Title="{DynamicResource GalleryText.CalendarCustomIcons}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <alder:AlderRangeCalendar HorizontalAlignment="Center" Culture="{DynamicResource GalleryCulture}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                          PreviousIcon="{DynamicResource AlderIconArrowLeft}"
+                          NextIcon="{DynamicResource AlderIconArrowRight}" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        calendar[!AlderRangeCalendar.PreviousIconProperty] = new DynamicResourceExtension("AlderIconArrowLeft");
+        calendar[!AlderRangeCalendar.NextIconProperty] = new DynamicResourceExtension("AlderIconArrowRight");
+        var preview = calendar;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleMonths" Title="{DynamicResource GalleryText.CalendarMonths}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <alder:AlderRangeCalendar HorizontalAlignment="Center" Culture="{DynamicResource GalleryCulture}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                          VisibleMonths="2" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center, VisibleMonths = 2 };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        var preview = calendar;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleInternational" Title="{DynamicResource GalleryText.CalendarInternational}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <alder:AlderRangeCalendar HorizontalAlignment="Center"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                          Culture="{CompiledBinding ThaiCulture, Mode=OneWay}" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        calendar.Bind(AlderRangeCalendar.CultureProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.ThaiCulture));
+        var preview = calendar;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleAccent" Title="{DynamicResource GalleryText.CalendarAccent}">
+      <gallery:ExampleCard.Preview>
+        <Border Padding="8,16">
+          <Border.DataContext><vm:RangeCalendarViewModel /></Border.DataContext>
+          <alder:AlderRangeCalendar HorizontalAlignment="Center" Culture="{DynamicResource GalleryCulture}"
+                          AutomationProperties.Name="{DynamicResource GalleryText.ScheduleCalendar}" DisplayDate="{CompiledBinding PreviewDate, Mode=OneWay}"
+                          BorderThickness="1"
+                          CornerRadius="12"
+                          Background="{DynamicResource AlderSurface}"
+                          BorderBrush="{DynamicResource AlderAccent}" />
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new RangeCalendarViewModel();
+        var calendar = new AlderRangeCalendar { DataContext = model, HorizontalAlignment = HorizontalAlignment.Center, BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(12) };
+        calendar.Bind(AlderRangeCalendar.DisplayDateProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.PreviewDate));
+        calendar[!AlderRangeCalendar.BackgroundProperty] = new DynamicResourceExtension("AlderSurface");
+        calendar[!AlderRangeCalendar.BorderBrushProperty] = new DynamicResourceExtension("AlderAccent");
+        var preview = calendar;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleBookAStay" Title="{DynamicResource GalleryText.BookAStay}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="10">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.ChooseUpTo15DaysNovember28IsUnavailable}" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+          <alder:AlderRangeCalendar x:Name="StayCalendar" Culture="{DynamicResource GalleryCulture}" VisibleMonths="2" FixedWeeks="True"
+                               Minimum="{Binding Minimum}" Maximum="{Binding Maximum}"
+                               IsDateUnavailable="{Binding Maintenance}" IsRangeEndUnavailable="{Binding StayLimit}"
+                               Value="{Binding Stay, Mode=TwoWay}" AutomationProperties.Name="{DynamicResource GalleryText.StayDates}" />
+          <alder:AlderTextBlock Text="{Binding Summary}" Foreground="{DynamicResource AlderMuted}" />
+          <WrapPanel ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Content="{DynamicResource GalleryText.ClearRange}" Command="{CompiledBinding Clear}" Variant="Ghost" Size="Small" HorizontalAlignment="Left" />
+            <alder:AlderButton Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding Reset}" Variant="Secondary" Size="Small" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var rangeCalendar = new AlderRangeCalendar
+        {
+            Culture = CultureInfo.CurrentCulture,
+            VisibleMonths = 2,
+            FixedWeeks = true,
+        };
+        rangeCalendar.Bind(AlderRangeCalendar.MinimumProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.Minimum));
+        rangeCalendar.Bind(AlderRangeCalendar.MaximumProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.Maximum));
+        rangeCalendar.Bind(AlderRangeCalendar.IsDateUnavailableProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.Maintenance));
+        rangeCalendar.Bind(AlderRangeCalendar.IsRangeEndUnavailableProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.StayLimit));
+        rangeCalendar.Bind(AlderRangeCalendar.ValueProperty, CompiledBinding.Create((RangeCalendarViewModel model) => model.Stay, mode: BindingMode.TwoWay));
+        AutomationProperties.SetName(rangeCalendar, "Stay dates");
+
+        var model = (RangeCalendarViewModel)DataContext!;
+        var clear = new AlderButton { Content = "Clear range", Size = AlderSize.Small, Variant = ButtonVariant.Ghost };
+        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary };
+        clear.Click += (_, _) => model.Clear();
+        reset.Click += (_, _) => model.Reset();
+        var actions = new WrapPanel { ItemSpacing = 8, LineSpacing = 8, Children = { clear, reset } };
+        var preview = new StackPanel { Spacing = 8, Children = { rangeCalendar, actions } };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,186 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" xmlns:views="using:Alder.Avalonia.Gallery.Views"
+             x:Class="Alder.Avalonia.Gallery.Views.KanbanExample" x:DataType="vm:KanbanViewModel">
+
+  <UserControl.Resources>
+    <DataTemplate x:Key="TaskBody" x:DataType="vm:KanbanTaskSample">
+      <StackPanel Spacing="8">
+        <alder:AlderTextBlock Text="{CompiledBinding Description}" IsVisible="{CompiledBinding HasDescription}" Foreground="{DynamicResource AlderMuted}" FontSize="13" TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" />
+        <alder:AlderChip Size="Small" Variant="Soft" Content="{CompiledBinding Label}" Color="{CompiledBinding Status}" HorizontalAlignment="Left" />
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" IsVisible="{CompiledBinding ShowProgress}">
+          <alder:AlderProgressBar Value="{CompiledBinding Progress}" ShowValue="False" Size="Small" VerticalAlignment="Center" />
+          <alder:AlderTextBlock Grid.Column="1" Text="{CompiledBinding ProgressText}" VerticalAlignment="Center" FontSize="11"
+                     Foreground="{DynamicResource AlderMuted}" />
+        </Grid>
+        <alder:AlderAvatar Fallback="{CompiledBinding Initials}" Size="Small" Width="23" Height="23"
+                           MinWidth="0" MinHeight="0" FontSize="10" Variant="Soft" Color="{CompiledBinding Status}"
+                           HorizontalAlignment="Left" />
+      </StackPanel>
+    </DataTemplate>
+    <ControlTheme x:Key="TaskCardTheme" TargetType="alder:AlderKanbanCard" x:DataType="vm:KanbanTaskSample"
+                  BasedOn="{StaticResource {x:Type alder:AlderKanbanCard}}">
+      <Setter Property="Header" Value="{CompiledBinding Title}" />
+      <Setter Property="ImageSource" Value="{CompiledBinding Artwork}" />
+      <Setter Property="ContentTemplate" Value="{StaticResource TaskBody}" />
+    </ControlTheme>
+    <ControlTheme x:Key="BoardColumnTheme" TargetType="alder:AlderKanbanColumn" x:DataType="vm:KanbanColumnSample"
+                  BasedOn="{StaticResource {x:Type alder:AlderKanbanColumn}}">
+      <Setter Property="Key" Value="{CompiledBinding Key}" />
+      <Setter Property="Header" Value="{CompiledBinding Title}" />
+      <Setter Property="ItemsSource" Value="{CompiledBinding Tasks}" />
+      <Setter Property="AddCommand" Value="{CompiledBinding Add}" />
+      <Setter Property="IndicatorBrush" Value="{CompiledBinding Indicator}" />
+      <Setter Property="AddLabel" Value="{CompiledBinding AddLabel}" />
+      <Setter Property="EmptyContent" Value="{DynamicResource GalleryText.ProKanbanEmpty}" />
+      <Setter Property="ItemContainerTheme" Value="{StaticResource TaskCardTheme}" />
+    </ControlTheme>
+    <ControlTheme x:Key="NotionAddButtonTheme" TargetType="alder:AlderButton"
+                  BasedOn="{StaticResource AlderKanbanAddButtonTheme}">
+      <Style Selector="^[Variant=Outline]">
+        <Setter Property="BorderBrush" Value="{CompiledBinding Foreground, RelativeSource={RelativeSource Self}, Converter={x:Static views:KanbanExample.NotionButtonOutline}}" />
+      </Style>
+      <Style Selector="^[Variant=Outline] /template/ alder|ButtonTint#Tint">
+        <Setter Property="Background" Value="{CompiledBinding Foreground, RelativeSource={RelativeSource TemplatedParent}}" />
+      </Style>
+      <Style Selector="^[Variant=Outline]:pointerover /template/ alder|ButtonTint#Tint,
+                       ^[Variant=Outline]:pressed /template/ alder|ButtonTint#Tint">
+        <Setter Property="Opacity" Value=".1" />
+      </Style>
+    </ControlTheme>
+    <ControlTheme x:Key="TintedBoardColumnTheme" TargetType="alder:AlderKanbanColumn" x:DataType="vm:KanbanColumnSample"
+                  BasedOn="{StaticResource BoardColumnTheme}">
+      <Setter Property="Background" Value="{CompiledBinding IndicatorBrush, RelativeSource={RelativeSource Self}, Converter={x:Static views:KanbanExample.NotionColumnBackground}}" />
+      <Setter Property="VerticalAlignment" Value="Top" />
+      <Style Selector="^[Key=NotionColumn1] /template/ alder|AlderButton#PART_AddButton,
+                       ^[Key=NotionColumn2] /template/ alder|AlderButton#PART_AddButton,
+                       ^[Key=NotionColumn3] /template/ alder|AlderButton#PART_AddButton,
+                       ^[Key=NotionColumn4] /template/ alder|AlderButton#PART_AddButton">
+        <Setter Property="Theme" Value="{StaticResource NotionAddButtonTheme}" />
+      </Style>
+      <Style Selector="^ /template/ alder|AlderButton#PART_AddButton[Variant=Outline]">
+        <Setter Property="Foreground" Value="{CompiledBinding IndicatorBrush, RelativeSource={RelativeSource TemplatedParent}}" />
+      </Style>
+      <Style Selector="^[Key=NotionColumn1]">
+        <Setter Property="IndicatorBrush" Value="{DynamicResource AlderAccent}" />
+      </Style>
+      <Style Selector="^[Key=NotionColumn2]">
+        <Setter Property="IndicatorBrush" Value="{DynamicResource AlderStatusWarning}" />
+      </Style>
+      <Style Selector="^[Key=NotionColumn3]">
+        <Setter Property="IndicatorBrush" Value="{DynamicResource AlderDanger}" />
+      </Style>
+      <Style Selector="^[Key=NotionColumn4]">
+        <Setter Property="IndicatorBrush" Value="{DynamicResource AlderStatusSuccess}" />
+      </Style>
+    </ControlTheme>
+    <ControlTheme x:Key="SizedBoardColumnTheme" TargetType="alder:AlderKanbanColumn" BasedOn="{StaticResource BoardColumnTheme}">
+      <Setter Property="Width" Value="435" />
+    </ControlTheme>
+    <ControlTheme x:Key="SmallTaskCardTheme" TargetType="alder:AlderKanbanCard" BasedOn="{StaticResource TaskCardTheme}">
+      <Setter Property="Padding" Value="8" />
+    </ControlTheme>
+    <ControlTheme x:Key="LargeTaskCardTheme" TargetType="alder:AlderKanbanCard" BasedOn="{StaticResource TaskCardTheme}">
+      <Setter Property="Padding" Value="16" />
+    </ControlTheme>
+    <ControlTheme x:Key="SmallBoardColumnTheme" TargetType="alder:AlderKanbanColumn" BasedOn="{StaticResource SizedBoardColumnTheme}">
+      <Setter Property="ItemContainerTheme" Value="{StaticResource SmallTaskCardTheme}" />
+    </ControlTheme>
+    <ControlTheme x:Key="LargeBoardColumnTheme" TargetType="alder:AlderKanbanColumn" BasedOn="{StaticResource SizedBoardColumnTheme}">
+      <Setter Property="ItemContainerTheme" Value="{StaticResource LargeTaskCardTheme}" />
+    </ControlTheme>
+  </UserControl.Resources>
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.ProDemoKanbanUsage}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="1040" MinHeight="780" HorizontalAlignment="Stretch">
+            <Border DataContext="{CompiledBinding Usage}" VerticalAlignment="Center">
+              <alder:AlderKanban x:DataType="vm:KanbanBoardSample" Size="Medium" Height="716"
+                                 ItemsSource="{CompiledBinding Columns}" ReorderCommand="{CompiledBinding Move}"
+                                 ItemContainerTheme="{StaticResource BoardColumnTheme}" />
+            </Border>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var board = model.Usage;
+        var layout = new AlderKanban { ItemsSource = board.Columns, ReorderCommand = board.Move, Height = 716 };
+        layout[!ItemsControl.ItemContainerThemeProperty] = new DynamicResourceExtension("BoardColumnTheme");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleNotion" Title="{DynamicResource GalleryText.ProDemoKanbanNotion}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="1040" MinHeight="1080" HorizontalAlignment="Stretch">
+            <Border DataContext="{CompiledBinding Notion}" VerticalAlignment="Center">
+              <alder:AlderKanban x:DataType="vm:KanbanBoardSample" Size="Medium" Height="1023"
+                                 ItemsSource="{CompiledBinding Columns}" ReorderCommand="{CompiledBinding Move}"
+                                 ItemContainerTheme="{StaticResource TintedBoardColumnTheme}" />
+            </Border>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var board = model.Notion;
+        var layout = new AlderKanban { ItemsSource = board.Columns, ReorderCommand = board.Move, Height = 1023 };
+        layout[!ItemsControl.ItemContainerThemeProperty] = new DynamicResourceExtension("TintedBoardColumnTheme");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleProject" Title="{DynamicResource GalleryText.ProDemoKanbanProject}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="1040" MinHeight="660" HorizontalAlignment="Stretch">
+            <Border DataContext="{CompiledBinding Project}" VerticalAlignment="Center">
+              <alder:AlderKanban x:DataType="vm:KanbanBoardSample" Size="Medium" Height="463"
+                                 ItemsSource="{CompiledBinding Columns}" ReorderCommand="{CompiledBinding Move}"
+                                 ItemContainerTheme="{StaticResource BoardColumnTheme}" />
+            </Border>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var board = model.Project;
+        var layout = new AlderKanban { ItemsSource = board.Columns, ReorderCommand = board.Move, Height = 463 };
+        layout[!ItemsControl.ItemContainerThemeProperty] = new DynamicResourceExtension("BoardColumnTheme");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleSizes" Title="{DynamicResource GalleryText.ProDemoKanbanSizes}">
+      <g:ExampleCard.Preview>
+        <Border MaxWidth="884" MinHeight="2380" HorizontalAlignment="Stretch">
+          <StackPanel Spacing="20" VerticalAlignment="Center">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.ProKanbanSizeSmall}" Foreground="{DynamicResource AlderMuted}" FontSize="12" />
+            <Border DataContext="{CompiledBinding Compact}">
+              <alder:AlderKanban x:DataType="vm:KanbanBoardSample" Size="Small" Height="694"
+                                 ItemsSource="{CompiledBinding Columns}" ReorderCommand="{CompiledBinding Move}"
+                                 ItemContainerTheme="{StaticResource SmallBoardColumnTheme}" />
+            </Border>
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.ProKanbanSizeMedium}" Foreground="{DynamicResource AlderMuted}" FontSize="12" />
+            <Border DataContext="{CompiledBinding Regular}">
+              <alder:AlderKanban x:DataType="vm:KanbanBoardSample" Size="Medium" Height="716"
+                                 ItemsSource="{CompiledBinding Columns}" ReorderCommand="{CompiledBinding Move}"
+                                 ItemContainerTheme="{StaticResource SizedBoardColumnTheme}" />
+            </Border>
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.ProKanbanSizeLarge}" Foreground="{DynamicResource AlderMuted}" FontSize="12" />
+            <Border DataContext="{CompiledBinding Spacious}">
+              <alder:AlderKanban x:DataType="vm:KanbanBoardSample" Size="Large" Height="716"
+                                 ItemsSource="{CompiledBinding Columns}" ReorderCommand="{CompiledBinding Move}"
+                                 ItemContainerTheme="{StaticResource LargeBoardColumnTheme}" />
+            </Border>
+          </StackPanel>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        AlderKanban MakeBoard(KanbanBoardSample board, AlderSize size)
+        {
+            var layout = new AlderKanban { ItemsSource = board.Columns, ReorderCommand = board.Move, Size = size, Height = size == AlderSize.Small ? 694 : 716 };
+            string columnTheme = size switch
+            {
+                AlderSize.Small => "SmallBoardColumnTheme",
+                AlderSize.Large => "LargeBoardColumnTheme",
+                _ => "SizedBoardColumnTheme"
+            };
+            layout[!ItemsControl.ItemContainerThemeProperty] = new DynamicResourceExtension(columnTheme);
+            return layout;
+        }
+        var compact = MakeBoard(model.Compact, AlderSize.Small);
+        var regular = MakeBoard(model.Regular, AlderSize.Medium);
+        var spacious = MakeBoard(model.Spacious, AlderSize.Large);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

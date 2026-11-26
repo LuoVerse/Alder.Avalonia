@@ -1,0 +1,78 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:a="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls" xmlns:md="using:Alder.NativeMarkdown.UI" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" x:Class="Alder.Avalonia.Gallery.Views.MarkdownExample" x:DataType="vm:AiExampleViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard Classes="chat-message-preview" x:Name="SampleDefault" Title="{DynamicResource GalleryText.AiDefault}">
+      <g:ExampleCard.Preview>
+        <Border Padding="8,24">
+          <a:AlderMarkdown MaxWidth="640" Markdown="{CompiledBinding ExampleMarkdown}">
+            <a:AlderMarkdown.Resources>
+              <md:MarkdownTypography x:Key="Md.Typography">Chat</md:MarkdownTypography>
+              <md:MarkdownResourceAlias x:Key="Md.SecondaryForeground"><x:Arguments><x:String>AlderMuted</x:String></x:Arguments></md:MarkdownResourceAlias>
+              <md:MarkdownResourceAlias x:Key="Md.InlineCodeBackground"><x:Arguments><x:String>AlderNeutral</x:String></x:Arguments></md:MarkdownResourceAlias>
+              <md:MarkdownResourceAlias x:Key="Md.QuoteBorderBrush"><x:Arguments><x:String>AlderBorder</x:String></x:Arguments></md:MarkdownResourceAlias>
+              <SolidColorBrush x:Key="Md.ListMarkerForeground" Color="#8071717A" />
+            </a:AlderMarkdown.Resources>
+          </a:AlderMarkdown>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var example = new AlderMarkdown { MaxWidth = 640, DataContext = model };
+        example.Bind(AlderMarkdown.MarkdownProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.ExampleMarkdown));
+        example.Resources[MarkdownResourceKeys.Typography] = MarkdownTypography.Chat;
+        example.Resources[MarkdownResourceKeys.SecondaryForeground] = new MarkdownResourceAlias("AlderMuted");
+        example.Resources[MarkdownResourceKeys.InlineCodeBackground] = new MarkdownResourceAlias("AlderNeutral");
+        example.Resources[MarkdownResourceKeys.QuoteBorderBrush] = new MarkdownResourceAlias("AlderBorder");
+        example.Resources[MarkdownResourceKeys.ListMarkerForeground] = new SolidColorBrush(Color.Parse("#8071717A"));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard Classes="chat-message-preview" x:Name="SampleStreaming" Title="{DynamicResource GalleryText.AiVariantStreaming}">
+      <g:ExampleCard.Preview>
+        <g:AiLivePreview Padding="8,24">
+          <g:AiLivePreview.DataContext>
+            <vm:AiExampleViewModel Scenario="Markdown"/>
+          </g:AiLivePreview.DataContext>
+          <a:AlderMarkdown MaxWidth="640" Stream="{CompiledBinding PreviewStream}">
+            <a:AlderMarkdown.Resources>
+              <md:MarkdownTypography x:Key="Md.Typography">Chat</md:MarkdownTypography>
+            </a:AlderMarkdown.Resources>
+          </a:AlderMarkdown>
+        </g:AiLivePreview>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel { Scenario = AiGalleryScenario.Markdown };
+        var view = new AlderMarkdown { MaxWidth = 640 };
+        view.Resources[MarkdownResourceKeys.Typography] = MarkdownTypography.Chat;
+        view.Bind(AlderMarkdown.StreamProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.PreviewStream));
+        var preview = new AiLivePreview { DataContext = model, Padding = new Thickness(8, 24), Child = view };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard Classes="chat-message-preview" x:Name="SampleIncompleteMarkdown" Title="{DynamicResource GalleryText.AiVariantIncompleteMarkdown}">
+      <g:ExampleCard.Preview>
+        <g:AiLivePreview Padding="8,24">
+          <g:AiLivePreview.DataContext>
+            <vm:AiExampleViewModel Scenario="RepairMarkdown"/>
+          </g:AiLivePreview.DataContext>
+          <a:AlderMarkdown MaxWidth="640" Stream="{CompiledBinding PreviewStream}">
+            <a:AlderMarkdown.Resources>
+              <md:MarkdownTypography x:Key="Md.Typography">Prose</md:MarkdownTypography>
+              <x:Double x:Key="Md.FontSize">16</x:Double>
+              <x:Double x:Key="Md.LineHeight">24</x:Double>
+              <x:Double x:Key="Md.BlockSpacing">16</x:Double>
+              <md:MarkdownResourceAlias x:Key="Md.ListMarkerForeground"><x:Arguments><x:String>AlderInk</x:String></x:Arguments></md:MarkdownResourceAlias>
+            </a:AlderMarkdown.Resources>
+          </a:AlderMarkdown>
+        </g:AiLivePreview>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new AiExampleViewModel { Scenario = AiGalleryScenario.RepairMarkdown };
+        var view = new AlderMarkdown { MaxWidth = 640 };
+        view.Resources[MarkdownResourceKeys.Typography] = MarkdownTypography.Prose;
+        view.Resources[MarkdownResourceKeys.FontSize] = 16d;
+        view.Resources[MarkdownResourceKeys.LineHeight] = 24d;
+        view.Resources[MarkdownResourceKeys.BlockSpacing] = 16d;
+        view.Resources[MarkdownResourceKeys.ListMarkerForeground] = new MarkdownResourceAlias("AlderInk");
+        view.Bind(AlderMarkdown.StreamProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.PreviewStream));
+        var preview = new AiLivePreview { DataContext = model, Padding = new Thickness(8, 24), Child = view };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

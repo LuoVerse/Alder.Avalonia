@@ -1,0 +1,106 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:conv="using:Avalonia.Data.Converters">
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderSegmentIndicator" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="AlderSegmentSeparator" Color="#4071717A" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderSegmentIndicator" Color="#46464C" />
+      <SolidColorBrush x:Key="AlderSegmentSeparator" Color="#409F9FA9" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+
+  <ControlTheme x:Key="{x:Type alder:AlderSegmentItem}" TargetType="alder:AlderSegmentItem">
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="Padding" Value="16,0" />
+    <Setter Property="MinHeight" Value="32" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="CornerRadius" Value="24" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid Background="Transparent">
+          <Border Name="Separator" Width="1" Height="16" HorizontalAlignment="Left" VerticalAlignment="Center"
+                  Background="{DynamicResource AlderSegmentSeparator}" Opacity="0" IsHitTestVisible="False" />
+          <StackPanel Name="ItemContent" Orientation="Horizontal" Margin="{TemplateBinding Padding}"
+                      HorizontalAlignment="Center" VerticalAlignment="Center">
+            <alder:AlderPathIcon Name="Icon" Width="16" Height="16" Data="{TemplateBinding Icon}"
+                      IsVisible="{TemplateBinding Icon, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}" VerticalAlignment="Center" />
+          </StackPanel>
+          <Border Name="FocusRing" Margin="-4" BorderBrush="{DynamicResource AlderAccent}" BorderThickness="2"
+                  CornerRadius="{TemplateBinding CornerRadius}" Opacity="0" IsHitTestVisible="False">
+            <Border BorderBrush="{DynamicResource AlderAppLayoutBackground}" BorderThickness="2"
+                    CornerRadius="{TemplateBinding CornerRadius}" />
+          </Border>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:selected"><Setter Property="Foreground" Value="{DynamicResource AlderInk}" /></Style>
+    <Style Selector="^:has-content /template/ StackPanel#ItemContent"><Setter Property="Spacing" Value="6" /></Style>
+    <Style Selector="^:not(:selected):not(:disabled):pointerover"><Setter Property="Opacity" Value="0.7" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /><Setter Property="Cursor" Value="Arrow" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=False]">
+      <Setter Property="Transitions">
+        <Transitions>
+          <DoubleTransition Property="Opacity" Duration="0:0:0.15" />
+          <BrushTransition Property="Foreground" Duration="0:0:0.15" />
+        </Transitions>
+      </Setter>
+      <Style Selector="^ /template/ Border#Separator, ^ /template/ Border#FocusRing">
+        <Setter Property="Transitions"><Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" /></Transitions></Setter>
+      </Style>
+    </Style>
+    <Style Selector="^:separator /template/ Border#Separator"><Setter Property="Opacity" Value="1" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#FocusRing"><Setter Property="Opacity" Value="1" /></Style>
+    <Style Selector="^[(alder|AlderSegment.Size)=Small]">
+      <Setter Property="MinHeight" Value="28" /><Setter Property="Padding" Value="10,0" /><Setter Property="FontSize" Value="12" />
+    </Style>
+    <Style Selector="^[(alder|AlderSegment.Size)=Large]">
+      <Setter Property="MinHeight" Value="40" /><Setter Property="Padding" Value="20,0" />
+    </Style>
+    <Style Selector="^[(alder|AlderSegment.Variant)=Ghost]:selected">
+      <Setter Property="Foreground" Value="{DynamicResource AlderOnAccent}" />
+    </Style>
+    <Style Selector="^[ExpandSelectedItem=True]:has-icon:not(:selected) /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderSegment}" TargetType="alder:AlderSegment">
+    <Setter Property="Padding" Value="4" />
+    <Setter Property="CornerRadius" Value="20" />
+    <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="ItemContainerTheme" Value="{StaticResource {x:Type alder:AlderSegmentItem}}" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="VerticalAlignment" Value="Top" />
+    <Setter Property="KeyboardNavigation.TabNavigation" Value="Once" />
+    <Setter Property="ItemsPanel"><ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate></Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" CornerRadius="{TemplateBinding CornerRadius}"
+                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+          <alder:AlderSegmentTrack Name="PART_Track">
+            <Border Name="Indicator" Background="{DynamicResource AlderSegmentIndicator}" BoxShadow="{DynamicResource AlderFieldShadow}"
+                    CornerRadius="24" IsHitTestVisible="False" />
+            <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+          </alder:AlderSegmentTrack>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Size=Small]"><Setter Property="Padding" Value="2" /></Style>
+    <Style Selector="^[Variant=Ghost]">
+      <Setter Property="Padding" Value="0" /><Setter Property="Background" Value="Transparent" />
+      <Style Selector="^ /template/ Border#Indicator">
+        <Setter Property="Background" Value="{DynamicResource AlderAccent}" /><Setter Property="BoxShadow" Value="none" />
+      </Style>
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

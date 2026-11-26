@@ -1,0 +1,243 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.ScrollShadowExample" x:DataType="vm:ScrollShadowViewModel">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+          <LinearGradientBrush x:Key="ShadowPreviewGradient" StartPoint="0%,0%" EndPoint="0%,100%">
+            <GradientStop Offset="0" Color="#F8F8F8" />
+            <GradientStop Offset="1" Color="White" />
+          </LinearGradientBrush>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+          <LinearGradientBrush x:Key="ShadowPreviewGradient" StartPoint="0%,0%" EndPoint="0%,100%">
+            <GradientStop Offset="0" Color="#1B1B1D" />
+            <GradientStop Offset="1" Color="#171719" />
+          </LinearGradientBrush>
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+      <DataTemplate x:Key="ShadowParagraphs" x:DataType="vm:ScrollShadowViewModel">
+        <alder:AlderItemsControl ItemsSource="{CompiledBinding Paragraphs}">
+          <alder:AlderItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Spacing="16" /></ItemsPanelTemplate></alder:AlderItemsControl.ItemsPanel>
+          <alder:AlderItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="x:String">
+              <alder:AlderSelectableTextBlock Text="{CompiledBinding}" FontSize="16" LineHeight="28" TextWrapping="Wrap" IsTabStop="False" />
+            </DataTemplate>
+          </alder:AlderItemsControl.ItemTemplate>
+        </alder:AlderItemsControl>
+      </DataTemplate>
+      <DataTemplate x:Key="ShadowStories" x:DataType="vm:ScrollShadowViewModel">
+        <alder:AlderItemsControl ItemsSource="{CompiledBinding Stories}">
+          <alder:AlderItemsControl.ItemsPanel>
+            <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="16" /></ItemsPanelTemplate>
+          </alder:AlderItemsControl.ItemsPanel>
+          <alder:AlderItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:ScrollShadowStory">
+              <Grid Width="196" Height="88" ColumnDefinitions="80,*" ColumnSpacing="12" Margin="4,0,0,0">
+                <Border Width="80" Height="80" CornerRadius="12" ClipToBounds="True">
+                  <alder:AlderImage Source="{CompiledBinding Image}" Stretch="UniformToFill"
+                         AutomationProperties.Name="{CompiledBinding AlternativeText}" />
+                </Border>
+                <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+                  <alder:AlderTextBlock Text="{CompiledBinding Title}" FontSize="14" FontWeight="Medium" LineHeight="24" TextWrapping="Wrap" />
+                  <alder:AlderTextBlock Text="{CompiledBinding Time}" FontSize="12" LineHeight="16" Foreground="{DynamicResource AlderMuted}" />
+                </StackPanel>
+              </Grid>
+            </DataTemplate>
+          </alder:AlderItemsControl.ItemTemplate>
+        </alder:AlderItemsControl>
+      </DataTemplate>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <StackPanel Spacing="20" TextElement.FontFamily="fonts:Inter#Inter">
+    <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <Border MinHeight="300">
+          <alder:AlderScrollShadow Height="240" MaxWidth="384" Padding="16" VerticalAlignment="Center"
+                              AutomationProperties.Name="{DynamicResource GalleryText.ScrollShadowText}"
+                              Content="{CompiledBinding}" ContentTemplate="{StaticResource ShadowParagraphs}" />
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var shadow = new AlderScrollShadow { Height = 240, MaxWidth = 384, Padding = new Thickness(16) };
+        shadow.Content = paragraphs; // Any Avalonia control or templated content.
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleOrientation" Title="{DynamicResource GalleryText.Orientation}">
+      <g:ExampleCard.Preview>
+        <StackPanel MaxWidth="384" Spacing="32" Margin="0,12">
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.Vertical}" FontSize="14" FontWeight="Medium" LineHeight="20" />
+            <alder:AlderSurface Padding="0" CornerRadius="24" BoxShadow="{DynamicResource AlderFieldShadow}">
+              <alder:AlderScrollShadow Height="240" Padding="16"
+                                  AutomationProperties.Name="{DynamicResource GalleryText.ScrollShadowText}"
+                                  Content="{CompiledBinding}" ContentTemplate="{StaticResource ShadowParagraphs}" />
+            </alder:AlderSurface>
+          </StackPanel>
+          <StackPanel Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.Horizontal}" FontSize="14" FontWeight="Medium" LineHeight="20" />
+            <alder:AlderSurface Padding="0" CornerRadius="24" BoxShadow="{DynamicResource AlderFieldShadow}">
+              <alder:AlderScrollShadow Orientation="Horizontal" Height="120" Padding="16"
+                                  AutomationProperties.Name="{DynamicResource GalleryText.ScrollShadowStories}"
+                                  Content="{CompiledBinding}" ContentTemplate="{StaticResource ShadowStories}" />
+            </alder:AlderSurface>
+          </StackPanel>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var vertical = new AlderScrollShadow { Height = 240, Content = paragraphs };
+        var horizontal = new AlderScrollShadow
+        {
+            Orientation = Orientation.Horizontal,
+            Height = 120,
+            Content = stories
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleShadowSize" Title="{DynamicResource GalleryText.ScrollShadowSize}">
+      <g:ExampleCard.Preview>
+        <alder:AlderScrollShadow Height="240" MaxWidth="384" Margin="0,12" Padding="16" ShadowSize="80"
+                            AutomationProperties.Name="{DynamicResource GalleryText.ScrollShadowText}"
+                            Content="{CompiledBinding}" ContentTemplate="{StaticResource ShadowParagraphs}" />
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var shadow = new AlderScrollShadow { Height = 240, ShadowSize = 80, Content = paragraphs };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleWithCard" Title="{DynamicResource GalleryText.ScrollShadowWithCard}">
+      <g:ExampleCard.Preview>
+        <alder:AlderCard MaxWidth="400" Margin="0,12" Padding="16" Spacing="12"
+                    Title="{DynamicResource GalleryText.ScrollShadowTerms}" Description="{CompiledBinding TermsDescription}">
+          <alder:AlderScrollShadow Height="300" Padding="16,0" Margin="0,0,0,16" ShadowSize="80"
+                              AutomationProperties.Name="{DynamicResource GalleryText.ScrollShadowTerms}"
+                              Content="{CompiledBinding}" ContentTemplate="{StaticResource ShadowParagraphs}" />
+          <alder:AlderCard.Footer>
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+              <alder:AlderButton Variant="Secondary" HorizontalAlignment="Stretch" Command="{CompiledBinding CancelTerms}"
+                            Content="{DynamicResource GalleryText.Dialog.Cancel}" />
+              <alder:AlderButton Grid.Column="1" HorizontalAlignment="Stretch" Command="{CompiledBinding AcceptTerms}"
+                            Content="{DynamicResource GalleryText.ScrollShadowAccept}" />
+            </Grid>
+          </alder:AlderCard.Footer>
+        </alder:AlderCard>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var terms = new AlderCard
+        {
+            Title = "Terms and Conditions",
+            Content = new AlderScrollShadow { Height = 300, Padding = new Thickness(16, 0), ShadowSize = 80, Content = paragraphs },
+            Footer = actions
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleHideScrollBar" Title="{DynamicResource GalleryText.ScrollShadowHideBar}">
+      <g:ExampleCard.Preview>
+        <alder:AlderScrollShadow Height="240" MaxWidth="384" Margin="0,12" Padding="16" HideScrollBar="True"
+                            AutomationProperties.Name="{DynamicResource GalleryText.ScrollShadowText}"
+                            Content="{CompiledBinding}" ContentTemplate="{StaticResource ShadowParagraphs}" />
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var shadow = new AlderScrollShadow { Height = 240, HideScrollBar = true, Content = paragraphs };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleVisibilityChange" Title="{DynamicResource GalleryText.ScrollShadowVisibilityChange}">
+      <g:ExampleCard.Preview>
+        <StackPanel MaxWidth="384" Spacing="24" Margin="0,12">
+          <StackPanel Spacing="12">
+            <Border Background="{DynamicResource AlderNeutral}" CornerRadius="4" Padding="16">
+              <alder:AlderTextBlock Text="{CompiledBinding VerticalStatus}" FontSize="14" FontWeight="SemiBold" LineHeight="20" TextWrapping="Wrap" />
+            </Border>
+            <alder:AlderScrollShadow Height="240" Padding="16,12" ShadowVisibilityChanged="VerticalShadowChanged"
+                                AutomationProperties.Name="{DynamicResource GalleryText.ScrollShadowText}"
+                                Content="{CompiledBinding}" ContentTemplate="{StaticResource ShadowParagraphs}" />
+          </StackPanel>
+          <StackPanel Spacing="12">
+            <Border Background="{DynamicResource AlderNeutral}" CornerRadius="4" Padding="16">
+              <alder:AlderTextBlock Text="{CompiledBinding HorizontalStatus}" FontSize="14" FontWeight="SemiBold" LineHeight="20" TextWrapping="Wrap" />
+            </Border>
+            <alder:AlderScrollShadow Orientation="Horizontal" Height="120" Padding="16" ShadowVisibilityChanged="HorizontalShadowChanged"
+                                AutomationProperties.Name="{DynamicResource GalleryText.ScrollShadowStories}"
+                                Content="{CompiledBinding}" ContentTemplate="{StaticResource ShadowStories}" />
+          </StackPanel>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var shadow = new AlderScrollShadow { Height = 240, Content = paragraphs };
+        shadow.ShadowVisibilityChanged += (_, visibility) => status.Text = visibility.ToString();
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleCustom" Title="{DynamicResource GalleryText.ScrollShadowCustomization}">
+      <g:ExampleCard.Preview>
+        <alder:AlderScrollShadow Height="192" MaxWidth="384" Margin="0,12" Padding="16" ShadowSize="48" HideScrollBar="True"
+                            CornerRadius="12" BorderThickness="1" BorderBrush="{DynamicResource AlderBorder}"
+                            Background="{DynamicResource ShadowPreviewGradient}"
+                            AutomationProperties.Name="{DynamicResource GalleryText.ScrollShadowUpdates}">
+          <alder:AlderItemsControl ItemsSource="{CompiledBinding Notes}">
+            <alder:AlderItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Spacing="12" /></ItemsPanelTemplate></alder:AlderItemsControl.ItemsPanel>
+            <alder:AlderItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="x:String">
+                <alder:AlderTextBlock Text="{CompiledBinding}" TextWrapping="Wrap" FontSize="14" LineHeight="23"
+                           Foreground="{DynamicResource AlderMuted}" />
+              </DataTemplate>
+            </alder:AlderItemsControl.ItemTemplate>
+          </alder:AlderItemsControl>
+        </alder:AlderScrollShadow>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var shadow = new AlderScrollShadow
+        {
+            Height = 192,
+            ShadowSize = 48,
+            HideScrollBar = true,
+            CornerRadius = new CornerRadius(12),
+            BorderThickness = new Thickness(1),
+            Padding = new Thickness(16),
+            Content = notes
+        };
+        shadow[!TemplatedControl.BorderBrushProperty] = new DynamicResourceExtension("AlderBorder");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+
+    <g:ExampleCard x:Name="SampleControlled" Title="{DynamicResource GalleryText.ScrollShadowControlled}">
+      <g:ExampleCard.Preview>
+        <StackPanel MaxWidth="384" Spacing="12" Margin="0,12">
+          <WrapPanel ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.ScrollShadowAuto}"
+                          Command="{CompiledBinding ChangeVisibility}" CommandParameter="{x:Static alder:ScrollShadowVisibility.Auto}" />
+            <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.DialogAtTop}"
+                          Command="{CompiledBinding ChangeVisibility}" CommandParameter="{x:Static alder:ScrollShadowVisibility.Top}" />
+            <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.ScrollShadowBoth}"
+                          Command="{CompiledBinding ChangeVisibility}" CommandParameter="{x:Static alder:ScrollShadowVisibility.Both}" />
+            <alder:AlderButton Size="Small" Variant="Secondary" Content="{DynamicResource GalleryText.FeedbackNone}"
+                          Command="{CompiledBinding ChangeVisibility}" CommandParameter="{x:Static alder:ScrollShadowVisibility.None}" />
+          </WrapPanel>
+          <alder:AlderCheckBox IsChecked="{CompiledBinding IsDetectionEnabled, Mode=TwoWay}"
+                          Content="{DynamicResource GalleryText.ScrollShadowDetect}" />
+          <alder:AlderScrollShadow Height="192" Padding="16" ShadowOffset="16" ShadowVisibility="{CompiledBinding Visibility}"
+                              IsShadowEnabled="{CompiledBinding IsDetectionEnabled}"
+                              AutomationProperties.Name="{DynamicResource GalleryText.ScrollShadowText}"
+                              Content="{CompiledBinding}" ContentTemplate="{StaticResource ShadowParagraphs}" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var shadow = new AlderScrollShadow
+        {
+            Height = 192,
+            ShadowOffset = 16,
+            ShadowVisibility = ScrollShadowVisibility.Auto,
+            IsShadowEnabled = true,
+            Content = paragraphs
+        };
+        shadow.ShadowVisibility = ScrollShadowVisibility.Both;
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

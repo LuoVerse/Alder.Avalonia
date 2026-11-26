@@ -1,0 +1,247 @@
+<UserControl xmlns:conv="using:Avalonia.Data.Converters" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.SearchFieldExample" x:DataType="vm:SearchFieldViewModel" FontFamily="fonts:Inter#Inter">
+  <UserControl.Styles>
+    <Style Selector="TextBlock.detail"><Setter Property="Foreground" Value="{DynamicResource AlderMuted}" /></Style>
+    <Style Selector="TextBlock.error"><Setter Property="Foreground" Value="{DynamicResource AlderDangerInk}" /></Style>
+  </UserControl.Styles>
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Width="336" MaxWidth="336" HorizontalAlignment="Center" Spacing="4">
+          <alder:AlderLabel x:Name="UsageSearchLabel" Content="{DynamicResource GalleryText.Search}" Target="{CompiledBinding #UsageSearch}" />
+          <alder:AlderSearchField x:Name="UsageSearch" PlaceholderText="{DynamicResource GalleryText.SearchFieldPrompt}" FullWidth="True"
+                                 AutomationProperties.LabeledBy="{CompiledBinding #UsageSearchLabel}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var field = new AlderSearchField { PlaceholderText = "Search...", FullWidth = true };
+        var label = new AlderLabel { Content = "Search", Target = field };
+        AutomationProperties.SetLabeledBy(field, label);
+        var preview = new StackPanel
+        {
+            Width = 336, HorizontalAlignment = HorizontalAlignment.Center, Spacing = 4,
+            Children = { label, field }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleVariants" Title="{DynamicResource GalleryText.Variants}">
+      <gallery:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="16" LineSpacing="12">
+          <StackPanel Spacing="4">
+            <alder:AlderLabel x:Name="PrimaryLabel" Theme="{StaticResource AlderLabelTheme}" Target="{Binding #PrimarySearch}" Content="{DynamicResource GalleryText.Primary}" />
+            <alder:AlderSearchField x:Name="PrimarySearch" PlaceholderText="{DynamicResource GalleryText.SearchProjectsPlaceholder}" AutomationProperties.LabeledBy="{Binding #PrimaryLabel}" />
+          </StackPanel>
+          <Border MaxWidth="280" CornerRadius="16" Padding="12" Background="{DynamicResource AlderSurface}">
+            <StackPanel Spacing="4">
+              <alder:AlderLabel x:Name="SurfaceLabel" Theme="{StaticResource AlderLabelTheme}" Target="{Binding #SurfaceSearch}" Content="{DynamicResource GalleryText.SecondaryInASurface}" />
+              <alder:AlderSearchField x:Name="SurfaceSearch" FullWidth="True" Variant="Secondary" PlaceholderText="{DynamicResource GalleryText.SearchDocuments}"
+                                 AutomationProperties.LabeledBy="{Binding #SurfaceLabel}" />
+            </StackPanel>
+          </Border>
+        </WrapPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var searchField1 = new AlderSearchField { PlaceholderText = "Search projects..." };
+
+        var searchField2 = new AlderSearchField
+        {
+            FullWidth = true,
+            Variant = InputVariant.Secondary,
+            PlaceholderText = "Search documents...",
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleControlledSearch" Title="{DynamicResource GalleryText.ControlledSearch}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="400" Spacing="4" HorizontalAlignment="Left">
+          <Grid ColumnDefinitions="*,Auto">
+            <alder:AlderLabel x:Name="QueryLabel" Theme="{StaticResource AlderLabelTheme}" Target="{Binding #ShortcutSearch}" Content="{DynamicResource GalleryText.FindAProject}" />
+            <Border Grid.Column="1" Padding="5,2" CornerRadius="4" Background="{DynamicResource AlderNeutral}">
+              <alder:AlderTextBlock FontSize="12" Foreground="{DynamicResource AlderInk}" Text="{Binding ShortcutLabel}" />
+            </Border>
+          </Grid>
+          <alder:AlderSearchField x:Name="ShortcutSearch" FullWidth="True" IsRequired="True" IsInvalid="{Binding IsQueryInvalid}"
+                             Text="{Binding Query, Mode=TwoWay}" SubmitCommand="{Binding Submit}" PlaceholderText="{DynamicResource GalleryText.SearchProjectsPlaceholder}"
+                             AutomationProperties.LabeledBy="{Binding #QueryLabel}"
+                             AutomationProperties.HelpText="{DynamicResource GalleryText.EnterAtLeastThreeCharactersAndPressEnter}" />
+          <alder:AlderTextBlock Classes="detail" Text="{DynamicResource GalleryText.EnterAtLeastThreeCharactersAndPressEnter}" IsVisible="{Binding !IsQueryInvalid}" />
+          <alder:AlderTextBlock Classes="detail error" Text="{DynamicResource GalleryText.EnterAtLeastThreeCharacters}" IsVisible="{Binding IsQueryInvalid}" />
+          <alder:AlderTextBlock Classes="detail" Text="{Binding Status}" AutomationProperties.LiveSetting="Polite"
+                     IsVisible="{Binding Status, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var searchField = new AlderSearchField
+        {
+            FullWidth = true,
+            IsRequired = true,
+            PlaceholderText = "Search projects...",
+        };
+        searchField.Bind(AlderSearchField.IsInvalidProperty, CompiledBinding.Create((SearchFieldViewModel model) => model.IsQueryInvalid));
+        searchField.Bind(AlderSearchField.TextProperty, CompiledBinding.Create((SearchFieldViewModel model) => model.Query, mode: BindingMode.TwoWay));
+        searchField.Bind(AlderSearchField.SubmitCommandProperty, CompiledBinding.Create((SearchFieldViewModel model) => model.Submit));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSearchForm" Title="{DynamicResource GalleryText.SearchFormTitle}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="280" Spacing="16">
+          <StackPanel Spacing="4">
+            <alder:AlderLabel x:Name="FormSearchLabel" Content="{DynamicResource GalleryText.SearchFormLabel}"
+                              IsRequired="True" IsInvalid="{CompiledBinding IsFormInvalid}"
+                              Target="{CompiledBinding #FormSearch}" />
+            <alder:AlderSearchField x:Name="FormSearch" FullWidth="True" IsRequired="True"
+                                    Text="{CompiledBinding FormQuery, Mode=TwoWay}" IsInvalid="{CompiledBinding IsFormInvalid}"
+                                    SubmitCommand="{CompiledBinding SubmitForm}"
+                                    PlaceholderText="{DynamicResource GalleryText.SearchFormPlaceholder}"
+                                    AutomationProperties.LabeledBy="{CompiledBinding #FormSearchLabel}"
+                                    AutomationProperties.HelpText="{DynamicResource GalleryText.SearchFormHint}" />
+            <alder:AlderTextBlock Classes="detail" FontSize="12" LineHeight="16" TextWrapping="Wrap"
+                                  IsVisible="{CompiledBinding !IsFormInvalid}" Text="{DynamicResource GalleryText.SearchFormHint}" />
+            <alder:AlderTextBlock FontSize="12" LineHeight="16" TextWrapping="Wrap" Foreground="{DynamicResource AlderDanger}"
+                                  IsVisible="{CompiledBinding IsFormInvalid}" Text="{DynamicResource GalleryText.SearchFormError}"
+                                  AutomationProperties.LiveSetting="Polite" />
+          </StackPanel>
+          <alder:AlderButton FullWidth="True" Command="{CompiledBinding SubmitForm}" CommandParameter="{CompiledBinding FormQuery}"
+                             IsPending="{CompiledBinding IsFormSubmitting}" Content="{CompiledBinding FormButtonLabel}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new SearchFieldViewModel();
+        var field = new AlderSearchField
+        {
+            FullWidth = true, IsRequired = true, PlaceholderText = "Search products...",
+            SubmitCommand = model.SubmitForm
+        };
+        field.Bind(AlderSearchField.TextProperty,
+            CompiledBinding.Create((SearchFieldViewModel vm) => vm.FormQuery, mode: BindingMode.TwoWay));
+        field.Bind(AlderSearchField.IsInvalidProperty,
+            CompiledBinding.Create((SearchFieldViewModel vm) => vm.IsFormInvalid));
+        var label = new AlderLabel { Content = "Search products", IsRequired = true, Target = field };
+        label.Bind(AlderLabel.IsInvalidProperty,
+            CompiledBinding.Create((SearchFieldViewModel vm) => vm.IsFormInvalid));
+        AutomationProperties.SetLabeledBy(field, label);
+        var hint = new AlderTextBlock
+        {
+            Text = "Enter at least 3 characters to search", FontSize = 12, LineHeight = 16,
+            TextWrapping = TextWrapping.Wrap
+        };
+        hint[!AlderTextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        hint.Bind(AlderTextBlock.IsVisibleProperty,
+            CompiledBinding.Create((SearchFieldViewModel vm) => !vm.IsFormInvalid));
+        var error = new AlderTextBlock
+        {
+            Text = "Search query must be at least 3 characters", FontSize = 12, LineHeight = 16,
+            TextWrapping = TextWrapping.Wrap
+        };
+        error[!AlderTextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderDanger");
+        AutomationProperties.SetLiveSetting(error, AutomationLiveSetting.Polite);
+        error.Bind(AlderTextBlock.IsVisibleProperty,
+            CompiledBinding.Create((SearchFieldViewModel vm) => vm.IsFormInvalid));
+        var submit = new AlderButton { FullWidth = true, Command = model.SubmitForm };
+        submit.Bind(AlderButton.CommandParameterProperty,
+            CompiledBinding.Create((SearchFieldViewModel vm) => vm.FormQuery));
+        submit.Bind(AlderButton.IsPendingProperty,
+            CompiledBinding.Create((SearchFieldViewModel vm) => vm.IsFormSubmitting));
+        submit.Bind(AlderButton.ContentProperty,
+            CompiledBinding.Create((SearchFieldViewModel vm) => vm.FormButtonLabel));
+        var preview = new StackPanel
+        {
+            DataContext = model, MaxWidth = 280, Spacing = 16,
+            Children = { new StackPanel { Spacing = 4, Children = { label, field, hint, error } }, submit }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderSearchField IsEnabled="False" Text="{DynamicResource GalleryText.DisabledSearch}" AutomationProperties.Name="{DynamicResource GalleryText.DisabledSearch}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var searchField = new AlderSearchField { IsEnabled = false, Text = "Disabled search" };
+        AutomationProperties.SetName(searchField, "Disabled search");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleReadOnly" Title="{DynamicResource GalleryText.ReadOnly}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderSearchField IsReadOnly="True" Text="{DynamicResource GalleryText.ArchivedProjects}" AutomationProperties.Name="{DynamicResource GalleryText.ReadOnlySearch}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var searchField = new AlderSearchField { IsReadOnly = true, Text = "Archived projects" };
+        AutomationProperties.SetName(searchField, "Read-only search");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSearchSitesWithCustomIcons" Title="{DynamicResource GalleryText.SearchSitesWithCustomIcons}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderSearchField SearchIcon="{StaticResource AlderIconGlobe}" ClearIcon="{StaticResource AlderIconTrash}"
+                           PlaceholderText="{DynamicResource GalleryText.SearchSites}" AutomationProperties.Name="{DynamicResource GalleryText.SearchSitesWithCustomIcons}" />
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var searchField = new AlderSearchField
+        {
+            SearchIcon = (Geometry)this.FindResource("AlderIconGlobe")!,
+            ClearIcon = (Geometry)this.FindResource("AlderIconTrash")!,
+            PlaceholderText = "Search sites...",
+        };
+        AutomationProperties.SetName(searchField, "Search sites with custom icons");
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleSearchShortcut" Title="{DynamicResource GalleryText.SearchShortcutTitle}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="336" Spacing="16">
+          <StackPanel Spacing="4">
+            <alder:AlderLabel x:Name="KeyboardSearchLabel" Content="{DynamicResource GalleryText.Search}"
+                              Target="{CompiledBinding #KeyboardSearch}" />
+            <alder:AlderSearchField x:Name="KeyboardSearch" FullWidth="True"
+                                    PlaceholderText="{DynamicResource GalleryText.SearchFieldPrompt}"
+                                    AutomationProperties.LabeledBy="{CompiledBinding #KeyboardSearchLabel}"
+                                    AutomationProperties.HelpText="{DynamicResource GalleryText.SearchShortcutHint}" />
+            <alder:AlderTextBlock Classes="detail" FontSize="12" LineHeight="16" TextWrapping="Wrap"
+                                  Text="{DynamicResource GalleryText.SearchShortcutHint}" />
+          </StackPanel>
+          <WrapPanel ItemSpacing="8" LineSpacing="4">
+            <alder:AlderTextBlock Classes="detail" FontSize="14" VerticalAlignment="Center" Text="{DynamicResource GalleryText.SearchShortcutPress}" />
+            <alder:AlderKbd FlowDirection="LeftToRight"><alder:AlderKbdKey KeyValue="Shift" /><x:String>S</x:String></alder:AlderKbd>
+            <alder:AlderTextBlock Classes="detail" FontSize="14" VerticalAlignment="Center" Text="{DynamicResource GalleryText.SearchShortcutAction}" />
+          </WrapPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var field = new AlderSearchField { FullWidth = true, PlaceholderText = "Search..." };
+        var label = new AlderLabel { Content = "Search", Target = field };
+        AutomationProperties.SetLabeledBy(field, label);
+        var keys = new AlderKbd { Items = { new AlderKbdKey { KeyValue = KbdKey.Shift }, "S" } };
+        AlderTextBlock Note(string text, double size)
+        {
+            var note = new AlderTextBlock { Text = text, FontSize = size, TextWrapping = TextWrapping.Wrap,
+                                           VerticalAlignment = VerticalAlignment.Center };
+            note[!AlderTextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+            return note;
+        }
+        var hint = Note("Use the keyboard shortcut to quickly focus this field", 12);
+        hint.LineHeight = 16;
+        var preview = new StackPanel
+        {
+            MaxWidth = 336, Spacing = 16, Children =
+            {
+                new StackPanel { Spacing = 4, Children = { label, field, hint } },
+                new WrapPanel { ItemSpacing = 8, LineSpacing = 4,
+                    Children = { Note("Press", 14), keys, Note("to focus the search field", 14) } }
+            }
+        };
+
+        // Add this tunneling handler to the top level on attach and remove it on detach.
+        void OnShortcutKeyDown(object? sender, KeyEventArgs e)
+        {
+            if (!field.IsEffectivelyVisible || sender is not TopLevel { FocusManager: { } focus }) return;
+            if (e.Key == Key.S && e.KeyModifiers == KeyModifiers.Shift && focus.GetFocusedElement() is not TextBox)
+                e.Handled = field.Focus();
+            else if (e.Key == Key.Escape && e.KeyModifiers == KeyModifiers.None && field.IsKeyboardFocusWithin &&
+                     string.IsNullOrEmpty(field.Text) &&
+                     !field.GetVisualDescendants().OfType<TextPresenter>().Any(text => !string.IsNullOrEmpty(text.PreeditText)))
+                e.Handled = focus.Focus(null);
+        }
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>
