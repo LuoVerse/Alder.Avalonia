@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Layout;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
@@ -72,6 +73,18 @@ public sealed partial class AlderDataGrid : AlderTable
     internal ScrollViewer? GridScroll => NativeView?.Scroll as ScrollViewer;
     internal double HorizontalOffset => GridScroll?.Offset.X ?? 0;
     internal double ViewportWidth => GridScroll?.Viewport.Width is > 0 and var width ? width : Bounds.Width;
+
+    internal static IDisposable? KeepRowActionPointerInput(Control anchor, MenuFlyout menu)
+    {
+        var property = PopupFlyoutBase.OverlayInputPassThroughElementProperty;
+        if (anchor is not Button || menu.IsSet(property) ||
+            anchor.FindAncestorOfType<TableViewCell>()?.FindAncestorOfType<AlderTableView>()?.OwnerTable is not AlderDataGrid)
+            return null;
+
+        // Avalonia copies the setting when showing the popup. A scoped default keeps
+        // the anchor hit-testable without retaining it on a shared flyout.
+        return menu.SetValue(property, anchor, BindingPriority.Style);
+    }
 
     /// <inheritdoc />
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)

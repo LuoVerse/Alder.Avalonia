@@ -832,10 +832,10 @@ public class Interactions
         Assert.Equal("North Carolina", autocomplete.SelectionText);
         Assert.False(autocomplete.IsDropDownOpen);
         var remaining = Assert.Single(wrap.GetVisualDescendants().OfType<Button>());
-        Assert.True(remaining.IsFocused);
+        Assert.True(trigger.IsFocused);
+        Assert.DoesNotContain(":focus-visible", trigger.Classes);
         Assert.DoesNotContain(":focus-visible", remaining.Classes);
 
-        trigger.Focus(NavigationMethod.Pointer);
         remaining.Focus(NavigationMethod.Tab);
         Assert.Contains(":focus-visible", remaining.Classes);
         Press(window, PhysicalKey.Space);
@@ -844,6 +844,56 @@ public class Interactions
         Assert.True(trigger.IsFocused);
         Assert.Contains(":focus-visible", trigger.Classes);
         window.Close();
+    }
+
+    [AvaloniaFact]
+    public void AutocompletePointerRemovalKeepsDropdownOpenAndReturnsFocusToTrigger()
+    {
+        var autocomplete = new AlderAutocomplete
+        {
+            ItemsSource = new[] { "Florida", "Delaware", "California", "Texas" },
+            SelectionMode = SelectionMode.Multiple,
+            ShowSelectionTags = true,
+            ShowClearButton = false,
+            Width = 256,
+            Label = "States to Visit"
+        };
+        AlderMotion.SetReduced(autocomplete, true);
+        var window = Show(autocomplete);
+        AlderMotion.SetReduced(window, true);
+        try
+        {
+            foreach (var item in autocomplete.Items.Take(3))
+                autocomplete.SelectedItems!.Add(item);
+            autocomplete.IsDropDownOpen = true;
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+
+            var search = window.GetVisualDescendants().OfType<AlderSearchField>().Single();
+            var trigger = autocomplete.GetVisualDescendants().OfType<Button>().Single(x => x.Name == "PART_Trigger");
+            var tags = autocomplete.GetVisualDescendants().OfType<WrapPanel>().Single(x => x.Name == "PART_SelectionTags");
+            var remove = tags.GetVisualDescendants().OfType<AlderButton>().First();
+            Assert.True(search.Focus(NavigationMethod.Tab));
+            Assert.True(remove.Focus(NavigationMethod.Tab));
+            Assert.Contains(":focus-visible", remove.Classes);
+            var point = remove.TranslatePoint(new Rect(remove.Bounds.Size).Center, window)!.Value;
+            window.MouseDown(point, MouseButton.Left);
+            window.MouseUp(point, MouseButton.Left);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Equal(new[] { "Delaware", "California" }, autocomplete.SelectedItems!.Cast<string>());
+            Assert.True(autocomplete.IsDropDownOpen);
+            Assert.True(trigger.IsFocused);
+            Assert.DoesNotContain(":focus-visible", trigger.Classes);
+            Assert.False(search.IsFocused);
+            Assert.All(tags.GetVisualDescendants().OfType<AlderButton>(),
+                button => Assert.False(button.IsFocused));
+
+            Press(window, PhysicalKey.ArrowDown);
+            Press(window, PhysicalKey.Enter);
+            Assert.Contains("Florida", autocomplete.SelectedItems!.Cast<string>());
+        }
+        finally { window.Close(); }
     }
 
     [AvaloniaFact]

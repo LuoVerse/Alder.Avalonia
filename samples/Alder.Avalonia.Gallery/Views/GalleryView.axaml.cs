@@ -86,13 +86,13 @@ public partial class GalleryView : UserControl
         ["Widget"] = new(() => CreatePage(CreateExamples(new WidgetExample(), new ProDataDisplayViewModel()))),
         ["Agenda"] = new(() => CreatePage(new AgendaExample())),
         ["Carousel"] = new(() => CreatePage(new CarouselExample())),
-        ["DateAndTime"] = new(() => CreateDeferredPage(() => [
-            CreateExamples(new CalendarExample(), new CalendarViewModel(), "Calendar"),
-            CreateExamples(new DateFieldExample(), new DateFieldViewModel(), "DateField"),
-            CreateExamples(new DatePickerExample(), new DatePickerViewModel(), "DatePicker"),
-            CreateExamples(new DateRangePickerExample(), new DateRangePickerViewModel(), "DateRangePicker"),
-            CreateExamples(new RangeCalendarExample(), new RangeCalendarViewModel(), "RangeCalendar"),
-            CreateExamples(new TimeFieldExample(), new TimeFieldViewModel(), "TimeField")])),
+        ["DateAndTime"] = new(() => CreateSectionPage(
+            ("Calendar", new CalendarExample(), new CalendarViewModel()),
+            ("DateField", new DateFieldExample(), new DateFieldViewModel()),
+            ("DatePicker", new DatePickerExample(), new DatePickerViewModel()),
+            ("DateRangePicker", new DateRangePickerExample(), new DateRangePickerViewModel()),
+            ("RangeCalendar", new RangeCalendarExample(), new RangeCalendarViewModel()),
+            ("TimeField", new TimeFieldExample(), new TimeFieldViewModel()))),
         ["Accordion"] = new(() => CreatePage(CreateExamples(new AccordionExample(), new AccordionViewModel()))),
         ["AppLayout"] = new(() => CreateDeferredPage(() => [CreateExamples(new AppLayoutExample(), new AppLayoutViewModel(), completeNavigationSources: true)])),
         ["Breadcrumbs"] = new(() => CreatePage(CreateExamples(new BreadcrumbsExample(), new BreadcrumbsViewModel()))),
@@ -221,28 +221,33 @@ public partial class GalleryView : UserControl
             !pages.TryGetValue(link.PageKey, out var page)) return;
 
         model.SelectedItem = item;
+        // Resolve the link after deferred example groups have been built and laid out.
         Dispatcher.UIThread.Post(() =>
         {
             if (!ReferenceEquals(model.SelectedItem, item)) return;
             var root = page.Value;
+            if (link.SectionName is { } name && ((StackPanel)root.Content!).Children.OfType<GalleryExampleList>()
+                .FirstOrDefault()?.RevealSection(name, link.ExampleName, link.ShowCode) == true)
+                return;
+
             Control section = link.SectionName is null ? root :
                 root.GetLogicalDescendants().OfType<StackPanel>().FirstOrDefault(group => group.Name == link.SectionName)
                 ?? (Control)root;
             var descendants = section.GetLogicalDescendants();
-            var list = descendants.OfType<GalleryExampleList>()
-                .FirstOrDefault(group => group.Items.OfType<ExampleCard>().Any(card => card.Name == link.ExampleName));
-            var example = (list?.Items.OfType<ExampleCard>() ?? descendants.OfType<ExampleCard>())
-                .FirstOrDefault(card => card.Name == link.ExampleName);
+            var (list, card) = descendants.OfType<GalleryExampleList>()
+                .Select(group => (group, group.FindExample(link.ExampleName)))
+                .FirstOrDefault(match => match.Item2 is not null);
+            var example = card ?? descendants.OfType<ExampleCard>().FirstOrDefault(exampleCard => exampleCard.Name == link.ExampleName);
             if (example is null)
             {
                 section.BringIntoView(new Rect(0, 0, section.Bounds.Width, 48));
                 return;
             }
 
-            list?.ScrollIntoView(example);
             if (link.ShowCode) example.ShowAxaml();
-            example.BringIntoView(new Rect(0, 0, example.Bounds.Width, 48));
-        }, DispatcherPriority.Background);
+            if (list is not null) list.Reveal(example);
+            else example.BringIntoView(new Rect(0, 0, example.Bounds.Width, 48));
+        }, DispatcherPriority.ApplicationIdle);
     }
 
     private static ScrollViewer CreateDeferredPage(Func<Control[]> createExamples)
@@ -266,7 +271,10 @@ public partial class GalleryView : UserControl
                 stack.AttachedToVisualTree -= LoadExamples;
                 stack.Children.Remove(loading);
                 foreach (var example in examples)
+                {
+                    VirtualizeExamples(example);
                     stack.Children.Add(example);
+                }
             }, DispatcherPriority.Background);
         }
     }
@@ -275,22 +283,62 @@ public partial class GalleryView : UserControl
     {
         var stack = new StackPanel { Spacing = 20, Classes = { "galleryPage" } };
         foreach (var group in groups)
+        {
+            VirtualizeExamples(group);
             stack.Children.Add(group);
+        }
         return new AlderScrollViewer { Content = stack, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
+    }
+
+    private static ScrollViewer CreateSectionPage(params (string Title, GalleryExampleSection Section, object Model)[] groups)
+    {
+        var sections = new GalleryExampleList();
+        foreach (var (title, section, model) in groups)
+        {
+            section.DataContext = model;
+            ExampleSource.Attach(section);
+            sections.AddSection(title, CreateSectionHeading(title), section);
+        }
+        return CreatePage(sections);
+    }
+
+    private static void VirtualizeExamples(Control group)
+    {
+        if (group is StackPanel section)
+        {
+            foreach (var child in section.Children)
+                VirtualizeExamples(child);
+        }
+        else if (group is UserControl { Content: StackPanel stack } &&
+                 stack.Children.Count > 1 && stack.Children.All(child => child is ExampleCard))
+        {
+            // Retain the AXAML panel as the resource, styling, and container-query scope.
+            var cards = stack.Children.ToArray();
+            var list = new GalleryExampleList { Spacing = stack.Spacing };
+            stack.Children.Clear();
+            foreach (var card in cards)
+                list.Add(card);
+            stack.Children.Add(list);
+        }
     }
 
     private static Control CreateExamples(UserControl view, object model, string? title = null, bool completeNavigationSources = false)
     {
         view.DataContext = model;
         if (completeNavigationSources) ExampleSource.AttachNavigation(view);
-        else ExampleSource.Attach(view, defer: view.Content is GalleryExampleList);
+        else ExampleSource.Attach(view);
 
         if (title is null)
             return view;
 
+        return new StackPanel { Name = title, Spacing = 12, Children = { CreateSectionHeading(title), view } };
+    }
+
+    private static AlderTextBlock CreateSectionHeading(string title)
+    {
         var heading = new AlderTextBlock { FontSize = 20, FontWeight = FontWeight.SemiBold };
         heading[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText." + title);
         heading[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderInk");
-        return new StackPanel { Name = title, Spacing = 12, Children = { heading, view } };
+        return heading;
     }
 }

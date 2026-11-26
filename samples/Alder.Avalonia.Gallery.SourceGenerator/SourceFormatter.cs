@@ -2,7 +2,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace Alder.Avalonia.Gallery.Controls;
+namespace Alder.Avalonia.Gallery.SourceGenerator;
 
 internal static class SourceFormatter
 {
@@ -11,7 +11,7 @@ internal static class SourceFormatter
         var lines = source.Trim('\n').TrimEnd().Split('\n');
         var indent = lines.Where(line => !string.IsNullOrWhiteSpace(line))
             .Min(line => line.Length - line.TrimStart().Length);
-        return string.Join('\n', lines.Select(line => string.IsNullOrWhiteSpace(line) ? "" : line[indent..]));
+        return string.Join("\n", lines.Select(line => string.IsNullOrWhiteSpace(line) ? "" : line.Substring(indent)));
     }
 
     public static string AxamlFragment(XElement element, IEnumerable<XAttribute> namespaces)
@@ -19,9 +19,10 @@ internal static class SourceFormatter
         // Use the containing view's prefixes while formatting, then display just the fragment.
         var wrapper = new XElement(element.Name.Namespace + "Snippet", namespaces, new XElement(element));
         var formatted = Axaml(wrapper.ToString(SaveOptions.DisableFormatting));
-        var body = formatted[(formatted.IndexOf('>') + 1)..formatted.LastIndexOf("</", StringComparison.Ordinal)];
+        int start = formatted.IndexOf('>') + 1;
+        var body = formatted.Substring(start, formatted.LastIndexOf("</", StringComparison.Ordinal) - start);
         var lines = body.Trim('\n').Split('\n');
-        return string.Join('\n', lines.Select(line => line.StartsWith("  ", StringComparison.Ordinal) ? line[2..] : line));
+        return string.Join("\n", lines.Select(line => line.StartsWith("  ", StringComparison.Ordinal) ? line.Substring(2) : line));
     }
 
     private static string Axaml(string source)

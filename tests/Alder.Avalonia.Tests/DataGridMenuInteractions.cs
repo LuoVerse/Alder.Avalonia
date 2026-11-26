@@ -174,6 +174,42 @@ public sealed class DataGridMenuInteractions
         finally { window.Close(); }
     }
 
+    [AvaloniaTheory]
+    [InlineData(TableColumnPin.None, false)]
+    [InlineData(TableColumnPin.End, false)]
+    [InlineData(TableColumnPin.End, true)]
+    public void StandardRowMenuGetsATemporaryAnchorAndPreservesExplicitTargets(TableColumnPin pin, bool explicitTarget)
+    {
+        var grid = CreateGrid([new Row(1)], 160, new RowCommand(_ => { }));
+        grid.Columns[1].Pin = pin;
+        var window = new Window { Width = 540, Height = 340, Content = grid };
+        AlderMotion.SetReduced(window, true);
+        window.Show();
+        try
+        {
+            Pump(window);
+            var scroll = grid.GridScroll!;
+            scroll.Offset = new Vector(scroll.ScrollBarMaximum.X, 0);
+            Pump(window);
+            var button = ActionButton(grid, 0);
+            var menu = new MenuFlyout { Items = { new AlderMenuItem { Header = "Edit" } } };
+            menu.Popup.ShouldUseOverlayLayer = true;
+            if (explicitTarget) menu.OverlayInputPassThroughElement = grid;
+            button.Flyout = menu;
+
+            var point = button.TranslatePoint(new Rect(button.Bounds.Size).Center, window)!.Value;
+            window.MouseMove(point);
+            window.MouseDown(point, MouseButton.Left);
+            window.MouseUp(point, MouseButton.Left);
+            Pump(window);
+
+            Assert.True(menu.IsOpen);
+            Assert.Same(explicitTarget ? (Control)grid : button, menu.Popup.OverlayInputPassThroughElement);
+            Assert.Same(explicitTarget ? grid : null, menu.OverlayInputPassThroughElement);
+        }
+        finally { window.Close(); }
+    }
+
     private static AlderDataGrid CreateGrid(Row[] rows, double menuWidth, ICommand action)
     {
         var grid = new AlderDataGrid { ItemsSource = rows, RowKeySelector = row => ((Row)row).Id, RowHeight = 56 };

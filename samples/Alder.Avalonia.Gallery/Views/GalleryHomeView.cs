@@ -19,6 +19,7 @@ internal sealed class GalleryHomeView : UserControl
 {
     private readonly GalleryHomeViewModel model = new();
     private readonly Action<GalleryHomeLink> openExample;
+    private readonly GalleryExampleList sections = new() { Spacing = 28 };
 
     public GalleryHomeView(Action<GalleryHomeLink> openExample)
     {
@@ -89,7 +90,9 @@ internal sealed class GalleryHomeView : UserControl
                     Tile("HoverCard", Inline(new HoverCardExample { DataContext = new HoverCardViewModel() }, "Usage", 143), new("HoverCard", "Usage")))),
             Tile("FloatingToc", Inline(new FloatingTocExample(), "InPage", 300), new("FloatingToc", "InPage")));
 
-        var page = Stack(28, Intro(basics), QuickStart(), basics, navigation, data, advanced);
+        foreach (var section in new Control[] { Intro(basics), QuickStart(), basics, navigation, data, advanced })
+            sections.Add(section);
+        var page = Stack(0, sections);
         page.Classes.Add("galleryPage");
         Content = page;
     }
@@ -98,6 +101,8 @@ internal sealed class GalleryHomeView : UserControl
     {
         // Embedded selections can scroll their own controls without jumping the outer home page.
         // When keyboard focus moves into a preview, reveal it in the outer page too.
+        // The overview list's own requests implement the Browse shortcut.
+        if (e.TargetObject is Control container && ReferenceEquals(container.Parent, sections)) return;
         if (e.TargetObject is not Visual target ||
             TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement() is not Visual focused ||
             (target != focused && !target.IsVisualAncestorOf(focused)))
@@ -109,6 +114,7 @@ internal sealed class GalleryHomeView : UserControl
         var browse = Button("HomeBrowse", ButtonVariant.Primary);
         browse.Click += (_, _) =>
         {
+            sections.Reveal(basics);
             if (this.FindAncestorOfType<ScrollViewer>() is { } scroll && basics.TranslatePoint(default, scroll) is { } position)
                 scroll.Offset = new Vector(0, Math.Max(0, scroll.Offset.Y + position.Y - 24));
         };

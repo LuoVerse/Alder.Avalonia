@@ -47,11 +47,10 @@ public sealed class AlderColorArea : TemplatedControl
 
     private const int PlaneSize = 96;
     private static readonly IBrush DotBrush = new SolidColorBrush(Color.FromArgb(51, 255, 255, 255));
-    private static readonly IBrush SaturationGradient = Gradient(Brushes.White.Color, Color.FromArgb(0, 255, 255, 255), true);
-    private static readonly IBrush BrightnessGradient = Gradient(Color.FromArgb(0, 0, 0, 0), Colors.Black, false);
     private Border? thumb;
     private IBrush? surfaceMask;
     private WriteableBitmap? plane;
+    private ImageBrush? planeBrush;
     private (AlderColorValue Base, int X, int Y) planeKey;
     private IPointer? pointer;
     private AlderColorValue dragStart;
@@ -93,31 +92,29 @@ public sealed class AlderColorArea : TemplatedControl
         var (x, y) = GetAxes();
         var color = Value.InSpace(ColorSpace);
         var rounded = new RoundedRect(rect, CornerRadius);
-        using (surfaceMask is { } mask ? context.PushOpacityMask(mask, rect) : context.PushClip(rect))
+        bool showsTransparency = color.Alpha < 1 || x == 3 || y == 3;
+        UpdatePlane(color, x, y);
+
+        // A single rounded paint keeps the opaque plane's edge independent of its gradient layers.
+        if (!showsTransparency)
+            context.DrawRectangle(planeBrush, null, rounded);
+
+        if (showsTransparency || ShowDots)
         {
-            if (ColorSpace == ColorSpace.Hsb && x == 1 && y == 2 && color.Alpha == 1)
+            using var clip = surfaceMask is { } mask ? context.PushOpacityMask(mask, rect) : context.PushClip(rect);
+            if (showsTransparency)
             {
-                // The common saturation/brightness plane is three paints. It needs no bitmap on first open.
-                context.FillRectangle(new SolidColorBrush(AlderColorValue.FromHsb(color.Hue, 1, 1).ToColor()), rect);
-                context.FillRectangle(SaturationGradient, rect);
-                context.FillRectangle(BrightnessGradient, rect);
-            }
-            else
-            {
-                UpdatePlane(color, x, y);
-                if (color.Alpha < 1 || x == 3 || y == 3)
-                    context.FillRectangle(AlderColorRendering.Checkerboard, rect);
+                context.FillRectangle(AlderColorRendering.Checkerboard, rect);
                 context.DrawImage(plane!, rect);
             }
-
             if (ShowDots)
                 for (double row = rect.Y + 4; row < rect.Bottom; row += 8)
                     for (double column = rect.X + 4; column < rect.Right; column += 8)
                         context.DrawEllipse(DotBrush, null, new Point(column, row), 1, 1);
-
-            if (BorderBrush is { } border)
-                context.DrawRectangle(null, new Pen(border, 2), rounded);
         }
+
+        if (BorderBrush is { } border)
+            context.DrawRectangle(null, new Pen(border), rounded.Deflate(.5, .5));
     }
 
     private void UpdateThumbPosition()
@@ -136,15 +133,6 @@ public sealed class AlderColorArea : TemplatedControl
         if (change.Property == WidthProperty || change.Property == HeightProperty)
             UpdateThumbPosition();
     }
-
-    private static IBrush Gradient(Color start, Color end, bool horizontal) =>
-        new LinearGradientBrush
-        {
-            StartPoint = RelativePoint.TopLeft,
-            EndPoint = horizontal ? new RelativePoint(1, 0, RelativeUnit.Relative)
-                                  : new RelativePoint(0, 1, RelativeUnit.Relative),
-            GradientStops = { new GradientStop(start, 0), new GradientStop(end, 1) }
-        };
 
     /// <inheritdoc />
     protected override void OnPointerPressed(PointerPressedEventArgs e)
@@ -259,14 +247,21 @@ public sealed class AlderColorArea : TemplatedControl
         plane ??= new WriteableBitmap(new PixelSize(PlaneSize, PlaneSize), new Vector(96, 96),
                                      PixelFormat.Bgra8888, AlphaFormat.Premul);
 
+        planeBrush ??= new ImageBrush(plane) { Stretch = Stretch.Fill };
         using var pixels = plane.Lock();
         var rowBytes = new byte[4 * PlaneSize];
+        bool saturationBrightness = color.Space == ColorSpace.Hsb && x == 1 && y == 2 && color.Alpha == 1;
+        var hue = saturationBrightness ? AlderColorValue.FromHsb(color.Hue, 1, 1).ToColor() : default;
         for (int row = 0; row < PlaneSize; row++)
         {
-            var rowColor = baseline.With(y, 1 - row / (PlaneSize - 1d));
+            double yValue = 1 - row / (PlaneSize - 1d);
+            var rowColor = baseline.With(y, yValue);
             for (int column = 0; column < PlaneSize; column++)
             {
-                var sample = rowColor.With(x, column / (PlaneSize - 1d)).ToColor();
+                double xValue = column / (PlaneSize - 1d);
+                var sample = saturationBrightness
+                    ? Color.FromRgb(Shade(hue.R, xValue, yValue), Shade(hue.G, xValue, yValue), Shade(hue.B, xValue, yValue))
+                    : rowColor.With(x, xValue).ToColor();
                 int index = 4 * column;
                 rowBytes[index] = Premultiply(sample.B, sample.A);
                 rowBytes[index + 1] = Premultiply(sample.G, sample.A);
@@ -276,6 +271,9 @@ public sealed class AlderColorArea : TemplatedControl
             Marshal.Copy(rowBytes, 0, pixels.Address + row * pixels.RowBytes, rowBytes.Length);
         }
     }
+
+    private static byte Shade(byte channel, double saturation, double brightness) =>
+        (byte)Math.Round((255 - (255 - channel) * saturation) * brightness);
 
     private static byte Premultiply(byte color, byte alpha) => (byte)((color * alpha + 127) / 255);
 

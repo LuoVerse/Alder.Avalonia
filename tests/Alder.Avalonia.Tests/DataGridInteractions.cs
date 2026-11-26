@@ -397,7 +397,9 @@ public sealed class DataGridInteractions
     }
 
     [AvaloniaFact]
-    public async Task DraggedRowPreviewFollowsPointerWhileTheBodyAutoScrolls()
+    public Task DraggedRowPreviewFollowsPointerWhileTheBodyAutoScrolls() => VerifyDraggedRowPreview();
+
+    internal static async Task VerifyDraggedRowPreview(Action<Window>? configureWindow = null)
     {
         var column = Column("Task", 340);
         column.CellTemplate = new FuncDataTemplate<int>((id, _) => new TextBlock { Text = $"Task {id}" });
@@ -409,6 +411,8 @@ public sealed class DataGridInteractions
         var window = Show(grid);
         try
         {
+            configureWindow?.Invoke(window);
+            Pump(window);
             var view = View(grid);
             var row = view.ContainerFromIndex(0)!;
             var grip = DragHandle(view, 0);

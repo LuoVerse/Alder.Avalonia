@@ -121,7 +121,10 @@
     <Setter Property="Template">
       <ControlTemplate>
         <Grid Background="Transparent">
-          <alder:AlderRoundedFrame Name="Rail" CornerRadius="16" IsHitTestVisible="False">
+          <Border Name="OpaqueRail" CornerRadius="16" IsHitTestVisible="False"
+                  Background="{TemplateBinding Gradient}" BackgroundSizing="OuterBorderEdge"
+                  BorderBrush="{StaticResource AlderColorInset}" BorderThickness="1" />
+          <alder:AlderRoundedFrame Name="TranslucentRail" CornerRadius="16" IsVisible="False" IsHitTestVisible="False">
             <Panel Background="{x:Static alder:AlderColorRendering.Checkerboard}">
               <Border Background="{TemplateBinding Gradient}" />
               <Border CornerRadius="16" BorderBrush="{StaticResource AlderColorInset}" BorderThickness="1" />
@@ -145,6 +148,8 @@
         </Grid>
       </ControlTemplate>
     </Setter>
+    <Style Selector="^:translucent-track /template/ Border#OpaqueRail"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^:translucent-track /template/ alder|AlderRoundedFrame#TranslucentRail"><Setter Property="IsVisible" Value="True" /></Style>
     <Style Selector="^:vertical"><Setter Property="Width" Value="20" /><Setter Property="Height" Value="192" /></Style>
     <Style Selector="^:focus-visible /template/ Thumb"><Setter Property="Tag" Value="alder-color-focus" /></Style>
     <Style Selector="^:color-dragging /template/ Thumb"><Setter Property="Cursor" Value="SizeAll" /></Style>

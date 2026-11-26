@@ -1,8 +1,8 @@
-using Avalonia.Controls;
+using Alder.Avalonia.Gallery.Controls;
 
 namespace Alder.Avalonia.Gallery.Views;
 
-public partial class DatePickerExample : UserControl
+public partial class DatePickerExample : GalleryExampleSection
 {
     public DatePickerExample() => InitializeComponent();
 }

@@ -329,11 +329,6 @@
     </Style>
     <Style Selector="^.secondary:pointerover"><Setter Property="Background" Value="{DynamicResource AlderTableSecondaryHover}" /></Style>
     <Style Selector="^:selected"><Setter Property="Background" Value="{DynamicResource AlderTableRowSelected}" /></Style>
-    <Style Selector="^.data-grid-row[(alder|AlderMotion.Reduced)=False]">
-      <Setter Property="Transitions">
-        <Transitions><BrushTransition Property="Background" Duration="0:0:0.12" Easing="0.2,0,0,1" /></Transitions>
-      </Setter>
-    </Style>
     <Style Selector="^.grid-drag-source">
       <Setter Property="Background" Value="{DynamicResource AlderTableRowHover}" />
     </Style>

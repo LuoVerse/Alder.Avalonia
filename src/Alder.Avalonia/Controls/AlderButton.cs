@@ -108,6 +108,15 @@ public partial class AlderButton : Button
     }
 
     /// <inheritdoc />
+    protected override void OpenFlyout()
+    {
+        using var rowActionInput = Flyout is MenuFlyout menu && menu is not AlderMenuFlyout
+            ? AlderDataGrid.KeepRowActionPointerInput(this, menu)
+            : null;
+        base.OpenFlyout();
+    }
+
+    /// <inheritdoc />
     protected override void OnFlyoutOpened()
     {
         base.OnFlyoutOpened();

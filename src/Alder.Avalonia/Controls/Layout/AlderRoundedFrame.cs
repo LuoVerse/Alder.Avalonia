@@ -4,23 +4,19 @@ using Avalonia.Media;
 
 namespace Alder.Avalonia.Controls;
 
-internal sealed class AlderRoundedFrame : Decorator
+internal sealed class AlderRoundedFrame : Border
 {
-    public static readonly StyledProperty<CornerRadius> CornerRadiusProperty =
-        Border.CornerRadiusProperty.AddOwner<AlderRoundedFrame>();
-
-    public CornerRadius CornerRadius
-    {
-        get => GetValue(CornerRadiusProperty);
-        set => SetValue(CornerRadiusProperty, value);
-    }
-
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
-        if (change.Property == CornerRadiusProperty ||
-            (change.Property == BoundsProperty && change.GetOldValue<Rect>().Size != Bounds.Size))
-            OpacityMask = CreateMask(Bounds.Size, CornerRadius);
+        if (change.Property != CornerRadiusProperty) return;
+
+        bool rounded = CornerRadius != default;
+        ClipToBounds = rounded;
+        // The opaque mask opens a compositing layer inside the rounded clip.
+        // The clip antialiases the combined background and content once, at the render target's scale.
+        // Refresh the layer even when the old and new corner radii are both nonzero.
+        OpacityMask = rounded ? new SolidColorBrush(Colors.White) : null;
     }
 
     internal static IBrush? CreateMask(Size size, CornerRadius radius)

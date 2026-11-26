@@ -474,14 +474,18 @@ public abstract class AlderPicker : SelectingItemsControl
             var icon = new AlderPathIcon { Width = 8, Height = 8, IsHitTestVisible = false };
             icon[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconXmark");
             icon[!ForegroundProperty] = new DynamicResourceExtension("AlderInk");
-            var remove = new AlderButton { Content = icon, Width = 12, Height = 12, CornerRadius = new CornerRadius(6) };
+            var remove = new TagRemoveButton { Content = icon, Width = 12, Height = 12, CornerRadius = new CornerRadius(6) };
             remove[!ThemeProperty] = new DynamicResourceExtension("AlderPickerTagRemoveTheme");
             AutomationProperties.SetName(remove, text);
             remove[!AutomationProperties.HelpTextProperty] = new DynamicResourceExtension("AlderText.PickerRemove");
             remove.Click += (_, e) =>
             {
                 e.Handled = true;
-                if (!IsReadOnly) Selection.Deselect(index);
+                if (IsReadOnly) return;
+                // The pointer can activate a tag that already has visible keyboard focus.
+                // Move focus before the tag tree is rebuilt, so no sibling inherits that focus.
+                if (remove.IsPointerClick) FocusField(NavigationMethod.Pointer);
+                Selection.Deselect(index);
             };
             contents.Children.Add(remove);
         }
@@ -493,6 +497,25 @@ public abstract class AlderPicker : SelectingItemsControl
         tag[!Border.BackgroundProperty] = new DynamicResourceExtension(
             Variant == InputVariant.Secondary ? "AlderSurface" : "AlderNeutral");
         return tag;
+    }
+
+    private sealed class TagRemoveButton : AlderButton
+    {
+        internal bool IsPointerClick { get; private set; }
+
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
+        {
+            IsPointerClick = true;
+            try { base.OnPointerPressed(e); }
+            finally { IsPointerClick = false; }
+        }
+
+        protected override void OnPointerReleased(PointerReleasedEventArgs e)
+        {
+            IsPointerClick = true;
+            try { base.OnPointerReleased(e); }
+            finally { IsPointerClick = false; }
+        }
     }
 
     private void WriteText(string? text)

@@ -8,6 +8,7 @@ on:
       - 'Directory.Build.props'
       - 'samples/Alder.Avalonia.Gallery/**'
       - 'samples/Alder.Avalonia.Gallery.Browser/**'
+      - 'samples/Alder.Avalonia.Gallery.SourceGenerator/**'
       - 'src/Alder.Avalonia/**'
   workflow_dispatch:
 

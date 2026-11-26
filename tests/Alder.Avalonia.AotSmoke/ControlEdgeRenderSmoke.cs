@@ -37,6 +37,195 @@ internal static class ControlEdgeRenderSmoke
             }
         }
         VerifyRowHover();
+        foreach (double scale in new[] { 1d, 1.25d, 2d })
+        {
+            VerifyOpenColorPickerEdge(scale);
+            VerifyDataGridRowBoundary(TableVariant.Primary, scale);
+            VerifyDataGridRowBoundary(TableVariant.Secondary, scale);
+            VerifyDataGridActionMenu(TableColumnPin.End, scale);
+            VerifyDataGridActionMenu(TableColumnPin.None, scale);
+        }
+    }
+
+    private static void VerifyOpenColorPickerEdge(double scale)
+    {
+        var picker = new AlderColorPicker
+        {
+            Value = AlderColorValue.Parse("#3B82F6"), ShowAlpha = false, ShowField = false
+        };
+        var window = Show(new Border { Padding = new Thickness(19, 12, 0, 0), Child = picker }, ThemeVariant.Dark, scale);
+        try
+        {
+            using var initial = Capture(window);
+            picker.Open();
+            using var frame = Capture(window);
+            var area = window.GetVisualDescendants().OfType<AlderColorArea>().Single();
+            var hue = window.GetVisualDescendants().OfType<AlderColorSlider>().Single(x => x.Name == "Hue");
+            var surface = area.GetVisualAncestors().OfType<Border>().First(x => x.Name == "ColorPickerSurface");
+            var surfaceColor = ((ISolidColorBrush)surface.Background!).Color;
+            var plane = area.TranslatePoint(default, window)!.Value;
+            var rail = hue.TranslatePoint(default, window)!.Value;
+            int left = (int)(rail.X * scale);
+            int right = (int)((rail.X + hue.Bounds.Width) * scale) - 1;
+            int top = (int)(rail.Y * scale);
+            int bottom = (int)((rail.Y + hue.Bounds.Height) * scale) - 1;
+
+            for (int y = top; y <= bottom; y++)
+            for (int x = 0; x < (int)(6 * scale); x++)
+            {
+                VerifyCap(frame.GetPixel(left + x, y));
+                VerifyCap(frame.GetPixel(right - x, y));
+            }
+
+            int planeBottom = (int)((plane.Y + area.Bounds.Height) * scale) - 1;
+            for (int dy = 0; dy < (int)(6 * scale); dy++)
+            for (int dx = 0; dx < (int)(16 * scale); dx++)
+            {
+                var pixel = frame.GetPixel((int)(plane.X * scale) + dx, planeBottom - dy);
+                if (Math.Max(pixel.Red, Math.Max(pixel.Green, pixel.Blue)) > surfaceColor.B + 4)
+                    throw new InvalidOperationException($"Color Picker plane showed a bright lower edge ({scale}×): {pixel} at ({dx},{dy}).");
+            }
+
+            var sample = plane + new Vector(area.Bounds.Width * .85, area.Bounds.Height * .2);
+            var blue = Pixel(frame, sample, scale);
+            hue.Value = 120;
+            using var updated = Capture(window);
+            var green = Pixel(updated, sample, scale);
+            if (blue.Blue <= blue.Green || green.Green <= green.Blue || Difference(blue, green) < 48)
+                throw new InvalidOperationException($"Color Picker did not repaint the plane after changing hue ({scale}×): {blue} to {green}.");
+
+            void VerifyCap(SKColor pixel)
+            {
+                if (pixel.Green > surfaceColor.G + 4 || pixel.Blue > surfaceColor.B + 4)
+                    throw new InvalidOperationException($"Color Picker hue cap leaked a light edge ({scale}×): {pixel}.");
+            }
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyDataGridRowBoundary(TableVariant variant, double scale)
+    {
+        var grid = new AlderDataGrid { ItemsSource = new[] { "First", "Second" }, RowHeight = 36, Variant = variant };
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Header = "Item",
+            CellTemplate = new FuncDataTemplate<string>((item, _) => new TextBlock { Text = item })
+        });
+        var window = Show(new Border { Padding = new Thickness(16), Child = grid }, ThemeVariant.Dark, scale);
+        AlderMotion.SetReduced(window, false);
+        try
+        {
+            using var initial = Capture(window);
+            var rows = grid.GetVisualDescendants().OfType<Control>().Where(x => x.Classes.Contains("data-grid-row")).ToArray();
+            var first = rows[0].TranslatePoint(new Point(210, rows[0].Bounds.Height / 2), window)!.Value;
+            var second = rows[1].TranslatePoint(new Point(210, rows[1].Bounds.Height / 2), window)!.Value;
+            double boundary = (first.Y + second.Y) / 2;
+            var firstRest = Pixel(initial, first, scale);
+            var secondRest = Pixel(initial, second, scale);
+            window.MouseMove(first);
+            PumpFrames(160);
+            using var start = Capture(window);
+            var active = Pixel(start, first, scale);
+            if (Difference(active, firstRest) <= 2) throw new InvalidOperationException("DataGrid row did not show hover feedback.");
+
+            // Step pixel by pixel through the separator and sample both rows at every stop.
+            for (int step = -4; step <= 4; step++)
+            {
+                window.MouseMove(new Point(first.X, boundary + (step + .5) / scale));
+                PumpFrames(28);
+                using var frame = Capture(window);
+                bool firstHover = Difference(Pixel(frame, first, scale), firstRest) > 1;
+                bool secondHover = Difference(Pixel(frame, second, scale), secondRest) > 1;
+                if (firstHover != (step < 0) || secondHover != (step >= 0))
+                    throw new InvalidOperationException($"DataGrid hover was unstable at the separator ({variant}, {scale}×, step {step}, rows {firstHover}/{secondHover}).");
+            }
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyDataGridActionMenu(TableColumnPin pin, double scale)
+    {
+        var grid = new AlderDataGrid { ItemsSource = new[] { "First", "Second" }, RowHeight = 42 };
+        grid.Columns.Add(new AlderTableColumn { Header = "Item", Width = new GridLength(430) });
+        grid.Columns.Add(new AlderTableColumn
+        {
+            Pin = pin, Width = new GridLength(64),
+            CellTemplate = new FuncDataTemplate<string>((_, _) => new AlderButton
+            {
+                Theme = (ControlTheme)Application.Current!.FindResource("AlderDataGridRowActionsButtonTheme")!,
+                Flyout = new AlderDropdownFlyout { Items = { new AlderMenuItem { Header = "Edit" } } }
+            })
+        });
+
+        var window = Show(new Border { Padding = new Thickness(16), Child = grid }, ThemeVariant.Dark, scale);
+        AlderMotion.SetReduced(window, false);
+        try
+        {
+            using var initial = Capture(window);
+            var scroll = grid.GridScroll!;
+            scroll.Offset = new Vector(scroll.ScrollBarMaximum.X, 0);
+            using var scrolled = Capture(window);
+            var row = grid.GetVisualDescendants().OfType<TableViewRow>().First();
+            var button = row.GetVisualDescendants().OfType<AlderButton>().Single();
+            var menu = (AlderDropdownFlyout)button.Flyout!;
+            var point = button.TranslatePoint(new Rect(button.Bounds.Size).Center, window)!.Value;
+            var rowSample = row.TranslatePoint(new Point(scroll.Offset.X + 70, 5), window)!.Value;
+            var cellSample = point + new Vector(-23, 0);
+            var rest = ReadColors(scrolled);
+
+            window.MouseMove(point);
+            using var hover = Capture(window);
+            var highlighted = ReadColors(hover);
+            if (highlighted == rest)
+                throw new InvalidOperationException($"The row action did not hover ({pin}, {scale}×).");
+
+            Click(point);
+            if (!menu.IsOpen)
+                throw new InvalidOperationException($"The row action menu did not open ({pin}, {scale}×).");
+            for (int frame = 0; frame < 4; frame++)
+            {
+                PumpFrames(28);
+                window.MouseMove(point + new Vector(frame % 2, 0));
+                VerifyHover();
+            }
+
+            Click(point);
+            VerifyHover();
+            PumpFrames(160);
+            if (menu.IsOpen)
+                throw new InvalidOperationException($"The row action menu did not close from its trigger ({pin}, {scale}×).");
+            VerifyHover();
+
+            Click(point);
+            Click(new Point(2, 2));
+            PumpFrames(160);
+            using var dismissed = Capture(window);
+            if (menu.IsOpen || ReadColors(dismissed) != rest)
+                throw new InvalidOperationException($"Dismissing the row action menu left stale hover ({pin}, {scale}×).");
+
+            (SKColor Row, SKColor Cell) ReadColors(SKBitmap frame) =>
+                (Pixel(frame, rowSample, scale), Pixel(frame, cellSample, scale));
+
+            void VerifyHover()
+            {
+                using var frame = Capture(window);
+                if (ReadColors(frame) != highlighted)
+                    throw new InvalidOperationException($"The row background flashed while opening or closing its action menu ({pin}, {scale}×).");
+            }
+
+            void Click(Point position)
+            {
+                window.MouseDown(position, MouseButton.Left);
+                window.MouseUp(position, MouseButton.Left);
+            }
+        }
+        finally { window.Close(); }
+    }
+
+    private static void PumpFrames(int milliseconds)
+    {
+        using var done = new CancellationTokenSource(TimeSpan.FromMilliseconds(milliseconds));
+        Dispatcher.UIThread.MainLoop(done.Token);
     }
 
     private static void VerifyRoundedWindow(ThemeVariant theme, double scale)
@@ -56,6 +245,10 @@ internal static class ControlEdgeRenderSmoke
         {
             using var presented = Capture(window);
             var frame = window.GetVisualDescendants().OfType<Control>().Single(x => x.Name == "PART_WindowFrame");
+            var layerMask = frame.OpacityMask;
+            frame.OpacityMask = null;
+            using var singleSurface = CaptureVisual(frame, scale);
+            frame.OpacityMask = layerMask;
             using var backgroundOnly = CaptureVisual(frame, scale);
             cover.IsVisible = true;
             window.UpdateLayout();
@@ -68,12 +261,27 @@ internal static class ControlEdgeRenderSmoke
                 var a = backgroundOnly.GetPixel(x, y);
                 var b = withContent.GetPixel(x, y);
                 if (a.Alpha is > 5 and < 250) blended++;
+                var single = singleSurface.GetPixel(x, y);
+                if (Math.Abs(single.Alpha - a.Alpha) > 1)
+                    throw new InvalidOperationException($"Window corner alpha differs from a single rounded surface at ({x},{y}): {a.Alpha} vs {single.Alpha} ({theme.Key}, {scale}×).");
                 if (Math.Abs(a.Alpha - b.Alpha) > 1 || Difference(a, b) > 2)
                     throw new InvalidOperationException($"Window content changed corner coverage at ({x},{y}) ({theme.Key}, {scale}×): {a} vs {b}.");
             }
 
             if (blended == 0 || withContent.GetPixel(0, 0).Alpha != 0)
                 throw new InvalidOperationException($"Window lost its antialiased transparent corner ({theme.Key}, {scale}×), {blended} blended pixels, mask {frame.OpacityMask}, corner {withContent.GetPixel(0, 0)}, center {withContent.GetPixel(50, 50)}.");
+
+            window.CornerRadius = new CornerRadius(18, 12, 6, 0);
+            using var asymmetric = CaptureVisual(frame, scale);
+            var topLeft = asymmetric.GetPixel(0, 0).Alpha;
+            var bottomLeft = asymmetric.GetPixel(0, asymmetric.Height - 1).Alpha;
+            if (topLeft != 0 || bottomLeft != 255)
+                throw new InvalidOperationException($"Window asymmetric corner alpha was {topLeft} and {bottomLeft} ({theme.Key}, {scale}×).");
+
+            window.CornerRadius = default;
+            using var square = CaptureVisual(frame, scale);
+            if (square.GetPixel(0, 0).Alpha != 255)
+                throw new InvalidOperationException($"Window did not clear its rounded clip ({theme.Key}, {scale}×).");
         }
         finally { window.Close(); }
     }
@@ -114,38 +322,24 @@ internal static class ControlEdgeRenderSmoke
         try
         {
             using var hue = Capture(window);
-            var rail = slider.GetVisualDescendants().OfType<Decorator>().Single(x => x.Name == "Rail");
-            var origin = rail.TranslatePoint(default, window)!.Value;
-            var checkerHost = rail.Child as Panel;
-            var brush = checkerHost?.Background ?? (rail as Border)?.Background;
-            if (checkerHost is not null) checkerHost.Background = null;
-            else ((Border)rail).Background = null;
-            using var hueWithoutChecker = Capture(window);
-            if (CompareRailEdge(hue, hueWithoutChecker) > 2)
-                throw new InvalidOperationException($"Opaque Hue revealed the checkerboard at the rounded edge ({theme.Key}, {scale}×).");
+            var opaqueRail = slider.GetVisualDescendants().OfType<Border>().Single(x => x.Name == "OpaqueRail");
+            var translucentRail = slider.GetVisualDescendants().OfType<Decorator>().Single(x => x.Name == "TranslucentRail");
+            if (!opaqueRail.IsVisible || translucentRail.IsVisible)
+                throw new InvalidOperationException("Opaque Hue still uses a checkerboard layer.");
 
             slider.Channel = ColorChannel.Alpha;
-            using var alphaWithoutChecker = Capture(window);
-            if (checkerHost is not null) checkerHost.Background = brush;
-            else ((Border)rail).Background = brush;
             using var alpha = Capture(window);
+            if (opaqueRail.IsVisible || !translucentRail.IsVisible)
+                throw new InvalidOperationException("Alpha lost its checkerboard layer.");
+
+            var origin = translucentRail.TranslatePoint(default, window)!.Value;
+            ((Panel)translucentRail.Child!).Background = null;
+            using var alphaWithoutChecker = Capture(window);
             if (!Enumerable.Range(14, 20).Any(x =>
-                Difference(Pixel(alpha, origin + new Vector(x, rail.Bounds.Height / 2), scale),
-                    Pixel(alphaWithoutChecker, origin + new Vector(x, rail.Bounds.Height / 2), scale)) >= 4))
+                Difference(Pixel(alpha, origin + new Vector(x, translucentRail.Bounds.Height / 2), scale),
+                    Pixel(alphaWithoutChecker, origin + new Vector(x, translucentRail.Bounds.Height / 2), scale)) >= 4))
                 throw new InvalidOperationException($"Alpha lost its checkerboard ({theme.Key}, {scale}×).");
 
-            int CompareRailEdge(SKBitmap a, SKBitmap b)
-            {
-                int diff = 0;
-                for (int y = 0; y < (int)(rail.Bounds.Height * scale); y++)
-                for (int x = 0; x < (int)(12 * scale); x++)
-                {
-                    int left = (int)(origin.X * scale) + x;
-                    int top = (int)(origin.Y * scale) + y;
-                    diff = Math.Max(diff, Difference(a.GetPixel(left, top), b.GetPixel(left, top)));
-                }
-                return diff;
-            }
         }
         finally { window.Close(); }
     }

@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Automation.Peers;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Metadata;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -12,6 +13,7 @@ using Avalonia.Media;
 namespace Alder.Avalonia.Controls;
 
 /// <summary>A native slider with a color gradient. ColorValue binds the color and Value reports the active channel.</summary>
+[PseudoClasses(":translucent-track")]
 public sealed class AlderColorSlider : Slider
 {
     /// <summary>Identifies the <see cref="ColorValue"/> Avalonia property.</summary>
@@ -113,6 +115,8 @@ public sealed class AlderColorSlider : Slider
         var space = AlderColorValue.SpaceFor(Channel, ColorSpace);
         int index = AlderColorValue.Index(space, Channel);
         var value = ColorValue.InSpace(space);
+        PseudoClasses.Set(":translucent-track",
+            Channel == ColorChannel.Alpha || (Channel != ColorChannel.Hue && value.Alpha < 1));
         // Hue needs a full spectrum even for grey or black.
         var baseColor = Channel == ColorChannel.Hue
             ? space == ColorSpace.Hsl ? AlderColorValue.FromHsl(0, 1, .5) : AlderColorValue.FromHsb(0, 1, 1)

@@ -30,10 +30,10 @@ Gallery 默认打开 Home。侧栏可以搜索组件，窗口支持浅色和深�
 
 ## 在 Avalonia 应用中使用
 
-从 [NuGet.org](https://www.nuget.org/packages/Alder.Avalonia/1.0.0-preview) 安装 `Alder.Avalonia`。
+从 [NuGet.org](https://www.nuget.org/packages/Alder.Avalonia/1.0.0) 安装 `Alder.Avalonia`。
 
 ```sh
-dotnet package add Alder.Avalonia --version 1.0.0-preview
+dotnet package add Alder.Avalonia --version 1.0.0
 ```
 
 在 `App.axaml` 中将 `AlderTheme` 加在宿主基础主题之后。下面使用 `Avalonia.Themes.Fluent` 包。

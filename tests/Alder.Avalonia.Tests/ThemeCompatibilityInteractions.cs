@@ -1,0 +1,94 @@
+using Alder.Avalonia.Controls;
+using Alder.Avalonia.Themes;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Headless;
+using Avalonia.Styling;
+using Avalonia.Themes.Fluent2;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
+using Xunit;
+
+namespace Alder.Avalonia.Tests;
+
+[Collection(HeadlessSessionCollection.Name)]
+public sealed class ThemeCompatibilityInteractions
+{
+    [Theory]
+    [InlineData(false, 650)]
+    [InlineData(false, 305)]
+    [InlineData(true, 650)]
+    [InlineData(true, 305)]
+    public async Task Fluent2SupportsWrappingAlderCardsAndActions(bool dark, int width)
+    {
+        await using var session = HeadlessUnitTestSession.StartNew(typeof(Fluent2AlderTestApp));
+        await session.Dispatch(() =>
+        {
+            var cards = new FlexPanel { Wrap = FlexWrap.Wrap, ColumnSpacing = 12, RowSpacing = 12 };
+            foreach (var title in new[] { "Revenue", "Orders", "Customers" })
+            {
+                var card = new AlderKpi { Title = title, Value = 120 };
+                Flex.SetBasis(card, new FlexBasis(140));
+                Flex.SetGrow(card, 1);
+                cards.Children.Add(card);
+            }
+
+            var actions = new WrapPanel
+            {
+                ItemWidth = 120, ItemSpacing = 12, LineSpacing = 8,
+                ItemsAlignment = WrapPanelItemsAlignment.StretchAll
+            };
+            foreach (var label in new[] { "Edit", "Archive", "Duplicate" })
+                actions.Children.Add(new AlderButton { Content = label, FullWidth = true });
+
+            var input = new TextBox { Text = "Fluent2" };
+            var window = new AlderWindow
+            {
+                Width = width, Height = 500, ShowTitleBar = false,
+                RequestedThemeVariant = dark ? ThemeVariant.Dark : ThemeVariant.Light,
+                Content = new StackPanel { Margin = new Thickness(20), Spacing = 12, Children = { cards, actions, input } }
+            };
+
+            window.Show();
+            try
+            {
+                Dispatcher.UIThread.RunJobs();
+                window.UpdateLayout();
+                bool wraps = width == 305;
+                var firstCard = cards.Children[0].Bounds;
+                Assert.True(firstCard.Width > 0);
+                Assert.InRange(Math.Abs(firstCard.Width - cards.Children[1].Bounds.Width), 0, 1);
+                Assert.Equal(wraps, cards.Children[2].Bounds.Y > firstCard.Y);
+                Assert.All(cards.Children, card => Assert.NotEmpty(card.GetVisualDescendants().OfType<TextBlock>()));
+
+                var firstAction = actions.Children[0].Bounds;
+                var lastAction = actions.Children[2].Bounds;
+                Assert.True(firstAction.Width >= 120);
+                Assert.InRange(Math.Abs(firstAction.Width - actions.Children[1].Bounds.Width), 0, 1);
+                Assert.Equal(wraps, lastAction.Y > firstAction.Y);
+                Assert.InRange(Math.Abs(actions.Bounds.Width - lastAction.Right), 0, 1);
+                Assert.NotEmpty(input.GetVisualDescendants());
+
+                var button = Assert.IsType<AlderButton>(actions.Children[0]);
+                Assert.Equal(AlderSize.Medium, button.Size);
+                button.SetValue(AlderButton.SizeProperty, AlderSize.Large);
+                Assert.Equal(AlderSize.Large, button.Size);
+                button.IsPending = true;
+                Assert.True(button.GetValue(AlderButton.IsPendingProperty));
+            }
+            finally { window.Close(); }
+        }, TestContext.Current.CancellationToken);
+    }
+}
+
+public sealed class Fluent2AlderTestApp : Application
+{
+    public static AppBuilder BuildAvaloniaApp() =>
+        AppBuilder.Configure<Fluent2AlderTestApp>().UseHeadless(new AvaloniaHeadlessPlatformOptions());
+
+    public override void Initialize()
+    {
+        Styles.Add(new Fluent2Theme());
+        Styles.Add(new AlderTheme());
+    }
+}

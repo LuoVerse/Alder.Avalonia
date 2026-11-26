@@ -116,7 +116,11 @@ public partial class ExampleCard : UserControl
 
     private void ModeChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (ready) Refresh();
+        if (!ready) return;
+        var owner = Parent is GalleryExampleSection section ? section.Parent : Parent;
+        if (e.AddedItems.Count > 0 && e.RemovedItems.Count > 0 && owner is GalleryExampleList list)
+            list.PreserveExamplePosition(this);
+        Refresh();
     }
 
     private async void CopyCode(object? sender, RoutedEventArgs e)

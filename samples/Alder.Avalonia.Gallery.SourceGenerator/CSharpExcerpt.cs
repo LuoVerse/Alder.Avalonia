@@ -2,14 +2,26 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Alder.Avalonia.Gallery.Controls;
+namespace Alder.Avalonia.Gallery.SourceGenerator;
 
-internal sealed class CSharpExcerpt(string source)
+internal sealed class CSharpExcerpt
 {
-    private readonly TypeDeclarationSyntax[] types = CSharpSyntaxTree.ParseText(source)
-        .GetRoot().DescendantNodes().OfType<TypeDeclarationSyntax>()
-        .Where(type => type.Parent is BaseNamespaceDeclarationSyntax or CompilationUnitSyntax)
-        .ToArray();
+    private readonly TypeDeclarationSyntax[] types;
+
+    public CSharpExcerpt(string source)
+    {
+        var declarations = CSharpSyntaxTree.ParseText(source).GetRoot().DescendantNodes();
+        types = declarations.OfType<TypeDeclarationSyntax>()
+            .Where(type => type.Parent is BaseNamespaceDeclarationSyntax or CompilationUnitSyntax).ToArray();
+        AttachesFiles = declarations.OfType<InvocationExpressionSyntax>().Any(call => call.Expression is
+            MemberAccessExpressionSyntax
+            {
+                Expression: IdentifierNameSyntax { Identifier.ValueText: "ExampleSource" },
+                Name.Identifier.ValueText: "AttachFiles"
+            });
+    }
+
+    public bool AttachesFiles { get; }
 
     public IEnumerable<MemberDeclarationSyntax> CodeBehind(string typeName, IEnumerable<string> handlers, IEnumerable<string> controls)
     {
@@ -17,10 +29,10 @@ internal sealed class CSharpExcerpt(string source)
         if (type is null) return [];
 
         // Named preview controls can also have event subscriptions set in the constructor.
-        var handlerNames = handlers.ToHashSet(StringComparer.Ordinal);
-        var controlNames = controls.ToHashSet(StringComparer.Ordinal);
-        var roots = type.Members.OfType<MethodDeclarationSyntax>().SelectMany(MemberNames)
-            .Where(handlerNames.Contains).ToHashSet(StringComparer.Ordinal);
+        var handlerNames = new HashSet<string>(handlers, StringComparer.Ordinal);
+        var controlNames = new HashSet<string>(controls, StringComparer.Ordinal);
+        var roots = new HashSet<string>(type.Members.OfType<MethodDeclarationSyntax>()
+            .SelectMany(MemberNames).Where(handlerNames.Contains), StringComparer.Ordinal);
         roots.UnionWith(controlNames);
         return SelectMembers(type, roots, controlNames);
     }
@@ -43,8 +55,8 @@ internal sealed class CSharpExcerpt(string source)
         // Include model item types declared in the same file, including positional records.
         foreach (var type in types)
         {
-            if (type != model && names.Contains(type.Identifier.ValueText))
-                declarations.TryAdd(type, type);
+            if (type != model && names.Contains(type.Identifier.ValueText) && !declarations.ContainsKey(type))
+                declarations.Add(type, type);
         }
 
         return Format(types.Where(declarations.ContainsKey).Select(type => declarations[type]));
@@ -53,10 +65,10 @@ internal sealed class CSharpExcerpt(string source)
     public static IEnumerable<string> ModelReferences(IEnumerable<MemberDeclarationSyntax> codeBehind, string modelName)
     {
         var nodes = codeBehind.SelectMany(member => member.DescendantNodes()).ToArray();
-        var variables = nodes.OfType<DeclarationPatternSyntax>()
+        var variables = new HashSet<string>(nodes.OfType<DeclarationPatternSyntax>()
             .Where(pattern => pattern.Type is IdentifierNameSyntax type && type.Identifier.ValueText == modelName)
             .Select(pattern => pattern.Designation).OfType<SingleVariableDesignationSyntax>()
-            .Select(variable => variable.Identifier.ValueText).ToHashSet(StringComparer.Ordinal);
+            .Select(variable => variable.Identifier.ValueText), StringComparer.Ordinal);
         return nodes.OfType<MemberAccessExpressionSyntax>()
             .Where(access => access.Expression is IdentifierNameSyntax target && variables.Contains(target.Identifier.ValueText))
             .Select(access => access.Name.Identifier.ValueText);
@@ -70,7 +82,7 @@ internal sealed class CSharpExcerpt(string source)
     {
         var names = new HashSet<string>(roots, StringComparer.Ordinal);
         var fields = controls is null ? null
-            : type.Members.OfType<FieldDeclarationSyntax>().SelectMany(MemberNames).ToHashSet(StringComparer.Ordinal);
+            : new HashSet<string>(type.Members.OfType<FieldDeclarationSyntax>().SelectMany(MemberNames), StringComparer.Ordinal);
         var selected = new Dictionary<MemberDeclarationSyntax, MemberDeclarationSyntax>();
         int previousCount;
         do
@@ -105,8 +117,8 @@ internal sealed class CSharpExcerpt(string source)
             return ReferencesExample(expression.Expression) ? constructor : null;
 
         if (constructor.Body is not { } body) return null;
-        var selected = body.Statements.OfType<ExpressionStatementSyntax>()
-            .Where(statement => ReferencesExample(statement.Expression)).ToHashSet();
+        var selected = new HashSet<ExpressionStatementSyntax>(body.Statements.OfType<ExpressionStatementSyntax>()
+            .Where(statement => ReferencesExample(statement.Expression)));
         if (selected.Count == 0) return null;
 
         return constructor.WithBody(body.WithStatements(SyntaxFactory.List(

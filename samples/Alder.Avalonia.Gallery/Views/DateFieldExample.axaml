@@ -1,326 +1,352 @@
-<UserControl xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
+<gallery:GalleryExampleSection xmlns:gallery="using:Alder.Avalonia.Gallery.Controls" xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:alder="using:Alder.Avalonia.Controls" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
              x:Class="Alder.Avalonia.Gallery.Views.DateFieldExample" x:DataType="vm:DateFieldViewModel" FontFamily="fonts:Inter#Inter">
   <Design.DataContext>
     <vm:DateFieldViewModel />
   </Design.DataContext>
-  <UserControl.Styles><Style Selector=":is(Label)"><Setter Property="Theme" Value="{StaticResource AlderLabelTheme}" /></Style></UserControl.Styles>
-  <gallery:GalleryExampleList>
-    <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
-      <gallery:ExampleCard.Preview>
-        <Border Padding="16,20" MinHeight="120">
-          <Border.DataContext><vm:DateFieldViewModel /></Border.DataContext>
-          <StackPanel MaxWidth="256" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <alder:AlderLabel x:Name="UsageLabel" Content="{DynamicResource GalleryText.Date}" Target="{CompiledBinding #UsageField}" />
-            <alder:AlderDateField x:Name="UsageField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
-                                  AutomationProperties.LabeledBy="{CompiledBinding #UsageLabel}"  />
-          </StackPanel>
-        </Border>
-      </gallery:ExampleCard.Preview>
-      <gallery:ExampleCard.CSharpSource><![CDATA[
-        var model = new DateFieldViewModel();
-        var field = new AlderDateField { DataContext = model, FullWidth = true };
-        field[!AlderDateField.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
-        var label = new AlderLabel { Target = field };
-        label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.Date");
-        label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
-        AutomationProperties.SetLabeledBy(field, label);
-        var preview = new StackPanel { DataContext = model, MaxWidth = 256, Spacing = 4, Children = { label, field } };
-      ]]></gallery:ExampleCard.CSharpSource>
-    </gallery:ExampleCard>
-    <gallery:ExampleCard x:Name="SamplePrefix" Title="{DynamicResource GalleryText.TemporalWithPrefix}">
-      <gallery:ExampleCard.Preview>
-        <Border Padding="16,20" MinHeight="120">
-          <Border.DataContext><vm:DateFieldViewModel /></Border.DataContext>
-          <StackPanel MaxWidth="256" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <alder:AlderLabel x:Name="PrefixLabel" Content="{DynamicResource GalleryText.Date}" Target="{CompiledBinding #PrefixField}" />
-            <alder:AlderDateField x:Name="PrefixField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
-                                  AutomationProperties.LabeledBy="{CompiledBinding #PrefixLabel}" >
-              <alder:AlderDateField.Prefix>
-                <alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconCalendar}" Foreground="{DynamicResource AlderMuted}" />
-              </alder:AlderDateField.Prefix>
-            </alder:AlderDateField>
-          </StackPanel>
-        </Border>
-      </gallery:ExampleCard.Preview>
-      <gallery:ExampleCard.CSharpSource><![CDATA[
-        var model = new DateFieldViewModel();
-        var field = new AlderDateField { DataContext = model, FullWidth = true };
-        field[!AlderDateField.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
-        var label = new AlderLabel { Target = field };
-        label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.Date");
-        label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
-        AutomationProperties.SetLabeledBy(field, label);
-        var preview = new StackPanel { DataContext = model, MaxWidth = 256, Spacing = 4, Children = { label, field } };
-        var prefix = new AlderPathIcon { Width = 16, Height = 16 };
-        prefix[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconCalendar");
-        prefix[!PathIcon.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
-        field.Prefix = prefix;
-      ]]></gallery:ExampleCard.CSharpSource>
-    </gallery:ExampleCard>
-    <gallery:ExampleCard x:Name="SampleSuffix" Title="{DynamicResource GalleryText.TemporalWithSuffix}">
-      <gallery:ExampleCard.Preview>
-        <Border Padding="16,20" MinHeight="120">
-          <Border.DataContext><vm:DateFieldViewModel /></Border.DataContext>
-          <StackPanel MaxWidth="256" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <alder:AlderLabel x:Name="SuffixLabel" Content="{DynamicResource GalleryText.Date}" Target="{CompiledBinding #SuffixField}" />
-            <alder:AlderDateField x:Name="SuffixField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
-                                  AutomationProperties.LabeledBy="{CompiledBinding #SuffixLabel}" >
-              <alder:AlderDateField.Suffix>
-                <alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconCalendar}" Foreground="{DynamicResource AlderMuted}" />
-              </alder:AlderDateField.Suffix>
-            </alder:AlderDateField>
-          </StackPanel>
-        </Border>
-      </gallery:ExampleCard.Preview>
-      <gallery:ExampleCard.CSharpSource><![CDATA[
-        var model = new DateFieldViewModel();
-        var field = new AlderDateField { DataContext = model, FullWidth = true };
-        field[!AlderDateField.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
-        var label = new AlderLabel { Target = field };
-        label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.Date");
-        label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
-        AutomationProperties.SetLabeledBy(field, label);
-        var preview = new StackPanel { DataContext = model, MaxWidth = 256, Spacing = 4, Children = { label, field } };
-        var suffix = new AlderPathIcon { Width = 16, Height = 16 };
-        suffix[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconCalendar");
-        suffix[!PathIcon.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
-        field.Suffix = suffix;
-      ]]></gallery:ExampleCard.CSharpSource>
-    </gallery:ExampleCard>
-    <gallery:ExampleCard x:Name="SampleBothIcons" Title="{DynamicResource GalleryText.TemporalWithBothIcons}">
-      <gallery:ExampleCard.Preview>
-        <Border Padding="16,20" MinHeight="120">
-          <Border.DataContext><vm:DateFieldViewModel /></Border.DataContext>
-          <StackPanel MaxWidth="256" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <alder:AlderLabel x:Name="BothIconsLabel" Content="{DynamicResource GalleryText.Date}" Target="{CompiledBinding #BothIconsField}" />
-            <alder:AlderDateField x:Name="BothIconsField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
-                                  AutomationProperties.LabeledBy="{CompiledBinding #BothIconsLabel}" >
-              <alder:AlderDateField.Prefix>
-                <alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconCalendar}" Foreground="{DynamicResource AlderMuted}" />
-              </alder:AlderDateField.Prefix>
-              <alder:AlderDateField.Suffix>
-                <alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconChevronDown}" Foreground="{DynamicResource AlderMuted}" />
-              </alder:AlderDateField.Suffix>
-            </alder:AlderDateField>
-          </StackPanel>
-        </Border>
-      </gallery:ExampleCard.Preview>
-      <gallery:ExampleCard.CSharpSource><![CDATA[
-        var model = new DateFieldViewModel();
-        var field = new AlderDateField { DataContext = model, FullWidth = true };
-        field[!AlderDateField.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
-        var label = new AlderLabel { Target = field };
-        label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.Date");
-        label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
-        AutomationProperties.SetLabeledBy(field, label);
-        var preview = new StackPanel { DataContext = model, MaxWidth = 256, Spacing = 4, Children = { label, field } };
-        var prefix = new AlderPathIcon { Width = 16, Height = 16 };
-        prefix[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconCalendar");
-        prefix[!PathIcon.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
-        field.Prefix = prefix;
-        var suffix = new AlderPathIcon { Width = 16, Height = 16 };
-        suffix[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconChevronDown");
-        suffix[!PathIcon.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
-        field.Suffix = suffix;
-      ]]></gallery:ExampleCard.CSharpSource>
-    </gallery:ExampleCard>
-    <gallery:ExampleCard x:Name="SampleSecondary" Title="{DynamicResource GalleryText.Variants}">
-      <gallery:ExampleCard.Preview>
-        <Border Padding="16,20" MinHeight="120">
-          <Border.DataContext><vm:DateFieldViewModel /></Border.DataContext>
-          <StackPanel MaxWidth="256" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <alder:AlderLabel x:Name="SecondaryLabel" Content="{DynamicResource GalleryText.Date}" Target="{CompiledBinding #SecondaryField}" />
-            <alder:AlderDateField x:Name="SecondaryField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
-                                  AutomationProperties.LabeledBy="{CompiledBinding #SecondaryLabel}"  Variant="Secondary" />
-          </StackPanel>
-        </Border>
-      </gallery:ExampleCard.Preview>
-      <gallery:ExampleCard.CSharpSource><![CDATA[
-        var model = new DateFieldViewModel();
-        var field = new AlderDateField { DataContext = model, FullWidth = true, Variant = InputVariant.Secondary };
-        field[!AlderDateField.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
-        var label = new AlderLabel { Target = field };
-        label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.Date");
-        label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
-        AutomationProperties.SetLabeledBy(field, label);
-        var preview = new StackPanel { DataContext = model, MaxWidth = 256, Spacing = 4, Children = { label, field } };
-      ]]></gallery:ExampleCard.CSharpSource>
-    </gallery:ExampleCard>
-    <gallery:ExampleCard x:Name="SampleDescription" Title="{DynamicResource GalleryText.TemporalWithDescription}">
-      <gallery:ExampleCard.Preview>
-        <Border Padding="16,20" MinHeight="120">
-          <Border.DataContext><vm:DateFieldViewModel /></Border.DataContext>
-          <StackPanel MaxWidth="256" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <alder:AlderLabel x:Name="DescriptionLabel" Content="{DynamicResource GalleryText.Date}" Target="{CompiledBinding #DescriptionField}" />
-            <alder:AlderDateField x:Name="DescriptionField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
-                                  AutomationProperties.LabeledBy="{CompiledBinding #DescriptionLabel}"  />
-            <alder:AlderTextBlock Text="{DynamicResource GalleryText.TemporalPreferredDate}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
-          </StackPanel>
-        </Border>
-      </gallery:ExampleCard.Preview>
-      <gallery:ExampleCard.CSharpSource><![CDATA[
-        var model = new DateFieldViewModel();
-        var field = new AlderDateField { DataContext = model, FullWidth = true };
-        field[!AlderDateField.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
-        var label = new AlderLabel { Target = field };
-        label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.Date");
-        label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
-        AutomationProperties.SetLabeledBy(field, label);
-        var preview = new StackPanel { DataContext = model, MaxWidth = 256, Spacing = 4, Children = { label, field } };
-        var detail = new AlderTextBlock { FontSize = 12, TextWrapping = TextWrapping.Wrap };
-        detail[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.TemporalPreferredDate");
-        detail[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
-        preview.Children.Add(detail);
-      ]]></gallery:ExampleCard.CSharpSource>
-    </gallery:ExampleCard>
-    <gallery:ExampleCard x:Name="SampleRequired" Title="{DynamicResource GalleryText.AutocompleteRequired}">
-      <gallery:ExampleCard.Preview>
-        <Border Padding="16,20" MinHeight="120">
-          <Border.DataContext><vm:DateFieldViewModel /></Border.DataContext>
-          <StackPanel MaxWidth="256" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <alder:AlderLabel x:Name="RequiredLabel" Content="{DynamicResource GalleryText.Date}" Target="{CompiledBinding #RequiredField}" />
-            <alder:AlderDateField x:Name="RequiredField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
-                                  AutomationProperties.LabeledBy="{CompiledBinding #RequiredLabel}" IsRequired="True" />
-            <alder:AlderTextBlock Text="{DynamicResource GalleryText.TemporalDateRequired}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
-          </StackPanel>
-        </Border>
-      </gallery:ExampleCard.Preview>
-      <gallery:ExampleCard.CSharpSource><![CDATA[
-        var model = new DateFieldViewModel();
-        var field = new AlderDateField { DataContext = model, FullWidth = true, IsRequired = true };
-        field[!AlderDateField.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
-        var label = new AlderLabel { Target = field };
-        label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.Date");
-        label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
-        AutomationProperties.SetLabeledBy(field, label);
-        var preview = new StackPanel { DataContext = model, MaxWidth = 256, Spacing = 4, Children = { label, field } };
-        var detail = new AlderTextBlock { FontSize = 12, TextWrapping = TextWrapping.Wrap };
-        detail[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.TemporalDateRequired");
-        detail[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
-        preview.Children.Add(detail);
-      ]]></gallery:ExampleCard.CSharpSource>
-    </gallery:ExampleCard>
-    <gallery:ExampleCard x:Name="SampleFullWidth" Title="{DynamicResource GalleryText.FullWidth}">
-      <gallery:ExampleCard.Preview>
-        <Border Padding="16,20" MinHeight="120">
-          <Border.DataContext><vm:DateFieldViewModel /></Border.DataContext>
-          <StackPanel MaxWidth="420" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <alder:AlderLabel x:Name="FullWidthLabel" Content="{DynamicResource GalleryText.Date}" Target="{CompiledBinding #FullWidthField}" />
-            <alder:AlderDateField x:Name="FullWidthField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
-                                  AutomationProperties.LabeledBy="{CompiledBinding #FullWidthLabel}"  />
-          </StackPanel>
-        </Border>
-      </gallery:ExampleCard.Preview>
-      <gallery:ExampleCard.CSharpSource><![CDATA[
-        var model = new DateFieldViewModel();
-        var field = new AlderDateField { DataContext = model, FullWidth = true };
-        field[!AlderDateField.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
-        var label = new AlderLabel { Target = field };
-        label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.Date");
-        label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
-        AutomationProperties.SetLabeledBy(field, label);
-        var preview = new StackPanel { DataContext = model, MaxWidth = 420, Spacing = 4, Children = { label, field } };
-      ]]></gallery:ExampleCard.CSharpSource>
-    </gallery:ExampleCard>
-    <gallery:ExampleCard x:Name="SampleInvalid" Title="{DynamicResource GalleryText.TemporalInvalid}">
-      <gallery:ExampleCard.Preview>
-        <Border Padding="16,20" MinHeight="120">
-          <Border.DataContext><vm:DateFieldViewModel /></Border.DataContext>
-          <StackPanel MaxWidth="256" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <alder:AlderLabel x:Name="InvalidLabel" Content="{DynamicResource GalleryText.Date}" Target="{CompiledBinding #InvalidField}" />
-            <alder:AlderDateField x:Name="InvalidField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
-                                  AutomationProperties.LabeledBy="{CompiledBinding #InvalidLabel}" IsInvalid="True" />
-            <alder:AlderTextBlock Text="{DynamicResource GalleryText.TemporalDateError}" FontSize="12" Foreground="{DynamicResource AlderDangerInk}" TextWrapping="Wrap" />
-          </StackPanel>
-        </Border>
-      </gallery:ExampleCard.Preview>
-      <gallery:ExampleCard.CSharpSource><![CDATA[
-        var model = new DateFieldViewModel();
-        var field = new AlderDateField { DataContext = model, FullWidth = true, IsInvalid = true };
-        field[!AlderDateField.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
-        var label = new AlderLabel { Target = field };
-        label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.Date");
-        label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
-        AutomationProperties.SetLabeledBy(field, label);
-        var preview = new StackPanel { DataContext = model, MaxWidth = 256, Spacing = 4, Children = { label, field } };
-        var detail = new AlderTextBlock { FontSize = 12, TextWrapping = TextWrapping.Wrap };
-        detail[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.TemporalDateError");
-        detail[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderDangerInk");
-        preview.Children.Add(detail);
-      ]]></gallery:ExampleCard.CSharpSource>
-    </gallery:ExampleCard>
-    <gallery:ExampleCard x:Name="SampleValidationForm" Title="{DynamicResource GalleryText.Controlled}">
-      <gallery:ExampleCard.Preview>
-        <StackPanel Spacing="4">
-          <alder:AlderLabel x:Name="StartLabel" Content="{DynamicResource GalleryText.StartDate}" Target="{Binding #StartDate}" />
-          <alder:AlderDateField x:Name="StartDate" Culture="{DynamicResource GalleryCulture}" IsRequired="True" Value="{Binding Date, Mode=TwoWay}"
-                           Minimum="{Binding Minimum}" AutomationProperties.LabeledBy="{Binding #StartLabel}">
-            <alder:AlderDateField.Prefix><alder:AlderPathIcon Width="16" Height="16" Data="{StaticResource AlderIconCalendar}" Foreground="{DynamicResource AlderMuted}" /></alder:AlderDateField.Prefix>
-          </alder:AlderDateField>
-          <alder:AlderTextBlock Foreground="{DynamicResource AlderMuted}" Text="{Binding Summary}" />
-          <alder:AlderTextBlock Foreground="{DynamicResource AlderDangerInk}" Text="{DynamicResource GalleryText.EnterADateOnOrAfterNovember12026}"
-                     TextWrapping="Wrap" MaxWidth="240" IsVisible="{Binding #StartDate.HasInvalidInput}" />
-          <WrapPanel ItemSpacing="8" LineSpacing="8">
-            <alder:AlderButton Content="{DynamicResource GalleryText.ClearDate}" Command="{CompiledBinding Clear}" Variant="Ghost" Size="Small" HorizontalAlignment="Left" />
-            <alder:AlderButton Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding Reset}" Variant="Secondary" Size="Small" />
-          </WrapPanel>
-        </StackPanel>
-      </gallery:ExampleCard.Preview>
-      <gallery:ExampleCard.CSharpSource><![CDATA[
-        var dateField = new AlderDateField
-        {
-            Culture = CultureInfo.CurrentCulture,
-            IsRequired = true,
-            Prefix = new AlderPathIcon { Height = 16, Data = (Geometry)this.FindResource("AlderIconCalendar")!, Foreground = (IBrush)this.FindResource("AlderMuted")! },
-        };
-        dateField.Bind(AlderDateField.ValueProperty, CompiledBinding.Create((DateFieldViewModel model) => model.Date, mode: BindingMode.TwoWay));
-        dateField.Bind(AlderDateField.MinimumProperty, CompiledBinding.Create((DateFieldViewModel model) => model.Minimum));
-
-        var model = (DateFieldViewModel)DataContext!;
-        var clear = new AlderButton { Content = "Clear date", Size = AlderSize.Small, Variant = ButtonVariant.Ghost };
-        var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary };
-        clear.Click += (_, _) => model.Clear();
-        reset.Click += (_, _) => model.Reset();
-        var actions = new WrapPanel { ItemSpacing = 8, LineSpacing = 8, Children = { clear, reset } };
-        var preview = new StackPanel { Spacing = 4, Children = { dateField, actions } };
-      ]]></gallery:ExampleCard.CSharpSource>
-    </gallery:ExampleCard>
-    <gallery:ExampleCard x:Name="SampleGermanDateFormat" Title="{DynamicResource GalleryText.GermanDateFormat}">
-      <gallery:ExampleCard.Preview>
-        <Border Padding="12" CornerRadius="16" Background="{DynamicResource AlderSurface}">
+  <gallery:GalleryExampleSection.Styles><Style Selector=":is(Label)"><Setter Property="Theme" Value="{StaticResource AlderLabelTheme}" /></Style></gallery:GalleryExampleSection.Styles>
+  <gallery:GalleryExampleSection.Examples>
+    <gallery:GalleryExampleTemplate Name="SampleUsage">
+      <gallery:ExampleCard Title="{DynamicResource GalleryText.Usage}">
+        <gallery:ExampleCard.Preview>
+          <Border Padding="16,20" MinHeight="120">
+            <Border.DataContext><vm:DateFieldViewModel /></Border.DataContext>
+            <StackPanel MaxWidth="256" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
+              <alder:AlderLabel x:Name="UsageLabel" Content="{DynamicResource GalleryText.Date}" Target="{CompiledBinding #UsageField}" />
+              <alder:AlderDateField x:Name="UsageField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
+                                    AutomationProperties.LabeledBy="{CompiledBinding #UsageLabel}"  />
+            </StackPanel>
+          </Border>
+        </gallery:ExampleCard.Preview>
+        <gallery:ExampleCard.CSharpSource><![CDATA[
+          var model = new DateFieldViewModel();
+          var field = new AlderDateField { DataContext = model, FullWidth = true };
+          field[!AlderDateField.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
+          var label = new AlderLabel { Target = field };
+          label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.Date");
+          label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
+          AutomationProperties.SetLabeledBy(field, label);
+          var preview = new StackPanel { DataContext = model, MaxWidth = 256, Spacing = 4, Children = { label, field } };
+        ]]></gallery:ExampleCard.CSharpSource>
+      </gallery:ExampleCard>
+    </gallery:GalleryExampleTemplate>
+    <gallery:GalleryExampleTemplate Name="SamplePrefix">
+      <gallery:ExampleCard Title="{DynamicResource GalleryText.TemporalWithPrefix}">
+        <gallery:ExampleCard.Preview>
+          <Border Padding="16,20" MinHeight="120">
+            <Border.DataContext><vm:DateFieldViewModel /></Border.DataContext>
+            <StackPanel MaxWidth="256" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
+              <alder:AlderLabel x:Name="PrefixLabel" Content="{DynamicResource GalleryText.Date}" Target="{CompiledBinding #PrefixField}" />
+              <alder:AlderDateField x:Name="PrefixField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
+                                    AutomationProperties.LabeledBy="{CompiledBinding #PrefixLabel}" >
+                <alder:AlderDateField.Prefix>
+                  <alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconCalendar}" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderDateField.Prefix>
+              </alder:AlderDateField>
+            </StackPanel>
+          </Border>
+        </gallery:ExampleCard.Preview>
+        <gallery:ExampleCard.CSharpSource><![CDATA[
+          var model = new DateFieldViewModel();
+          var field = new AlderDateField { DataContext = model, FullWidth = true };
+          field[!AlderDateField.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
+          var label = new AlderLabel { Target = field };
+          label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.Date");
+          label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
+          AutomationProperties.SetLabeledBy(field, label);
+          var preview = new StackPanel { DataContext = model, MaxWidth = 256, Spacing = 4, Children = { label, field } };
+          var prefix = new AlderPathIcon { Width = 16, Height = 16 };
+          prefix[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconCalendar");
+          prefix[!PathIcon.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+          field.Prefix = prefix;
+        ]]></gallery:ExampleCard.CSharpSource>
+      </gallery:ExampleCard>
+    </gallery:GalleryExampleTemplate>
+    <gallery:GalleryExampleTemplate Name="SampleSuffix">
+      <gallery:ExampleCard Title="{DynamicResource GalleryText.TemporalWithSuffix}">
+        <gallery:ExampleCard.Preview>
+          <Border Padding="16,20" MinHeight="120">
+            <Border.DataContext><vm:DateFieldViewModel /></Border.DataContext>
+            <StackPanel MaxWidth="256" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
+              <alder:AlderLabel x:Name="SuffixLabel" Content="{DynamicResource GalleryText.Date}" Target="{CompiledBinding #SuffixField}" />
+              <alder:AlderDateField x:Name="SuffixField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
+                                    AutomationProperties.LabeledBy="{CompiledBinding #SuffixLabel}" >
+                <alder:AlderDateField.Suffix>
+                  <alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconCalendar}" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderDateField.Suffix>
+              </alder:AlderDateField>
+            </StackPanel>
+          </Border>
+        </gallery:ExampleCard.Preview>
+        <gallery:ExampleCard.CSharpSource><![CDATA[
+          var model = new DateFieldViewModel();
+          var field = new AlderDateField { DataContext = model, FullWidth = true };
+          field[!AlderDateField.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
+          var label = new AlderLabel { Target = field };
+          label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.Date");
+          label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
+          AutomationProperties.SetLabeledBy(field, label);
+          var preview = new StackPanel { DataContext = model, MaxWidth = 256, Spacing = 4, Children = { label, field } };
+          var suffix = new AlderPathIcon { Width = 16, Height = 16 };
+          suffix[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconCalendar");
+          suffix[!PathIcon.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+          field.Suffix = suffix;
+        ]]></gallery:ExampleCard.CSharpSource>
+      </gallery:ExampleCard>
+    </gallery:GalleryExampleTemplate>
+    <gallery:GalleryExampleTemplate Name="SampleBothIcons">
+      <gallery:ExampleCard Title="{DynamicResource GalleryText.TemporalWithBothIcons}">
+        <gallery:ExampleCard.Preview>
+          <Border Padding="16,20" MinHeight="120">
+            <Border.DataContext><vm:DateFieldViewModel /></Border.DataContext>
+            <StackPanel MaxWidth="256" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
+              <alder:AlderLabel x:Name="BothIconsLabel" Content="{DynamicResource GalleryText.Date}" Target="{CompiledBinding #BothIconsField}" />
+              <alder:AlderDateField x:Name="BothIconsField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
+                                    AutomationProperties.LabeledBy="{CompiledBinding #BothIconsLabel}" >
+                <alder:AlderDateField.Prefix>
+                  <alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconCalendar}" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderDateField.Prefix>
+                <alder:AlderDateField.Suffix>
+                  <alder:AlderPathIcon Width="16" Height="16" Data="{DynamicResource AlderIconChevronDown}" Foreground="{DynamicResource AlderMuted}" />
+                </alder:AlderDateField.Suffix>
+              </alder:AlderDateField>
+            </StackPanel>
+          </Border>
+        </gallery:ExampleCard.Preview>
+        <gallery:ExampleCard.CSharpSource><![CDATA[
+          var model = new DateFieldViewModel();
+          var field = new AlderDateField { DataContext = model, FullWidth = true };
+          field[!AlderDateField.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
+          var label = new AlderLabel { Target = field };
+          label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.Date");
+          label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
+          AutomationProperties.SetLabeledBy(field, label);
+          var preview = new StackPanel { DataContext = model, MaxWidth = 256, Spacing = 4, Children = { label, field } };
+          var prefix = new AlderPathIcon { Width = 16, Height = 16 };
+          prefix[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconCalendar");
+          prefix[!PathIcon.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+          field.Prefix = prefix;
+          var suffix = new AlderPathIcon { Width = 16, Height = 16 };
+          suffix[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderIconChevronDown");
+          suffix[!PathIcon.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+          field.Suffix = suffix;
+        ]]></gallery:ExampleCard.CSharpSource>
+      </gallery:ExampleCard>
+    </gallery:GalleryExampleTemplate>
+    <gallery:GalleryExampleTemplate Name="SampleSecondary">
+      <gallery:ExampleCard Title="{DynamicResource GalleryText.Variants}">
+        <gallery:ExampleCard.Preview>
+          <Border Padding="16,20" MinHeight="120">
+            <Border.DataContext><vm:DateFieldViewModel /></Border.DataContext>
+            <StackPanel MaxWidth="256" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
+              <alder:AlderLabel x:Name="SecondaryLabel" Content="{DynamicResource GalleryText.Date}" Target="{CompiledBinding #SecondaryField}" />
+              <alder:AlderDateField x:Name="SecondaryField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
+                                    AutomationProperties.LabeledBy="{CompiledBinding #SecondaryLabel}"  Variant="Secondary" />
+            </StackPanel>
+          </Border>
+        </gallery:ExampleCard.Preview>
+        <gallery:ExampleCard.CSharpSource><![CDATA[
+          var model = new DateFieldViewModel();
+          var field = new AlderDateField { DataContext = model, FullWidth = true, Variant = InputVariant.Secondary };
+          field[!AlderDateField.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
+          var label = new AlderLabel { Target = field };
+          label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.Date");
+          label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
+          AutomationProperties.SetLabeledBy(field, label);
+          var preview = new StackPanel { DataContext = model, MaxWidth = 256, Spacing = 4, Children = { label, field } };
+        ]]></gallery:ExampleCard.CSharpSource>
+      </gallery:ExampleCard>
+    </gallery:GalleryExampleTemplate>
+    <gallery:GalleryExampleTemplate Name="SampleDescription">
+      <gallery:ExampleCard Title="{DynamicResource GalleryText.TemporalWithDescription}">
+        <gallery:ExampleCard.Preview>
+          <Border Padding="16,20" MinHeight="120">
+            <Border.DataContext><vm:DateFieldViewModel /></Border.DataContext>
+            <StackPanel MaxWidth="256" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
+              <alder:AlderLabel x:Name="DescriptionLabel" Content="{DynamicResource GalleryText.Date}" Target="{CompiledBinding #DescriptionField}" />
+              <alder:AlderDateField x:Name="DescriptionField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
+                                    AutomationProperties.LabeledBy="{CompiledBinding #DescriptionLabel}"  />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.TemporalPreferredDate}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+            </StackPanel>
+          </Border>
+        </gallery:ExampleCard.Preview>
+        <gallery:ExampleCard.CSharpSource><![CDATA[
+          var model = new DateFieldViewModel();
+          var field = new AlderDateField { DataContext = model, FullWidth = true };
+          field[!AlderDateField.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
+          var label = new AlderLabel { Target = field };
+          label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.Date");
+          label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
+          AutomationProperties.SetLabeledBy(field, label);
+          var preview = new StackPanel { DataContext = model, MaxWidth = 256, Spacing = 4, Children = { label, field } };
+          var detail = new AlderTextBlock { FontSize = 12, TextWrapping = TextWrapping.Wrap };
+          detail[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.TemporalPreferredDate");
+          detail[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+          preview.Children.Add(detail);
+        ]]></gallery:ExampleCard.CSharpSource>
+      </gallery:ExampleCard>
+    </gallery:GalleryExampleTemplate>
+    <gallery:GalleryExampleTemplate Name="SampleRequired">
+      <gallery:ExampleCard Title="{DynamicResource GalleryText.AutocompleteRequired}">
+        <gallery:ExampleCard.Preview>
+          <Border Padding="16,20" MinHeight="120">
+            <Border.DataContext><vm:DateFieldViewModel /></Border.DataContext>
+            <StackPanel MaxWidth="256" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
+              <alder:AlderLabel x:Name="RequiredLabel" Content="{DynamicResource GalleryText.Date}" Target="{CompiledBinding #RequiredField}" />
+              <alder:AlderDateField x:Name="RequiredField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
+                                    AutomationProperties.LabeledBy="{CompiledBinding #RequiredLabel}" IsRequired="True" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.TemporalDateRequired}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+            </StackPanel>
+          </Border>
+        </gallery:ExampleCard.Preview>
+        <gallery:ExampleCard.CSharpSource><![CDATA[
+          var model = new DateFieldViewModel();
+          var field = new AlderDateField { DataContext = model, FullWidth = true, IsRequired = true };
+          field[!AlderDateField.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
+          var label = new AlderLabel { Target = field };
+          label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.Date");
+          label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
+          AutomationProperties.SetLabeledBy(field, label);
+          var preview = new StackPanel { DataContext = model, MaxWidth = 256, Spacing = 4, Children = { label, field } };
+          var detail = new AlderTextBlock { FontSize = 12, TextWrapping = TextWrapping.Wrap };
+          detail[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.TemporalDateRequired");
+          detail[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+          preview.Children.Add(detail);
+        ]]></gallery:ExampleCard.CSharpSource>
+      </gallery:ExampleCard>
+    </gallery:GalleryExampleTemplate>
+    <gallery:GalleryExampleTemplate Name="SampleFullWidth">
+      <gallery:ExampleCard Title="{DynamicResource GalleryText.FullWidth}">
+        <gallery:ExampleCard.Preview>
+          <Border Padding="16,20" MinHeight="120">
+            <Border.DataContext><vm:DateFieldViewModel /></Border.DataContext>
+            <StackPanel MaxWidth="420" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
+              <alder:AlderLabel x:Name="FullWidthLabel" Content="{DynamicResource GalleryText.Date}" Target="{CompiledBinding #FullWidthField}" />
+              <alder:AlderDateField x:Name="FullWidthField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
+                                    AutomationProperties.LabeledBy="{CompiledBinding #FullWidthLabel}"  />
+            </StackPanel>
+          </Border>
+        </gallery:ExampleCard.Preview>
+        <gallery:ExampleCard.CSharpSource><![CDATA[
+          var model = new DateFieldViewModel();
+          var field = new AlderDateField { DataContext = model, FullWidth = true };
+          field[!AlderDateField.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
+          var label = new AlderLabel { Target = field };
+          label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.Date");
+          label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
+          AutomationProperties.SetLabeledBy(field, label);
+          var preview = new StackPanel { DataContext = model, MaxWidth = 420, Spacing = 4, Children = { label, field } };
+        ]]></gallery:ExampleCard.CSharpSource>
+      </gallery:ExampleCard>
+    </gallery:GalleryExampleTemplate>
+    <gallery:GalleryExampleTemplate Name="SampleInvalid">
+      <gallery:ExampleCard Title="{DynamicResource GalleryText.TemporalInvalid}">
+        <gallery:ExampleCard.Preview>
+          <Border Padding="16,20" MinHeight="120">
+            <Border.DataContext><vm:DateFieldViewModel /></Border.DataContext>
+            <StackPanel MaxWidth="256" Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
+              <alder:AlderLabel x:Name="InvalidLabel" Content="{DynamicResource GalleryText.Date}" Target="{CompiledBinding #InvalidField}" />
+              <alder:AlderDateField x:Name="InvalidField" FullWidth="True" Culture="{DynamicResource GalleryCulture}"
+                                    AutomationProperties.LabeledBy="{CompiledBinding #InvalidLabel}" IsInvalid="True" />
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.TemporalDateError}" FontSize="12" Foreground="{DynamicResource AlderDangerInk}" TextWrapping="Wrap" />
+            </StackPanel>
+          </Border>
+        </gallery:ExampleCard.Preview>
+        <gallery:ExampleCard.CSharpSource><![CDATA[
+          var model = new DateFieldViewModel();
+          var field = new AlderDateField { DataContext = model, FullWidth = true, IsInvalid = true };
+          field[!AlderDateField.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
+          var label = new AlderLabel { Target = field };
+          label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.Date");
+          label.Theme = (ControlTheme)Application.Current!.FindResource("AlderLabelTheme")!;
+          AutomationProperties.SetLabeledBy(field, label);
+          var preview = new StackPanel { DataContext = model, MaxWidth = 256, Spacing = 4, Children = { label, field } };
+          var detail = new AlderTextBlock { FontSize = 12, TextWrapping = TextWrapping.Wrap };
+          detail[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.TemporalDateError");
+          detail[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderDangerInk");
+          preview.Children.Add(detail);
+        ]]></gallery:ExampleCard.CSharpSource>
+      </gallery:ExampleCard>
+    </gallery:GalleryExampleTemplate>
+    <gallery:GalleryExampleTemplate Name="SampleValidationForm">
+      <gallery:ExampleCard Title="{DynamicResource GalleryText.Controlled}">
+        <gallery:ExampleCard.Preview>
           <StackPanel Spacing="4">
-            <alder:AlderLabel x:Name="LocaleLabel" Content="{DynamicResource GalleryText.GermanDateFormat}" Target="{Binding #LocalizedDate}" />
-            <alder:AlderDateField x:Name="LocalizedDate" Culture="{Binding GermanCulture}" Variant="Secondary" Value="{Binding Example, Mode=OneWay}"
-                             FullWidth="True" AutomationProperties.LabeledBy="{Binding #LocaleLabel}" />
+            <alder:AlderLabel x:Name="StartLabel" Content="{DynamicResource GalleryText.StartDate}" Target="{Binding #StartDate}" />
+            <alder:AlderDateField x:Name="StartDate" Culture="{DynamicResource GalleryCulture}" IsRequired="True" Value="{Binding Date, Mode=TwoWay}"
+                             Minimum="{Binding Minimum}" AutomationProperties.LabeledBy="{Binding #StartLabel}">
+              <alder:AlderDateField.Prefix><alder:AlderPathIcon Width="16" Height="16" Data="{StaticResource AlderIconCalendar}" Foreground="{DynamicResource AlderMuted}" /></alder:AlderDateField.Prefix>
+            </alder:AlderDateField>
+            <alder:AlderTextBlock Foreground="{DynamicResource AlderMuted}" Text="{Binding Summary}" />
+            <alder:AlderTextBlock Foreground="{DynamicResource AlderDangerInk}" Text="{DynamicResource GalleryText.EnterADateOnOrAfterNovember12026}"
+                       TextWrapping="Wrap" MaxWidth="240" IsVisible="{Binding #StartDate.HasInvalidInput}" />
+            <WrapPanel ItemSpacing="8" LineSpacing="8">
+              <alder:AlderButton Content="{DynamicResource GalleryText.ClearDate}" Command="{CompiledBinding Clear}" Variant="Ghost" Size="Small" HorizontalAlignment="Left" />
+              <alder:AlderButton Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding Reset}" Variant="Secondary" Size="Small" />
+            </WrapPanel>
           </StackPanel>
-        </Border>
-      </gallery:ExampleCard.Preview>
-      <gallery:ExampleCard.CSharpSource><![CDATA[
-        var dateField = new AlderDateField { Variant = InputVariant.Secondary, FullWidth = true };
-        dateField.Bind(AlderDateField.CultureProperty, CompiledBinding.Create((DateFieldViewModel model) => model.GermanCulture));
-        dateField.Bind(AlderDateField.ValueProperty, CompiledBinding.Create((DateFieldViewModel model) => model.Example, mode: BindingMode.OneWay));
-      ]]></gallery:ExampleCard.CSharpSource>
-    </gallery:ExampleCard>
-    <gallery:ExampleCard x:Name="SampleReadOnly" Title="{DynamicResource GalleryText.ReadOnly}">
-      <gallery:ExampleCard.Preview>
-        <alder:AlderDateField Culture="{DynamicResource GalleryCulture}" IsReadOnly="True" Value="{Binding Example, Mode=OneWay}" AutomationProperties.Name="{DynamicResource GalleryText.ReadOnlyDate}" />
-      </gallery:ExampleCard.Preview>
-      <gallery:ExampleCard.CSharpSource><![CDATA[
-        var dateField = new AlderDateField { Culture = CultureInfo.CurrentCulture, IsReadOnly = true };
-        dateField.Bind(AlderDateField.ValueProperty, CompiledBinding.Create((DateFieldViewModel model) => model.Example, mode: BindingMode.OneWay));
-        AutomationProperties.SetName(dateField, "Read-only date");
-      ]]></gallery:ExampleCard.CSharpSource>
-    </gallery:ExampleCard>
-    <gallery:ExampleCard x:Name="SampleDisabled" Title="{DynamicResource GalleryText.Disabled}">
-      <gallery:ExampleCard.Preview>
-        <alder:AlderDateField Culture="{DynamicResource GalleryCulture}" IsEnabled="False" AutomationProperties.Name="{DynamicResource GalleryText.DisabledDate}" />
-      </gallery:ExampleCard.Preview>
-      <gallery:ExampleCard.CSharpSource><![CDATA[
-        var dateField = new AlderDateField { Culture = CultureInfo.CurrentCulture, IsEnabled = false };
-        AutomationProperties.SetName(dateField, "Disabled date");
-      ]]></gallery:ExampleCard.CSharpSource>
-    </gallery:ExampleCard>
-  </gallery:GalleryExampleList>
-</UserControl>
+        </gallery:ExampleCard.Preview>
+        <gallery:ExampleCard.CSharpSource><![CDATA[
+          var dateField = new AlderDateField
+          {
+              Culture = CultureInfo.CurrentCulture,
+              IsRequired = true,
+              Prefix = new AlderPathIcon { Height = 16, Data = (Geometry)this.FindResource("AlderIconCalendar")!, Foreground = (IBrush)this.FindResource("AlderMuted")! },
+          };
+          dateField.Bind(AlderDateField.ValueProperty, CompiledBinding.Create((DateFieldViewModel model) => model.Date, mode: BindingMode.TwoWay));
+          dateField.Bind(AlderDateField.MinimumProperty, CompiledBinding.Create((DateFieldViewModel model) => model.Minimum));
+
+          var model = (DateFieldViewModel)DataContext!;
+          var clear = new AlderButton { Content = "Clear date", Size = AlderSize.Small, Variant = ButtonVariant.Ghost };
+          var reset = new AlderButton { Content = "Reset", Size = AlderSize.Small, Variant = ButtonVariant.Secondary };
+          clear.Click += (_, _) => model.Clear();
+          reset.Click += (_, _) => model.Reset();
+          var actions = new WrapPanel { ItemSpacing = 8, LineSpacing = 8, Children = { clear, reset } };
+          var preview = new StackPanel { Spacing = 4, Children = { dateField, actions } };
+        ]]></gallery:ExampleCard.CSharpSource>
+      </gallery:ExampleCard>
+    </gallery:GalleryExampleTemplate>
+    <gallery:GalleryExampleTemplate Name="SampleGermanDateFormat">
+      <gallery:ExampleCard Title="{DynamicResource GalleryText.GermanDateFormat}">
+        <gallery:ExampleCard.Preview>
+          <Border Padding="12" CornerRadius="16" Background="{DynamicResource AlderSurface}">
+            <StackPanel Spacing="4">
+              <alder:AlderLabel x:Name="LocaleLabel" Content="{DynamicResource GalleryText.GermanDateFormat}" Target="{Binding #LocalizedDate}" />
+              <alder:AlderDateField x:Name="LocalizedDate" Culture="{Binding GermanCulture}" Variant="Secondary" Value="{Binding Example, Mode=OneWay}"
+                               FullWidth="True" AutomationProperties.LabeledBy="{Binding #LocaleLabel}" />
+            </StackPanel>
+          </Border>
+        </gallery:ExampleCard.Preview>
+        <gallery:ExampleCard.CSharpSource><![CDATA[
+          var dateField = new AlderDateField { Variant = InputVariant.Secondary, FullWidth = true };
+          dateField.Bind(AlderDateField.CultureProperty, CompiledBinding.Create((DateFieldViewModel model) => model.GermanCulture));
+          dateField.Bind(AlderDateField.ValueProperty, CompiledBinding.Create((DateFieldViewModel model) => model.Example, mode: BindingMode.OneWay));
+        ]]></gallery:ExampleCard.CSharpSource>
+      </gallery:ExampleCard>
+    </gallery:GalleryExampleTemplate>
+    <gallery:GalleryExampleTemplate Name="SampleReadOnly">
+      <gallery:ExampleCard Title="{DynamicResource GalleryText.ReadOnly}">
+        <gallery:ExampleCard.Preview>
+          <alder:AlderDateField Culture="{DynamicResource GalleryCulture}" IsReadOnly="True" Value="{Binding Example, Mode=OneWay}" AutomationProperties.Name="{DynamicResource GalleryText.ReadOnlyDate}" />
+        </gallery:ExampleCard.Preview>
+        <gallery:ExampleCard.CSharpSource><![CDATA[
+          var dateField = new AlderDateField { Culture = CultureInfo.CurrentCulture, IsReadOnly = true };
+          dateField.Bind(AlderDateField.ValueProperty, CompiledBinding.Create((DateFieldViewModel model) => model.Example, mode: BindingMode.OneWay));
+          AutomationProperties.SetName(dateField, "Read-only date");
+        ]]></gallery:ExampleCard.CSharpSource>
+      </gallery:ExampleCard>
+    </gallery:GalleryExampleTemplate>
+    <gallery:GalleryExampleTemplate Name="SampleDisabled">
+      <gallery:ExampleCard Title="{DynamicResource GalleryText.Disabled}">
+        <gallery:ExampleCard.Preview>
+          <alder:AlderDateField Culture="{DynamicResource GalleryCulture}" IsEnabled="False" AutomationProperties.Name="{DynamicResource GalleryText.DisabledDate}" />
+        </gallery:ExampleCard.Preview>
+        <gallery:ExampleCard.CSharpSource><![CDATA[
+          var dateField = new AlderDateField { Culture = CultureInfo.CurrentCulture, IsEnabled = false };
+          AutomationProperties.SetName(dateField, "Disabled date");
+        ]]></gallery:ExampleCard.CSharpSource>
+      </gallery:ExampleCard>
+    </gallery:GalleryExampleTemplate>
+  </gallery:GalleryExampleSection.Examples>
+</gallery:GalleryExampleSection>

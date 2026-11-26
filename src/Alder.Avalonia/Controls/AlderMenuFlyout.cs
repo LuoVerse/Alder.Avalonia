@@ -78,6 +78,13 @@ public class AlderMenuFlyout : MenuFlyout
     }
 
     /// <inheritdoc />
+    protected override bool ShowAtCore(Control placementTarget, bool showAtPointer = false)
+    {
+        using var rowActionInput = showAtPointer ? null : AlderDataGrid.KeepRowActionPointerInput(placementTarget, this);
+        return base.ShowAtCore(placementTarget, showAtPointer);
+    }
+
+    /// <inheritdoc />
     protected override void OnOpened()
     {
         if (Target is { } target && Popup.Child is { } presenter)
