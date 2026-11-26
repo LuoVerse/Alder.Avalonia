@@ -79,7 +79,6 @@ dotnet publish tests/Alder.Avalonia.AotSmoke -c Release -r osx-arm64 -p:PublishA
 
 - [设计系统](DESIGN.md)
 - [组件目录与使用契约](docs/COMPONENTS.md)
-- [历史移植与 Web 对照记录](docs/Alder.Avalonia移植设计.md)
 
 ## 许可
 
