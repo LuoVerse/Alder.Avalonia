@@ -1152,12 +1152,19 @@ internal static class ControlEdgeRenderSmoke
             Tab(window);
             using var acting = Capture(window);
             var action = field.GetVisualDescendants().OfType<Button>().Single(button => button.IsFocused);
-            var point = action.TranslatePoint(new Point(action.Bounds.Width / 2, 2), window)!.Value;
+            // Sample outside the field so subpixel text rendering cannot be mistaken for the focus ring.
+            var ringPoint = field.TranslatePoint(new Point(field.Bounds.Width / 2, -1), window)!.Value;
+            var editorRing = Pixel(editing, ringPoint, scale);
+            var suffixRing = Pixel(acting, ringPoint, scale);
+            if (!IsAccent(editorRing) || IsAccent(suffixRing))
+                throw new InvalidOperationException($"Search editor outline did not follow focus ({theme.Key}, {scale}×): {editorRing} → {suffixRing}.");
+
+            var fillPoint = action.TranslatePoint(new Point(action.Bounds.Width / 2, 2), window)!.Value;
             action.TryFindResource("AlderNeutralHover", theme, out var brush);
             var color = ((ISolidColorBrush)brush!).Color;
-            if (!editing.Pixels.Any(IsAccent) || acting.Pixels.Any(IsAccent) ||
-                Difference(Pixel(acting, point, scale), new SKColor(color.R, color.G, color.B)) > 5)
-                throw new InvalidOperationException($"Search suffix did not use its hover fill or retained the editor outline ({theme.Key}, {scale}×).");
+            var fill = Pixel(acting, fillPoint, scale);
+            if (Difference(fill, new SKColor(color.R, color.G, color.B)) > 5)
+                throw new InvalidOperationException($"Search suffix did not use its hover fill ({theme.Key}, {scale}×): actual {fill}, expected {color}.");
         }
         finally { window.Close(); }
     }
