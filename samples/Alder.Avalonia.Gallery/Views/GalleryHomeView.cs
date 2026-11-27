@@ -19,7 +19,6 @@ internal sealed class GalleryHomeView : UserControl
 {
     private readonly GalleryHomeViewModel model = new();
     private readonly Action<GalleryHomeLink> openExample;
-    private readonly GalleryExampleList sections = new() { Spacing = 28 };
 
     public GalleryHomeView(Action<GalleryHomeLink> openExample)
     {
@@ -52,14 +51,14 @@ internal sealed class GalleryHomeView : UserControl
                     secondary: ("Chip", new("Chip", "SampleUsage"))),
                 Tile("Alert", Alert(), new("Alert", "SampleBasic"))));
 
-        sections.Add(Intro(basics));
-        sections.Add(QuickStart());
-        sections.Add(basics);
-        sections.Add(BuildNavigation);
-        sections.Add(BuildData);
-        sections.Add(BuildAdvanced);
-        var page = Stack(0, sections);
-        page.Classes.Add("galleryPage");
+        // Keep the overview sections measured so the scroll extent stays stable across preview heights.
+        var page = new GallerySectionStack
+        {
+            Spacing = 28,
+            Classes = { "galleryPage" },
+            Children = { Intro(basics), QuickStart(), basics }
+        };
+        page.AddSections([BuildNavigation, BuildData, BuildAdvanced]);
         Content = page;
     }
 
@@ -110,8 +109,6 @@ internal sealed class GalleryHomeView : UserControl
     {
         // Embedded selections can scroll their own controls without jumping the outer home page.
         // When keyboard focus moves into a preview, reveal it in the outer page too.
-        // The overview list's own requests implement the Browse shortcut.
-        if (e.TargetObject is Control container && ReferenceEquals(container.Parent, sections)) return;
         if (e.TargetObject is not Visual target ||
             TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement() is not Visual focused ||
             (target != focused && !target.IsVisualAncestorOf(focused)))
@@ -123,7 +120,6 @@ internal sealed class GalleryHomeView : UserControl
         var browse = Button("HomeBrowse", ButtonVariant.Primary);
         browse.Click += (_, _) =>
         {
-            sections.Reveal(basics);
             if (this.FindAncestorOfType<ScrollViewer>() is { } scroll && basics.TranslatePoint(default, scroll) is { } position)
                 scroll.Offset = new Vector(0, Math.Max(0, scroll.Offset.Y + position.Y - 24));
         };
