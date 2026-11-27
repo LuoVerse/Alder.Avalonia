@@ -135,8 +135,8 @@ public sealed class AlderStepperStep : Button
     public static readonly StyledProperty<string?> DescriptionProperty =
         AvaloniaProperty.Register<AlderStepperStep, string?>(nameof(Description));
     /// <summary>Identifies the <see cref="Icon"/> Avalonia property.</summary>
-    public static readonly StyledProperty<Geometry?> IconProperty =
-        AvaloniaProperty.Register<AlderStepperStep, Geometry?>(nameof(Icon));
+    public static readonly StyledProperty<object?> IconProperty =
+        AvaloniaProperty.Register<AlderStepperStep, object?>(nameof(Icon));
     /// <summary>Identifies the <see cref="TrailingContent"/> Avalonia property.</summary>
     public static readonly StyledProperty<object?> TrailingContentProperty =
         AvaloniaProperty.Register<AlderStepperStep, object?>(nameof(TrailingContent));
@@ -149,8 +149,8 @@ public sealed class AlderStepperStep : Button
     /// <summary>Identifies the <see cref="Number"/> Avalonia property.</summary>
     public static readonly DirectProperty<AlderStepperStep, int> NumberProperty =
         AvaloniaProperty.RegisterDirect<AlderStepperStep, int>(nameof(Number), step => step.Number);
-    internal static readonly DirectProperty<AlderStepperStep, Geometry?> DisplayIconProperty =
-        AvaloniaProperty.RegisterDirect<AlderStepperStep, Geometry?>(nameof(DisplayIcon), step => step.DisplayIcon);
+    internal static readonly DirectProperty<AlderStepperStep, object?> DisplayIconProperty =
+        AvaloniaProperty.RegisterDirect<AlderStepperStep, object?>(nameof(DisplayIcon), step => step.DisplayIcon);
     internal static readonly DirectProperty<AlderStepperStep, IBrush?> StepAccentProperty =
         AvaloniaProperty.RegisterDirect<AlderStepperStep, IBrush?>(nameof(StepAccent), step => step.StepAccent);
     internal static readonly DirectProperty<AlderStepperStep, IBrush?> StepOnAccentProperty =
@@ -163,8 +163,8 @@ public sealed class AlderStepperStep : Button
     public string? Title { get => GetValue(TitleProperty); set => SetValue(TitleProperty, value); }
     /// <summary>The optional supporting text displayed with the content.</summary>
     public string? Description { get => GetValue(DescriptionProperty); set => SetValue(DescriptionProperty, value); }
-    /// <summary>The optional geometry displayed with the content.</summary>
-    public Geometry? Icon { get => GetValue(IconProperty); set => SetValue(IconProperty, value); }
+    /// <summary>An optional geometry or icon control displayed with the content.</summary>
+    public object? Icon { get => GetValue(IconProperty); set => SetValue(IconProperty, value); }
     /// <summary>Optional content aligned to the trailing edge of the step title.</summary>
     public object? TrailingContent { get => GetValue(TrailingContentProperty); set => SetValue(TrailingContentProperty, value); }
     /// <summary>An optional indicator template whose data is this step, including its current status.</summary>
@@ -173,7 +173,7 @@ public sealed class AlderStepperStep : Button
     public AlderStepStatus Status { get => field; private set => SetAndRaise(StatusProperty, ref field, value); }
     /// <summary>The one-based number displayed for the step.</summary>
     public int Number { get => field; private set => SetAndRaise(NumberProperty, ref field, value); }
-    internal Geometry? DisplayIcon { get => field; private set => SetAndRaise(DisplayIconProperty, ref field, value); }
+    internal object? DisplayIcon { get => field; private set => SetAndRaise(DisplayIconProperty, ref field, value); }
     internal IBrush? StepAccent { get => field; private set => SetAndRaise(StepAccentProperty, ref field, value); }
     internal IBrush? StepOnAccent { get => field; private set => SetAndRaise(StepOnAccentProperty, ref field, value); }
 

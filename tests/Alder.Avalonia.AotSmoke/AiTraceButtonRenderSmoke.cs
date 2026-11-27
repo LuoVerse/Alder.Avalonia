@@ -75,9 +75,9 @@ internal static class AiTraceButtonRenderSmoke
             trigger.Focus(NavigationMethod.Tab);
             using var focused = Capture(window);
             var focusEdge = origin + new Vector(-1, trigger.Bounds.Height / 2);
-            var focus = Pixel(focused, focusEdge, scale);
-            if (focus.Blue < focus.Red + 70 || focus == Pixel(initial, focusEdge, scale))
-                throw new InvalidOperationException($"The outer keyboard focus ring did not render ({theme.Key}/{scale}x).");
+            if (Pixel(focused, edge, scale) != Pixel(hover, edge, scale) ||
+                Pixel(focused, focusEdge, scale) != Pixel(initial, focusEdge, scale))
+                throw new InvalidOperationException($"The trace keyboard focus did not use the hover fill within the button ({theme.Key}/{scale}x).");
         }
         finally { window.Close(); }
     }

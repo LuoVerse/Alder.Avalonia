@@ -1,12 +1,6 @@
-using Alder.Avalonia.Controls;
-using Alder.NativeMarkdown.UI.Extensions;
-using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input.Platform;
-using Avalonia.Interactivity;
 using Avalonia.Layout;
-using Avalonia.Markup.Xaml.MarkupExtensions;
 
 namespace Alder.Avalonia.Gallery.Controls;
 
@@ -32,20 +26,15 @@ public partial class ExampleCard : UserControl
     public string AxamlSource { get => GetValue(AxamlSourceProperty); set => SetValue(AxamlSourceProperty, value); }
     public string CSharpSource { get => GetValue(CSharpSourceProperty); set => SetValue(CSharpSourceProperty, value); }
 
-    private static readonly MarkdownServices SourceServices = new()
-    {
-        Highlighter = AlderMarkdown.ChatServices.Highlighter,
-        CodeBlocks = AlderMarkdown.ChatServices.CodeBlocks with { ShowHeader = false, ShowLineNumbers = true }
-    };
-
     private bool ready;
-    private int sourceRevision;
-    private Action? prepareSources;
+    private Action? loadSources;
+    private Action<ExampleCodePanel>? configureCode;
+    private ExampleCodePanel? code;
+    private bool preparingCode;
 
     public ExampleCard()
     {
         InitializeComponent();
-        MarkdownServices.SetServices(SourceCode, SourceServices);
         ready = true;
         SizeChanged += (_, e) =>
         {
@@ -60,43 +49,22 @@ public partial class ExampleCard : UserControl
         };
     }
 
+    internal void DeferSources(Action load) => loadSources = load;
+
     internal void SetSources(string axaml, string viewModel, string codeBehind, string controlUsage)
     {
+        configureCode = panel => panel.SetSources(viewModel, codeBehind, controlUsage);
         AxamlSource = axaml;
         CSharpSource = controlUsage;
-        CodeKinds.Items.Clear();
-        AddCodeKind("ViewModelSource", viewModel);
-        AddCodeKind("CodeBehindSource", codeBehind);
-        AddCodeKind("ControlUsageSource", controlUsage);
-        CodeKinds.SelectedIndex = 0;
     }
-
-    internal void PrepareSourcesOnDemand(Action prepare) => prepareSources = prepare;
 
     internal void ShowAxaml() => Modes.SelectedIndex = 1;
 
     internal void SetSourceFiles((string Name, string Text)[] axaml, (string Name, string Text)[] csharp)
     {
+        configureCode = panel => panel.SetSourceFiles(axaml, csharp);
         AxamlSource = axaml[0].Text;
         CSharpSource = csharp[0].Text;
-        SetFiles(AxamlKinds, axaml);
-        SetFiles(CodeKinds, csharp);
-    }
-
-    private static void SetFiles(ListBox tabs, (string Name, string Text)[] files)
-    {
-        tabs.Items.Clear();
-        foreach (var (name, text) in files)
-            tabs.Items.Add(new AlderListBoxItem { Content = name, Tag = text });
-        tabs.SelectedIndex = 0;
-    }
-
-    private void AddCodeKind(string resource, string source)
-    {
-        if (string.IsNullOrWhiteSpace(source)) return;
-        var item = new AlderListBoxItem { Tag = source };
-        item[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText." + resource);
-        CodeKinds.Items.Add(item);
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -123,63 +91,34 @@ public partial class ExampleCard : UserControl
         Refresh();
     }
 
-    private async void CopyCode(object? sender, RoutedEventArgs e)
-    {
-        var code = SourceCode.Code;
-        if (Modes.SelectedIndex <= 0 || string.IsNullOrEmpty(code)) return;
-        int revision = sourceRevision;
-        bool copied = false;
-        try
-        {
-            if (TopLevel.GetTopLevel(this)?.Clipboard is { } clipboard)
-            {
-                await clipboard.SetTextAsync(code);
-                copied = true;
-            }
-        }
-        catch (Exception error) when (error is InvalidOperationException or ExternalException)
-        {
-            copied = false;
-        }
-        if (sourceRevision == revision && CodePanel.IsVisible)
-            SetCopyFeedback(copied);
-    }
-
-    private void SetCopyFeedback(bool? copied = null)
-    {
-        CopyCodeButton.Classes.Set("copied", copied == true);
-        CopyCodeButton.Classes.Set("copyFailed", copied == false);
-    }
-
     private void Refresh()
     {
-        var mode = Modes.SelectedIndex;
+        if (preparingCode) return;
+        int mode = Modes.SelectedIndex;
         PreviewPanel.IsVisible = mode == 0;
-        CodePanel.IsVisible = mode > 0;
+        CodeHost.IsVisible = mode > 0;
         if (mode <= 0)
         {
-            sourceRevision++;
-            SetCopyFeedback();
+            code?.Deactivate();
             return;
         }
-        var prepare = prepareSources;
-        prepareSources = null;
-        prepare?.Invoke();
 
-        bool axaml = mode == 1;
-        AxamlKinds.IsVisible = axaml;
-        CodeKinds.IsVisible = !axaml;
-        var tabs = axaml ? AxamlKinds : CodeKinds;
-        CodeTabs.IsVisible = axaml ? tabs.Items.Count > 1 : tabs.Items.Count > 0;
-        var language = axaml ? "axaml" : "csharp";
-        var raw = (tabs.SelectedItem as ListBoxItem)?.Tag as string ?? (axaml ? AxamlSource : CSharpSource);
-        if (SourceCode.Code != raw || SourceCode.Language != language)
+        // Load sources and allocate the editor only when a source tab is opened.
+        preparingCode = true;
+        try
         {
-            sourceRevision++;
-            SetCopyFeedback();
-            SourceCode.Language = language;
-            SourceCode.Code = raw;
+            var load = loadSources;
+            loadSources = null;
+            load?.Invoke();
+            if (code is null)
+                CodeHost.Content = code = new ExampleCodePanel();
+            configureCode?.Invoke(code);
+            configureCode = null;
+            code.ShowSource(mode, AxamlSource, CSharpSource);
         }
-        CopyCodeButton.IsEnabled = !string.IsNullOrEmpty(raw);
+        finally
+        {
+            preparingCode = false;
+        }
     }
 }

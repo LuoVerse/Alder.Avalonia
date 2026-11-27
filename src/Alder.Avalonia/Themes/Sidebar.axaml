@@ -29,8 +29,6 @@
             <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" Margin="{TemplateBinding Padding}"
                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                               VerticalContentAlignment="Center" />
-            <Border Name="FocusRing" Margin="-3" CornerRadius="{TemplateBinding CornerRadius}" BorderThickness="2"
-                    BorderBrush="{DynamicResource AlderAccent}" IsVisible="False" IsHitTestVisible="False" />
           </Grid>
         </alder:ButtonFeedback>
       </ControlTemplate>
@@ -242,7 +240,7 @@
                 <Grid Name="RowContent" ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
                   <Panel Width="20" Height="20" VerticalAlignment="Center"
                          IsVisible="{TemplateBinding Icon, Converter={x:Static conv:ObjectConverters.IsNotNull}}">
-                    <alder:AlderPathIcon Name="RowIcon" Width="16" Height="16" Data="{TemplateBinding Icon}" Foreground="{DynamicResource AlderMuted}"
+                    <alder:AlderIconPresenter Name="RowIcon" Width="16" Height="16" Content="{TemplateBinding Icon}" Foreground="{DynamicResource AlderMuted}"
                               HorizontalAlignment="Center" VerticalAlignment="Center" />
                   </Panel>
                   <ContentPresenter Name="Label" Grid.Column="1" Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}"
@@ -257,11 +255,6 @@
               <ContentPresenter Name="Actions" Grid.Column="1" Content="{TemplateBinding Actions}" VerticalAlignment="Center"
                                 Opacity="0" IsHitTestVisible="False" IsEnabled="False"
                                 IsVisible="{TemplateBinding Actions, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
-              <Border Name="FocusRing" Grid.ColumnSpan="2" Margin="-4" IsVisible="False" IsHitTestVisible="False"
-                      BorderThickness="2" BorderBrush="{DynamicResource AlderAccent}" CornerRadius="{TemplateBinding CornerRadius}">
-                <Border BorderBrush="{DynamicResource AlderAppLayoutBackground}" BorderThickness="2"
-                        CornerRadius="{TemplateBinding CornerRadius}" />
-              </Border>
             </Grid>
           </Border>
           <alder:AlderAccordionPanel Name="Submenu" ClipToBounds="True" IsEnabled="False" IsHitTestVisible="False">
@@ -278,10 +271,10 @@
     </Style>
     <Style Selector="^ /template/ :is(Button)#PART_Row:pointerover"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
     <Style Selector="^:selected"><Setter Property="FontWeight" Value="Medium" /></Style>
-    <Style Selector="^:selected /template/ PathIcon#RowIcon">
+    <Style Selector="^:selected /template/ alder|AlderIconPresenter#RowIcon">
       <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
     </Style>
-    <Style Selector="^:focus-visible /template/ Border#FocusRing"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:focus-visible:not(:disabled) /template/ Border#RowSurface"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
     <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
     <Style Selector="^:not(:empty) /template/ PathIcon#Chevron"><Setter Property="IsVisible" Value="True" /></Style>
     <Style Selector="^[IsExpanded=True] /template/ PathIcon#Chevron"><Setter Property="RenderTransform" Value="rotate(90deg)" /></Style>

@@ -1,0 +1,60 @@
+<alder:AlderSalashWindow xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:alder="using:Alder.Avalonia.Controls"
+        xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+        xmlns:conv="using:Avalonia.Data.Converters"
+        xmlns:chrome="using:Avalonia.Controls.Chrome"
+        x:Class="Alder.Avalonia.Gallery.Views.SalashPreviewWindow"
+        x:DataType="vm:SalashWindowViewModel" Title="{DynamicResource GalleryText.SalashSignIn}"
+        WindowStartupLocation="CenterOwner" MinWidth="412">
+  <alder:AlderSalashWindow.Background>
+    <ImageBrush Source="avares://Alder.Avalonia.Gallery/Assets/Window/alpine-morning.jpg" Stretch="UniformToFill" />
+  </alder:AlderSalashWindow.Background>
+  <alder:AlderCard Width="336" Padding="28" VerticalAlignment="Center" Background="{DynamicResource AlderSurface}"
+                   BorderBrush="{DynamicResource AlderBorder}" BorderThickness="1"
+                   chrome:WindowDecorationProperties.ElementRole="User">
+    <StackPanel Spacing="18">
+      <StackPanel Spacing="8">
+        <TextBlock Text="Alder" FontSize="18" FontWeight="SemiBold" />
+        <TextBlock Text="{DynamicResource GalleryText.SalashSignIn}" FontSize="30" FontWeight="Bold" />
+      </StackPanel>
+      <StackPanel Spacing="6">
+        <alder:AlderLabel x:Name="AccountLabel" Target="{Binding #AccountField}" Content="{DynamicResource GalleryText.SalashAccount}" />
+        <alder:AlderInput x:Name="AccountField" FullWidth="True" Height="44" ShowClearButton="True"
+                          Text="{CompiledBinding Account, Mode=TwoWay}" IsReadOnly="{CompiledBinding IsSigningIn}"
+                          PlaceholderText="{DynamicResource GalleryText.SalashAccountHint}"
+                          AutomationProperties.LabeledBy="{Binding #AccountLabel}" />
+      </StackPanel>
+      <StackPanel Spacing="6">
+        <alder:AlderLabel x:Name="PasswordLabel" Target="{Binding #PasswordField}" Content="{DynamicResource GalleryText.Password}" />
+        <alder:AlderInputGroup x:Name="PasswordField" FullWidth="True" Height="44" Type="Password"
+                              Text="{CompiledBinding Password, Mode=TwoWay}" RevealPassword="{CompiledBinding IsPasswordVisible}"
+                              IsReadOnly="{CompiledBinding IsSigningIn}" SuffixPadding="4,0,6,0"
+                              PlaceholderText="{DynamicResource GalleryText.EnterPassword}"
+                              AutomationProperties.LabeledBy="{Binding #PasswordLabel}">
+          <alder:AlderInputGroup.Suffix>
+            <alder:AlderButton Size="Small" IsIconOnly="True" Variant="Ghost"
+                               Classes.revealed="{CompiledBinding IsPasswordVisible}" Command="{CompiledBinding TogglePassword}">
+              <alder:AlderButton.Styles>
+                <Style Selector="alder|AlderButton">
+                  <Setter Property="Icon" Value="{StaticResource AlderIconEye}" />
+                  <Setter Property="AutomationProperties.Name" Value="{DynamicResource GalleryText.SalashShowPassword}" />
+                </Style>
+                <Style Selector="alder|AlderButton.revealed">
+                  <Setter Property="Icon" Value="{StaticResource AlderIconEyeSlash}" />
+                  <Setter Property="AutomationProperties.Name" Value="{DynamicResource GalleryText.SalashHidePassword}" />
+                </Style>
+              </alder:AlderButton.Styles>
+            </alder:AlderButton>
+          </alder:AlderInputGroup.Suffix>
+        </alder:AlderInputGroup>
+      </StackPanel>
+      <TextBlock Text="{CompiledBinding Error}" IsVisible="{CompiledBinding Error, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}"
+                 Foreground="{DynamicResource AlderDanger}" TextWrapping="Wrap" FontSize="13"
+                 AutomationProperties.LiveSetting="Polite" />
+      <alder:AlderButton x:Name="SignInButton" FullWidth="True" Height="44" IsDefault="True"
+                        IsPending="{CompiledBinding IsSigningIn}" Command="{CompiledBinding SignIn}"
+                        Content="{DynamicResource GalleryText.SalashSignIn}" />
+    </StackPanel>
+  </alder:AlderCard>
+</alder:AlderSalashWindow>

@@ -46,6 +46,8 @@ internal sealed class DialogLayer : Panel
         this.finish = finish;
         IsNestedSheet = nestedSheet;
         PreviousFocus = previousFocus;
+        FocusReturnMethod = previousFocus is InputElement input && input.Classes.Contains(":focus-visible")
+            ? NavigationMethod.Tab : NavigationMethod.Unspecified;
         ClipToBounds = true;
         FlowDirection = FlowDirection.LeftToRight;
         KeyboardNavigation.SetTabNavigation(this, KeyboardNavigationMode.Cycle);
@@ -125,6 +127,7 @@ internal sealed class DialogLayer : Panel
 
     public bool IsActive { get; set; }
     public IInputElement? PreviousFocus { get; private set; }
+    public NavigationMethod FocusReturnMethod { get; private set; }
     public DialogBackdrop Backdrop => IsNestedSheet ? DialogBackdrop.Transparent : options.Backdrop;
     public bool IsNestedSheet { get; }
     public bool IsSheet => options is SheetOptions;
@@ -141,12 +144,15 @@ internal sealed class DialogLayer : Panel
     public void ReplacePreviousFocus(DialogLayer removed)
     {
         if (PreviousFocus is Visual visual && removed.IsVisualAncestorOf(visual))
+        {
             PreviousFocus = removed.PreviousFocus;
+            FocusReturnMethod = removed.FocusReturnMethod;
+        }
     }
 
     public void FocusInitial()
     {
-        if (IsActive) surface.FocusInitial();
+        if (IsActive) surface.FocusInitial(FocusReturnMethod);
     }
 
     public void Complete(DialogResult result)
@@ -221,7 +227,11 @@ internal sealed class DialogLayer : Panel
 
         if (e.Key != Key.Escape) return;
         e.Handled = true;
-        if (options.CanEscapeDismiss) RequestClose(DialogResult.Cancel);
+        if (options.CanEscapeDismiss)
+        {
+            FocusReturnMethod = NavigationMethod.Tab;
+            RequestClose(DialogResult.Cancel);
+        }
     }
 
     private (Size Size, DialogPlacement Placement) GetSurfaceSlot(Size available)

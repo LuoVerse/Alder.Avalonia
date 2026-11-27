@@ -15,47 +15,54 @@ public abstract partial class AlderCartesianChart
         var brush = chart.Brushes[s];
         var pen = new Pen(brush, !ShowXAxis && !ShowYAxis && !ShowGrid ? 1.5 : 2,
             series.IsDashed ? ComparisonDash : null, lineCap: PenLineCap.Round, lineJoin: PenLineJoin.Round);
-        var points = new List<Point>();
-        foreach (var (span, category) in chart.Spans[s].Select((span, index) => (span, index)))
+        foreach (var line in chart.GetLineSegments(s, smooth, lineRenderScale))
         {
-            if (span is { } value)
-                points.Add(new Point(chart.Category(category), chart.ValueCoordinate(value.End, s)));
-            else if (!series.ConnectGaps)
+            if (line.Geometry is not { } geometry)
             {
-                DrawLineSegment(context, points, pen, smooth, series.ShowDots, progress);
-                points.Clear();
+                context.DrawEllipse(brush, null, line.FirstPoint, 2.5, 2.5);
+                continue;
             }
+            if (progress >= 1)
+            {
+                context.DrawGeometry(null, pen, geometry);
+                if (line.Dots is { } dots)
+                    foreach (var point in dots)
+                        context.DrawEllipse(brush, null, point, 3, 3);
+            }
+            else if (geometry.TryGetSegment(0, geometry.ContourLength * progress, true, out var segment))
+                context.DrawGeometry(null, pen, segment);
         }
-        DrawLineSegment(context, points, pen, smooth, series.ShowDots, progress);
     }
 
-    private static void DrawLineSegment(DrawingContext context, List<Point> points, IPen pen,
-        bool smooth, bool dots, double progress)
+    private protected sealed record LineSegment(Point FirstPoint, StreamGeometry? Geometry, Point[]? Dots);
+
+    private static void ReduceDenseLine(List<Point> points, double scale)
     {
-        if (points.Count == 0)
+        if (points.Count < 4 || points.Count <= (points[^1].X - points[0].X) * scale * 2)
             return;
-        if (points.Count == 1)
+
+        // Preserve each uninterrupted segment's endpoints and the extremes in each
+        // device-pixel column. Hit testing continues to use the unreduced series.
+        int last = points.Count - 1;
+        int write = 1;
+        for (int read = 1; read < last;)
         {
-            context.DrawEllipse(pen.Brush, null, points[0], 2.5, 2.5);
-            return;
+            double column = Math.Floor(points[read].X * scale);
+            int min = read;
+            int max = read++;
+            while (read < last && Math.Floor(points[read].X * scale) == column)
+            {
+                if (points[read].Y < points[min].Y) min = read;
+                if (points[read].Y > points[max].Y) max = read;
+                read++;
+            }
+            var first = points[Math.Min(min, max)];
+            var second = points[Math.Max(min, max)];
+            points[write++] = first;
+            if (min != max) points[write++] = second;
         }
-
-        var geometry = new StreamGeometry();
-        using (var path = geometry.Open())
-        {
-            path.BeginFigure(points[0], false);
-            AppendCurve(path, points, smooth);
-            path.EndFigure(false);
-        }
-
-        if (progress >= 1)
-            context.DrawGeometry(null, pen, geometry);
-        else if (geometry.TryGetSegment(0, geometry.ContourLength * progress, true, out var segment))
-            context.DrawGeometry(null, pen, segment);
-
-        if (dots && progress >= 1)
-            foreach (var point in points)
-                context.DrawEllipse(pen.Brush, null, point, 3, 3);
+        points[write++] = points[last];
+        points.RemoveRange(write, points.Count - write);
     }
 
     private protected void DrawAreaSeries(DrawingContext context, ChartLayout chart, int s, bool smooth, bool stacked)

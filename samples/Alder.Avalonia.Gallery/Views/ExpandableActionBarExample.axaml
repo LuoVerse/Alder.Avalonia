@@ -1,0 +1,95 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.ExpandableActionBarExample"
+             x:DataType="vm:ExpandableActionBarViewModel">
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleExpandableActionBar" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="12">
+          <Grid MinHeight="86" Margin="0,0,0,6">
+            <alder:AlderExpandableActionBar x:Name="PreviewActionBar" IsExpanded="{CompiledBinding IsExpanded}"
+                                            SelectedIndex="{CompiledBinding SelectedIndex}">
+              <alder:AlderExpandableActionBarItem Content="{DynamicResource GalleryText.ExpandableActionSend}"
+                                                  Icon="{StaticResource AlderIconEnvelope}" IconMotion="Send" Shortcut="S" />
+              <alder:AlderExpandableActionBarItem Content="{DynamicResource GalleryText.Copy}"
+                                                  Icon="{StaticResource AlderIconCopy}" IconMotion="Copy" Shortcut="C" />
+              <alder:AlderExpandableActionBarItem Content="{DynamicResource GalleryText.ActionBarExport}"
+                                                  Icon="{StaticResource AlderIconDownload}" IconMotion="Download" Shortcut="E" />
+              <alder:AlderExpandableActionBarItem Content="{DynamicResource GalleryText.ActionBarArchive}"
+                                                  Icon="{StaticResource AlderIconArchive}" IconMotion="Archive" Shortcut="A" />
+              <alder:AlderExpandableActionBarItem Content="{DynamicResource GalleryText.ExpandableActionAlerts}"
+                                                  Icon="{StaticResource AlderIconBell}" IconMotion="Bell" Badge="3" />
+              <alder:AlderExpandableActionBarItem Content="{DynamicResource GalleryText.ExpandableActionSettings}"
+                                                  Icon="{StaticResource AlderIconGear}" IconMotion="Settings" />
+            </alder:AlderExpandableActionBar>
+          </Grid>
+          <alder:AlderButton HorizontalAlignment="Center" Size="Small" Variant="Outline"
+                             Content="{CompiledBinding ToggleLabel}" Command="{CompiledBinding Toggle}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.Feedback>
+        <alder:AlderTextBlock HorizontalAlignment="Center" Text="{CompiledBinding Feedback}"
+                              Foreground="{DynamicResource AlderMuted}" AutomationProperties.LiveSetting="Polite" />
+      </gallery:ExampleCard.Feedback>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var bar = new AlderExpandableActionBar();
+        bar.Items.Add(new AlderExpandableActionBarItem
+        {
+            Content = "Send",
+            Icon = (Geometry)this.FindResource("AlderIconEnvelope")!,
+            IconMotion = AlderActionIconMotion.Send,
+            Shortcut = "S",
+        });
+        bar.SelectedIndex = 0;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleExpandableActionBarCompact" Title="{DynamicResource GalleryText.ExpandableActionCompact}">
+      <gallery:ExampleCard.Preview>
+        <Grid MinHeight="78" MaxWidth="248">
+          <alder:AlderExpandableActionBar Size="Small" IsExpanded="True" ExpandOnHover="False" ExpandOnFocus="False"
+                                          SelectedIndex="0">
+            <alder:AlderExpandableActionBarItem Content="{DynamicResource GalleryText.Copy}"
+                                                Icon="{StaticResource AlderIconCopy}" IconMotion="Copy" />
+            <alder:AlderExpandableActionBarItem Content="{DynamicResource GalleryText.ActionBarExport}"
+                                                Icon="{StaticResource AlderIconDownload}" IconMotion="Download" IsEnabled="False" />
+            <alder:AlderExpandableActionBarItem Content="{DynamicResource GalleryText.ExpandableActionAlerts}"
+                                                Icon="{StaticResource AlderIconBell}" IconMotion="Bell" Badge="3" />
+            <alder:AlderExpandableActionBarItem Content="{DynamicResource GalleryText.ExpandableActionSettings}"
+                                                Icon="{StaticResource AlderIconGear}" IconMotion="Settings" />
+          </alder:AlderExpandableActionBar>
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var bar = new AlderExpandableActionBar
+        {
+            Size = AlderExpandableActionBarSize.Small,
+            IsExpanded = true,
+            ExpandOnHover = false,
+            ExpandOnFocus = false,
+            MaxWidth = 248,
+        };
+        bar.Items.Add(new AlderExpandableActionBarItem
+        {
+            Content = "Copy", Icon = (Geometry)this.FindResource("AlderIconCopy")!, IconMotion = AlderActionIconMotion.Copy
+        });
+        bar.Items.Add(new AlderExpandableActionBarItem
+        {
+            Content = "Export", Icon = (Geometry)this.FindResource("AlderIconDownload")!,
+            IconMotion = AlderActionIconMotion.Download, IsEnabled = false
+        });
+        bar.Items.Add(new AlderExpandableActionBarItem
+        {
+            Content = "Alerts", Icon = (Geometry)this.FindResource("AlderIconBell")!,
+            IconMotion = AlderActionIconMotion.Bell, Badge = "3"
+        });
+        bar.Items.Add(new AlderExpandableActionBarItem
+        {
+            Content = "Settings", Icon = (Geometry)this.FindResource("AlderIconGear")!, IconMotion = AlderActionIconMotion.Settings
+        });
+        bar.SelectedIndex = 0;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

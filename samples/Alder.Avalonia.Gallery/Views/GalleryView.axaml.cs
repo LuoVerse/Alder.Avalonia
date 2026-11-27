@@ -19,9 +19,9 @@ public partial class GalleryView : UserControl
     private ScrollViewer? homePage;
     private readonly Dictionary<string, Lazy<ScrollViewer>> pages = new(StringComparer.Ordinal)
     {
-        ["Button"] = new(() => CreatePage(
-            CreateExamples(new ButtonExample(), new ButtonViewModel(), "Button"),
-            CreateExamples(new ButtonGroupExample(), new ButtonGroupViewModel(), "ButtonGroup"))),
+        ["Button"] = new(() => CreateGroupedPage(
+            () => CreateExamples(new ButtonExample(), new ButtonViewModel(), "Button"),
+            () => CreateExamples(new ButtonGroupExample(), new ButtonGroupViewModel(), "ButtonGroup"))),
         ["ToggleButton"] = new(() => CreatePage(CreateExamples(new ToggleButtonExample(), new ToggleButtonViewModel()))),
         ["NumberValue"] = new(() => CreatePage(new NumberValueExample())),
         ["PressableFeedback"] = new(() => CreatePage(new PressableFeedbackExample())),
@@ -49,22 +49,23 @@ public partial class GalleryView : UserControl
         ["EmojiPicker"] = new(() => CreatePage(CreateExamples(new EmojiPickerExample(), new EmojiPickerViewModel()))),
         ["Checkbox"] = new(() => CreatePage(CreateExamples(new CheckBoxExample(), new CheckBoxViewModel()))),
         ["RadioButtonGroup"] = new(() => CreatePage(CreateExamples(new RadioButtonGroupExample(), new RadioButtonGroupViewModel()))),
+        ["SalashWindow"] = new(() => CreatePage(new SalashWindowExample())),
         ["DropZone"] = new(() => CreatePage(CreateExamples(new DropZoneExample(), new DropZoneViewModel()))),
         ["NumberStepper"] = new(() => CreatePage(CreateExamples(new NumberStepperExample(), new NumberStepperViewModel()))),
         ["InlineSelect"] = new(() => CreatePage(new InlineSelectExample())),
         ["NativeSelect"] = new(() => CreatePage(CreateExamples(new NativeSelectExample(), new FormSelectViewModel()))),
         ["RichTextEditor"] = new(() => CreatePage(CreateExamples(new RichTextEditorExample(), new RichTextEditorViewModel()))),
         ["CheckboxButtonGroup"] = new(() => CreatePage(CreateExamples(new CheckboxButtonGroupExample(), new CheckboxButtonGroupViewModel()))),
-        ["Input"] = new(() => CreatePage(
-            CreateExamples(new InputExample(), new InputViewModel(), "Input"),
-            CreateExamples(new InputGroupExample(), new InputGroupViewModel(), "InputGroup"),
-            CreateExamples(new InputOtpExample(), new InputOtpViewModel(), "InputOTP"),
-            CreateExamples(new NumberFieldExample(), new NumberFieldViewModel(), "NumberField"),
-            CreateExamples(new SearchFieldExample(), new SearchFieldViewModel(), "SearchField"),
-            CreateExamples(new TextAreaExample(), new TextAreaViewModel(), "TextArea"))),
-        ["Selection"] = new(() => CreatePage(
-            CreateExamples(new ChoiceExample(), new ChoiceViewModel(), "Selection"),
-            CreateExamples(new RadioGroupExample(), new RadioGroupViewModel(), "RadioGroup"))),
+        ["Input"] = new(() => CreateGroupedPage(
+            () => CreateExamples(new InputExample(), new InputViewModel(), "Input"),
+            () => CreateExamples(new InputGroupExample(), new InputGroupViewModel(), "InputGroup"),
+            () => CreateExamples(new InputOtpExample(), new InputOtpViewModel(), "InputOTP"),
+            () => CreateExamples(new NumberFieldExample(), new NumberFieldViewModel(), "NumberField"),
+            () => CreateExamples(new SearchFieldExample(), new SearchFieldViewModel(), "SearchField"),
+            () => CreateExamples(new TextAreaExample(), new TextAreaViewModel(), "TextArea"))),
+        ["Selection"] = new(() => CreateGroupedPage(
+            () => CreateExamples(new ChoiceExample(), new ChoiceViewModel(), "Selection"),
+            () => CreateExamples(new RadioGroupExample(), new RadioGroupViewModel(), "RadioGroup"))),
         ["Switch"] = new(() => CreatePage(CreateExamples(new NotificationExample(), new NotificationViewModel()))),
         ["CellSwitch"] = new(() => CreatePage(new CellSwitchExample())),
         ["Resizable"] = new(() => CreatePage(new ResizableExample())),
@@ -72,11 +73,14 @@ public partial class GalleryView : UserControl
         ["Slider"] = new(() => CreatePage(CreateExamples(new SliderExample(), new SliderViewModel()))),
         ["CellSlider"] = new(() => CreatePage(new CellSliderExample())),
         ["ActionBar"] = new(() => CreatePage(new ActionBarExample())),
+        ["ExpandableActionBar"] = new(() => CreatePage(CreateExamples(new ExpandableActionBarExample(), new ExpandableActionBarViewModel()))),
+        ["OverflowActions"] = new(() => CreatePage(CreateExamples(new OverflowActionsExample(), new OverflowActionsViewModel()))),
         ["EmptyState"] = new(() => CreatePage(new EmptyStateExample())),
         ["FileTree"] = new(() => CreatePage(new FileTreeExample())),
         ["FloatingToc"] = new(() => CreatePage(new FloatingTocExample())),
         ["HoloCard"] = new(() => CreatePage(CreateExamples(new HoloCardExample(), new HoloCardViewModel()))),
         ["HoverCard"] = new(() => CreatePage(CreateExamples(new HoverCardExample(), new HoverCardViewModel()))),
+        ["ImageView"] = new(() => CreatePage(new ImageViewExample())),
         ["Kanban"] = new(() => CreatePage(CreateExamples(new KanbanExample(), new KanbanViewModel()))),
         ["ItemCard"] = new(() => CreatePage(CreateExamples(new ItemCardExample(), new ProDataDisplayViewModel()))),
         ["Kpi"] = new(() => CreatePage(CreateExamples(new KpiExample(), new ProDataDisplayViewModel()))),
@@ -98,41 +102,43 @@ public partial class GalleryView : UserControl
         ["Breadcrumbs"] = new(() => CreatePage(CreateExamples(new BreadcrumbsExample(), new BreadcrumbsViewModel()))),
         ["Command"] = new(() => CreatePage(CreateExamples(new CommandExample(), new CommandViewModel()))),
         ["ContextMenu"] = new(() => CreatePage(CreateExamples(new ContextMenuExample(), new ContextMenuViewModel()))),
-        ["Disclosure"] = new(() => CreatePage(
-            CreateExamples(new DisclosureExample(), new DisclosureViewModel(), "Disclosure"),
-            CreateExamples(new DisclosureGroupExample(), new DisclosureGroupViewModel(), "DisclosureGroup"))),
+        ["Disclosure"] = new(() => CreateGroupedPage(
+            () => CreateExamples(new DisclosureExample(), new DisclosureViewModel(), "Disclosure"),
+            () => CreateExamples(new DisclosureGroupExample(), new DisclosureGroupViewModel(), "DisclosureGroup"))),
         ["Link"] = new(() => CreatePage(CreateExamples(new LinkExample(), new LinkViewModel()))),
         ["Segment"] = new(() => CreatePage(CreateExamples(new SegmentExample(), new SegmentViewModel()))),
         ["Navbar"] = new(() => CreatePage(CreateExamples(new NavbarExample(), new NavbarViewModel()))),
         ["Stepper"] = new(() => CreatePage(CreateExamples(new StepperExample(), new StepperViewModel()))),
         ["Sidebar"] = new(() => CreateDeferredPage(() => [CreateExamples(new SidebarExample(), new SidebarViewModel(), completeNavigationSources: true)])),
         ["Pagination"] = new(() => CreatePage(CreateExamples(new PaginationExample(), new PaginationViewModel()))),
-        ["Tabs"] = new(() => CreatePage(
-            CreateExamples(new ExpandableTabsExample(), new ExpandableTabsViewModel()),
-            CreateExamples(new MorphingTabsExample(), new MorphingTabsViewModel()),
-            CreateExamples(new TabsExample(), new TabsViewModel(), "Tabs"))),
+        ["Tabs"] = new(() => CreateGroupedPage(
+            () => CreateExamples(new ExpandableTabsExample(), new ExpandableTabsViewModel()),
+            () => CreateExamples(new MorphingTabsExample(), new MorphingTabsViewModel()),
+            () => CreateExamples(new TabsExample(), new TabsViewModel(), "Tabs"))),
         ["Dialog"] = new(() => CreatePage(CreateExamples(new DialogExample(), new DialogViewModel()))),
         ["Drawer"] = new(() => CreatePage(CreateExamples(new DrawerExample(), new DrawerViewModel()))),
         ["MessageBox"] = new(() => CreatePage(CreateExamples(new MessageBoxExample(), new MessageBoxViewModel()))),
         ["Popover"] = new(() => CreatePage(CreateExamples(new PopoverExample(), new PopoverViewModel()))),
+        ["BloomMenu"] = new(() => CreatePage(CreateExamples(new BloomMenuExample(), new BloomMenuViewModel()))),
         ["Sheet"] = new(() => CreatePage(CreateExamples(new SheetExample(), new SheetViewModel()))),
         ["Toast"] = new(() => CreatePage(CreateExamples(new ToastExample(), new ToastViewModel()))),
         ["ToolTip"] = new(() => CreatePage(CreateExamples(new ToolTipExample(), new ToolTipViewModel()))),
         ["Alert"] = new(() => CreatePage(CreateExamples(new AlertExample(), new FeedbackViewModel()))),
         ["Meter"] = new(() => CreatePage(CreateExamples(new MeterExample(), new FeedbackViewModel()))),
-        ["Progress"] = new(() => CreatePage(
-            CreateExamples(new ProgressBarExample(), new FeedbackViewModel(), "ProgressBar"),
-            CreateExamples(new ProgressCircleExample(), new FeedbackViewModel(), "ProgressCircle"))),
+        ["Progress"] = new(() => CreateGroupedPage(
+            () => CreateExamples(new ProgressBarExample(), new FeedbackViewModel(), "ProgressBar"),
+            () => CreateExamples(new ProgressCircleExample(), new FeedbackViewModel(), "ProgressCircle"))),
         ["Skeleton"] = new(() => CreatePage(CreateExamples(new SkeletonExample(), new FeedbackViewModel()))),
         ["Spinner"] = new(() => CreatePage(CreateExamples(new SpinnerExample(), new FeedbackViewModel()))),
         ["Card"] = new(() => CreatePage(CreateExamples(new CardExample(), new CardViewModel()))),
         ["Separator"] = new(() => CreatePage(CreateExamples(new SeparatorExample(), new LayoutViewModel()))),
         ["Surface"] = new(() => CreatePage(CreateExamples(new SurfaceExample(), new LayoutViewModel()))),
+        ["TransitioningContent"] = new(() => CreatePage(CreateExamples(new TransitioningContentExample(), new TransitioningContentViewModel()))),
         ["Avatar"] = new(() =>
         {
             var viewModel = new AvatarViewModel();
-            return CreatePage(CreateExamples(new AvatarExample(), viewModel, "Avatar"),
-                CreateExamples(new AvatarGroupExample(), viewModel, "AvatarGroup"));
+            return CreateGroupedPage(() => CreateExamples(new AvatarExample(), viewModel, "Avatar"),
+                () => CreateExamples(new AvatarGroupExample(), viewModel, "AvatarGroup"));
         }),
         ["Autocomplete"] = new(() => CreatePage(CreateExamples(new AutocompleteExample(), new AutocompleteViewModel()))),
         ["ComboBox"] = new(() => CreatePage(CreateExamples(new ComboBoxExample(), new ComboBoxViewModel()))),
@@ -159,7 +165,8 @@ public partial class GalleryView : UserControl
         ["RadialChart"] = new(() => CreatePage(CreateExamples(new RadialChartExample(), new ChartsViewModel()))),
         ["DataGrid"] = new(() => CreatePage(CreateExamples(new DataGridExample(), new DataGridViewModel()))),
         ["Table"] = new(() => CreatePage(CreateExamples(new TableExample(), new TableViewModel()))),
-        ["ScrollShadow"] = new(() => CreatePage(CreateExamples(new ScrollShadowExample(), new ScrollShadowViewModel())))
+        ["ScrollShadow"] = new(() => CreatePage(CreateExamples(new ScrollShadowExample(), new ScrollShadowViewModel()))),
+        ["WorkflowEditor"] = new(() => CreatePage(CreateExamples(new WorkflowEditorExample(), new WorkflowEditorViewModel())))
     };
 
     public GalleryView()
@@ -226,6 +233,10 @@ public partial class GalleryView : UserControl
         {
             if (!ReferenceEquals(model.SelectedItem, item)) return;
             var root = page.Value;
+            if (link.SectionName is { } sectionName && root.Content is GallerySectionStack groups &&
+                groups.LoadThrough(sectionName))
+                TopLevel.GetTopLevel(root)?.UpdateLayout();
+
             if (link.SectionName is { } name && ((StackPanel)root.Content!).Children.OfType<GalleryExampleList>()
                 .FirstOrDefault()?.RevealSection(name, link.ExampleName, link.ShowCode) == true)
                 return;
@@ -287,6 +298,18 @@ public partial class GalleryView : UserControl
             VirtualizeExamples(group);
             stack.Children.Add(group);
         }
+        return new AlderScrollViewer { Content = stack, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
+    }
+
+    private static ScrollViewer CreateGroupedPage(params Func<Control>[] groups)
+    {
+        var stack = new GallerySectionStack { Spacing = 20, Classes = { "galleryPage" } };
+        stack.AddSections(groups.Select(group => (Func<Control>)(() =>
+        {
+            var control = group();
+            VirtualizeExamples(control);
+            return control;
+        })));
         return new AlderScrollViewer { Content = stack, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
     }
 

@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
-using Avalonia.Media;
 
 namespace Alder.Avalonia.Controls;
 
@@ -60,9 +59,9 @@ public partial class AlderButton : Button
     /// <summary>Whether the control stretches to fill the available width.</summary>
     [GeneratedStyledProperty]
     public partial bool FullWidth { get; set; }
-    /// <summary>The optional geometry displayed with the content.</summary>
+    /// <summary>An optional geometry or icon control displayed with the content.</summary>
     [GeneratedStyledProperty]
-    public partial Geometry? Icon { get; set; }
+    public partial object? Icon { get; set; }
     /// <summary>Whether pointer and keyboard activation can start a ripple when reduced motion is off.</summary>
     [GeneratedStyledProperty]
     public partial bool IsRippleEnabled { get; set; }

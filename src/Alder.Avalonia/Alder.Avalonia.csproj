@@ -11,9 +11,10 @@
     <Description>Native Avalonia controls for forms, colors, navigation, data display, and AI conversations, with light and dark themes.</Description>
     <PackageTags>avalonia;ui;controls;desktop;axaml</PackageTags>
     <PackageProjectUrl>https://github.com/LuoVerse/Alder.Avalonia</PackageProjectUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseFile>LICENSES.txt</PackageLicenseFile>
     <PackageReadmeFile>NuGet.md</PackageReadmeFile>
     <PackageIcon>Alder.png</PackageIcon>
+    <PackageReleaseNotes>https://github.com/LuoVerse/Alder.Avalonia/releases/tag/v$(Version)</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/LuoVerse/Alder.Avalonia</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <DebugType>embedded</DebugType>
@@ -21,10 +22,13 @@
   <ItemGroup><PackageReference Include="Avalonia" Version="12.2.0" /></ItemGroup>
   <ItemGroup>
     <None Include="../../docs/NuGet.md;../../LICENSE" Pack="true" PackagePath="/" />
+    <None Include="../../docs/NuGet.LICENSE.txt" Pack="true" PackagePath="LICENSES.txt" />
     <None Update="Assets/Alder.png" Pack="true" PackagePath="Alder.png" />
   </ItemGroup>
   <ItemGroup><None Update="Assets/GravityUIIcons.LICENSE" Pack="true" PackagePath="licenses/" /></ItemGroup>
   <ItemGroup>
+    <AvaloniaResource Include="Assets/Fonts/PuHuiTi/*.ttf" />
+    <None Update="Assets/AlibabaPuHuiTi.LICENSE.txt" Pack="true" PackagePath="licenses/AlibabaPuHuiTi.LICENSE.txt" />
     <EmbeddedResource Include="Assets/EmojiCatalog.tsv" LogicalName="Alder.Avalonia.EmojiCatalog.tsv" />
     <None Update="Assets/Unicode.LICENSE" Pack="true" PackagePath="licenses/" />
     <None Update="Assets/TextEngine.LICENSE" Pack="true" PackagePath="licenses/" />

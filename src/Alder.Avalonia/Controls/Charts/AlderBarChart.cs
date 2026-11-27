@@ -38,14 +38,14 @@ public sealed class AlderBarChart : AlderCartesianChart
     private protected override bool UsesBands => true;
     private protected override bool HasPointSeries => false;
 
-    static AlderBarChart() => AffectsRender<AlderBarChart>(BarCornerRadiusProperty, MaxBarWidthProperty, RoundBarBaseProperty);
-
     /// <inheritdoc />
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
         if (change.Property == OrientationProperty)
             ResetLayout();
+        if (change.Property == BarCornerRadiusProperty || change.Property == MaxBarWidthProperty || change.Property == RoundBarBaseProperty)
+            InvalidateSeries();
     }
 
     private protected override void DrawSeries(DrawingContext context, ChartLayout chart) =>

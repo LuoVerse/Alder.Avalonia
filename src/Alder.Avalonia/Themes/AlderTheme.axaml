@@ -1,5 +1,6 @@
 <Styles x:Class="Alder.Avalonia.Themes.AlderTheme" xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:alder="using:Alder.Avalonia.Controls" xmlns:md="using:Alder.NativeMarkdown.UI.Themes">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:alder="using:Alder.Avalonia.Controls" xmlns:md="using:Alder.NativeMarkdown.UI.Themes"
+        xmlns:transcript="using:Alder.NativeMarkdown.UI.Transcript">
   <md:StreamMarkTheme />
   <Styles.Resources>
     <ResourceDictionary>
@@ -30,6 +31,7 @@
       <x:String x:Key="AlderText.WindowMinimize">Minimize</x:String>
       <x:String x:Key="AlderText.WindowMaximize">Maximize</x:String>
       <x:String x:Key="AlderText.WindowRestore">Restore window</x:String>
+      <x:String x:Key="AlderText.ClearInput">Clear text</x:String>
       <x:String x:Key="AlderText.ClearSearch">Clear search</x:String>
       <x:String x:Key="AlderText.Unavailable">Unavailable</x:String>
       <x:String x:Key="AlderText.Selected">Selected</x:String>
@@ -59,6 +61,8 @@
       <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
           <SolidColorBrush x:Key="AlderMuted" Color="#71717A" />
+          <BoxShadows x:Key="AlderButtonFocusShadow">0 0 0 2 #18181B</BoxShadows>
+          <BoxShadows x:Key="AlderButtonInsetFocusShadow">inset 0 0 0 2 #18181B</BoxShadows>
           <SolidColorBrush x:Key="AlderSliderStep" Color="#4071717A" />
           <SolidColorBrush x:Key="AlderFieldHover" Color="#EBF7F7F7" />
           <SolidColorBrush x:Key="AlderInputHover" Color="#EBF8F8F8" />
@@ -91,6 +95,8 @@
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
           <SolidColorBrush x:Key="AlderMuted" Color="#9F9FA9" />
+          <BoxShadows x:Key="AlderButtonFocusShadow">0 0 0 2 #FCFCFC</BoxShadows>
+          <BoxShadows x:Key="AlderButtonInsetFocusShadow">inset 0 0 0 2 #FCFCFC</BoxShadows>
           <SolidColorBrush x:Key="AlderSliderStep" Color="#409F9FA9" />
           <SolidColorBrush x:Key="AlderFieldHover" Color="#EB1B1B1F" />
           <SolidColorBrush x:Key="AlderInputHover" Color="#EB1C1C1F" />
@@ -99,7 +105,7 @@
           <BoxShadows x:Key="AlderFieldInvalidRing">0 0 0 2 #DB3B3E</BoxShadows>
           <SolidColorBrush x:Key="AlderSoftHoverTint" Color="#0C0485F7" />
           <SolidColorBrush x:Key="AlderSwitchHover" Color="#CC27272A" />
-          <BoxShadows x:Key="AlderFieldShadow">none</BoxShadows>
+          <BoxShadows x:Key="AlderFieldShadow">0 3 7 0 #52000000, 0 1 4 0 #80303036</BoxShadows>
           <SolidColorBrush x:Key="AlderAccent" Color="#0485F7" />
           <SolidColorBrush x:Key="AlderAccentHover" Color="#3592F9" />
           <SolidColorBrush x:Key="AlderOnAccent" Color="#FCFCFC" />
@@ -119,7 +125,7 @@
           <SolidColorBrush x:Key="AlderDangerInk" Color="#EB7872" />
           <SolidColorBrush x:Key="AlderSurface" Color="#18181B" />
           <SolidColorBrush x:Key="AlderSurfaceSecondary" Color="#232325" />
-          <BoxShadows x:Key="AlderToolbarShadow">inset 0 0 1 0 #4DFFFFFF</BoxShadows>
+          <BoxShadows x:Key="AlderToolbarShadow">0 10 20 0 #66000000, 0 4 12 0 #883A3A42, inset 0 0 1 0 #4DFFFFFF</BoxShadows>
         </ResourceDictionary>
       </ResourceDictionary.ThemeDictionaries>
       <ResourceDictionary.MergedDictionaries>
@@ -141,6 +147,9 @@
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/TemporalFields.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Calendars.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/ActionBar.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/ExpandableActionBar.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/BloomMenu.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/OverflowActions.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/EmptyState.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/FileTree.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/FloatingToc.axaml" />
@@ -151,6 +160,7 @@
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Map.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Agenda.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Carousel.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/ImageView.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/DatePickers.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Disclosure.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Accordion.axaml" />
@@ -164,6 +174,7 @@
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Feedback.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/FeedbackExtras.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Layout.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/TransitioningContent.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Resizable.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/AppLayout.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Sidebar.axaml" />
@@ -306,5 +317,8 @@
   <Style Selector="alder|AlderKanban[Size=Large] alder|AlderKanbanColumn"><Setter Property="Width" Value="320" /></Style>
   <Style Selector="alder|AlderKanban[Size=Small] alder|AlderKanbanCard"><Setter Property="Padding" Value="8" /><Setter Property="FontSize" Value="12" /></Style>
   <Style Selector="alder|AlderKanban[Size=Large] alder|AlderKanbanCard"><Setter Property="Padding" Value="16" /><Setter Property="FontSize" Value="16" /></Style>
+  <Style Selector="transcript|TranscriptPanel:focus-visible">
+    <Setter Property="Background" Value="{DynamicResource AlderSoftHoverTint}" />
+  </Style>
   <StyleInclude Source="avares://Alder.Avalonia/Themes/RichTextEditor.axaml" />
 </Styles>

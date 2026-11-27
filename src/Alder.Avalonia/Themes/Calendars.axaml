@@ -34,9 +34,10 @@
         </Transitions>
       </Setter>
     </Style>
-    <Style Selector="^:pointerover:not(:disabled) /template/ Border#Face"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
+    <Style Selector="^:pointerover:not(:disabled) /template/ Border#Face, ^:focus-visible:not(:disabled) /template/ Border#Face">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
     <Style Selector="^:pressed /template/ Border#Face"><Setter Property="RenderTransform" Value="scale(0.95)" /></Style>
-    <Style Selector="^:focus-visible /template/ Border#Face"><Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" /></Style>
     <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
     <Style Selector="^.years-open">
       <Setter Property="Opacity" Value="0" />
@@ -73,7 +74,9 @@
     <Setter Property="FontSize" Value="14" />
     <Setter Property="FontWeight" Value="Medium" />
     <Style Selector="^.current"><Setter Property="Foreground" Value="{DynamicResource AlderOnAccent}" /><Setter Property="Background" Value="{DynamicResource AlderAccent}" /></Style>
-    <Style Selector="^.current:pointerover /template/ Border#Face"><Setter Property="Background" Value="{DynamicResource AlderAccentHover}" /></Style>
+    <Style Selector="^.current:pointerover /template/ Border#Face, ^.current:focus-visible /template/ Border#Face">
+      <Setter Property="Background" Value="{DynamicResource AlderAccentHover}" />
+    </Style>
   </ControlTheme>
 
   <ControlTheme x:Key="AlderCalendarDayTheme" TargetType="alder:AlderCalendarDayButton">
@@ -94,8 +97,6 @@
           <Border Name="Track" Background="Transparent" />
           <Panel Name="Day" Width="36" Height="36" RenderTransform="scale(1)">
             <Ellipse Name="DayFill" Fill="{TemplateBinding Background}" IsHitTestVisible="False" />
-            <Ellipse Name="DayFocusRing" Margin="-4" Stroke="{DynamicResource AlderAccent}" StrokeThickness="2"
-                     IsVisible="False" IsHitTestVisible="False" />
             <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
                               HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
             <Ellipse Name="Indicator" Width="4" Height="4" HorizontalAlignment="Center" VerticalAlignment="Bottom"
@@ -121,13 +122,15 @@
       </Setter>
     </Style>
     <Style Selector="^.today:not(.selected):not(.outside)"><Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" /><Setter Property="Background" Value="{DynamicResource AlderSoft}" /></Style>
-    <Style Selector="^:pointerover:not(.selected):not(.middle):not(.unavailable):not(:disabled) /template/ Ellipse#DayFill">
+    <Style Selector="^:pointerover:not(.selected):not(.middle):not(.unavailable):not(:disabled) /template/ Ellipse#DayFill,
+                     ^:focus-visible:not(.selected):not(.middle):not(:disabled) /template/ Ellipse#DayFill">
       <Setter Property="Fill" Value="{DynamicResource AlderNeutral}" />
     </Style>
-    <Style Selector="^.today:pointerover:not(.selected):not(.middle):not(.unavailable):not(:disabled) /template/ Ellipse#DayFill"><Setter Property="Fill" Value="{DynamicResource AlderSoftHover}" /></Style>
+    <Style Selector="^.today:pointerover:not(.selected):not(.middle):not(.unavailable):not(:disabled) /template/ Ellipse#DayFill,
+                     ^.today:focus-visible:not(.selected):not(.middle):not(.unavailable):not(:disabled) /template/ Ellipse#DayFill"><Setter Property="Fill" Value="{DynamicResource AlderSoftHover}" /></Style>
     <Style Selector="^:pressed:not(.unavailable) /template/ Panel#Day"><Setter Property="RenderTransform" Value="scale(0.95)" /></Style>
-    <Style Selector="^:focus-visible"><Setter Property="ZIndex" Value="1" /></Style>
-    <Style Selector="^:focus-visible /template/ Ellipse#DayFocusRing"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^.selected:focus-visible /template/ Ellipse#DayFill"><Setter Property="Fill" Value="{DynamicResource AlderAccentHover}" /></Style>
+    <Style Selector="^.middle:focus-visible:not(.unavailable) /template/ Ellipse#DayFill"><Setter Property="Fill" Value="{DynamicResource AlderSoftHover}" /></Style>
     <Style Selector="^.selected"><Setter Property="Foreground" Value="{DynamicResource AlderOnAccent}" /><Setter Property="Background" Value="{DynamicResource AlderAccent}" /></Style>
     <Style Selector="^.selected:pressed /template/ Ellipse#DayFill"><Setter Property="Fill" Value="{DynamicResource AlderAccentHover}" /></Style>
     <Style Selector="^.selected /template/ Ellipse#Indicator"><Setter Property="Fill" Value="{DynamicResource AlderOnAccent}" /></Style>

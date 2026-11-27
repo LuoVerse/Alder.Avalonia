@@ -77,6 +77,18 @@ public sealed partial class AlderDropZone : TemplatedControl
     /// <summary>The selected files and their current processing states. The application owns their storage handles.</summary>
     public ReadOnlyObservableCollection<AlderDropZoneFile> Files { get; }
 
+    /// <summary>Receives <see cref="DropZoneFilesChangedEventArgs"/> after a selection or drop has been validated.</summary>
+    [GeneratedStyledProperty]
+    public partial ICommand? FilesChangedCommand { get; set; }
+
+    /// <summary>Receives the <see cref="AlderDropZoneFile"/> removed from the list or replaced in single-file mode.</summary>
+    [GeneratedStyledProperty]
+    public partial ICommand? FileRemovedCommand { get; set; }
+
+    /// <summary>Receives the failed <see cref="AlderDropZoneFile"/> when the user requests a retry.</summary>
+    [GeneratedStyledProperty]
+    public partial ICommand? RetryRequestedCommand { get; set; }
+
     /// <summary>Opens the system file picker.</summary>
     public ICommand BrowseCommand { get; }
 
@@ -109,7 +121,10 @@ public sealed partial class AlderDropZone : TemplatedControl
         RetryFileCommand = new FileAction(file =>
         {
             if (IsEffectivelyEnabled && file is { Status: DropZoneFileStatus.Failed } && files.Contains(file))
+            {
                 RetryRequested?.Invoke(this, file);
+                ExecuteCommand(RetryRequestedCommand, file);
+            }
         });
         files.CollectionChanged += (_, _) => PseudoClasses.Set(":has-files", files.Count > 0);
     }
@@ -203,15 +218,15 @@ public sealed partial class AlderDropZone : TemplatedControl
         }
         finally { validation.Release(); }
 
-        foreach (var file in replaced) FileRemoved?.Invoke(this, file);
-        FilesChanged?.Invoke(this, new(added.ToArray(), rejected.ToArray()));
+        foreach (var file in replaced) NotifyFileRemoved(file);
+        NotifyFilesChanged(new(added.ToArray(), rejected.ToArray()));
     }
 
     /// <summary>Removes a file record from the drop zone.</summary>
     public bool RemoveFile(AlderDropZoneFile file)
     {
         if (!IsEffectivelyEnabled || !files.Remove(file)) return false;
-        FileRemoved?.Invoke(this, file);
+        NotifyFileRemoved(file);
         return true;
     }
 
@@ -278,7 +293,25 @@ public sealed partial class AlderDropZone : TemplatedControl
     private void ReportUnavailable()
     {
         LastError = DropZoneFileError.Unavailable;
-        FilesChanged?.Invoke(this, new([], [new(null, LastError)]));
+        NotifyFilesChanged(new([], [new(null, LastError)]));
+    }
+
+    private void NotifyFilesChanged(DropZoneFilesChangedEventArgs args)
+    {
+        FilesChanged?.Invoke(this, args);
+        ExecuteCommand(FilesChangedCommand, args);
+    }
+
+    private void NotifyFileRemoved(AlderDropZoneFile file)
+    {
+        FileRemoved?.Invoke(this, file);
+        ExecuteCommand(FileRemovedCommand, file);
+    }
+
+    private static void ExecuteCommand(ICommand? command, object parameter)
+    {
+        if (command?.CanExecute(parameter) == true)
+            command.Execute(parameter);
     }
 
     private sealed class FileAction(Action<AlderDropZoneFile?> execute) : ICommand

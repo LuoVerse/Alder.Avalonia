@@ -69,6 +69,7 @@ public sealed class AlderPopover : PopupFlyoutBase
     }
     private bool waitingForLayout;
     private bool restoreFocus;
+    private bool openedFromKeyboard;
 
     internal bool FocusContentOnOpen { get; set; } = true;
     internal Control? FocusReturnTarget { get; init; }
@@ -133,17 +134,37 @@ public sealed class AlderPopover : PopupFlyoutBase
         surface = new AnchoredSurface(tooltip: false)
         {
             Focusable = FocusContentOnOpen || ShowMode == FlyoutShowMode.Standard,
+            FocusAdorner = null,
             Child = new StackPanel { Children = { heading, body } }
         };
         ApplyAppearance();
-        surface.AddHandler(InputElement.KeyDownEvent, (_, e) =>
+        KeyboardNavigation.SetIsTabStop(surface, false);
+        surface.AddHandler(InputElement.KeyDownEvent, OnSurfaceKeyDown, RoutingStrategies.Bubble);
+        return surface;
+    }
+
+    private void OnSurfaceKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Handled) return;
+        if (e.Key == Key.Escape)
         {
-            if (e.Handled || e.Key != Key.Escape) return;
             e.Handled = true;
             restoreFocus = true;
             Hide();
-        }, RoutingStrategies.Bubble);
-        return surface;
+        }
+        else if (e.Key == Key.Tab && e.KeyModifiers is KeyModifiers.None or KeyModifiers.Shift &&
+                 surface is { IsFocused: true } frame && FirstTabStop(frame) is null &&
+                 (FocusReturnTarget ?? Target) is { } anchor)
+        {
+            e.Handled = true;
+            restoreFocus = true;
+            Hide();
+            if (anchor.IsFocused)
+            {
+                var direction = e.KeyModifiers == KeyModifiers.Shift ? NavigationDirection.Previous : NavigationDirection.Next;
+                TopLevel.GetTopLevel(anchor)?.FocusManager?.FindNextElement(direction)?.Focus(NavigationMethod.Tab, e.KeyModifiers);
+            }
+        }
     }
 
     /// <inheritdoc />
@@ -191,6 +212,7 @@ public sealed class AlderPopover : PopupFlyoutBase
             base.OnOpened();
             return;
         }
+        openedFromKeyboard = (FocusReturnTarget ?? anchor).Classes.Contains(":focus-visible");
         ApplyPlacement();
         if (!AlderMotion.GetReduced(anchor))
         {
@@ -246,8 +268,17 @@ public sealed class AlderPopover : PopupFlyoutBase
             return;
         }
 
-        if (waitingForLayout || surface is not { } frame || Target is not { } anchor ||
-            !frame.IsAttachedToVisualTree() || !anchor.IsAttachedToVisualTree() || AlderMotion.GetReduced(anchor))
+        if (surface is not { } frame || Target is not { } anchor) return;
+
+        // Move focus before Avalonia detaches the popup and restores focus without the keyboard navigation method.
+        var returnTarget = FocusReturnTarget ?? anchor;
+        if (returnTarget.IsAttachedToVisualTree() && frame.IsKeyboardFocusWithin &&
+            (restoreFocus || FocusContentOnOpen && (openedFromKeyboard ||
+                TopLevel.GetTopLevel(frame)?.FocusManager?.GetFocusedElement() is InputElement focused &&
+                focused.Classes.Contains(":focus-visible"))))
+            returnTarget.Focus(NavigationMethod.Tab);
+
+        if (waitingForLayout || !frame.IsAttachedToVisualTree() || !anchor.IsAttachedToVisualTree() || AlderMotion.GetReduced(anchor))
             return;
 
         args.Cancel = true;
@@ -270,9 +301,8 @@ public sealed class AlderPopover : PopupFlyoutBase
             OverlayMotion.Reset(frame);
         }
         waitingForLayout = false;
-        if (restoreFocus && (FocusReturnTarget ?? Target) is { } anchor && anchor.IsAttachedToVisualTree())
-            anchor.Focus(NavigationMethod.Tab);
         restoreFocus = false;
+        openedFromKeyboard = false;
         base.OnClosed();
     }
 
@@ -300,10 +330,13 @@ public sealed class AlderPopover : PopupFlyoutBase
         frame.LayoutUpdated -= OnPlaced;
         frame.LayoutUpdated += UpdateArrow;
         if (!FocusContentOnOpen) return;
-        var first = frame.GetVisualDescendants().OfType<InputElement>().FirstOrDefault(input =>
-            input.Focusable && input.IsEffectivelyEnabled && input.IsEffectivelyVisible && KeyboardNavigation.GetIsTabStop(input));
-        (first ?? frame).Focus();
+        var first = FirstTabStop(frame);
+        (first ?? frame).Focus(openedFromKeyboard ? NavigationMethod.Tab : NavigationMethod.Unspecified);
     }
+
+    private static InputElement? FirstTabStop(Visual frame) =>
+        frame.GetVisualDescendants().OfType<InputElement>().FirstOrDefault(input =>
+            input.Focusable && input.IsEffectivelyEnabled && input.IsEffectivelyVisible && KeyboardNavigation.GetIsTabStop(input));
 
     private void UpdateArrow(object? sender, EventArgs e)
     {

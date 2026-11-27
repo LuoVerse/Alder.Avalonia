@@ -24,9 +24,9 @@ public sealed class AlderSearchField : AlderInput
     /// <summary>Identifies the <see cref="ClearIcon"/> Avalonia property.</summary>
     public static readonly StyledProperty<Geometry?> ClearIconProperty =
         AvaloniaProperty.Register<AlderSearchField, Geometry?>(nameof(ClearIcon));
-    /// <summary>Identifies the <see cref="ShowClearButton"/> Avalonia property.</summary>
-    public static readonly StyledProperty<bool> ShowClearButtonProperty =
-        AvaloniaProperty.Register<AlderSearchField, bool>(nameof(ShowClearButton), true);
+    /// <summary>Identifies the <see cref="AlderInput.ShowClearButton"/> Avalonia property.</summary>
+    public new static readonly StyledProperty<bool> ShowClearButtonProperty =
+        AlderInput.ShowClearButtonProperty.AddOwner<AlderSearchField>(new StyledPropertyMetadata<bool>(true));
     internal static readonly StyledProperty<ControlTheme?> ClearButtonThemeProperty =
         AvaloniaProperty.Register<AlderSearchField, ControlTheme?>(nameof(ClearButtonTheme));
 
@@ -36,8 +36,7 @@ public sealed class AlderSearchField : AlderInput
     public Geometry? SearchIcon { get => GetValue(SearchIconProperty); set => SetValue(SearchIconProperty, value); }
     /// <summary>The geometry used for the clear icon.</summary>
     public Geometry? ClearIcon { get => GetValue(ClearIconProperty); set => SetValue(ClearIconProperty, value); }
-    /// <summary>Whether the clear affordance is available when the field contains text.</summary>
-    public bool ShowClearButton { get => GetValue(ShowClearButtonProperty); set => SetValue(ShowClearButtonProperty, value); }
+    internal override bool UsesTemplateClearButton => false;
     internal ControlTheme? ClearButtonTheme { get => GetValue(ClearButtonThemeProperty); set => SetValue(ClearButtonThemeProperty, value); }
     /// <summary>Raised after the user clears the search text.</summary>
     public event EventHandler? Cleared;

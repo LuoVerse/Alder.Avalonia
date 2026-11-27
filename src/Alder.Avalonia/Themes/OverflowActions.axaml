@@ -1,0 +1,113 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls">
+  <x:String x:Key="AlderText.OverflowActions">Actions</x:String>
+  <x:String x:Key="AlderText.OverflowActionsOpen">Show extra actions</x:String>
+  <x:String x:Key="AlderText.OverflowActionsClose">Hide extra actions</x:String>
+
+  <ItemsPanelTemplate x:Key="AlderOverflowActionsItemsPanel">
+    <StackPanel Orientation="Horizontal" Spacing="6" />
+  </ItemsPanelTemplate>
+  <ItemsPanelTemplate x:Key="AlderOverflowActionsSmallItemsPanel">
+    <StackPanel Orientation="Horizontal" Spacing="4" />
+  </ItemsPanelTemplate>
+
+  <ControlTheme x:Key="{x:Type alder:AlderOverflowActions}" TargetType="alder:AlderOverflowActions">
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="CornerRadius" Value="26" />
+    <Setter Property="Padding" Value="6" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="ExpandLabel" Value="{DynamicResource AlderText.OverflowActionsOpen}" />
+    <Setter Property="CollapseLabel" Value="{DynamicResource AlderText.OverflowActionsClose}" />
+    <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.OverflowActions}" />
+    <Setter Property="Template">
+      <ControlTemplate x:DataType="alder:AlderOverflowActions">
+        <Border Name="PART_Surface" ClipToBounds="False" Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                CornerRadius="{TemplateBinding CornerRadius}" Padding="{TemplateBinding Padding}"
+                BoxShadow="{DynamicResource AlderToolbarShadow}">
+          <DockPanel>
+            <alder:AlderOverflowActionsToggle Name="PART_Toggle" DockPanel.Dock="Right" Margin="6,0,0,0">
+              <Grid IsHitTestVisible="False">
+                <alder:AlderPathIcon Name="MoreIcon" Data="{DynamicResource AlderIconEllipsis}" Width="16" Height="16"
+                                     AutomationProperties.AccessibilityView="Raw" />
+                <alder:AlderPathIcon Name="CloseIcon" Data="{DynamicResource AlderIconXmark}" Width="16" Height="16" Opacity="0"
+                                     AutomationProperties.AccessibilityView="Raw" />
+              </Grid>
+            </alder:AlderOverflowActionsToggle>
+            <alder:AlderScrollViewer Name="PART_Scroller" Focusable="False" HorizontalScrollBarVisibility="Hidden"
+                                    VerticalScrollBarVisibility="Disabled" VerticalAlignment="Center">
+              <alder:AlderOverflowActionsPanel Name="PART_Rail">
+                <ItemsControl Name="PART_Primary" ItemsPanel="{StaticResource AlderOverflowActionsItemsPanel}"
+                              ItemsSource="{CompiledBinding PrimaryActions, RelativeSource={RelativeSource TemplatedParent}}" />
+                <ItemsControl Name="PART_Overflow" IsVisible="False" ItemsPanel="{StaticResource AlderOverflowActionsItemsPanel}"
+                              ItemsSource="{CompiledBinding OverflowActions, RelativeSource={RelativeSource TemplatedParent}}" />
+              </alder:AlderOverflowActionsPanel>
+            </alder:AlderScrollViewer>
+          </DockPanel>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Size=Small]">
+      <Setter Property="Padding" Value="4" />
+      <Setter Property="CornerRadius" Value="22" />
+    </Style>
+    <Style Selector="^[Size=Small] /template/ alder|AlderOverflowActionsToggle">
+      <Setter Property="Margin" Value="4,0,0,0" />
+    </Style>
+    <Style Selector="^[Size=Small] /template/ ItemsControl#PART_Primary, ^[Size=Small] /template/ ItemsControl#PART_Overflow">
+      <Setter Property="ItemsPanel" Value="{StaticResource AlderOverflowActionsSmallItemsPanel}" />
+    </Style>
+    <Style Selector="^[Size=Small] /template/ alder|AlderPathIcon#MoreIcon, ^[Size=Small] /template/ alder|AlderPathIcon#CloseIcon">
+      <Setter Property="Width" Value="14" />
+      <Setter Property="Height" Value="14" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderOverflowAction}" TargetType="alder:AlderOverflowAction"
+                BasedOn="{StaticResource {x:Type alder:AlderButton}}">
+    <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="Padding" Value="14,4" />
+    <Style Selector="^[(alder|AlderOverflowActions.Size)=Small]">
+      <Setter Property="Size" Value="Small" />
+      <Setter Property="FontSize" Value="12" />
+    </Style>
+    <Style Selector="^:pointerover /template/ alder|ButtonTint#Tint, ^:pressed /template/ alder|ButtonTint#Tint">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+      <Setter Property="Opacity" Value="0" />
+    </Style>
+    <Style Selector="^:focus-visible:not(:disabled) /template/ alder|ButtonTint#Tint">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="^:pointerover:not(:disabled) /template/ alder|ButtonFeedback#Face">
+      <Setter Property="ActiveScale" Value="1.008" />
+    </Style>
+    <Style Selector="^:pressed /template/ alder|ButtonFeedback#Face">
+      <Setter Property="PressScale" Value="0.97" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderOverflowActionsToggle}" TargetType="alder:AlderOverflowActionsToggle"
+                BasedOn="{StaticResource AlderButtonTheme}">
+    <Setter Property="Width" Value="36" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Background" Value="{DynamicResource AlderAccent}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderOnAccent}" />
+    <Style Selector="^[(alder|AlderOverflowActions.Size)=Small]">
+      <Setter Property="Width" Value="32" />
+      <Setter Property="MinHeight" Value="32" />
+    </Style>
+    <Style Selector="^:pointerover:not(:disabled) /template/ alder|ButtonFeedback#Face">
+      <Setter Property="ActiveScale" Value="1.03" />
+    </Style>
+    <Style Selector="^:pressed /template/ alder|ButtonFeedback#Face">
+      <Setter Property="PressScale" Value="0.96" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

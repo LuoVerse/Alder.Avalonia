@@ -207,7 +207,7 @@ public enum BlockActionTargets
 public sealed record BlockActionDescriptor(
     string Id,
     string Label,
-    Geometry Icon,
+    object Icon,
     Func<MarkdownBlock, bool> AppliesTo,
     Func<BlockActionContext, Task> Execute)
 {

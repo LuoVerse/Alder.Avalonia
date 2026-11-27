@@ -1,6 +1,28 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:alder="using:Alder.Avalonia.Controls">
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:media="using:Avalonia.Media">
+  <ControlTheme x:Key="{x:Type alder:AlderIconPresenter}" TargetType="alder:AlderIconPresenter">
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="IsHitTestVisible" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Viewbox Stretch="Uniform">
+          <ContentPresenter Content="{TemplateBinding PresentedContent}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Foreground="{TemplateBinding Foreground}">
+            <ContentPresenter.DataTemplates>
+              <DataTemplate DataType="media:Geometry" x:DataType="media:Geometry">
+                <alder:AlderPathIcon Classes="alder-icon-vector" Data="{CompiledBinding}"
+                                     Width="{CompiledBinding $parent[alder:AlderIconPresenter].Width}"
+                                     Height="{CompiledBinding $parent[alder:AlderIconPresenter].Height}"
+                                     Theme="{CompiledBinding $parent[alder:AlderIconPresenter].VectorTheme, Converter={x:Static alder:AlderIconPresenter.OptionalVectorTheme}}" />
+              </DataTemplate>
+            </ContentPresenter.DataTemplates>
+          </ContentPresenter>
+        </Viewbox>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
   <!-- Gravity UI icons, MIT. See Assets/GravityUIIcons.LICENSE. -->
   <StreamGeometry x:Key="AlderIconAlignCenter">F0 M2.75 2a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5zm0 7a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5zm2 3.5a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5zM4 6.25a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 4 6.25</StreamGeometry>
   <StreamGeometry x:Key="AlderIconAlignJustify">F0 M2.75 2a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5zM2 6.25a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 6.25M2.75 9a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5zm0 3.5a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5z</StreamGeometry>
@@ -103,7 +125,9 @@
     <Setter Property="Height" Value="16" />
     <Setter Property="Template">
       <ControlTemplate>
-        <Path Data="{TemplateBinding Data}" Fill="{TemplateBinding Foreground}" Stretch="None" IsHitTestVisible="False" />
+        <Viewbox Stretch="Uniform" IsHitTestVisible="False">
+          <Path Width="16" Height="16" Data="{TemplateBinding Data}" Fill="{TemplateBinding Foreground}" Stretch="None" />
+        </Viewbox>
       </ControlTemplate>
     </Setter>
   </ControlTheme>

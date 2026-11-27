@@ -3,12 +3,12 @@ using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Automation.Peers;
 using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 
@@ -37,7 +37,7 @@ public sealed class AlderNavbar : TemplatedControl
     /// <summary>Identifies the <see cref="Menu"/> Avalonia property.</summary>
     public static readonly StyledProperty<object?> MenuProperty = AvaloniaProperty.Register<AlderNavbar, object?>(nameof(Menu));
     /// <summary>Identifies the <see cref="Size"/> Avalonia property.</summary>
-    public static readonly StyledProperty<AlderSize> SizeProperty = AvaloniaProperty.Register<AlderNavbar, AlderSize>(nameof(Size), AlderSize.Medium);
+    public static readonly StyledProperty<AlderSize> SizeProperty = AvaloniaProperty.Register<AlderNavbar, AlderSize>(nameof(Size), AlderSize.Medium, inherits: true);
     /// <summary>Identifies the <see cref="Position"/> Avalonia property.</summary>
     public static readonly StyledProperty<AlderNavbarPosition> PositionProperty =
         AvaloniaProperty.Register<AlderNavbar, AlderNavbarPosition>(nameof(Position), AlderNavbarPosition.Sticky);
@@ -421,7 +421,11 @@ public sealed class AlderNavbarItem : HyperlinkButton
     /// <summary>Identifies the <see cref="Route"/> Avalonia property.</summary>
     public static readonly StyledProperty<string?> RouteProperty = AvaloniaProperty.Register<AlderNavbarItem, string?>(nameof(Route));
     /// <summary>Identifies the <see cref="Icon"/> Avalonia property.</summary>
-    public static readonly StyledProperty<Geometry?> IconProperty = AvaloniaProperty.Register<AlderNavbarItem, Geometry?>(nameof(Icon));
+    public static readonly StyledProperty<object?> IconProperty = AvaloniaProperty.Register<AlderNavbarItem, object?>(nameof(Icon));
+
+    internal static readonly StyledProperty<AlderSize> SizeProperty = AlderNavbar.SizeProperty.AddOwner<AlderNavbarItem>();
+
+    internal AlderSize Size => GetValue(SizeProperty);
 
     /// <summary>Whether this item matches the current route.</summary>
     public bool IsCurrent { get => GetValue(IsCurrentProperty); set => SetValue(IsCurrentProperty, value); }
@@ -429,8 +433,8 @@ public sealed class AlderNavbarItem : HyperlinkButton
     public bool IsMenuItem { get => GetValue(IsMenuItemProperty); set => SetValue(IsMenuItemProperty, value); }
     /// <summary>The route associated with this navigation item.</summary>
     public string? Route { get => GetValue(RouteProperty); set => SetValue(RouteProperty, value); }
-    /// <summary>The optional geometry displayed with the content.</summary>
-    public Geometry? Icon { get => GetValue(IconProperty); set => SetValue(IconProperty, value); }
+    /// <summary>An optional geometry or icon control displayed with the content.</summary>
+    public object? Icon { get => GetValue(IconProperty); set => SetValue(IconProperty, value); }
 
     /// <inheritdoc />
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)

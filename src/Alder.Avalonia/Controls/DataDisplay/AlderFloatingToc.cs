@@ -412,6 +412,8 @@ public sealed class AlderFloatingToc : TemplatedControl
             }
             e.Handled = true;
         }
+        else if (e.Key == Key.Tab && e.KeyModifiers is KeyModifiers.None or KeyModifiers.Shift && IsOpen)
+            SetCurrentValue(IsOpenProperty, false);
         else if (e.Key == Key.Escape && IsOpen)
         {
             SetCurrentValue(IsOpenProperty, false);

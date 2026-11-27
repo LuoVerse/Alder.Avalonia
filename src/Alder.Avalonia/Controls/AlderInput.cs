@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 
 namespace Alder.Avalonia.Controls;
 
@@ -41,6 +43,9 @@ public class AlderInput : TextBox
     /// <summary>Identifies the <see cref="IsRequired"/> Avalonia property.</summary>
     public static readonly StyledProperty<bool> IsRequiredProperty =
         AvaloniaProperty.Register<AlderInput, bool>(nameof(IsRequired));
+    /// <summary>Identifies the <see cref="ShowClearButton"/> Avalonia property.</summary>
+    public static readonly StyledProperty<bool> ShowClearButtonProperty =
+        AvaloniaProperty.Register<AlderInput, bool>(nameof(ShowClearButton));
 
     /// <summary>The visual treatment applied to the control.</summary>
     public InputVariant Variant { get => GetValue(VariantProperty); set => SetValue(VariantProperty, value); }
@@ -52,8 +57,22 @@ public class AlderInput : TextBox
     public bool IsInvalid { get => GetValue(IsInvalidProperty); set => SetValue(IsInvalidProperty, value); }
     /// <summary>Whether the field is presented as required.</summary>
     public bool IsRequired { get => GetValue(IsRequiredProperty); set => SetValue(IsRequiredProperty, value); }
+    /// <summary>Shows a clear button when the editable input contains text.</summary>
+    public bool ShowClearButton { get => GetValue(ShowClearButtonProperty); set => SetValue(ShowClearButtonProperty, value); }
+
+    private Button? clearButton;
 
     static AlderInput() => AffectsMeasure<AlderInput>(FullWidthProperty);
+
+    /// <inheritdoc />
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    {
+        if (clearButton is not null) clearButton.Click -= OnClearClick;
+        base.OnApplyTemplate(e);
+        clearButton = e.NameScope.Find<Button>("PART_ClearButton");
+        if (clearButton is not null) clearButton.Click += OnClearClick;
+        UpdateClearButton();
+    }
 
     // Accessory buttons have their own focus and keyboard handling.
     /// <inheritdoc />
@@ -95,5 +114,25 @@ public class AlderInput : TextBox
             PseudoClasses.Set(":secondary", Variant == InputVariant.Secondary);
         else if (change.Property == IsInvalidProperty)
             PseudoClasses.Set(":alder-invalid", IsInvalid);
+        else if (change.Property == TextProperty || change.Property == IsReadOnlyProperty ||
+                 change.Property == ShowClearButtonProperty)
+            UpdateClearButton();
+    }
+
+    internal virtual bool UsesTemplateClearButton => true;
+    private bool CanClear => UsesTemplateClearButton && ShowClearButton && !IsReadOnly && !string.IsNullOrEmpty(Text);
+
+    private void UpdateClearButton()
+    {
+        if (!CanClear && clearButton?.IsFocused == true) Focus();
+        PseudoClasses.Set(":clearable", CanClear);
+    }
+
+    private void OnClearClick(object? sender, RoutedEventArgs e)
+    {
+        if (!CanClear || !IsEffectivelyEnabled) return;
+        Focus();
+        SetCurrentValue(TextProperty, string.Empty);
+        e.Handled = true;
     }
 }

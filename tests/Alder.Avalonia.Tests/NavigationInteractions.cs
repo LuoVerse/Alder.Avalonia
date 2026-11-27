@@ -8,6 +8,7 @@ using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
 using Avalonia.Input.Raw;
+using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Threading;
@@ -18,6 +19,39 @@ namespace Alder.Avalonia.Tests;
 
 public class NavigationInteractions
 {
+    [AvaloniaTheory]
+    [InlineData(AlderSize.Small)]
+    [InlineData(AlderSize.Medium)]
+    [InlineData(AlderSize.Large)]
+    public void PaginationCentersItsArrowsWithTheLocalizedLabels(AlderSize size)
+    {
+        var pagination = new AlderPagination { Size = size, PageCount = 5, CurrentPage = 2 };
+        using var view = new NavigationWindow(pagination);
+        view.Window.SetRenderScaling(2);
+
+        foreach (var (previous, next) in new[] { ("Previous", "Next"), ("上一页", "下一页") })
+        {
+            pagination.PreviousText = previous;
+            pagination.NextText = next;
+            view.Pump();
+            CheckButton("PART_Previous", "PreviousLabel");
+            CheckButton("PART_Next", "NextLabel");
+        }
+
+        void CheckButton(string buttonName, string labelName)
+        {
+            var button = Find<AlderButton>(pagination, buttonName);
+            var label = Find<AlderTextBlock>(button, labelName);
+            var arrow = button.GetVisualDescendants().OfType<AlderPathIcon>()
+                .Single(icon => icon.Data is not null && icon.IsEffectivelyVisible);
+            Assert.Equal(VerticalAlignment.Center, label.VerticalAlignment);
+            Assert.Equal(VerticalAlignment.Center, arrow.VerticalAlignment);
+            var labelCenter = label.TranslatePoint(new Rect(label.Bounds.Size).Center, button)!.Value.Y;
+            var arrowCenter = arrow.TranslatePoint(new Rect(arrow.Bounds.Size).Center, button)!.Value.Y;
+            Assert.InRange(labelCenter - arrowCenter, -0.5, 0.5);
+        }
+    }
+
     [AvaloniaFact]
     public void SegmentTracksKeysAndSkipsDisabledOptionsFromTheKeyboard()
     {
@@ -81,9 +115,10 @@ public class NavigationInteractions
         Assert.Equal(16, Find<Border>(second, "Separator").Bounds.Height);
         Assert.True(first.Focus(NavigationMethod.Tab));
         view.Pump();
-        var focusRing = Find<Border>(first, "FocusRing");
-        Assert.Equal(1, focusRing.Opacity);
-        Assert.Equal(new Thickness(-4), focusRing.Margin);
+        var highlight = Find<Border>(first, "ItemHighlight");
+        Assert.Equal(1, highlight.Opacity);
+        Assert.Equal(default, highlight.BorderThickness);
+        Assert.Equal("a", segment.SelectedKey);
 
         segment.SelectedKey = "b";
         view.Pump();
@@ -115,10 +150,10 @@ public class NavigationInteractions
             segment.SelectedIndex = index;
             view.Pump();
             var item = Assert.IsType<AlderSegmentItem>(segment.SelectedItem);
-            var glyph = Find<PathIcon>(item, "Icon");
+            var glyph = Find<AlderIconPresenter>(item, "Icon");
             Assert.Equal(new Size(36, 28), indicator.Bounds.Size);
             Assert.Equal(new Point(2 + 36 * index, 2), indicator.TranslatePoint(default, segment));
-            Assert.Equal(new Size(16, 16), glyph.Bounds.Size);
+            Assert.Equal(new Size(14, 14), glyph.Bounds.Size);
             Assert.Equal(new Point(20 + 36 * index, 16), glyph.TranslatePoint(new Rect(glyph.Bounds.Size).Center, segment));
         }
     }
@@ -444,7 +479,8 @@ public class NavigationInteractions
     [InlineData(false)]
     public async Task SidebarSearchFindsCollapsedChildrenAndUsesTheNormalSelectionPath(bool useDialogHost)
     {
-        var child = new AlderSidebarItem { Header = "Details", SearchKeywords = "quarterly-report" };
+        var icon = new Border { Width = 16, Height = 16, Background = Brushes.Magenta };
+        var child = new AlderSidebarItem { Header = "Details", SearchKeywords = "quarterly-report", Icon = icon };
         int invoked = 0;
         child.Invoked += (_, _) => invoked++;
         var branch = new AlderSidebarItem { Header = "Reports", Items = { child } };
@@ -486,6 +522,9 @@ public class NavigationInteractions
         view.Window.KeyTextInput("quarterly-report");
         view.Pump();
         Assert.Equal("Details", palette.ActiveItem?.Label);
+        var searchIcon = Assert.IsType<AlderIconPresenter>(palette.ActiveItem!.Icon);
+        Assert.Same(icon, searchIcon.Content);
+        Assert.True(palette.IsVisualAncestorOf(icon));
         view.Press(PhysicalKey.Enter);
         await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
         view.Pump();
@@ -493,6 +532,7 @@ public class NavigationInteractions
         Assert.Same(child, Assert.Single(menu.SelectedItems));
         Assert.True(branch.IsExpanded);
         Assert.Equal(1, invoked);
+        Assert.True(child.IsVisualAncestorOf(icon));
         Assert.False(palette.IsAttachedToVisualTree());
     }
 
@@ -550,13 +590,11 @@ public class NavigationInteractions
         view.Press(PhysicalKey.ArrowLeft);
         Assert.True(branch.IsExpanded);
         var surface = Find<Border>(branch, "RowSurface");
-        var icon = Find<PathIcon>(branch, "RowIcon");
+        var icon = Find<AlderIconPresenter>(branch, "RowIcon");
         Assert.Equal(new Size(36, 36), surface.Bounds.Size);
         Assert.Equal(new CornerRadius(16), surface.CornerRadius);
         Assert.Equal(new Rect(surface.Bounds.Size).Center, icon.TranslatePoint(new Rect(icon.Bounds.Size).Center, surface));
-        var focusRing = Find<Border>(branch, "FocusRing");
-        Assert.True(focusRing.IsVisible);
-        Assert.Equal(new Thickness(-4), focusRing.Margin);
+        Assert.Equal(branch.FindResource(branch.ActualThemeVariant, "AlderNeutralHover"), surface.Background);
 
         host.FlowDirection = FlowDirection.RightToLeft;
         host.SidebarPlacement = AppLayoutSidebarPlacement.End;

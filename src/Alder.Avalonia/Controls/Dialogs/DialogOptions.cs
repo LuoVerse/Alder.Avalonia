@@ -118,7 +118,7 @@ public abstract record OverlayOptions
     /// <summary>The primary text displayed for the content.</summary>
     public string? Title { get; init; }
     /// <summary>The optional geometry displayed with the content.</summary>
-    public Geometry? Icon { get; init; }
+    public object? Icon { get; init; }
     /// <summary>The data template used to present the overlay content.</summary>
     public IDataTemplate? ContentTemplate { get; init; }
     /// <summary>The predefined response buttons available in the footer.</summary>

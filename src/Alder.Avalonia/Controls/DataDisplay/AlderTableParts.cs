@@ -18,6 +18,13 @@ internal sealed class AlderTableView : TableView
     public bool ShowColumnHeaders { get => GetValue(ShowColumnHeadersProperty); set => SetValue(ShowColumnHeadersProperty, value); }
 
     internal AlderTable? OwnerTable { get; set; }
+    internal double MeasuredWidth { get; private set; }
+
+    protected override Size MeasureOverride(Size availableSize)
+    {
+        MeasuredWidth = availableSize.Width;
+        return base.MeasureOverride(availableSize);
+    }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
@@ -38,6 +45,7 @@ internal sealed class AlderTableView : TableView
     protected override void ClearContainerForItemOverride(Control container)
     {
         if (OwnerTable is AlderDataGrid grid) grid.StopRowReorderMotion(container);
+        else if (OwnerTable is { } table && double.IsFinite(table.RowHeight)) container.ClearValue(HeightProperty);
         base.ClearContainerForItemOverride(container);
     }
 
@@ -49,18 +57,19 @@ internal sealed class AlderTableView : TableView
         {
             grid.UpdateReorderRow(container, item);
             container.Classes.Set("data-grid-row", true);
-            container.Height = grid.Virtualized ? grid.RowHeight : double.NaN;
-            container.MinHeight = double.IsNaN(container.Height) ? table.MinRowHeight : Math.Min(table.MinRowHeight, container.Height);
         }
-        else container.MinHeight = table.MinRowHeight;
+        double height = table is AlderDataGrid { Virtualized: false } ? double.NaN : table.RowHeight;
+        if (table is AlderDataGrid || double.IsFinite(height)) container.Height = height;
+        container.MinHeight = double.IsNaN(height) ? table.MinRowHeight : Math.Min(table.MinRowHeight, height);
         container.Classes.Set("last-row", Variant == TableVariant.Primary && index == ItemCount - 1);
         container.Classes.Set("secondary", Variant == TableVariant.Secondary);
     }
 
-    internal void RefreshRealizedRows()
+    internal void RefreshRealizedRows(bool clearRowHeight = false)
     {
         foreach (var row in GetRealizedContainers())
         {
+            if (clearRowHeight) row.ClearValue(HeightProperty);
             int index = IndexFromContainer(row);
             if (index >= 0 && index < ItemCount) RefreshRow(row, ItemsView[index], index);
         }
@@ -120,7 +129,10 @@ internal sealed class AlderTableResizeThumb : Thumb
     private const double DefaultGridResizeMinimum = 48;
     private ResizeDrag? drag;
     private sealed record ResizeDrag(TableViewColumnHeader Header, TableViewColumn Column, TableView Table,
-        double PointerX, double Width, bool FromStart);
+        double PointerX, double Width, bool FromStart)
+    {
+        public bool HasMoved { get; set; }
+    }
 
     public AlderTableResizeThumb() =>
         this[!AutomationProperties.NameProperty] = new DynamicResourceExtension("AlderText.TableResizeColumn");
@@ -155,16 +167,15 @@ internal sealed class AlderTableResizeThumb : Thumb
             base.OnPointerMoved(e);
             return;
         }
-        if (ReferenceEquals(active.Header.Column, active.Column))
-        {
-            double delta = e.GetPosition(active.Table).X - active.PointerX;
-            ResizeTo(active.Header, active.Column, active.Width + (active.FromStart ? -delta : delta));
-        }
+        ResizeAt(active, e.GetPosition(active.Table).X);
         e.Handled = true;
     }
 
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
+        if (drag is { } active && ReferenceEquals(e.Pointer.Captured, this) &&
+            e.InitialPressMouseButton == MouseButton.Left)
+            ResizeAt(active, e.GetPosition(active.Table).X);
         base.OnPointerReleased(e);
         EndResize();
         if (ReferenceEquals(e.Pointer.Captured, this)) e.Pointer.Capture(null);
@@ -193,6 +204,15 @@ internal sealed class AlderTableResizeThumb : Thumb
         e.Handled = ResizeTo(header, column, column.ActualWidth + (grow ? 8 : -8));
     }
 
+    private static void ResizeAt(ResizeDrag drag, double pointerX)
+    {
+        if (!ReferenceEquals(drag.Header.Column, drag.Column)) return;
+        double delta = pointerX - drag.PointerX;
+        if (delta == 0 && !drag.HasMoved) return;
+        drag.HasMoved = true;
+        ResizeTo(drag.Header, drag.Column, drag.Width + (drag.FromStart ? -delta : delta));
+    }
+
     private static bool ResizeTo(TableViewColumnHeader header, TableViewColumn column, double width)
     {
         if (!column.CanUserEffectivelyResize || !double.IsFinite(width)) return false;
@@ -202,7 +222,10 @@ internal sealed class AlderTableResizeThumb : Thumb
             minimum = Math.Max(minimum, Math.Min(DefaultGridResizeMinimum, maximum));
 
         double resized = Math.Clamp(width, minimum, maximum);
-        if (Math.Abs(resized - column.ActualWidth) >= .01)
+        // Several input events may arrive before the layout pass updates ActualWidth.
+        var requested = column.Width;
+        double previous = requested.IsAbsolute ? requested.Value : column.ActualWidth;
+        if (Math.Abs(resized - previous) >= .01)
             column.SetCurrentValue(TableViewColumn.WidthProperty, new GridLength(resized));
         return true;
     }
@@ -306,7 +329,7 @@ internal sealed class AlderTableExpander : Button
         IsHitTestVisible = Focusable = state.HasChildren;
         Width = state.HasChildren ? 32 : 0;
         Margin = new Thickness(state.Depth * 16, 0, state.HasChildren ? 4 : 0, 0);
-        if (PseudoClasses.Contains(":expanded") != state.IsExpanded || AutomationProperties.GetName(this) is null)
+        if (state.HasChildren && (PseudoClasses.Contains(":expanded") != state.IsExpanded || AutomationProperties.GetName(this) is null))
             this[!AutomationProperties.NameProperty] = new DynamicResourceExtension(
                 state.IsExpanded ? "AlderText.TableCollapseRow" : "AlderText.TableExpandRow");
         PseudoClasses.Set(":expanded", state.IsExpanded);

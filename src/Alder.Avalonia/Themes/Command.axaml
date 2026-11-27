@@ -133,7 +133,9 @@
                         <Grid.Styles>
                           <Style Selector="Grid.unavailable"><Setter Property="Opacity" Value=".5" /></Style>
                         </Grid.Styles>
-                        <alder:AlderPathIcon Data="{CompiledBinding Icon}" Width="16" Height="16" Margin="0,0,10,0"
+                        <alder:AlderIconPresenter Content="{CompiledBinding Icon}" Margin="0,0,10,0"
+                                  Width="{CompiledBinding $parent[alder:AlderCommand].Size, Converter={x:Static alder:AlderIconPresenter.SizeToExtent}, FallbackValue=16}"
+                                  Height="{CompiledBinding $parent[alder:AlderCommand].Size, Converter={x:Static alder:AlderIconPresenter.SizeToExtent}, FallbackValue=16}"
                                   Foreground="{DynamicResource AlderMuted}"
                                   IsVisible="{CompiledBinding Icon, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,8">

@@ -1,0 +1,43 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.ImageViewExample" x:DataType="vm:ImageViewViewModel">
+  <StackPanel x:Name="Examples" Spacing="20">
+    <gallery:ExampleCard x:Name="SampleImageCollection" Title="{DynamicResource GalleryText.ImageViewCollection}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="960">
+          <WrapPanel ItemSpacing="14" LineSpacing="8" HorizontalAlignment="Right">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="{DynamicResource GalleryText.ImageViewTransition}" VerticalAlignment="Center"
+                         FontSize="13" Foreground="{DynamicResource AlderMuted}" />
+              <alder:AlderSelect x:Name="TransitionSelector" Width="144" Variant="Secondary"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.ImageViewTransition}"
+                                 ItemsSource="{CompiledBinding ImageTransitions}"
+                                 SelectedItem="{CompiledBinding ImageTransition, Mode=TwoWay}"
+                                 TextSelector="{CompiledBinding ImageTransitionCaption}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+              <TextBlock Text="{DynamicResource GalleryText.ImageViewReduceMotion}" VerticalAlignment="Center"
+                         FontSize="13" Foreground="{DynamicResource AlderMuted}" />
+              <alder:AlderSwitch Size="Small" IsChecked="{CompiledBinding ReduceMotion}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.ImageViewReduceMotion}" />
+            </StackPanel>
+          </WrapPanel>
+          <alder:AlderImageView x:Name="CollectionViewer" ItemsSource="{CompiledBinding Photos}" ViewportHeight="320"
+                                ImageTransition="{CompiledBinding ImageTransition}"
+                                alder:AlderMotion.Reduced="{CompiledBinding ReduceMotion}"
+                                AutomationProperties.Name="{DynamicResource GalleryText.ImageViewCollection}" />
+          <TextBlock Text="{DynamicResource GalleryText.ImageViewHint}" HorizontalAlignment="Center" TextAlignment="Center"
+                     TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" FontSize="12" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleSingleImage" Title="{DynamicResource GalleryText.ImageViewSingle}">
+      <gallery:ExampleCard.Preview>
+        <alder:AlderImageView x:Name="SingleViewer" Source="{CompiledBinding SingleImage}" ViewportHeight="240" MaxWidth="560"
+                              AutomationProperties.Name="{DynamicResource GalleryText.ImageViewAvocadoDescription}" />
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

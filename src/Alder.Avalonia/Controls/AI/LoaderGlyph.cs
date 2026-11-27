@@ -6,7 +6,7 @@ namespace Alder.Avalonia.Controls;
 
 internal sealed class LoaderGlyph(IBrush ink)
 {
-    private static readonly SplineEasing Ease = new(.42, 0, .58, 1);
+    internal static readonly SplineEasing Ease = new(.42, 0, .58, 1);
     private static readonly Geometry RingArc = Geometry.Parse("M10 0 A10 10 0 0 1 -.29 10");
     private static readonly Geometry Sparkle = Geometry.Parse(
         "M0 -1 C.08 -.42 .42 -.08 1 0 C.42 .08 .08 .42 0 1 C-.08 .42 -.42 .08 -1 0 C-.42 -.08 -.08 -.42 0 -1Z");
@@ -42,11 +42,18 @@ internal sealed class LoaderGlyph(IBrush ink)
 
     private void DrawRing(DrawingContext context, double seconds, bool still)
     {
-        using (context.PushOpacity(.2))
-            context.DrawEllipse(null, ring, default, 10, 10);
+        DrawRingRail(context);
         using (context.PushTransform(Matrix.CreateRotation(still ? 0 : Cycle(seconds / .8) * Math.Tau)))
-            context.DrawGeometry(null, ring, RingArc);
+            DrawRingArc(context);
     }
+
+    internal void DrawRingRail(DrawingContext context)
+    {
+        using var track = context.PushOpacity(.2);
+        context.DrawEllipse(null, ring, default, 10, 10);
+    }
+
+    internal void DrawRingArc(DrawingContext context) => context.DrawGeometry(null, ring, RingArc);
 
     private void DrawClassic(DrawingContext context, double seconds, bool still)
     {
@@ -78,11 +85,18 @@ internal sealed class LoaderGlyph(IBrush ink)
 
     private void DrawScan(DrawingContext context, double seconds, bool still)
     {
-        using (context.PushOpacity(.22))
-            context.DrawRectangle(null, outline, new Rect(-9, -9, 18, 18), 4, 4);
-        double y = still ? 0 : -5.5 + 11 * Breathe(seconds / 1.8);
-        context.DrawLine(ring, new Point(-4.5, y), new Point(4.5, y));
+        DrawScanRail(context);
+        using var offset = context.PushTransform(Matrix.CreateTranslation(0, still ? 0 : -5.5 + 11 * Breathe(seconds / 1.8)));
+        DrawScanLine(context);
     }
+
+    internal void DrawScanRail(DrawingContext context)
+    {
+        using var track = context.PushOpacity(.22);
+        context.DrawRectangle(null, outline, new Rect(-9, -9, 18, 18), 4, 4);
+    }
+
+    internal void DrawScanLine(DrawingContext context) => context.DrawLine(ring, new Point(-4.5, 0), new Point(4.5, 0));
 
     private void DrawGrid(DrawingContext context, double seconds, bool still)
     {

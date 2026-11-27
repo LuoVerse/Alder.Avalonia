@@ -41,33 +41,36 @@
     <Setter Property="Template">
       <ControlTemplate>
         <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}" ClipToBounds="True">
-          <Grid RowDefinitions="Auto,*">
-            <Border Background="{DynamicResource AlderAgendaHeader}" BorderBrush="{DynamicResource AlderSeparator}"
-                    BorderThickness="0,0,0,1" Padding="14,10,14,8">
-              <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="8">
-                <alder:AlderTextBlock Name="PART_Heading" FontSize="20" FontWeight="SemiBold"
-                           VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-                <alder:AlderSegment Name="PART_View" Grid.Column="1" Size="Small" HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    AutomationProperties.Name="{DynamicResource AlderText.AgendaView}"
-                                    SelectedKey="{CompiledBinding View, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
-                  <alder:AlderSegmentItem Key="{x:Static alder:AlderCalendarView.Day}" Content="{DynamicResource AlderText.AgendaDay}" />
-                  <alder:AlderSegmentItem Key="{x:Static alder:AlderCalendarView.Week}" Content="{DynamicResource AlderText.AgendaWeek}" />
-                  <alder:AlderSegmentItem Key="{x:Static alder:AlderCalendarView.Month}" Content="{DynamicResource AlderText.AgendaMonth}" />
-                </alder:AlderSegment>
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-                  <alder:AlderButton Name="PART_Previous" Variant="Ghost" Size="Small" IsIconOnly="True"
-                                     Icon="{StaticResource AlderIconChevronLeft}" AutomationProperties.Name="{DynamicResource AlderText.PreviousPeriod}" />
-                  <alder:AlderButton Name="PART_Today" Variant="Outline" Size="Small" Content="{DynamicResource AlderText.AgendaToday}" />
-                  <alder:AlderButton Name="PART_Next" Variant="Ghost" Size="Small" IsIconOnly="True"
-                                     Icon="{StaticResource AlderIconChevronRight}" AutomationProperties.Name="{DynamicResource AlderText.NextPeriod}" />
-                </StackPanel>
-              </Grid>
-            </Border>
-            <alder:AlderContentControl Name="PART_Body" Grid.Row="1" HorizontalContentAlignment="Stretch"
-                            VerticalContentAlignment="Stretch" ClipToBounds="True" />
-          </Grid>
+                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}">
+          <!-- Clip the header and body inside the border so they cannot cover its rounded outline. -->
+          <Border CornerRadius="{TemplateBinding CornerRadius}" ClipToBounds="True">
+            <Grid RowDefinitions="Auto,*">
+              <Border Background="{DynamicResource AlderAgendaHeader}" BorderBrush="{DynamicResource AlderSeparator}"
+                      BorderThickness="0,0,0,1" Padding="14,10,14,8">
+                <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="8">
+                  <alder:AlderTextBlock Name="PART_Heading" FontSize="20" FontWeight="SemiBold"
+                             VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                  <alder:AlderSegment Name="PART_View" Grid.Column="1" Size="Small" HorizontalAlignment="Left"
+                                      VerticalAlignment="Center"
+                                      AutomationProperties.Name="{DynamicResource AlderText.AgendaView}"
+                                      SelectedKey="{CompiledBinding View, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+                    <alder:AlderSegmentItem Key="{x:Static alder:AlderCalendarView.Day}" Content="{DynamicResource AlderText.AgendaDay}" />
+                    <alder:AlderSegmentItem Key="{x:Static alder:AlderCalendarView.Week}" Content="{DynamicResource AlderText.AgendaWeek}" />
+                    <alder:AlderSegmentItem Key="{x:Static alder:AlderCalendarView.Month}" Content="{DynamicResource AlderText.AgendaMonth}" />
+                  </alder:AlderSegment>
+                  <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                    <alder:AlderButton Name="PART_Previous" Variant="Ghost" Size="Small" IsIconOnly="True"
+                                       Icon="{StaticResource AlderIconChevronLeft}" AutomationProperties.Name="{DynamicResource AlderText.PreviousPeriod}" />
+                    <alder:AlderButton Name="PART_Today" Variant="Outline" Size="Small" Content="{DynamicResource AlderText.AgendaToday}" />
+                    <alder:AlderButton Name="PART_Next" Variant="Ghost" Size="Small" IsIconOnly="True"
+                                       Icon="{StaticResource AlderIconChevronRight}" AutomationProperties.Name="{DynamicResource AlderText.NextPeriod}" />
+                  </StackPanel>
+                </Grid>
+              </Border>
+              <alder:AlderContentControl Name="PART_Body" Grid.Row="1" HorizontalContentAlignment="Stretch"
+                              VerticalContentAlignment="Stretch" ClipToBounds="True" />
+            </Grid>
+          </Border>
         </Border>
       </ControlTemplate>
     </Setter>
@@ -80,6 +83,7 @@
   </ControlTheme>
 
   <ControlTheme x:Key="AlderAgendaDayButtonTheme" TargetType="Button">
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
     <Setter Property="FontSize" Value="13" />
@@ -96,14 +100,16 @@
       </ControlTemplate>
     </Setter>
     <Style Selector="^.outside"><Setter Property="Foreground" Value="{DynamicResource AlderMuted}" /></Style>
-    <Style Selector="^:pointerover"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
+    <Style Selector="^:pointerover, ^:focus-visible"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
     <Style Selector="^.today">
       <Setter Property="Background" Value="{DynamicResource AlderAccent}" />
       <Setter Property="Foreground" Value="{DynamicResource AlderOnAccent}" />
     </Style>
+    <Style Selector="^.today:focus-visible, ^.today:pointerover"><Setter Property="Background" Value="{DynamicResource AlderAccentHover}" /></Style>
   </ControlTheme>
 
   <ControlTheme x:Key="AlderAgendaSmallButtonTheme" TargetType="Button">
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
     <Setter Property="FontSize" Value="11" />
@@ -116,7 +122,7 @@
         </Border>
       </ControlTemplate>
     </Setter>
-    <Style Selector="^:pointerover">
+    <Style Selector="^:pointerover, ^:focus-visible">
       <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
       <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
     </Style>
@@ -160,14 +166,14 @@
     <Style Selector="^.short"><Setter Property="Padding" Value="8,2,4,1" /></Style>
     <Style Selector="^.past"><Setter Property="Opacity" Value="0.65" /></Style>
     <Style Selector="^.outlined /template/ Border#AccentEdge"><Setter Property="IsVisible" Value="False" /></Style>
-    <Style Selector="^.outlined /template/ Rectangle#Outline, ^.selected /template/ Rectangle#Outline, ^:focus-visible /template/ Rectangle#Outline">
+    <Style Selector="^.outlined /template/ Rectangle#Outline, ^.selected /template/ Rectangle#Outline">
       <Setter Property="IsVisible" Value="True" />
     </Style>
     <Style Selector="^.dashed /template/ Rectangle#Outline"><Setter Property="StrokeDashArray" Value="4,3" /></Style>
-    <Style Selector="^.selected /template/ Rectangle#Outline, ^:focus-visible /template/ Rectangle#Outline">
+    <Style Selector="^.selected /template/ Rectangle#Outline">
       <Setter Property="StrokeThickness" Value="1.5" />
     </Style>
-    <Style Selector="^:pointerover /template/ Border#HoverOverlay"><Setter Property="Opacity" Value="0.09" /></Style>
+    <Style Selector="^:pointerover /template/ Border#HoverOverlay, ^:focus-visible /template/ Border#HoverOverlay"><Setter Property="Opacity" Value="0.09" /></Style>
     <Style Selector="^.resizable /template/ Border#ResizeZone"><Setter Property="IsVisible" Value="True" /></Style>
     <Style Selector="^ /template/ Border#ResizeZone:pointerover > Border#ResizeHandle, ^.resizing /template/ Border#ResizeHandle">
       <Setter Property="Opacity" Value="0.65" />

@@ -33,7 +33,8 @@ public sealed class CarouselInteractions
 
         preview.Click(next);
         Assert.Equal(2, carousel.SelectedIndex);
-        var thumbnail = Part<StackPanel>(carousel, "PART_Thumbnails").Children.OfType<Button>().First();
+        var strip = Part<ItemsControl>(carousel, "PART_Thumbnails");
+        var thumbnail = Assert.IsAssignableFrom<Button>(strip.ContainerFromIndex(0));
         preview.Click(thumbnail);
         Assert.Equal(0, carousel.SelectedIndex);
         Assert.False(previous.IsEnabled);
@@ -52,6 +53,8 @@ public sealed class CarouselInteractions
         Assert.False(next.IsEnabled);
         Assert.InRange(carousel.GetVisualDescendants().OfType<AlderCarouselItem>().Count(), 3, 5);
         Assert.True(Part<ScrollViewer>(carousel, "PART_ThumbnailStrip").Offset.X > 0);
+        Assert.InRange(strip.GetRealizedContainers().Count(), 1, 20);
+        Assert.Contains("selected", Assert.IsAssignableFrom<Button>(strip.ContainerFromIndex(carousel.SelectedIndex)).Classes);
 
         carousel.Layout = AlderCarouselLayout.Miniatures;
         preview.Pump();
@@ -68,7 +71,7 @@ public sealed class CarouselInteractions
         var carousel = new AlderCarousel { Items = { first, second }, ShowThumbnails = true };
         using var preview = new CarouselWindow(carousel);
         Assert.Same(first, carousel.ContainerFromIndex(0));
-        Assert.Equal("A", ((Button)Part<StackPanel>(carousel, "PART_Thumbnails").Children[0]).Content);
+        Assert.Equal("A", Assert.IsAssignableFrom<Button>(Part<ItemsControl>(carousel, "PART_Thumbnails").ContainerFromIndex(0)).Content);
         carousel.MoveNext();
         preview.Pump();
         Assert.Same(second, carousel.SelectedItem);

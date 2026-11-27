@@ -29,6 +29,16 @@ internal sealed class GalleryExampleList : AlderItemsControl
         Items.Add(new Entry(content.Name) { Content = content });
     }
 
+    internal void Add(Func<Control> create)
+    {
+        Items.Add(new Entry(null, () =>
+        {
+            var content = create();
+            LogicalChildren.Add(content);
+            return content;
+        }));
+    }
+
     internal void AddSection(string name, Control heading, GalleryExampleSection section)
     {
         LogicalChildren.Add(heading);

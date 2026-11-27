@@ -16,30 +16,15 @@
     <Setter Property="ClipToBounds" Value="False" />
     <Setter Property="Template">
       <ControlTemplate>
-        <Panel>
-          <alder:ButtonFeedback Name="Face" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
-                            BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
-                              Padding="{TemplateBinding Padding}" VerticalContentAlignment="Center" />
-          </alder:ButtonFeedback>
-          <alder:InputFocusRing Name="TriggerRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
-        </Panel>
+        <alder:ButtonFeedback Name="Face" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
+                          BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+          <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
+                            Padding="{TemplateBinding Padding}" VerticalContentAlignment="Center" />
+        </alder:ButtonFeedback>
       </ControlTemplate>
     </Setter>
-    <Style Selector="^:pointerover:not(:disabled), ^:pressed:not(:disabled)">
+    <Style Selector="^:pointerover:not(:disabled), ^:focus-visible:not(:disabled), ^:pressed:not(:disabled)">
       <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
-    </Style>
-    <Style Selector="^ /template/ alder|InputFocusRing#TriggerRing">
-      <Setter Property="BoxShadow" Value="0 0 0 0 #000485F7" />
-      <Setter Property="Transitions">
-        <Transitions><BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions>
-      </Setter>
-    </Style>
-    <Style Selector="^:focus-visible /template/ alder|InputFocusRing#TriggerRing">
-      <Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" />
-    </Style>
-    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ alder|InputFocusRing#TriggerRing">
-      <Setter Property="Transitions" Value="{x:Null}" />
     </Style>
   </ControlTheme>
 
@@ -57,7 +42,7 @@
                         IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                         AutomationProperties.Name="{TemplateBinding (AutomationProperties.Name)}">
             <Grid ColumnDefinitions="Auto,*,Auto">
-              <alder:AlderPathIcon Data="{TemplateBinding Icon}" Width="16" Height="16" Margin="0,0,8,0" VerticalAlignment="Center"
+              <alder:AlderIconPresenter Content="{TemplateBinding Icon}" Width="16" Height="16" Margin="0,0,8,0" VerticalAlignment="Center"
                         IsVisible="{Binding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}"
                         IsHitTestVisible="False" />
               <ContentPresenter Grid.Column="1" Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}"

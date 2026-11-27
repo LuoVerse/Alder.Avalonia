@@ -21,9 +21,12 @@ internal sealed class AlderFittedIcon : Control
         var geometry = Data;
         var fill = Fill;
         if (geometry is null || fill is null) return;
+        Draw(context, geometry, fill, new Rect(Bounds.Size).Deflate(1));
+    }
 
+    internal static void Draw(DrawingContext context, Geometry geometry, IBrush fill, Rect slot)
+    {
         var ink = geometry.Bounds;
-        var slot = new Rect(Bounds.Size).Deflate(1);
         if (ink.Width <= 0 || ink.Height <= 0 || slot.Width <= 0 || slot.Height <= 0) return;
 
         var scale = Math.Min(slot.Width / ink.Width, slot.Height / ink.Height);

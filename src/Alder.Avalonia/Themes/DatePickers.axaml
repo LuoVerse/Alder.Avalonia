@@ -25,7 +25,8 @@
               </alder:AlderDateTriggerButton>
             </Grid>
           </Border>
-          <alder:InputFocusRing Name="FieldRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+          <alder:InputFocusRing Name="FieldRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False"
+                                Classes.editing="{CompiledBinding #PART_Segments.IsKeyboardFocusWithin}" />
         </Panel>
       </ControlTemplate>
     </Setter>
@@ -41,7 +42,7 @@
             <Grid ColumnDefinitions="Auto,*,Auto,Auto" Margin="{TemplateBinding Padding}">
               <ContentPresenter Grid.Column="0" Content="{TemplateBinding Prefix}" VerticalContentAlignment="Center" />
               <alder:AlderScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <StackPanel Name="RangeEditors" Orientation="Horizontal" VerticalAlignment="Center">
                   <alder:AlderDateField Name="PART_Start" Classes="range-endpoint" Culture="{TemplateBinding Culture}"
                                    IsReadOnly="{TemplateBinding IsReadOnly}" IsInvalid="{TemplateBinding IsInvalid}" Minimum="{TemplateBinding Minimum}"
                                    Maximum="{TemplateBinding Maximum}" IsDateUnavailable="{TemplateBinding IsDateUnavailable}"
@@ -60,7 +61,8 @@
               </alder:AlderDateTriggerButton>
             </Grid>
           </Border>
-          <alder:InputFocusRing Name="FieldRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+          <alder:InputFocusRing Name="FieldRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False"
+                                Classes.editing="{CompiledBinding #RangeEditors.IsKeyboardFocusWithin}" />
         </Panel>
       </ControlTemplate>
     </Setter>

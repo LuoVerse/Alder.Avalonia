@@ -215,7 +215,7 @@ public sealed class FeedbackExtrasInteractions
                 var chip = (AlderTrendChip)panel.Children[i];
                 var (_, direction, background, foreground) = expected[i];
                 var surface = chip.GetVisualDescendants().OfType<AlderChip>().Single();
-                var arrow = surface.GetVisualDescendants().OfType<AlderPathIcon>().First();
+                var arrow = surface.GetVisualDescendants().OfType<AlderChipIcon>().First();
                 var labels = surface.GetVisualDescendants().OfType<TextBlock>().ToDictionary(text => text.Text!);
                 Assert.Equal(Color.Parse(background), Paint(surface.Background));
                 Assert.Equal(Color.Parse(foreground), Paint(labels["3.3%"].Foreground));
@@ -238,22 +238,28 @@ public sealed class FeedbackExtrasInteractions
         var feedback = new AlderPressableFeedback
         {
             Effects = PressableFeedbackEffects.HoldConfirm,
-            Duration = TimeSpan.FromMilliseconds(65),
+            Duration = TimeSpan.FromMilliseconds(800),
             CompletionCommand = new ActionCommand(() => completions++)
         };
         button.Feedback = feedback;
         var window = Show(button);
+        AlderMotion.SetReduced(window, false);
         try
         {
             var center = Center(button, window);
             window.MouseDown(center, MouseButton.Left);
             Assert.Equal(PressableFeedbackState.Holding, feedback.State);
+            await WaitFor(() => feedback.Progress >= .08);
             window.MouseMove(new Point(175, 120));
-            await Task.Delay(120);
+            Assert.Equal(PressableFeedbackState.Resetting, feedback.State);
+            Assert.InRange(feedback.Progress, .08, .99);
             window.MouseUp(new Point(175, 120), MouseButton.Left);
+            await WaitFor(() => feedback.State == PressableFeedbackState.Idle);
+            Assert.Equal(0, feedback.Progress);
             Assert.Equal(0, commands);
             Assert.Equal(0, completions);
 
+            feedback.Duration = TimeSpan.FromMilliseconds(65);
             window.MouseDown(center, MouseButton.Left);
             await WaitFor(() => feedback.State == PressableFeedbackState.Complete);
             await Task.Delay(45);
@@ -370,12 +376,26 @@ public sealed class FeedbackExtrasInteractions
             Assert.Equal(1, visual.Scale.X);
             Assert.Equal(2, invokeCount);
 
+            var homeRow = home.GetVisualDescendants().OfType<Button>().Single(b => b.Name == "PART_Row");
+            var homeCenter = Center(homeRow, window);
+            for (int i = 0; i < 4; i++)
+            {
+                window.MouseDown(homeCenter, MouseButton.Left);
+                window.MouseUp(homeCenter, MouseButton.Left);
+                Assert.Same(home, sidebar.SelectedItem);
+                window.MouseDown(center, MouseButton.Left);
+                window.MouseUp(center, MouseButton.Left);
+                Assert.Same(inbox, sidebar.SelectedItem);
+            }
+            Assert.Equal(6, invokeCount);
+            Assert.Equal(1, visual.Scale.X);
+
             AlderMotion.SetReduced(window, true);
             window.MouseDown(center, MouseButton.Left);
             Assert.Null(visual.ImplicitAnimations);
             Assert.Equal(1, visual.Scale.X);
             window.MouseUp(center, MouseButton.Left);
-            Assert.Equal(3, invokeCount);
+            Assert.Equal(7, invokeCount);
         }
         finally { window.Close(); }
     }
@@ -404,6 +424,50 @@ public sealed class FeedbackExtrasInteractions
             Assert.NotNull(ClipOf(explicitRipple).Child);
             window.MouseUp(second, MouseButton.Left);
             await WaitFor(() => ClipOf(explicitRipple).Child is null);
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaFact]
+    public async Task ButtonRippleRestartsOnRapidPressAndFadesAfterDraggingOutside()
+    {
+        int clicks = 0;
+        var button = new AlderButton { Width = 120, Height = 36, Content = "Apply", Command = new ActionCommand(() => clicks++) };
+        button.Feedback = new AlderPressableFeedback();
+        var window = Show(button);
+        AlderMotion.SetReduced(window, false);
+        try
+        {
+            var clip = button.GetVisualDescendants().OfType<Border>().Single(x => x.Name == "RippleClip");
+            var center = Center(button, window);
+            var left = center - new Vector(36, 0);
+            var right = center + new Vector(36, 0);
+            for (int i = 0; i < 6; i++)
+            {
+                Point point = i % 2 == 0 ? left : right;
+                window.MouseDown(point, MouseButton.Left);
+                window.MouseUp(point, MouseButton.Left);
+            }
+            Assert.Equal(6, clicks);
+
+            window.MouseDown(left, MouseButton.Left);
+            var ink = Assert.IsAssignableFrom<Control>(clip.Child);
+            await Task.Delay(650);
+            Assert.Same(ink, clip.Child); // Earlier presses must not retire the latest held ripple.
+            Assert.True(button.IsPressed);
+            var outside = new Point(center.X, center.Y + 90);
+            window.MouseMove(outside);
+            window.MouseUp(outside, MouseButton.Left);
+            Assert.False(button.IsPressed);
+            Assert.Equal(6, clicks);
+            await WaitFor(() => clip.Child is null);
+
+            window.MouseDown(right, MouseButton.Left);
+            window.MouseUp(right, MouseButton.Left);
+            Assert.NotNull(clip.Child);
+            AlderMotion.SetReduced(window, true);
+            Assert.Null(clip.Child);
+            Assert.Equal(7, clicks);
         }
         finally { window.Close(); }
     }

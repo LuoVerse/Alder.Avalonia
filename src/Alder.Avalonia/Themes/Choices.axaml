@@ -44,8 +44,6 @@
                           Opacity="0" Foreground="{DynamicResource AlderOnAccent}" IsHitTestVisible="False">
                   <alder:AlderPathIcon.Transitions><Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.2" /></Transitions></alder:AlderPathIcon.Transitions>
                 </alder:AlderPathIcon>
-                <Border Name="FocusRing" IsVisible="False" IsHitTestVisible="False" Margin="-4" BorderThickness="2"
-                        CornerRadius="{Binding #Indicator.CornerRadius}" BorderBrush="{DynamicResource AlderAccent}" />
               </Grid>
               <ContentPresenter Grid.Column="1" Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
                                 ContentTemplate="{TemplateBinding ContentTemplate}" Margin="12,0,0,0"
@@ -74,12 +72,13 @@
       <Setter Property="BorderThickness" Value="1" />
       <Setter Property="BorderBrush" Value="{DynamicResource AlderDanger}" />
     </Style>
-    <Style Selector="^:focus-visible /template/ Border#FocusRing"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:focus-visible:not(:disabled):not(:checked):not(:indeterminate) /template/ Border#Indicator"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
     <Style Selector="^:checked /template/ Border#SelectionFill, ^:indeterminate /template/ Border#SelectionFill">
       <Setter Property="Opacity" Value="1" />
       <Setter Property="RenderTransform" Value="scale(1)" />
     </Style>
-    <Style Selector="^:pointerover:not(:disabled) /template/ Border#SelectionFill, ^:indeterminate:pressed:not(:disabled) /template/ Border#SelectionFill">
+    <Style Selector="^:pointerover:not(:disabled) /template/ Border#SelectionFill,
+                     ^:focus-visible:not(:disabled) /template/ Border#SelectionFill, ^:indeterminate:pressed:not(:disabled) /template/ Border#SelectionFill">
       <Setter Property="Background" Value="{DynamicResource AlderAccentHover}" />
     </Style>
     <Style Selector="^:checked /template/ Path#CheckStroke"><Setter Property="StrokeDashOffset" Value="0" /></Style>
@@ -175,8 +174,6 @@
                           BorderBrush="{DynamicResource AlderDanger}" />
                 </Panel>
               </Border>
-              <Border Name="FocusRing" IsVisible="False" Margin="-4" CornerRadius="12" BorderThickness="2"
-                      BorderBrush="{DynamicResource AlderAccent}" />
             </Grid>
             <ContentPresenter Grid.Column="1" Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
                               ContentTemplate="{TemplateBinding ContentTemplate}" MinHeight="20" VerticalContentAlignment="Center"
@@ -233,16 +230,17 @@
     <Style Selector="^.alder-invalid /template/ Border#InvalidRing, ^:field-error /template/ Border#InvalidRing">
       <Setter Property="IsVisible" Value="True" />
     </Style>
-    <Style Selector="^:focus-visible /template/ Border#FocusRing"><Setter Property="IsVisible" Value="True" /></Style>
     <Style Selector="^:pressed /template/ Border#Indicator"><Setter Property="RenderTransform" Value="scale(0.95)" /></Style>
     <Style Selector="^:checked /template/ Border#Indicator"><Setter Property="Background" Value="{DynamicResource AlderAccent}" /></Style>
-    <Style Selector="^:pointerover:not(:checked):not(:disabled) /template/ Border#DefaultDot">
+    <Style Selector="^:pointerover:not(:checked):not(:disabled) /template/ Border#DefaultDot,
+                     ^:focus-visible:not(:checked):not(:disabled) /template/ Border#DefaultDot">
       <Setter Property="Background" Value="{DynamicResource AlderFieldHover}" />
     </Style>
-    <Style Selector="^[IsSecondary=True]:pointerover:not(:checked):not(:disabled) /template/ Border#DefaultDot">
+    <Style Selector="^[IsSecondary=True]:pointerover:not(:checked):not(:disabled) /template/ Border#DefaultDot,
+                     ^[IsSecondary=True]:focus-visible:not(:checked):not(:disabled) /template/ Border#DefaultDot">
       <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
     </Style>
-    <Style Selector="^:checked:pressed /template/ Border#Indicator"><Setter Property="Background" Value="{DynamicResource AlderAccentHover}" /></Style>
+    <Style Selector="^:checked:pressed /template/ Border#Indicator, ^:checked:focus-visible /template/ Border#Indicator"><Setter Property="Background" Value="{DynamicResource AlderAccentHover}" /></Style>
     <Style Selector="^:checked /template/ Border#DefaultDot">
       <Setter Property="Background" Value="{DynamicResource AlderOnAccent}" />
       <Setter Property="RenderTransform" Value="scale(0.4286)" />
@@ -274,11 +272,11 @@
     </Style>
     <Style Selector="^.tile:checked /template/ Border#DefaultDot"><Setter Property="RenderTransform" Value="scale(0.343)" /></Style>
     <Style Selector="^.tile:checked:pressed /template/ Border#DefaultDot"><Setter Property="RenderTransform" Value="scale(0.457)" /></Style>
-    <Style Selector="^.card:checked /template/ Border#Row, ^.tile:checked /template/ Border#Row, ^.tile:focus-visible /template/ Border#Row">
+    <Style Selector="^.card:checked /template/ Border#Row, ^.tile:checked /template/ Border#Row">
       <Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" />
       <Setter Property="Background" Value="{DynamicResource AlderSelectionCardFill}" />
     </Style>
-    <Style Selector="^.tile:focus-visible /template/ Border#FocusRing"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^.card:focus-visible:not(:disabled):not(:checked) /template/ Border#Row, ^.tile:focus-visible:not(:disabled):not(:checked) /template/ Border#Row"><Setter Property="Background" Value="{DynamicResource AlderFieldHover}" /></Style>
     <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#Indicator">
       <Setter Property="Transitions" Value="{x:Null}" />
       <Setter Property="RenderTransform" Value="scale(1)" />
@@ -407,10 +405,9 @@
     <Style Selector="^.large /template/ PathIcon, ^[Size=Large] /template/ PathIcon">
       <Setter Property="Width" Value="12" /><Setter Property="Height" Value="12" />
     </Style>
-    <Style Selector="^:pointerover /template/ alder|SwitchTrack#Track, ^:pressed /template/ alder|SwitchTrack#Track">
+    <Style Selector="^:pointerover /template/ alder|SwitchTrack#Track, ^:focus-visible /template/ alder|SwitchTrack#Track, ^:pressed /template/ alder|SwitchTrack#Track">
       <Setter Property="IsHighlighted" Value="True" />
     </Style>
-    <Style Selector="^:focus-visible /template/ Border#TrackOutline"><Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" /></Style>
     <Style Selector="^:checked /template/ PathIcon#OnGlyph">
       <Setter Property="Opacity" Value="1" />
     </Style>

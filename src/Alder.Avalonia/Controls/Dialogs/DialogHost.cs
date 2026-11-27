@@ -94,11 +94,11 @@ public sealed class DialogHost : ContentControl
         if (!layers.Remove(layer)) return;
         foreach (var item in layers)
             item.ReplacePreviousFocus(layer);
+        UpdateLayers();
+        if (wasTop && this.IsAttachedToVisualTree() && layer.PreviousFocus?.Focus(layer.FocusReturnMethod) != true && layers.Count > 0)
+            layers[^1].FocusInitial();
         overlays?.Children.Remove(layer);
         layer.Complete(result);
-        UpdateLayers();
-        if (wasTop && this.IsAttachedToVisualTree() && layer.PreviousFocus?.Focus() != true && layers.Count > 0)
-            layers[^1].FocusInitial();
     }
 
     private void AbortLayers()

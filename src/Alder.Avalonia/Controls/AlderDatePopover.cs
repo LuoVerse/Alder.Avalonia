@@ -80,6 +80,7 @@ internal sealed class AlderDatePopover : PopupFlyoutBase
         {
             if (e.Handled || e.Key != Key.Escape || calendar.IsYearPickerOpen) return;
             e.Handled = true;
+            openingMethod = NavigationMethod.Tab;
             Dismiss();
         }, RoutingStrategies.Tunnel);
         return frame;
@@ -112,6 +113,11 @@ internal sealed class AlderDatePopover : PopupFlyoutBase
             args.Cancel = true;
             return;
         }
+        if (restoreFocus && focusReturn is { } trigger && trigger.IsAttachedToVisualTree())
+        {
+            var focused = TopLevel.GetTopLevel(trigger)?.FocusManager?.GetFocusedElement() as InputElement;
+            trigger.Focus(focused?.Classes.Contains(":focus-visible") == true ? NavigationMethod.Tab : openingMethod);
+        }
         if (surface is null || waitingForPlacement || Target is not { } target || Popup.Child is not { } child || AlderMotion.GetReduced(target)) return;
         args.Cancel = true;
         child.IsHitTestVisible = false;
@@ -133,7 +139,7 @@ internal sealed class AlderDatePopover : PopupFlyoutBase
             visual.Scale = new Vector3D(1, 1, 1);
         }
         surface = null;
-        if (restoreFocus) focusReturn?.Focus(openingMethod);
+        restoreFocus = false;
         focusReturn = null;
         base.OnClosed();
     }

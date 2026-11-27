@@ -18,7 +18,8 @@
         <Border Padding="18,23" MinHeight="120">
           <alder:AlderDropZone MaxWidth="480" Title="{DynamicResource GalleryText.FormDropUploadAssets}" Description="{DynamicResource GalleryText.FormDropProgressDescription}"
                               MaxFileSize="10000000" AllowMultiple="True" BrowseContent="{DynamicResource GalleryText.FormDropAddFiles}"
-                              Loaded="OnFileListLoaded" RetryRequested="OnRetryRequested" />
+                              Loaded="OnFileListLoaded" FilesChangedCommand="{CompiledBinding UploadCommand}"
+                              RetryRequestedCommand="{CompiledBinding RetryCommand}" FileRemovedCommand="{CompiledBinding CancelCommand}" />
         </Border>
       </g:ExampleCard.Preview>
       <g:ExampleCard.CSharpSource><![CDATA[
@@ -26,25 +27,26 @@
         zone[!AlderDropZone.TitleProperty] = new DynamicResourceExtension("GalleryText.FormDropUploadAssets");
         zone[!AlderDropZone.DescriptionProperty] = new DynamicResourceExtension("GalleryText.FormDropProgressDescription");
         zone[!AlderDropZone.BrowseContentProperty] = new DynamicResourceExtension("GalleryText.FormDropAddFiles");
-        zone.Loaded += async (_, _) =>
-        {
-            await model.LoadExampleFilesAsync(zone);
-            zone.FilesChanged += async (_, args) => await model.AnimateFilesAsync(zone, args.Added);
-        };
-        zone.RetryRequested += async (_, file) => await model.AnimateFilesAsync(zone, [file]);
+        zone.FilesChangedCommand = model.UploadCommand;
+        zone.RetryRequestedCommand = model.RetryCommand;
+        zone.FileRemovedCommand = model.CancelCommand;
+        zone.Loaded += (_, _) => model.InitializePreview(zone);
       ]]></g:ExampleCard.CSharpSource>
     </g:ExampleCard>
     <g:ExampleCard x:Name="SampleCompactFileList" Title="{DynamicResource GalleryText.FormDropCompact}">
       <g:ExampleCard.Preview>
         <Border Padding="18,23">
           <alder:AlderDropZone MaxWidth="480" ShowDropArea="False" IsFileListCompact="True" AllowMultiple="True"
-                               Loaded="OnFileListLoaded" RetryRequested="OnRetryRequested" />
+                               Loaded="OnFileListLoaded" FilesChangedCommand="{CompiledBinding UploadCommand}"
+                              RetryRequestedCommand="{CompiledBinding RetryCommand}" FileRemovedCommand="{CompiledBinding CancelCommand}" />
         </Border>
       </g:ExampleCard.Preview>
       <g:ExampleCard.CSharpSource><![CDATA[
         var zone = new AlderDropZone { MaxWidth = 480, ShowDropArea = false, IsFileListCompact = true, AllowMultiple = true };
-        zone.Loaded += async (_, _) => await model.LoadExampleFilesAsync(zone);
-        zone.RetryRequested += async (_, file) => await model.AnimateFilesAsync(zone, [file]);
+        zone.FilesChangedCommand = model.UploadCommand;
+        zone.RetryRequestedCommand = model.RetryCommand;
+        zone.FileRemovedCommand = model.CancelCommand;
+        zone.Loaded += (_, _) => model.InitializePreview(zone);
       ]]></g:ExampleCard.CSharpSource>
     </g:ExampleCard>
     <g:ExampleCard x:Name="SampleImages" Title="{DynamicResource GalleryText.FormDropImagesOnly}">

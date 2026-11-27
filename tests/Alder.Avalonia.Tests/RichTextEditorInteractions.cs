@@ -119,7 +119,7 @@ public sealed class RichTextEditorInteractions
             Assert.Equal(InputVariant.Secondary, url.Variant);
             Assert.Equal("https://example.com", url.PlaceholderText);
             Assert.False(url.IsFocused);
-            Assert.All(surface.GetVisualDescendants().OfType<AlderButton>(), button => Assert.False(button.IsEnabled));
+            Assert.All(VisibleActions(surface), button => Assert.False(button.IsEnabled));
             host.KeyPressQwerty(PhysicalKey.Tab, RawInputModifiers.None);
             Assert.True(url.IsFocused);
             host.KeyTextInput("https://example.org");
@@ -134,7 +134,7 @@ public sealed class RichTextEditorInteractions
             editor.Select(7, 0);
             Click(trigger);
             surface = Surface();
-            var remove = surface.GetVisualDescendants().OfType<AlderButton>().First();
+            var remove = VisibleActions(surface).First();
             Assert.True(remove.IsEnabled);
             await Task.Delay(160);
             Click(outside);
@@ -147,7 +147,7 @@ public sealed class RichTextEditorInteractions
             AlderMotion.SetReduced(editor, true);
             Click(trigger);
             surface = Surface();
-            Click(surface.GetVisualDescendants().OfType<AlderButton>().First());
+            Click(VisibleActions(surface).First());
             Assert.DoesNotContain("https://example.org", editor.Value);
             Assert.False(surface.IsAttachedToVisualTree());
             Assert.Equal("Add a link", editor.PlainText);
@@ -155,6 +155,8 @@ public sealed class RichTextEditorInteractions
         finally { host.Close(); }
 
         Control Surface() => host.GetVisualDescendants().OfType<Control>().Single(c => c.Name == "AlderPopoverSurface");
+        static IEnumerable<AlderButton> VisibleActions(Control surface) =>
+            surface.GetVisualDescendants().OfType<AlderButton>().Where(button => button.IsEffectivelyVisible);
         void Click(Control control)
         {
             var point = control.TranslatePoint(new Rect(control.Bounds.Size).Center, host)!.Value;
@@ -222,6 +224,39 @@ public sealed class RichTextEditorInteractions
             Assert.Equal(editor.PlainText, restored.PlainText);
         }
         finally { host.Close(); }
+    }
+
+    [AvaloniaFact]
+    public void LongWrappedTextKeepsLineMetricsAfterAnEditShiftsLaterParagraphs()
+    {
+        var editor = new AlderRichTextEditor();
+        var host = new Window { Width = 420, Height = 300, Content = editor };
+        host.Show();
+        try
+        {
+            host.UpdateLayout();
+            var paragraphs = Enumerable.Range(0, 120).Select(i =>
+                $"Line {i:D3}. Ordinary Latin text and ligatures like office must wrap consistently.");
+            editor.InsertText(string.Join('\n', paragraphs));
+            var before = Snapshot();
+            Assert.True(before.Length > 120);
+            editor.Select(0, 0);
+            editor.InsertText("First paragraph\n");
+            var after = Snapshot();
+            Assert.Equal(before.Select(line => (line.First + 16, line.Length, line.Width, line.Height)), after.Skip(1));
+            editor.Execute(RichTextCommand.Undo);
+            Assert.Equal(before, Snapshot());
+        }
+        finally { host.Close(); }
+
+        (int First, int Length, double Width, double Height)[] Snapshot()
+        {
+            Dispatcher.UIThread.RunJobs();
+            host.UpdateLayout();
+            var presenter = editor.GetVisualDescendants().OfType<RichTextPresenter>().Single();
+            return presenter.TextLayout.TextLines.Select(line =>
+                (line.FirstTextSourceIndex, line.Length, line.Width, line.Height)).ToArray();
+        }
     }
 
     [AvaloniaFact]

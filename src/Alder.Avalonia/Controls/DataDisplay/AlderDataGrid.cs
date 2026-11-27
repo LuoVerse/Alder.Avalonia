@@ -25,8 +25,7 @@ public sealed partial class AlderDataGrid : AlderTable
     public static readonly StyledProperty<bool> VirtualizedProperty =
         AvaloniaProperty.Register<AlderDataGrid, bool>(nameof(Virtualized), true);
     /// <summary>Identifies the <see cref="RowHeight"/> Avalonia property.</summary>
-    public static readonly StyledProperty<double> RowHeightProperty =
-        AvaloniaProperty.Register<AlderDataGrid, double>(nameof(RowHeight), double.NaN, validate: IsLayoutHeight);
+    public new static readonly StyledProperty<double> RowHeightProperty = AlderTable.RowHeightProperty.AddOwner<AlderDataGrid>();
     /// <summary>Identifies the <see cref="HeadingHeight"/> Avalonia property.</summary>
     public static readonly StyledProperty<double> HeadingHeightProperty =
         AvaloniaProperty.Register<AlderDataGrid, double>(nameof(HeadingHeight), 36, validate: value => value > 0 && double.IsFinite(value));
@@ -40,7 +39,7 @@ public sealed partial class AlderDataGrid : AlderTable
     /// <summary>Whether rows are realized only near the viewport.</summary>
     public bool Virtualized { get => GetValue(VirtualizedProperty); set => SetValue(VirtualizedProperty, value); }
     /// <summary>Fixed row height in virtualized mode. NaN retains natural row heights.</summary>
-    public double RowHeight { get => GetValue(RowHeightProperty); set => SetValue(RowHeightProperty, value); }
+    public new double RowHeight { get => base.RowHeight; set => base.RowHeight = value; }
     /// <summary>The height of the grid's heading row in device-independent pixels.</summary>
     public double HeadingHeight { get => GetValue(HeadingHeightProperty); set => SetValue(HeadingHeightProperty, value); }
     /// <summary>Whether sort requests are handled locally or by the caller.</summary>
@@ -55,8 +54,8 @@ public sealed partial class AlderDataGrid : AlderTable
     private const string HorizontalScrollingClass = "dataGridScrollingHorizontal";
     private const string VerticalScrollingClass = "dataGridScrollingVertical";
     private static readonly TimeSpan ScrollBarIdleDelay = TimeSpan.FromMilliseconds(600);
-    private IDisposable? hideHorizontalScrollBar;
-    private IDisposable? hideVerticalScrollBar;
+    private DispatcherTimer? hideHorizontalScrollBar;
+    private DispatcherTimer? hideVerticalScrollBar;
     private ScrollViewer? scrollingView;
 
     private protected override bool CanRequestMoreRows => effectiveViewport.Intersects(new Rect(Bounds.Size));
@@ -72,7 +71,20 @@ public sealed partial class AlderDataGrid : AlderTable
 
     internal ScrollViewer? GridScroll => NativeView?.Scroll as ScrollViewer;
     internal double HorizontalOffset => GridScroll?.Offset.X ?? 0;
-    internal double ViewportWidth => GridScroll?.Viewport.Width is > 0 and var width ? width : Bounds.Width;
+    private double measuredWidth;
+    internal double ViewportWidth => GridScroll?.Viewport.Width is > 0 and var width ? width :
+        Bounds.Width > 0 ? Bounds.Width : measuredWidth;
+
+    /// <inheritdoc />
+    protected override Size MeasureOverride(Size availableSize)
+    {
+        if (measuredWidth != availableSize.Width)
+        {
+            measuredWidth = availableSize.Width;
+            hasColumnLayout = false;
+        }
+        return base.MeasureOverride(availableSize);
+    }
 
     internal static IDisposable? KeepRowActionPointerInput(Control anchor, MenuFlyout menu)
     {
@@ -126,7 +138,7 @@ public sealed partial class AlderDataGrid : AlderTable
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
-        if (change.Property == RowHeightProperty || change.Property == VirtualizedProperty)
+        if (change.Property == VirtualizedProperty)
             UpdateRows();
         else if (change.Property == PinSelectionColumnProperty || change.Property == ReorderCommandProperty ||
                  change.Property == CanReorderRowsProperty)
@@ -173,6 +185,7 @@ public sealed partial class AlderDataGrid : AlderTable
 
     private protected override void OnTableScrollChanged(ScrollChangedEventArgs e)
     {
+        if (landingRow is not null && e.OffsetDelta != default) ClearLandingPreview();
         if (e.OffsetDelta.X != 0 || e.ViewportDelta.X != 0 || e.ExtentDelta.X != 0)
             InvalidateColumnLayout();
 
@@ -183,26 +196,35 @@ public sealed partial class AlderDataGrid : AlderTable
         UpdateScrollBarActivity(scroll, VerticalScrollingClass, e.OffsetDelta.Y, scroll.ScrollBarMaximum.Y, ref hideVerticalScrollBar);
     }
 
-    private static void UpdateScrollBarActivity(ScrollViewer scroll, string activeClass, double delta, double maximum, ref IDisposable? hideTimer)
+    private static void UpdateScrollBarActivity(ScrollViewer scroll, string activeClass, double delta, double maximum, ref DispatcherTimer? hideTimer)
     {
         if (maximum <= 0)
         {
-            hideTimer?.Dispose();
-            hideTimer = null;
+            hideTimer?.Stop();
             scroll.Classes.Set(activeClass, false);
         }
         else if (delta != 0)
         {
-            hideTimer?.Dispose();
             scroll.Classes.Set(activeClass, true);
-            hideTimer = DispatcherTimer.RunOnce(() => scroll.Classes.Set(activeClass, false), ScrollBarIdleDelay);
+            if (hideTimer is null)
+            {
+                var timer = new DispatcherTimer { Interval = ScrollBarIdleDelay };
+                timer.Tick += (_, _) =>
+                {
+                    timer.Stop();
+                    scroll.Classes.Set(activeClass, false);
+                };
+                hideTimer = timer;
+            }
+            hideTimer.Stop();
+            hideTimer.Start();
         }
     }
 
     private void ResetScrollBarActivity()
     {
-        hideHorizontalScrollBar?.Dispose();
-        hideVerticalScrollBar?.Dispose();
+        hideHorizontalScrollBar?.Stop();
+        hideVerticalScrollBar?.Stop();
         hideHorizontalScrollBar = null;
         hideVerticalScrollBar = null;
         scrollingView?.Classes.Set(HorizontalScrollingClass, false);
@@ -215,13 +237,6 @@ public sealed partial class AlderDataGrid : AlderTable
         hasColumnLayout = false;
         headers?.InvalidateArrange();
         InvalidateRowsArrange();
-    }
-
-    private void InvalidateRowsArrange()
-    {
-        if (NativeView is null) return;
-        foreach (var row in NativeView.GetRealizedContainers())
-            row.FindDescendantOfType<AlderDataGridCellsPresenter>()?.InvalidateArrange();
     }
 
     internal DataGridColumnLayout? ArrangeHeaders(double width)
@@ -243,7 +258,7 @@ public sealed partial class AlderDataGrid : AlderTable
         if (!hasColumnLayout)
         {
             columnLayout = CreateColumnLayout(ViewportWidth);
-            hasColumnLayout = true;
+            hasColumnLayout = columnLayout is not null;
         }
         return columnLayout;
     }
@@ -251,5 +266,4 @@ public sealed partial class AlderDataGrid : AlderTable
     private DataGridColumnLayout? CreateColumnLayout(double width) =>
         NativeView?.Columns is { } columns ? DataGridColumnLayout.Create(columns, width, HorizontalOffset) : null;
 
-    private static bool IsLayoutHeight(double value) => double.IsNaN(value) || value > 0 && double.IsFinite(value);
 }

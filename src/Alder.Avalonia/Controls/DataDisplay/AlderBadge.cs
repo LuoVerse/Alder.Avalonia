@@ -59,9 +59,9 @@ public sealed partial class AlderBadge : ContentControl
     /// <summary>The anchor corner used to position this badge.</summary>
     [GeneratedStyledProperty]
     public partial BadgePlacement Placement { get; set; }
-    /// <summary>The optional geometry displayed with the content.</summary>
+    /// <summary>An optional geometry or icon control displayed with the content.</summary>
     [GeneratedStyledProperty]
-    public partial Geometry? Icon { get; set; }
+    public partial object? Icon { get; set; }
     /// <summary>The size of the optional badge icon in device-independent pixels.</summary>
     [GeneratedStyledProperty(DefaultValue = 12d)]
     public partial double IconSize { get; set; }

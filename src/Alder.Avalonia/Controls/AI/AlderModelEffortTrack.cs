@@ -1,7 +1,10 @@
+using System.Diagnostics;
 using Avalonia;
 using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Rendering.Composition;
+using Avalonia.Rendering.Composition.Animations;
 using Avalonia.Styling;
 using Avalonia.VisualTree;
 
@@ -11,6 +14,8 @@ namespace Alder.Avalonia.Controls;
 internal sealed partial class AlderModelEffortTrack : Control
 {
     private const double TrackHeight = 16;
+    private const double SheenDuration = 8;
+    private const double SheenTravel = 4.8;
     internal const double ThumbWidth = 14;
     private static readonly Color DefaultAccent = Color.Parse("#0485F7");
     private static readonly SplineEasing SweepEase = new(.42, 0, .58, 1);
@@ -31,6 +36,12 @@ internal sealed partial class AlderModelEffortTrack : Control
     private TimeSpan? lastFrame;
     private double sheenSeconds;
     private double sparkSeconds;
+    private long? sweepStarted;
+    private CompositionLinearGradientBrush? sheenBrush;
+    private double sheenWidth;
+    private bool? sheenDark;
+    private Visual[]? visibilityAncestors;
+    private bool inViewport = true;
 
     static AlderModelEffortTrack() => AffectsRender<AlderModelEffortTrack>(
         ValueProperty, MaximumProperty, AccentAmountProperty, SheenAmountProperty, UltraAmountProperty, HoverAmountProperty,
@@ -44,24 +55,53 @@ internal sealed partial class AlderModelEffortTrack : Control
     {
         frame = Advance;
         ActualThemeVariantChanged += (_, _) => InvalidateVisual();
+        EffectiveViewportChanged += (_, e) =>
+        {
+            bool visible = new Rect(Bounds.Size).Intersects(e.EffectiveViewport);
+            if (visible == inViewport) return;
+            inViewport = visible;
+            if (!visible) StopSweepClock();
+            InvalidateVisual();
+        };
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
+        if (visibilityAncestors is not null)
+        {
+            foreach (var ancestor in visibilityAncestors) ancestor.PropertyChanged -= OnAncestorChanged;
+            visibilityAncestors = null;
+        }
+        StopSweepClock();
+        sheenBrush = null;
+        sheenDark = null;
+        inViewport = true;
         lastFrame = null;
         base.OnDetachedFromVisualTree(e);
+    }
+
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+        if ((change.Property == IsVisibleProperty && !IsVisible) ||
+            (change.Property == AlderMotion.ReducedProperty && AlderMotion.GetReduced(this)))
+            StopSweepClock();
     }
 
     public override void Render(DrawingContext context)
     {
         if (Bounds.Width < ThumbWidth || Maximum <= 0)
         {
+            StopSweepClock();
             lastFrame = null;
             return;
         }
 
         bool dark = ActualThemeVariant == ThemeVariant.Dark;
         bool reduced = AlderMotion.GetReduced(this);
+        bool animate = !reduced && inViewport && IsEffectivelyVisible && Classes.Contains("accent-effort");
+        if (animate) sweepStarted ??= Stopwatch.GetTimestamp();
+        else StopSweepClock();
         var track = new Rect(0, (Bounds.Height - TrackHeight) / 2, Bounds.Width, TrackHeight);
         var thumbX = ThumbStart;
         var fill = track.WithWidth(thumbX + ThumbWidth);
@@ -92,8 +132,15 @@ internal sealed partial class AlderModelEffortTrack : Control
             };
         context.DrawRectangle(fillBrush, null, new RoundedRect(fill, 6));
 
-        if (!reduced && SheenAmount > 0)
-            DrawSheen(context, fill, dark);
+        // Ultra still redraws its particles. Compose only the settled Max band.
+        bool composed = animate && SheenAmount == 1 && UltraAmount <= 0 &&
+            !Classes.Contains("ultra-effort") && TryDrawComposedSheen(context, fill, dark);
+        if (!composed)
+        {
+            StopBrush();
+            if (!reduced && SheenAmount > 0)
+                DrawSheen(context, fill, dark);
+        }
 
         DrawTicks(context, track, fill.Right, dark);
         if (!reduced && UltraAmount > 0)
@@ -108,7 +155,8 @@ internal sealed partial class AlderModelEffortTrack : Control
         var thumbOutline = Focused ? new Pen(Brush(accent), 2) : null;
         context.DrawRectangle(Brush(Colors.White), thumbOutline, new RoundedRect(thumb, 4), thumbShadow);
 
-        if (reduced || !Classes.Contains("accent-effort") || !IsEffectivelyVisible)
+        bool needsFrame = animate && (UltraAmount > 0 || (SheenAmount > 0 && !composed));
+        if (!needsFrame)
         {
             lastFrame = null;
         }
@@ -143,13 +191,95 @@ internal sealed partial class AlderModelEffortTrack : Control
             new BoxShadows(new BoxShadow { Blur = 11, Spread = 4, Color = glow }));
     }
 
+    private bool TryDrawComposedSheen(DrawingContext context, Rect fill, bool dark)
+    {
+        // During snapping the fill width changes every frame. Use the existing drawing for
+        // those frames so the gradient geometry stays exact without restarting animations.
+        if (Math.Abs(GetBaseValue(ValueProperty).GetValueOrDefault() - Value) > .001 ||
+            ElementComposition.GetElementVisual(this)?.Compositor is not { } compositor)
+            return false;
+
+        if (sheenBrush is null)
+        {
+            sheenBrush = compositor.CreateLinearGradientBrush();
+            visibilityAncestors = this.GetVisualAncestors().ToArray();
+            foreach (var ancestor in visibilityAncestors) ancestor.PropertyChanged += OnAncestorChanged;
+        }
+        var brush = sheenBrush;
+        if (sheenDark != dark)
+        {
+            var color = dark ? Color.FromRgb(163, 207, 255) : Colors.White;
+            brush.GradientStops =
+            [
+                new GradientStop(Color.FromArgb(0, color.R, color.G, color.B), .42),
+                new GradientStop(Color.FromArgb(18, color.R, color.G, color.B), .47),
+                new GradientStop(Color.FromArgb(46, color.R, color.G, color.B), .5),
+                new GradientStop(Color.FromArgb(18, color.R, color.G, color.B), .53),
+                new GradientStop(Color.FromArgb(0, color.R, color.G, color.B), .58)
+            ];
+            sheenDark = dark;
+        }
+        if (Math.Abs(sheenWidth - fill.Width) > .05)
+        {
+            var halfLength = (fill.Width * .9063 + fill.Height * .4226) / 2;
+            var halfX = halfLength * .9063;
+            var halfY = halfLength * .4226;
+            var delay = TimeSpan.FromSeconds(-SweepPhase);
+            StartEndpoint(brush, nameof(CompositionLinearGradientBrush.StartPoint), fill, -halfX, -halfY, delay);
+            StartEndpoint(brush, nameof(CompositionLinearGradientBrush.EndPoint), fill, halfX, halfY, delay);
+            sheenWidth = fill.Width;
+        }
+        using (context.PushClip(new RoundedRect(fill, 6)))
+            context.DrawRectangle(brush, null, fill);
+        return true;
+    }
+
+    private static void StartEndpoint(
+        CompositionLinearGradientBrush brush, string property, Rect fill, double x, double y, TimeSpan delay)
+    {
+        var animation = brush.Compositor.CreateRelativePointKeyFrameAnimation();
+        animation.Duration = TimeSpan.FromSeconds(SheenDuration);
+        animation.DelayTime = delay;
+        animation.IterationBehavior = AnimationIterationBehavior.Forever;
+        var start = new RelativePoint(-fill.Width * .5 + x, fill.Height / 2 + y, RelativeUnit.Absolute);
+        var end = new RelativePoint(fill.Width * 1.5 + x, fill.Height / 2 + y, RelativeUnit.Absolute);
+        animation.InsertKeyFrame(0, start);
+        animation.InsertKeyFrame((float)(SheenTravel / SheenDuration), end, SweepEase);
+        animation.InsertKeyFrame(1, end);
+        brush.StartAnimation(property, animation);
+    }
+
+    private void OnAncestorChanged(object? sender, AvaloniaPropertyChangedEventArgs change)
+    {
+        if (change.Property != IsVisibleProperty) return;
+        if (change.GetNewValue<bool>()) InvalidateVisual();
+        else StopSweepClock();
+    }
+
+    private double SweepPhase => (sheenSeconds + (sweepStarted is { } timestamp
+        ? Stopwatch.GetElapsedTime(timestamp).TotalSeconds : 0)) % SheenDuration;
+
+    private void StopSweepClock()
+    {
+        sheenSeconds = SweepPhase;
+        sweepStarted = null;
+        StopBrush();
+    }
+
+    private void StopBrush()
+    {
+        if (sheenWidth == 0 || sheenBrush is not { } brush) return;
+        brush.StopAnimation(nameof(CompositionLinearGradientBrush.StartPoint));
+        brush.StopAnimation(nameof(CompositionLinearGradientBrush.EndPoint));
+        sheenWidth = 0;
+    }
+
     private void DrawSheen(DrawingContext context, Rect fill, bool dark)
     {
-        const double sweepDuration = 4.8;
-        double cycle = sheenSeconds % 8;
-        if (cycle >= sweepDuration) return;
+        double cycle = SweepPhase;
+        if (cycle >= SheenTravel) return;
 
-        var x = fill.Width * (2 * SweepEase.Ease(cycle / sweepDuration) - .5);
+        var x = fill.Width * (2 * SweepEase.Ease(cycle / SheenTravel) - .5);
         const double directionX = .9063;
         const double directionY = .4226;
         var length = fill.Width * directionX + fill.Height * directionY;
@@ -207,7 +337,6 @@ internal sealed partial class AlderModelEffortTrack : Control
         }
         double elapsed = lastFrame is { } previous ? (time - previous).TotalSeconds : 0;
         lastFrame = time;
-        sheenSeconds += elapsed;
         if (Classes.Contains("ultra-effort"))
             sparkSeconds += elapsed;
         InvalidateVisual();

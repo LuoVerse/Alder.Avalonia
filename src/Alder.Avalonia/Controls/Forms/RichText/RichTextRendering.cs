@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Globalization;
 using Avalonia;
 using Avalonia.Controls;
@@ -14,7 +15,34 @@ public sealed class RichTextPresenter : TextPresenter
     private static readonly FontFamily Monospace = FontFamily.Parse("Menlo, Consolas, monospace");
     internal AlderRichTextEditor? Owner { get; set; }
     private double width = double.PositiveInfinity;
+    private Size? measureConstraint;
     private readonly TextRunCache shaped = new();
+    private readonly ConditionalWeakTable<RichParagraph, ParagraphShape> plainShapes = new();
+
+    private sealed record ParagraphShape(TextRunProperties Properties, GlyphTypeface Typeface, GlyphInfo[]? Glyphs);
+
+    private ShapedTextRun? ShapePlainParagraph(RichParagraph line, TextRunProperties properties)
+    {
+        if (!plainShapes.TryGetValue(line, out var cached))
+        {
+            var face = properties.Typeface.GlyphTypeface;
+            GlyphInfo[]? glyphs = null;
+            if (line.Text.All(c => c is >= ' ' and <= '~' && face.CharacterToGlyphMap.ContainsGlyph(c)))
+            {
+                using var buffer = TextShaper.Current.ShapeText(line.Text.AsMemory(), new TextShaperOptions(face,
+                    properties.FontRenderingEmSize, culture: properties.CultureInfo, letterSpacing: LetterSpacing,
+                    fontFeatures: properties.FontFeatures));
+                glyphs = buffer.ToArray();
+            }
+            plainShapes.Add(line, cached = new(properties, face, glyphs));
+        }
+        if (cached.Glyphs is not { } values) return null;
+        // TextLayout owns each returned run. Copy the cached glyph data into a new pooled buffer.
+        var copy = new ShapedBuffer(line.Text.AsMemory(), values.Length, cached.Typeface,
+            cached.Properties.FontRenderingEmSize, 0);
+        for (int i = 0; i < values.Length; i++) copy[i] = values[i];
+        return new ShapedTextRun(copy, cached.Properties);
+    }
     internal void Refresh(int firstChangedOffset = 0)
     {
         shaped.InvalidateFrom(firstChangedOffset);
@@ -25,6 +53,7 @@ public sealed class RichTextPresenter : TextPresenter
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         shaped.Invalidate();
+        plainShapes.Clear();
         base.OnDetachedFromVisualTree(e);
     }
 
@@ -34,15 +63,27 @@ public sealed class RichTextPresenter : TextPresenter
         base.OnPropertyChanged(change);
         // Width, caret and selection can reuse shaping. Font metrics and paint cannot.
         if (change.Property.Name is "FontFamily" or "FontSize" or "Foreground" or "FontStyle" or
-            "FontWeight" or "FontStretch" or "FlowDirection" or "LetterSpacing" or "FontFeatures")
+            "FontWeight" or "FontStretch" or "FlowDirection" or "LetterSpacing" or "FontFeatures" or "ActualThemeVariant")
+        {
             shaped?.Invalidate();
+            plainShapes?.Clear();
+        }
     }
 
     /// <inheritdoc />
     protected override Size MeasureOverride(Size availableSize)
     {
-        width = availableSize.Width;
-        return base.MeasureOverride(availableSize);
+        if (measureConstraint != availableSize || width != availableSize.Width)
+        {
+            measureConstraint = availableSize;
+            width = availableSize.Width;
+            return base.MeasureOverride(availableSize);
+        }
+        // Caret movement may already have built the layout for this width after a text change.
+        var layout = TextLayout;
+        _ = CursorRectangle;
+        InvalidateArrange();
+        return new Size(layout.WidthIncludingTrailingWhitespace, layout.Height);
     }
 
     /// <inheritdoc />
@@ -83,6 +124,12 @@ public sealed class RichTextPresenter : TextPresenter
             var line = doc.Line(row);
             if (index == end) return new TextCharacters("\n", Resolve(line.Kind, default));
             int offset = index - start;
+            // Plain left-to-right paragraphs can reuse glyphs even when a preceding edit shifts their offsets.
+            // Mixed runs, bidi text and font fallback continue through Avalonia's formatter.
+            if (offset == 0 && doc.Length is >= 4096 and <= 250_000 &&
+                line is { Kind: RichBlock.Paragraph, Runs: [{ Style: { Marks: 0, Link: null } }] } &&
+                host.FlowDirection == FlowDirection.LeftToRight && host.ShapePlainParagraph(line, Resolve(line.Kind, default)) is { } shaped)
+                return shaped;
             foreach (var run in line.Runs)
             {
                 if (offset < run.Text.Length) return new TextCharacters(run.Text.AsMemory(offset), Resolve(line.Kind, run.Style));

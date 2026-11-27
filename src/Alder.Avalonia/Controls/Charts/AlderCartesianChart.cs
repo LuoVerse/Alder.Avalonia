@@ -1,5 +1,7 @@
 using System.Globalization;
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Media;
 
 namespace Alder.Avalonia.Controls;
@@ -69,8 +71,14 @@ public abstract partial class AlderCartesianChart : AlderPlotChart
 
     private static readonly double[] TickSteps = [1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10];
     private ChartLayout? layout;
+    private Panel? plotLayers;
+    private PlotLayer? cursorLayer;
+    private PlotLayer? seriesLayer;
+    private PlotLayer? pointsLayer;
+    private TopLevel? viewRoot;
+    private double lineRenderScale = 1;
 
-    static AlderCartesianChart() => AffectsRender<AlderCartesianChart>(ShowGridProperty, ShowHoverMarkerProperty, CategoryLabelIntervalProperty);
+    static AlderCartesianChart() => AffectsRender<AlderCartesianChart>(ShowGridProperty, CategoryLabelIntervalProperty);
 
     private protected virtual bool IsHorizontal => false;
     private protected virtual bool UsesBands => false;
@@ -113,6 +121,52 @@ public abstract partial class AlderCartesianChart : AlderPlotChart
     }
 
     /// <inheritdoc />
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    {
+        base.OnApplyTemplate(e);
+        plotLayers?.Children.Clear();
+        plotLayers = e.NameScope.Find<Panel>("PART_PlotLayers");
+        cursorLayer = null;
+        seriesLayer = null;
+        pointsLayer = null;
+        if (plotLayers is not null)
+        {
+            cursorLayer = new(DrawPlotCursor);
+            seriesLayer = new(DrawPlotSeries);
+            pointsLayer = new(DrawPlotPoints);
+            plotLayers.Children.Add(cursorLayer);
+            plotLayers.Children.Add(seriesLayer);
+            plotLayers.Children.Add(pointsLayer);
+        }
+        InvalidateVisual();
+    }
+
+    /// <inheritdoc />
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        viewRoot = TopLevel.GetTopLevel(this);
+        if (viewRoot is not null) viewRoot.ScalingChanged += UpdateLineRenderScale;
+        UpdateLineRenderScale(this, EventArgs.Empty);
+    }
+
+    /// <inheritdoc />
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        if (viewRoot is not null) viewRoot.ScalingChanged -= UpdateLineRenderScale;
+        viewRoot = null;
+        base.OnDetachedFromVisualTree(e);
+    }
+
+    private void UpdateLineRenderScale(object? sender, EventArgs e)
+    {
+        double scale = viewRoot?.RenderScaling ?? 1;
+        if (lineRenderScale == scale) return;
+        lineRenderScale = scale;
+        InvalidateSeries();
+    }
+
+    /// <inheritdoc />
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
@@ -125,12 +179,37 @@ public abstract partial class AlderCartesianChart : AlderPlotChart
             RestartReveal();
         if (change.Property == ShowHoverMarkerProperty && !ShowHoverMarker && !ShowTooltip)
             ClearActive();
+        if (change.Property == ShowTooltipProperty || change.Property == ShowHoverMarkerProperty ||
+            change.Property == CursorBrushProperty || change.Property == BackgroundProperty)
+            InvalidateActiveIndex();
+        if (change.Property == ShowGridProperty)
+            InvalidateSeries();
     }
 
     private protected override void ResetLayout()
     {
         layout = null;
         base.ResetLayout();
+        InvalidateSeries();
+        InvalidateActiveIndex();
+    }
+
+    private protected void InvalidateSeries()
+    {
+        if (seriesLayer is { } layer) layer.InvalidateVisual();
+        else InvalidateVisual();
+    }
+
+    private protected override void InvalidateReveal() => InvalidateSeries();
+
+    private protected override void InvalidateActiveIndex()
+    {
+        if (cursorLayer is { } cursor && pointsLayer is { } points)
+        {
+            cursor.InvalidateVisual();
+            points.InvalidateVisual();
+        }
+        else InvalidateVisual();
     }
 
     /// <inheritdoc />
@@ -142,14 +221,36 @@ public abstract partial class AlderCartesianChart : AlderPlotChart
             return;
 
         DrawAxes(context, chart);
-        using (context.PushClip(chart.Plot.Inflate(0.5)))
-        {
-            if (ShowTooltip)
-                DrawCursor(context, chart, ActiveIndex);
-            DrawSeries(context, chart);
-        }
-        if (ShowHoverMarker)
+        // Keep rendering functional with templates that don't declare the retained plot layers.
+        if (plotLayers is not null) return;
+        DrawPlotCursor(context);
+        DrawPlotSeries(context);
+        DrawPlotPoints(context);
+    }
+
+    private void DrawPlotCursor(DrawingContext context)
+    {
+        if (!ShowTooltip || ActiveIndex < 0 || GetLayout() is not { } chart) return;
+        using var clip = context.PushClip(chart.Plot.Inflate(.5));
+        DrawCursor(context, chart, ActiveIndex);
+    }
+
+    private void DrawPlotSeries(DrawingContext context)
+    {
+        if (GetLayout() is not { } chart) return;
+        using var clip = context.PushClip(chart.Plot.Inflate(.5));
+        DrawSeries(context, chart);
+    }
+
+    private void DrawPlotPoints(DrawingContext context)
+    {
+        if (ShowHoverMarker && ActiveIndex >= 0 && GetLayout() is { } chart)
             DrawActivePoints(context, chart, ActiveIndex);
+    }
+
+    private sealed class PlotLayer(Action<DrawingContext> draw) : Control
+    {
+        public override void Render(DrawingContext context) => draw(context);
     }
 
     private protected abstract void DrawSeries(DrawingContext context, ChartLayout chart);
@@ -319,11 +420,8 @@ public abstract partial class AlderCartesianChart : AlderPlotChart
 
         if (!(IsHorizontal ? ShowYAxis : ShowXAxis))
             return;
-        var categorySpacing = chart.CategorySpacing;
-        var labelSpacing = IsHorizontal ? FontSize + 6 : chart.GetCategoryLabelSpacing(this);
-        int stride = categorySpacing <= 0 ? 1 : Math.Clamp((int)Math.Ceiling(labelSpacing / categorySpacing), 1, Categories.Count);
         int interval = Math.Clamp(CategoryLabelInterval, 1, Categories.Count);
-        stride = Math.Max(stride, interval);
+        int stride = GetCategoryLabelStride(chart.CategorySpacing, interval);
         for (int i = interval - 1; i < Categories.Count; i += stride)
         {
             if (IsHorizontal)
@@ -331,6 +429,30 @@ public abstract partial class AlderCartesianChart : AlderPlotChart
             else
                 DrawXAxisLabel(context, Categories[i], chart.Category(i), plot.Bottom);
         }
+    }
+
+    private int GetCategoryLabelStride(double categorySpacing, int interval)
+    {
+        int count = Categories.Count;
+        if (IsHorizontal)
+            return Math.Max(interval, Math.Clamp((int)Math.Ceiling((FontSize + 6) / categorySpacing), 1, count));
+
+        // At most one label can fit in each roughly font-sized band. Only shape labels
+        // that could be drawn, then widen the stride if one of those labels needs room.
+        int stride = Math.Max(interval, Math.Clamp((int)Math.Ceiling((FontSize + 8) / categorySpacing), 1, count));
+        while (stride < count)
+        {
+            double labelWidth = 0;
+            for (int i = interval - 1; i < count; i += stride)
+            {
+                labelWidth = Math.Max(labelWidth, Text(Categories[i]).Width);
+                if (labelWidth >= 92) break;
+            }
+            int required = Math.Clamp((int)Math.Ceiling(Math.Min(100, labelWidth + 8) / categorySpacing), 1, count);
+            if (required <= stride) break;
+            stride = required;
+        }
+        return stride;
     }
 
     private void DrawXAxisLabel(DrawingContext context, string label, double x, double bottom)
@@ -367,26 +489,46 @@ public abstract partial class AlderCartesianChart : AlderPlotChart
     private protected sealed class ChartLayout(Rect plot, int count, bool usesBands, bool horizontal,
         ChartSpan?[][] spans, IBrush[] brushes, ValueScale primary, ValueScale? secondary, IReadOnlyList<AlderChartSeries> series)
     {
-        private string[] measuredLabels = [];
-        private CultureInfo? labelCulture;
-        private double categoryLabelSpacing;
+        private readonly (bool Smooth, double Scale, LineSegment[]? Segments)[] lineCache =
+            new (bool, double, LineSegment[]?)[series.Count];
 
-        public double GetCategoryLabelSpacing(AlderCartesianChart chart)
+        public IReadOnlyList<LineSegment> GetLineSegments(int seriesIndex, bool smooth, double scale)
         {
-            var categories = chart.Categories;
-            var culture = CultureInfo.CurrentCulture;
-            if (ReferenceEquals(culture, labelCulture) && measuredLabels.SequenceEqual(categories))
-                return categoryLabelSpacing;
+            ref var cache = ref lineCache[seriesIndex];
+            if (cache.Segments is { } segments && cache.Smooth == smooth && cache.Scale == scale)
+                return segments;
 
-            labelCulture = culture;
-            measuredLabels = categories.ToArray();
-            double maxWidth = 0;
-            foreach (var label in measuredLabels)
+            var options = series[seriesIndex];
+            var points = new List<Point>();
+            var lines = new List<LineSegment>();
+            for (int index = 0; index < Spans[seriesIndex].Length; index++)
             {
-                maxWidth = Math.Max(maxWidth, chart.Text(label).Width);
-                if (maxWidth >= 92) break;
+                if (Spans[seriesIndex][index] is { } span)
+                    points.Add(new Point(Category(index), ValueCoordinate(span.End, seriesIndex)));
+                else if (!options.ConnectGaps)
+                    AddSegment();
             }
-            return categoryLabelSpacing = Math.Min(100, maxWidth + 8);
+            AddSegment();
+            cache = (smooth, scale, lines.ToArray());
+            return cache.Segments;
+
+            void AddSegment()
+            {
+                if (points.Count == 0) return;
+                StreamGeometry? geometry = null;
+                if (points.Count > 1)
+                {
+                    if (!options.ShowDots && !options.IsDashed)
+                        ReduceDenseLine(points, scale);
+                    geometry = new StreamGeometry();
+                    using var path = geometry.Open();
+                    path.BeginFigure(points[0], false);
+                    AppendCurve(path, points, smooth);
+                    path.EndFigure(false);
+                }
+                lines.Add(new LineSegment(points[0], geometry, options.ShowDots ? points.ToArray() : null));
+                points.Clear();
+            }
         }
 
         public Rect Plot { get; } = plot;

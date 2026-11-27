@@ -248,6 +248,9 @@ public class AlderColorPicker : TemplatedControl
 
     private void OnClosing(object? sender, CancelEventArgs e)
     {
+        if (e.Cancel) return;
+        if (restoreFocus && trigger is { } anchor && anchor.IsAttachedToVisualTree())
+            anchor.Focus(focusReturnMethod);
         if (!CommitOnApply && !restoreFocus && flyout?.IsClosing == false && field is { IsVisible: true } input)
             input.Commit();
     }
@@ -256,8 +259,6 @@ public class AlderColorPicker : TemplatedControl
     {
         SetAndRaise(IsOpenProperty, ref isOpen, false);
         ResetDraft();
-        if (restoreFocus && trigger is { } anchor && anchor.IsAttachedToVisualTree())
-            anchor.Focus(focusReturnMethod);
         restoreFocus = false;
     }
 

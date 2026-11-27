@@ -16,6 +16,131 @@ namespace Alder.Avalonia.Tests;
 public class WindowInteractions
 {
     [AvaloniaFact]
+    public async Task SalashWindowShowsTheReplacementBeforeClosingAndReleasesItsOwnHosts()
+    {
+        var next = new AlderWindow { Width = 480, Height = 320 };
+        var handoff = new TaskCompletionSource<Window?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var results = new List<DialogResult>();
+        var context = new TestDialogContext();
+        var splash = new TestSalashWindow(result => { results.Add(result); return handoff.Task; }) { DataContext = context };
+        AlderMotion.SetReduced(splash, true);
+        var closed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        splash.Closed += (_, _) => closed.TrySetResult();
+        splash.Show();
+        try
+        {
+            Pump();
+            var toast = Toast.Show(new("Startup") { Duration = TimeSpan.Zero }, splash);
+            var message = MessageBox.ShowAsync("Startup", owner: splash);
+            ToastHandle? nextToast = null;
+            next.Opened += (_, _) =>
+            {
+                Assert.True(splash.IsVisible);
+                nextToast = Toast.Show(new("Main window") { Duration = TimeSpan.Zero }, next);
+            };
+
+            Assert.Empty(results);
+            context.Complete(DialogResult.OK);
+            context.Complete(DialogResult.Cancel);
+            Pump();
+            Assert.Equal([DialogResult.OK], results);
+            Assert.True(splash.IsVisible);
+            handoff.SetResult(next);
+            await closed.Task.WaitAsync(TimeSpan.FromSeconds(2));
+
+            Assert.True(next.IsVisible);
+            Assert.Null(splash.DefaultDialogHost);
+            Assert.Null(ToastHost.Find(splash, null));
+            Assert.Equal(DialogResult.None, await message);
+            Assert.Equal(ToastCloseReason.HostRemoved, await toast.Completion);
+            Assert.NotNull(next.DefaultDialogHost);
+            Assert.NotNull(nextToast);
+            Assert.False(nextToast.Completion.IsCompleted);
+        }
+        finally
+        {
+            handoff.TrySetResult(null);
+            if (splash.IsVisible) splash.Close();
+            if (next.IsVisible) next.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task SalashWindowRetainsItsHostsWhenTheFactoryFailsAndCanRetry()
+    {
+        var failure = new InvalidOperationException("Factory failed");
+        var results = new List<DialogResult>();
+        var context = new TestDialogContext();
+        var splash = new TestSalashWindow(result =>
+        {
+            results.Add(result);
+            return results.Count == 1 ? Task.FromException<Window?>(failure) : Task.FromResult<Window?>(null);
+        }) { DataContext = context };
+        var failed = new TaskCompletionSource<Exception>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var closed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        splash.TransitionFailed += (_, error) => failed.TrySetResult(error);
+        splash.Closed += (_, _) => closed.TrySetResult();
+        splash.Show();
+        try
+        {
+            var toast = Toast.Show(new("Startup") { Duration = TimeSpan.Zero }, splash);
+            context.Complete(DialogResult.OK);
+            Assert.Same(failure, await failed.Task.WaitAsync(TimeSpan.FromSeconds(2)));
+            Assert.True(splash.IsVisible);
+            Assert.NotNull(splash.DefaultDialogHost);
+            Assert.False(toast.Completion.IsCompleted);
+            splash.Close();
+            await closed.Task.WaitAsync(TimeSpan.FromSeconds(2));
+            Assert.Equal(ToastCloseReason.HostRemoved, await toast.Completion);
+            Assert.Equal([DialogResult.OK, DialogResult.None], results);
+        }
+        finally { if (splash.IsVisible) splash.Close(); }
+    }
+
+    [AvaloniaFact]
+    public async Task SalashWindowTracksTheCurrentViewModelAndReturnsItsModalResult()
+    {
+        var oldContext = new TestDialogContext();
+        var context = new TestDialogContext();
+        var results = new List<DialogResult>();
+        var splash = new TestSalashWindow(result => { results.Add(result); return Task.FromResult<Window?>(null); })
+        {
+            DataContext = oldContext
+        };
+        var owner = new AlderWindow();
+        owner.Show();
+        try
+        {
+            var completion = splash.ShowDialog<DialogResult>(owner);
+            Assert.True(oldContext.HasCloseSubscribers);
+            oldContext.Complete(DialogResult.OK);
+            splash.DataContext = context;
+            Assert.False(oldContext.HasCloseSubscribers);
+            Pump();
+            Assert.Empty(results);
+            Assert.True(splash.IsVisible);
+
+            await Task.Run(() => context.Complete(DialogResult.Cancel));
+            Assert.Equal(DialogResult.Cancel, await completion.WaitAsync(TimeSpan.FromSeconds(2)));
+            Assert.Equal([DialogResult.Cancel], results);
+            Assert.False(context.HasCloseSubscribers);
+        }
+        finally { owner.Close(); }
+    }
+
+    private sealed class TestSalashWindow(Func<DialogResult, Task<Window?>> createNextWindow) : AlderSalashWindow
+    {
+        protected override Task<Window?> CreateNextWindow() => createNextWindow(CloseResult);
+    }
+
+    private sealed class TestDialogContext : IDialogContext
+    {
+        public event EventHandler<DialogResult>? RequestClose;
+        public bool HasCloseSubscribers => RequestClose is not null;
+        public void Complete(DialogResult result) => RequestClose?.Invoke(this, result);
+    }
+
+    [AvaloniaFact]
     public async Task WindowProvidesHostsBeforeOpenedAndKeepsNamedHostsIndependent()
     {
         var owner = new Button { Content = "Page" };
@@ -143,6 +268,77 @@ public class WindowInteractions
             Assert.True(closed);
         }
         finally { if (window.IsVisible) window.Close(); }
+    }
+
+    [AvaloniaTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void SalashWindowUsesAlderWindowCaptionButtons(bool mac)
+    {
+        var window = new AlderWindow { Width = 500, Height = 460 };
+        var input = new AlderInput();
+        var action = new AlderButton { Content = "Sign in" };
+        var splash = new TestSalashWindow(_ => Task.FromResult<Window?>(null))
+        {
+            Width = 500, Height = 460, Content = new StackPanel { Children = { input, action } }
+        };
+        window.Classes.Set("mac", mac);
+        splash.Classes.Set("mac", mac);
+        AlderMotion.SetReduced(splash, true);
+        window.Show();
+        splash.Show();
+        try
+        {
+            Pump();
+            var prefix = mac ? "PART_Mac" : "PART_";
+            foreach (var name in new[] { "CloseButton", "MinimizeButton", "MaximizeButton" })
+            {
+                var expected = Part<Button>(window, prefix + name);
+                var actual = Part<Button>(splash, prefix + name);
+                Assert.True(actual.IsEffectivelyVisible);
+                Assert.Same(expected.Theme, actual.Theme);
+                Assert.Equal(expected.TranslatePoint(default, window), actual.TranslatePoint(default, splash));
+                Assert.False(expected.IsTabStop);
+                Assert.False(actual.IsTabStop);
+                Assert.Null(actual.FocusAdorner);
+            }
+
+            Assert.True(input.Focus());
+            Tab();
+            Assert.True(action.IsFocused);
+            Tab();
+            Assert.True(input.IsFocused);
+            Tab(RawInputModifiers.Shift);
+            Assert.True(action.IsFocused);
+
+            var maximize = Part<Button>(splash, prefix + "MaximizeButton");
+            var frame = Part<Border>(splash, "PART_WindowFrame");
+            var outline = Part<Border>(splash, "PART_WindowOutline");
+            Assert.Equal(new CornerRadius(18), frame.CornerRadius);
+            Assert.True(outline.IsVisible);
+            Click(splash, maximize);
+            Assert.Equal(WindowState.Maximized, splash.WindowState);
+            Assert.Equal(default, frame.CornerRadius);
+            Assert.False(outline.IsVisible);
+            Click(splash, maximize);
+            Assert.Equal(WindowState.Normal, splash.WindowState);
+            Assert.Equal(new CornerRadius(18), frame.CornerRadius);
+            Click(splash, Part<Button>(splash, prefix + "CloseButton"));
+            Assert.False(splash.IsVisible);
+        }
+        finally
+        {
+            if (splash.IsVisible) splash.Close();
+            window.Close();
+            Pump();
+        }
+
+        void Tab(RawInputModifiers modifiers = RawInputModifiers.None)
+        {
+            splash.KeyPressQwerty(PhysicalKey.Tab, modifiers);
+            splash.KeyReleaseQwerty(PhysicalKey.Tab, modifiers);
+            Pump();
+        }
     }
 
     [AvaloniaFact]

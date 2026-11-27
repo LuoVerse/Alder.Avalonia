@@ -243,8 +243,7 @@ public sealed class TranscriptPanel : Panel, ILogicalScrollable, ISelectionHost
     {
         ClipToBounds = true;
         Focusable = true;
-        // 透明背景：空白处也能开始拖拽选择
-        Background = Brushes.Transparent;
+        FocusAdorner = null;
         _layer = new RowLayer(this);
         Children.Add(_layer);
         _selection = new SelectionController(this);
@@ -257,6 +256,8 @@ public sealed class TranscriptPanel : Panel, ILogicalScrollable, ISelectionHost
 
     static TranscriptPanel()
     {
+        // 透明背景：空白处也能开始拖拽选择
+        BackgroundProperty.OverrideDefaultValue<TranscriptPanel>(Brushes.Transparent);
         MarkdownServices.ServicesProperty.Changed.AddClassHandler<TranscriptPanel>((panel, _) => panel.InvalidateStyle());
     }
 

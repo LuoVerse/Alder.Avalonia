@@ -180,8 +180,10 @@
     <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
       <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis" />
     </Style>
-    <Style Selector="^ /template/ PathIcon#LeadingIcon">
-      <Setter Property="Data" Value="{CompiledBinding Icon, RelativeSource={RelativeSource AncestorType=alder:AlderNavbarItem}}" />
+    <Style Selector="^ /template/ alder|AlderIconPresenter#LeadingIcon">
+      <Setter Property="Width" Value="{CompiledBinding Size, RelativeSource={RelativeSource AncestorType=alder:AlderNavbarItem}, Converter={x:Static alder:AlderIconPresenter.SizeToExtent}}" />
+      <Setter Property="Height" Value="{CompiledBinding Size, RelativeSource={RelativeSource AncestorType=alder:AlderNavbarItem}, Converter={x:Static alder:AlderIconPresenter.SizeToExtent}}" />
+      <Setter Property="Content" Value="{CompiledBinding Icon, RelativeSource={RelativeSource AncestorType=alder:AlderNavbarItem}}" />
       <Setter Property="IsVisible" Value="{CompiledBinding Icon, RelativeSource={RelativeSource AncestorType=alder:AlderNavbarItem}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
     </Style>
   </ControlTheme>

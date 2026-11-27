@@ -8,8 +8,9 @@
     <WasmEnableThreads>false</WasmEnableThreads>
     <!-- The browser hosts the Gallery assembly through App rather than running its desktop entry point. -->
     <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
-    <!-- Gallery examples and ReactiveUI use reflection at runtime. -->
-    <PublishTrimmed>false</PublishTrimmed>
+    <!-- Trim the framework and compatible libraries while retaining the Gallery's reflection-based examples. -->
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>partial</TrimMode>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia.Browser" Version="12.2.0" />

@@ -172,8 +172,12 @@
   <ControlTheme x:Key="{x:Type alder:AlderScrollBar}" TargetType="alder:AlderScrollBar" BasedOn="{StaticResource AlderDataGridScrollBarTheme}">
     <Style Selector="^:horizontal"><Setter Property="Height" Value="10" /></Style>
     <Style Selector="^:vertical"><Setter Property="Width" Value="10" /></Style>
+    <Style Selector="^[Tag=scroll-focus] /template/ Thumb#PART_Thumb">
+      <Setter Property="Background" Value="{DynamicResource AlderDataGridScrollThumbActive}" />
+    </Style>
   </ControlTheme>
   <ControlTheme x:Key="{x:Type alder:AlderScrollViewer}" TargetType="alder:AlderScrollViewer">
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="Template">
       <ControlTemplate>
@@ -199,6 +203,9 @@
         </Grid>
       </ControlTemplate>
     </Setter>
+    <Style Selector="^:focus-visible /template/ alder|AlderScrollBar[IsVisible=True]">
+      <Setter Property="Tag" Value="scroll-focus" />
+    </Style>
     <Style Selector="^[AllowAutoHide=True] /template/ ScrollContentPresenter#PART_ContentPresenter">
       <Setter Property="Grid.ColumnSpan" Value="2" />
       <Setter Property="Grid.RowSpan" Value="2" />
@@ -206,9 +213,17 @@
   </ControlTheme>
   <ControlTheme x:Key="AlderInlineSelectScrollViewerTheme" TargetType="alder:AlderScrollViewer"
                 BasedOn="{StaticResource {x:Type alder:AlderScrollViewer}}">
-    <Setter Property="AllowAutoHide" Value="False" />
+    <Setter Property="AllowAutoHide" Value="True" />
     <Style Selector="^ /template/ alder|AlderScrollBar#PART_VerticalScrollBar">
-      <Setter Property="Margin" Value="0,5,6,5" />
+      <Setter Property="Theme">
+        <ControlTheme TargetType="alder:AlderScrollBar" BasedOn="{StaticResource AlderDataGridScrollBarTheme}">
+          <Setter Property="Width" Value="8" />
+          <Style Selector="^:vertical /template/ Thumb#PART_Thumb">
+            <Setter Property="MinHeight" Value="20" />
+          </Style>
+        </ControlTheme>
+      </Setter>
+      <Setter Property="Margin" Value="0,0,3,0" />
     </Style>
   </ControlTheme>
   <ControlTheme x:Key="{x:Type alder:AlderListBox}" TargetType="alder:AlderListBox">
@@ -239,29 +254,29 @@
     </Setter>
   </ControlTheme>
   <ControlTheme x:Key="AlderTableScrollTheme" TargetType="ScrollViewer">
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
     <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
     <Setter Property="CornerRadius" Value="16" />
     <Setter Property="Template">
       <ControlTemplate>
-        <Grid RowDefinitions="*,Auto" ColumnDefinitions="*,Auto">
-          <DockPanel>
-            <Border Name="HeaderSurface" DockPanel.Dock="Top" MinHeight="36"
-                    Background="{DynamicResource AlderSurfaceSecondary}" ClipToBounds="True">
-              <alder:AlderDataGridHeadersPresenter />
-            </Border>
-            <Border Name="RowsSurface" CornerRadius="{TemplateBinding CornerRadius}" Background="{TemplateBinding Background}" ClipToBounds="True">
-              <ScrollContentPresenter Name="PART_ContentPresenter"
-                                      ScrollViewer.IsScrollInertiaEnabled="{TemplateBinding IsScrollInertiaEnabled}">
-                <ScrollContentPresenter.GestureRecognizers>
-                  <ScrollGestureRecognizer CanHorizontallyScroll="{CompiledBinding #PART_ContentPresenter.CanHorizontallyScroll}"
-                                           CanVerticallyScroll="{CompiledBinding #PART_ContentPresenter.CanVerticallyScroll}"
-                                           IsScrollInertiaEnabled="{CompiledBinding #PART_ContentPresenter.(ScrollViewer.IsScrollInertiaEnabled)}" />
-                </ScrollContentPresenter.GestureRecognizers>
-              </ScrollContentPresenter>
-            </Border>
-          </DockPanel>
-          <alder:AlderScrollBar Name="PART_HorizontalScrollBar" Grid.Row="1" Orientation="Horizontal" />
-          <alder:AlderScrollBar Name="PART_VerticalScrollBar" Grid.Column="1" Orientation="Vertical" />
+        <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,Auto">
+          <Border Name="HeaderSurface" MinHeight="36"
+                  Background="{DynamicResource AlderSurfaceSecondary}" ClipToBounds="True">
+            <alder:AlderDataGridHeadersPresenter />
+          </Border>
+          <Border Name="RowsSurface" Grid.Row="1" CornerRadius="{TemplateBinding CornerRadius}"
+                  Background="{TemplateBinding Background}" ClipToBounds="True">
+            <ScrollContentPresenter Name="PART_ContentPresenter"
+                                    ScrollViewer.IsScrollInertiaEnabled="{TemplateBinding IsScrollInertiaEnabled}">
+              <ScrollContentPresenter.GestureRecognizers>
+                <ScrollGestureRecognizer CanHorizontallyScroll="{CompiledBinding #PART_ContentPresenter.CanHorizontallyScroll}"
+                                         CanVerticallyScroll="{CompiledBinding #PART_ContentPresenter.CanVerticallyScroll}"
+                                         IsScrollInertiaEnabled="{CompiledBinding #PART_ContentPresenter.(ScrollViewer.IsScrollInertiaEnabled)}" />
+              </ScrollContentPresenter.GestureRecognizers>
+            </ScrollContentPresenter>
+          </Border>
+          <alder:AlderScrollBar Name="PART_HorizontalScrollBar" Grid.Row="2" Orientation="Horizontal" />
+          <alder:AlderScrollBar Name="PART_VerticalScrollBar" Grid.Row="1" Grid.Column="1" Orientation="Vertical" />
         </Grid>
       </ControlTemplate>
     </Setter>
@@ -274,7 +289,7 @@
     </Style>
     <Style Selector="^.dataGridScroll /template/ :is(ScrollBar)#PART_HorizontalScrollBar">
       <Setter Property="Theme" Value="{StaticResource AlderDataGridScrollBarTheme}" />
-      <Setter Property="Grid.Row" Value="0" />
+      <Setter Property="Grid.Row" Value="1" />
       <Setter Property="VerticalAlignment" Value="Bottom" />
       <Setter Property="Height" Value="10" />
       <Setter Property="Margin" Value="4,0,10,1" />
@@ -311,14 +326,12 @@
     <Setter Property="Template">
       <ControlTemplate>
         <Panel>
-          <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+          <Border Name="RowSurface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
                   BorderThickness="{TemplateBinding BorderThickness}">
             <alder:AlderDataGridCellsPresenter Name="PART_CellsPresenter" />
           </Border>
           <Border Name="DropBefore" Height="2" VerticalAlignment="Top" IsVisible="False" IsHitTestVisible="False" Background="{DynamicResource AlderAccent}" />
           <Border Name="DropAfter" Height="2" VerticalAlignment="Bottom" IsVisible="False" IsHitTestVisible="False" Background="{DynamicResource AlderAccent}" />
-          <Border Name="RowFocus" IsVisible="False" IsHitTestVisible="False" CornerRadius="8" BorderThickness="2"
-                  BorderBrush="{DynamicResource AlderAccent}" />
         </Panel>
       </ControlTemplate>
     </Setter>
@@ -338,9 +351,10 @@
     <Style Selector="^.grid-drop-before /template/ Border#DropBefore, ^.grid-drop-after /template/ Border#DropAfter">
       <Setter Property="IsVisible" Value="True" />
     </Style>
+    <Style Selector="^.grid-drop-settling"><Setter Property="Opacity" Value="0" /></Style>
     <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
     <Style Selector="^.last-row"><Setter Property="BorderThickness" Value="0" /></Style>
-    <Style Selector="^:focus-visible /template/ Border#RowFocus"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#RowSurface"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
   </ControlTheme>
   <ControlTheme x:Key="AlderTableCellTheme" TargetType="TableViewCell">
     <Setter Property="Padding" Value="16,12" />
@@ -349,20 +363,30 @@
     <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
     <Setter Property="Template">
       <ControlTemplate>
-        <Panel>
-        <Border Padding="{TemplateBinding Padding}">
-          <DockPanel VerticalAlignment="Center">
-            <alder:AlderTableExpander DockPanel.Dock="Left" Column="{TemplateBinding Column}"
-                                 Row="{CompiledBinding DataContext, RelativeSource={RelativeSource TemplatedParent}}" />
-            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
-                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="Center"
-                              TextBlock.LineHeight="20" TextBlock.TextTrimming="CharacterEllipsis" />
-          </DockPanel>
-        </Border>
-          <Border Name="PinEdge" Width="1" IsVisible="False" IsHitTestVisible="False" Background="{DynamicResource AlderSeparator}" />
-        </Panel>
+        <ContentPresenter Name="PART_ContentPresenter" Padding="{TemplateBinding Padding}"
+                          Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="Center"
+                          TextBlock.LineHeight="20" TextBlock.TextTrimming="CharacterEllipsis" />
       </ControlTemplate>
     </Setter>
+    <Style Selector="^.tree-cell, ^.grid-pin-start-edge, ^.grid-pin-end-edge">
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Panel>
+          <Border Padding="{TemplateBinding Padding}">
+            <DockPanel VerticalAlignment="Center">
+              <alder:AlderTableExpander DockPanel.Dock="Left" Column="{TemplateBinding Column}"
+                                   Row="{CompiledBinding DataContext, RelativeSource={RelativeSource TemplatedParent}}" />
+              <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="Center"
+                                TextBlock.LineHeight="20" TextBlock.TextTrimming="CharacterEllipsis" />
+            </DockPanel>
+          </Border>
+            <Border Name="PinEdge" Width="1" IsVisible="False" IsHitTestVisible="False" Background="{DynamicResource AlderSeparator}" />
+          </Panel>
+        </ControlTemplate>
+      </Setter>
+    </Style>
     <Style Selector="^.data-grid-cell"><Setter Property="Padding" Value="12,7" /></Style>
     <Style Selector="^.grid-pin-start-edge /template/ Border#PinEdge">
       <Setter Property="IsVisible" Value="True" /><Setter Property="HorizontalAlignment" Value="Right" />
@@ -443,7 +467,7 @@
     <Setter Property="Template">
       <ControlTemplate>
         <Border Padding="{TemplateBinding Padding}" Name="SortSurface" Background="Transparent" CornerRadius="8"
-                BorderBrush="{DynamicResource AlderAccent}">
+                BorderBrush="{DynamicResource AlderInk}">
           <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6" VerticalAlignment="Center">
             <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" TextBlock.TextTrimming="CharacterEllipsis" />

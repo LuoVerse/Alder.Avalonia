@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Windows.Input;
@@ -37,7 +38,7 @@ public sealed class AlderCommandItem
     /// <summary>Additional search terms used to match the item.</summary>
     public string? Keywords { get; init; }
     /// <summary>The optional geometry displayed with the content.</summary>
-    public Geometry? Icon { get; init; }
+    public object? Icon { get; init; }
     /// <summary>Keyboard hint displayed beside the action.</summary>
     public string? Shortcut { get; init; }
     /// <summary>Whether the item or action is available for interaction.</summary>
@@ -49,6 +50,10 @@ public sealed class AlderCommandItem
     /// <summary>The optional subgroups opened by invoking this item.</summary>
     public IReadOnlyList<AlderCommandGroup>? Groups { get; init; }
 
+    private string? searchText;
+
+    internal string SearchText => searchText ??= Keywords is null && Description is null
+        ? Label : string.Concat(Label, " ", Keywords, " ", Description);
     internal bool CanInvoke => IsEnabled && (Groups is not null || Command?.CanExecute(CommandParameter) != false);
 }
 
@@ -275,18 +280,26 @@ public sealed class AlderCommand : TemplatedControl
     {
         if (list is null) return;
         var query = Query?.Trim() ?? "";
-        var terms = query.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
         var filter = Filter;
+        var terms = filter is null
+            ? query.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)
+                .Select(term => (Text: term, Offsets: StringInfo.ParseCombiningCharacters(term))).ToArray()
+            : [];
         var compare = CultureInfo.CurrentCulture.CompareInfo;
+        var groups = CurrentGroups;
+        int count = filter is null && query.Length != 0 ? groups.Sum(group => group.Items.Count) : 0;
+        var matches = SearchWork.CanPartition(count) ? MatchGroups(groups, count, terms, compare) : null;
         // Keep the original action references and section headings. Realized containers build their own binding data.
         var results = new List<object>();
-        foreach (var group in CurrentGroups)
+        int index = 0;
+        foreach (var group in groups)
         {
             int start = results.Count;
             foreach (var item in group.Items)
             {
-                if (query.Length != 0 && !(filter?.Invoke(item, query) ?? Matches(item, terms, compare))) continue;
-                results.Add(item);
+                if (matches is not null ? matches[index++] : query.Length == 0 ||
+                    (filter?.Invoke(item, query) ?? Matches(item.SearchText, terms, compare)))
+                    results.Add(item);
             }
             if (results.Count > start && !string.IsNullOrWhiteSpace(group.Heading))
                 results.Insert(start, new AlderCommandHeading(group.Heading, start > 0));
@@ -295,26 +308,38 @@ public sealed class AlderCommand : TemplatedControl
         rows = results;
         list.ItemsSource = rows;
         IsEmpty = rows.Count == 0;
-        int index = selection is { CanInvoke: true } ? results.IndexOf(selection) : -1;
-        SetActive(index >= 0 ? index : results.FindIndex(row => row is AlderCommandItem { CanInvoke: true }));
+        int activeIndex = selection is { CanInvoke: true } ? results.IndexOf(selection) : -1;
+        SetActive(activeIndex >= 0 ? activeIndex : results.FindIndex(row => row is AlderCommandItem { CanInvoke: true }));
     }
 
-    private static bool Matches(AlderCommandItem item, string[] terms, CompareInfo compare)
+    private static bool[] MatchGroups(IReadOnlyList<AlderCommandGroup> groups, int count,
+        (string Text, int[] Offsets)[] terms, CompareInfo compare)
+    {
+        var text = ArrayPool<string>.Shared.Rent(count);
+        try
+        {
+            int index = 0;
+            foreach (var group in groups)
+                foreach (var item in group.Items) text[index++] = item.SearchText;
+            return SearchWork.Match(count, i => Matches(text[i], terms, compare));
+        }
+        finally { ArrayPool<string>.Shared.Return(text, clearArray: true); }
+    }
+
+    private static bool Matches(string searchable, (string Text, int[] Offsets)[] terms, CompareInfo compare)
     {
         const CompareOptions options = CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth;
-        string searchable = item.Keywords is null && item.Description is null ? item.Label :
-            string.Concat(item.Label, " ", item.Keywords, " ", item.Description);
-        foreach (string term in terms)
+        foreach (var (term, offsets) in terms)
         {
             if (compare.IndexOf(searchable, term, options) >= 0) continue;
             int position = 0;
-            var letters = StringInfo.GetTextElementEnumerator(term);
-            while (letters.MoveNext())
+            for (int letter = 0; letter < offsets.Length; letter++)
             {
-                string letter = letters.GetTextElement();
-                int index = compare.IndexOf(searchable, letter, position, options);
+                int end = letter + 1 < offsets.Length ? offsets[letter + 1] : term.Length;
+                var element = term.AsSpan(offsets[letter], end - offsets[letter]);
+                int index = compare.IndexOf(searchable.AsSpan(position), element, options);
                 if (index < 0) return false;
-                position = index + letter.Length;
+                position += index + element.Length;
                 if (position > searchable.Length) return false;
             }
         }
@@ -509,7 +534,7 @@ internal sealed record AlderCommandRow(string Label, AlderCommandItem? Item, boo
     public bool IsDisabledAction => Item is not null && !IsEnabled;
     public string? Description => Item?.Description;
     public string? Shortcut => Item?.Shortcut;
-    public Geometry? Icon => Item?.Icon;
+    public object? Icon => Item?.Icon;
 }
 
 internal sealed class AlderCommandList : AlderListBox

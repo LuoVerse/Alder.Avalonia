@@ -1,7 +1,9 @@
+using System.Windows.Input;
 using Alder.Avalonia.Controls;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
@@ -19,6 +21,127 @@ namespace Alder.Avalonia.Tests;
 
 public sealed class FormControlInteractions
 {
+    [AvaloniaFact]
+    public void InputClearButtonUpdatesTheBindingAndMatchesOtherSuffixActions()
+    {
+        var model = new InputTextModel();
+        var suffix = new AlderButton { Size = AlderSize.Small, IsIconOnly = true, Variant = ButtonVariant.Ghost };
+        var input = new AlderInputGroup { ShowClearButton = true, Suffix = suffix, Width = 260 };
+        input.Bind(AlderInput.TextProperty, CompiledBinding.Create((InputTextModel vm) => vm.Text,
+            mode: BindingMode.TwoWay, source: model));
+        var window = Show(input);
+        try
+        {
+            var clear = Part<AlderButton>(input, "PART_ClearButton");
+            Assert.True(clear.IsEffectivelyVisible);
+            Assert.Equal(suffix.Bounds.Size, clear.Bounds.Size);
+            Assert.Equal(suffix.Size, clear.Size);
+            Assert.Equal(suffix.Variant, clear.Variant);
+
+            var point = clear.TranslatePoint(new Rect(clear.Bounds.Size).Center, window)!.Value;
+            window.MouseDown(point, MouseButton.Left);
+            window.MouseUp(point, MouseButton.Left);
+            Pump(window);
+            Assert.Equal("", model.Text);
+            Assert.False(clear.IsEffectivelyVisible);
+            Assert.True(input.IsFocused);
+            Assert.True(suffix.IsEffectivelyVisible);
+
+            input.SetCurrentValue(AlderInput.TextProperty, "New text");
+            Assert.Equal("New text", model.Text);
+            Assert.True(clear.IsEffectivelyVisible);
+            input.IsReadOnly = true;
+            Assert.False(clear.IsEffectivelyVisible);
+            Assert.Equal("New text", input.Text);
+        }
+        finally { window.Close(); }
+    }
+
+    private sealed class InputTextModel
+    {
+        public string? Text { get; set; } = "Alder";
+    }
+
+    [AvaloniaFact]
+    public void TabbingToFieldActionsMovesTheFocusIndicatorOffTheEditor()
+    {
+        var reveal = new AlderButton { Content = "Reveal" };
+        var nested = new Button { Content = "Custom" };
+        var input = new AlderInputGroup { Text = "Secret", Type = InputType.Password, ShowClearButton = true,
+            Suffix = new StackPanel { Orientation = Orientation.Horizontal, Children = { reveal, nested } } };
+        var search = new AlderSearchField { Text = "Search" };
+        var numberAction = new AlderButton { Content = "Units" };
+        var number = new AlderNumberField { Value = 3, ShowButtonSpinner = false, InnerRightContent = numberAction };
+        var colorAction = new AlderButton { Content = "Copy" };
+        var color = new AlderColorField { Suffix = colorAction };
+        var area = new AlderTextArea { Text = "Notes", ShowClearButton = true, Rows = 2 };
+        var date = new AlderDatePicker();
+        var range = new AlderDateRangePicker();
+        var timeAction = new AlderButton { Content = "Now" };
+        var time = new AlderTimeField { Suffix = timeAction };
+        var promptAction = new AlderButton { Content = "Tool" };
+        var prompt = new AlderPromptInput { Tools = promptAction };
+        var outside = new AlderButton { Content = "Outside" };
+        var darkTime = new ThemeVariantScope { RequestedThemeVariant = ThemeVariant.Dark, Child = time };
+        var window = Show(new StackPanel { Children = { input, search, number, color, area, date, range, darkTime, prompt, outside } });
+        try
+        {
+            var clear = Part<AlderButton>(input, "PART_ClearButton");
+            MoveToAction(input, input, clear);
+            Press(window, PhysicalKey.Tab);
+            CheckAction(reveal);
+            Press(window, PhysicalKey.Tab);
+            CheckAction(nested);
+            window.KeyPressQwerty(PhysicalKey.Tab, RawInputModifiers.Shift);
+            window.KeyReleaseQwerty(PhysicalKey.Tab, RawInputModifiers.Shift);
+            Pump(window);
+            CheckAction(reveal);
+
+            var clearSearch = search.GetVisualDescendants().OfType<Button>().Single(button => button.IsEffectivelyVisible);
+            MoveToAction(search, search, clearSearch);
+            Press(window, PhysicalKey.Space);
+            Assert.Equal("", search.Text);
+            Assert.True(search.IsFocused);
+            MoveToAction(number, Part<TextBox>(number, "PART_TextBox"), numberAction);
+            MoveToAction(color, color, colorAction);
+            MoveToAction(area, area, Part<AlderButton>(area, "PART_ClearButton"));
+            MoveToAction(date, LastSegment(date), Part<Button>(date, "PART_CalendarTrigger"));
+            MoveToAction(range, LastSegment(Part<AlderDateField>(range, "PART_End")), Part<Button>(range, "PART_CalendarTrigger"));
+            MoveToAction(time, LastSegment(time), timeAction);
+
+            Assert.True(Part<TextBox>(prompt, "PART_Editor").Focus());
+            Press(window, PhysicalKey.Tab);
+            CheckAction(promptAction);
+            Assert.True(outside.Focus(NavigationMethod.Tab));
+            CheckAction(outside);
+        }
+        finally { window.Close(); }
+
+        void MoveToAction(Control field, Control editor, Button action)
+        {
+            Assert.True(editor.Focus());
+            Pump(window);
+            var ring = field.GetVisualDescendants().OfType<InputFocusRing>().Last(candidate => candidate.Name == "FieldRing");
+            Assert.True(ring.BoxShadow[0].Color.A > 0);
+            Press(window, PhysicalKey.Tab);
+            CheckAction(action);
+            Assert.Equal(0, ring.BoxShadow[0].Color.A);
+        }
+
+        void CheckAction(Button action)
+        {
+            Assert.True(action.IsFocused);
+            if (action is AlderButton)
+                Assert.True(Part<ButtonTint>(action, "Tint").Opacity > 0);
+            else if (action is AlderDateTriggerButton)
+                Assert.True(Assert.IsAssignableFrom<ISolidColorBrush>(Part<Border>(action, "Face").Background).Color.A > 0);
+            Assert.DoesNotContain(action.GetVisualDescendants().OfType<Border>(), border => border.Name == "FocusRing");
+        }
+
+        static Button LastSegment(Control field) =>
+            Part<StackPanel>(field, "PART_Segments").Children.OfType<Button>().Last();
+    }
+
     [AvaloniaFact]
     public void NativeSelectPopupUsesTheFieldThemeAndSkipsDisabledOptions()
     {
@@ -80,6 +203,36 @@ public sealed class FormControlInteractions
             Assert.Contains("Design", select.SelectedItems!.Cast<string>());
             Assert.Contains("Research", select.SelectedItems!.Cast<string>());
             Assert.True(select.IsDropDownOpen);
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaFact]
+    public void InlineSelectKeepsAllFourOptionsInsideThePopupAndSelectsTheLastWithTheKeyboard()
+    {
+        var select = new AlderInlineSelect
+        {
+            Items = { "English", "Spanish", "French", "Japanese" }, SelectedIndex = 0, DropDownWidth = 140,
+            HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Top,
+            Margin = new Thickness(0, 40, 0, 0)
+        };
+        var window = Show(select);
+        try
+        {
+            select.IsDropDownOpen = true;
+            Pump(window);
+            var surface = Part<Control>(window, "AlderPopoverSurface");
+            var list = surface.GetVisualDescendants().OfType<ListBox>().Single();
+            var scroll = Part<ScrollViewer>(list, "PART_PickerScroll");
+            Assert.Equal(0, scroll.ScrollBarMaximum.Y);
+            var last = Assert.IsAssignableFrom<Control>(list.ContainerFromIndex(3));
+            var bottom = last.TranslatePoint(new Point(0, last.Bounds.Height), surface)!.Value.Y;
+            Assert.True(surface.Bounds.Height - bottom >= 8);
+
+            Press(window, PhysicalKey.End);
+            Press(window, PhysicalKey.Enter);
+            Assert.Equal("Japanese", select.SelectedItem);
+            Assert.False(select.IsDropDownOpen);
         }
         finally { window.Close(); }
     }
@@ -173,11 +326,15 @@ public sealed class FormControlInteractions
     [AvaloniaFact]
     public async Task DropZoneValidatesARealDropAndAllowsRetryAndRemoval()
     {
+        var commands = new DropZoneCommandModel();
         var zone = new AlderDropZone
         {
             FileTypeFilter = [new("Images") { Patterns = ["*.png"] }],
             MaxFileSize = 8, AllowMultiple = true, MaxFiles = 1
         };
+        zone.Bind(AlderDropZone.FilesChangedCommandProperty, CompiledBinding.Create((DropZoneCommandModel model) => model.Upload, source: commands));
+        zone.Bind(AlderDropZone.RetryRequestedCommandProperty, CompiledBinding.Create((DropZoneCommandModel model) => model.Retry, source: commands));
+        zone.Bind(AlderDropZone.FileRemovedCommandProperty, CompiledBinding.Create((DropZoneCommandModel model) => model.Cancel, source: commands));
         var window = Show(zone);
         var directory = Directory.CreateTempSubdirectory("alder-drop-");
         try
@@ -209,6 +366,7 @@ public sealed class FormControlInteractions
             var result = await changed.Task.WaitAsync(TimeSpan.FromSeconds(2));
             Pump(window);
 
+            Assert.Same(result, Assert.Single(commands.Upload.Calls));
             Assert.Equal(new[] { DropZoneFileError.Type, DropZoneFileError.Size, DropZoneFileError.Count }, result.Rejected.Select(item => item.Error));
             var fileRecord = Assert.Single(zone.Files);
             Assert.Same(accepted, fileRecord.File);
@@ -227,16 +385,26 @@ public sealed class FormControlInteractions
             zone.RetryRequested += (_, item) => retried = item;
             fileRecord.Status = DropZoneFileStatus.Failed;
             Pump(window);
-            Click(zone.GetVisualDescendants().OfType<AlderButton>().Single(button => button.Command == zone.RetryFileCommand));
+            var retry = zone.GetVisualDescendants().OfType<AlderButton>().Single(button => button.Command == zone.RetryFileCommand);
+            commands.Retry.Enabled = false;
+            Click(retry);
+            Assert.Empty(commands.Retry.Calls);
+            commands.Retry.Enabled = true;
+            Click(retry);
             Assert.Same(fileRecord, retried);
+            Assert.Same(fileRecord, Assert.Single(commands.Retry.Calls));
             Click(zone.GetVisualDescendants().OfType<AlderButton>().Single(button => button.Command == zone.RemoveFileCommand));
             Assert.Empty(zone.Files);
+            Assert.Same(fileRecord, Assert.Single(commands.Cancel.Calls));
 
             await zone.AddFilesAsync([overflow]);
-            Assert.Same(overflow, Assert.Single(zone.Files).File);
+            var replaced = Assert.Single(zone.Files);
+            Assert.Same(overflow, replaced.File);
             zone.AllowMultiple = false;
             await zone.AddFilesAsync([accepted]);
             Assert.Same(accepted, Assert.Single(zone.Files).File);
+            Assert.Same(replaced, commands.Cancel.Calls.Last());
+            Assert.Same(Assert.Single(zone.Files), Assert.Single(commands.Upload.Calls.Last().Added));
             Assert.Equal(DropZoneFileError.None, zone.LastError);
 
             void Click(Control control)
@@ -363,6 +531,22 @@ public sealed class FormControlInteractions
             Assert.Equal(0, newDot.Opacity);
         }
         finally { window.Close(); }
+    }
+
+    private sealed class DropZoneCommandModel
+    {
+        public RecordingCommand<DropZoneFilesChangedEventArgs> Upload { get; } = new();
+        public RecordingCommand<AlderDropZoneFile> Retry { get; } = new();
+        public RecordingCommand<AlderDropZoneFile> Cancel { get; } = new();
+    }
+
+    private sealed class RecordingCommand<T> : ICommand
+    {
+        public bool Enabled { get; set; } = true;
+        public List<T> Calls { get; } = [];
+        public event EventHandler? CanExecuteChanged { add { } remove { } }
+        public bool CanExecute(object? parameter) => Enabled && parameter is T;
+        public void Execute(object? parameter) => Calls.Add(Assert.IsAssignableFrom<T>(parameter));
     }
 
     private static AlderRadioButtonGroupItem Radio(string key)

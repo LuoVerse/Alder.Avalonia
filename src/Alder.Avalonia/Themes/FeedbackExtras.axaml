@@ -115,11 +115,10 @@
           <ContentPresenter Name="RatingLabel" Content="{TemplateBinding Label}" FontSize="14" FontWeight="Medium"
                             TextBlock.LineHeight="20" />
           <Panel HorizontalAlignment="Left">
-            <Border Background="Transparent">
+            <Canvas Name="PART_IconSources" Width="0" Height="0" ClipToBounds="True" IsHitTestVisible="False" />
+            <Border Name="RatingSurface" Background="Transparent" CornerRadius="6">
               <StackPanel Name="PART_Items" Orientation="Horizontal" />
             </Border>
-            <alder:InputFocusRing Name="RatingFocus" CornerRadius="4" BoxShadow="{DynamicResource AlderFocusShadow}"
-                                  IsHitTestVisible="False" IsVisible="False" />
           </Panel>
         </StackPanel>
       </ControlTemplate>
@@ -127,7 +126,7 @@
     <Style Selector="^ /template/ ContentPresenter#RatingLabel:empty"><Setter Property="IsVisible" Value="False" /></Style>
     <Style Selector="^[IsReadOnly=True]"><Setter Property="Cursor" Value="Arrow" /><Setter Property="Focusable" Value="False" /></Style>
     <Style Selector="^:disabled"><Setter Property="Cursor" Value="Arrow" /><Setter Property="Opacity" Value="0.5" /></Style>
-    <Style Selector="^:focus-visible /template/ alder|InputFocusRing#RatingFocus"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#RatingSurface"><Setter Property="Background" Value="{DynamicResource AlderSoft}" /></Style>
   </ControlTheme>
 
 </ResourceDictionary>

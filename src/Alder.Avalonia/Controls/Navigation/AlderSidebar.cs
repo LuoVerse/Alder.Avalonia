@@ -355,14 +355,23 @@ public sealed class AlderSidebar : HeaderedContentControl
                     path.OfType<AlderSidebarItem>().Any(row => !row.IsEnabled || !row.IsVisible) ||
                     item?.Command?.CanExecute(item.CommandParameter) == false) continue;
 
+                // An unrealized row has no themed visual to mirror. Borrow its
+                // icon until navigation realizes the row.
+                var icon = item?.Icon;
+                var borrowed = icon is Control { } control && !control.IsAttachedToVisualTree()
+                    ? new AlderIconPresenter { Content = control, Width = 16, Height = 16, IsBorrowingControl = true }
+                    : null;
+                var searchIcon = (object?)borrowed ?? (icon is Control visible
+                    ? new Border { Width = 16, Height = 16, Background = new VisualBrush(visible) }
+                    : icon);
                 items.Add(new AlderCommandItem
                 {
                     Label = label,
-                    Icon = item?.Icon,
+                    Icon = searchIcon,
                     Keywords = string.Join(" ", path.Take(path.Length - 1)
                         .Select(parent => parent is AlderSidebarItem row ? GetSearchLabel(row) : parent.ToString())
                         .Append(heading).Append(item?.SearchKeywords)),
-                    Command = new SearchNavigationAction(this, menu, path)
+                    Command = new SearchNavigationAction(this, menu, path, borrowed)
                 });
             }
             if (items.Count > 0) groups.Add(new AlderCommandGroup { Heading = heading, Items = items });
@@ -375,7 +384,7 @@ public sealed class AlderSidebar : HeaderedContentControl
         item.GetTemplateDescendants().FirstOrDefault(child => child.Name == "Label")?
             .GetVisualDescendants().OfType<TextBlock>().FirstOrDefault()?.Text;
 
-    private sealed class SearchNavigationAction(AlderSidebar sidebar, AlderSidebarMenu menu, object[] path) : ICommand
+    private sealed class SearchNavigationAction(AlderSidebar sidebar, AlderSidebarMenu menu, object[] path, AlderIconPresenter? borrowed) : ICommand
     {
         public event EventHandler? CanExecuteChanged { add { } remove { } }
 
@@ -383,6 +392,7 @@ public sealed class AlderSidebar : HeaderedContentControl
 
         public void Execute(object? parameter)
         {
+            if (borrowed is not null) borrowed.Content = null;
             if (path.Length > 1 && sidebar.IsRail) sidebar.ToggleRail();
             menu.RevealPath(path)?.Invoke();
         }
@@ -673,7 +683,7 @@ public sealed class AlderSidebarMenu : TreeView, ICustomKeyboardNavigation
 public sealed class AlderSidebarItem : TreeViewItem
 {
     /// <summary>Identifies the <see cref="Icon"/> Avalonia property.</summary>
-    public static readonly StyledProperty<Geometry?> IconProperty = AvaloniaProperty.Register<AlderSidebarItem, Geometry?>(nameof(Icon));
+    public static readonly StyledProperty<object?> IconProperty = AvaloniaProperty.Register<AlderSidebarItem, object?>(nameof(Icon));
     /// <summary>Identifies the <see cref="Badge"/> Avalonia property.</summary>
     public static readonly StyledProperty<object?> BadgeProperty = AvaloniaProperty.Register<AlderSidebarItem, object?>(nameof(Badge));
     /// <summary>Identifies the <see cref="BadgeTemplate"/> Avalonia property.</summary>
@@ -700,8 +710,8 @@ public sealed class AlderSidebarItem : TreeViewItem
     public static readonly RoutedEvent<RoutedEventArgs> InvokedEvent =
         RoutedEvent.Register<AlderSidebarItem, RoutedEventArgs>(nameof(Invoked), RoutingStrategies.Bubble);
 
-    /// <summary>The optional geometry displayed with the content.</summary>
-    public Geometry? Icon { get => GetValue(IconProperty); set => SetValue(IconProperty, value); }
+    /// <summary>An optional geometry or icon control displayed with the content.</summary>
+    public object? Icon { get => GetValue(IconProperty); set => SetValue(IconProperty, value); }
     /// <summary>Optional supplementary content displayed beside the navigation label.</summary>
     public object? Badge { get => GetValue(BadgeProperty); set => SetValue(BadgeProperty, value); }
     /// <summary>The data template used to present the badge.</summary>

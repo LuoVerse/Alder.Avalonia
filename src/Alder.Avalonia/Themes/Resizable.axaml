@@ -42,8 +42,6 @@
     <Setter Property="Template">
       <ControlTemplate>
         <Panel Background="Transparent">
-          <alder:InputFocusRing Name="FocusRing" Width="1" HorizontalAlignment="Center"
-                                BoxShadow="{DynamicResource AlderSelectFocusShadow}" IsVisible="False" IsHitTestVisible="False" />
           <Border Name="SeparatorLine" Width="1" HorizontalAlignment="Center"
                   Background="{DynamicResource AlderSeparator}" IsHitTestVisible="False">
             <Border.Transitions>
@@ -62,12 +60,6 @@
       <Setter Property="Cursor" Value="SizeNorthSouth" />
     </Style>
     <Style Selector="^[Orientation=Vertical] /template/ Border#SeparatorLine">
-      <Setter Property="Width" Value="NaN" />
-      <Setter Property="Height" Value="1" />
-      <Setter Property="HorizontalAlignment" Value="Stretch" />
-      <Setter Property="VerticalAlignment" Value="Center" />
-    </Style>
-    <Style Selector="^[Orientation=Vertical] /template/ alder|InputFocusRing#FocusRing">
       <Setter Property="Width" Value="NaN" />
       <Setter Property="Height" Value="1" />
       <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -102,9 +94,8 @@
                      ^[Type=Handle]:dragging /template/ alder|AlderResizableIndicator#DefaultIndicator">
       <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
     </Style>
-    <Style Selector="^:focus-visible /template/ alder|InputFocusRing#FocusRing">
-      <Setter Property="IsVisible" Value="True" />
-    </Style>
+    <Style Selector="^:focus-visible:not(:disabled) /template/ Border#SeparatorLine"><Setter Property="Background" Value="{DynamicResource AlderAccent}" /></Style>
+    <Style Selector="^:focus-visible:not(:disabled) /template/ alder|AlderResizableIndicator#DefaultIndicator"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
     <Style Selector="^:disabled">
       <Setter Property="Cursor" Value="Arrow" />
       <Setter Property="Opacity" Value="0.5" />

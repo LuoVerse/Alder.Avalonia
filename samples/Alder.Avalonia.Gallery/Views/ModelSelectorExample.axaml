@@ -10,7 +10,7 @@
                               Text="{CompiledBinding Draft, Mode=TwoWay}" SendCommand="{CompiledBinding Send}" IsRunning="{CompiledBinding Running}"
                               StopCommand="{CompiledBinding Stop}" Placeholder="{DynamicResource GalleryText.AiAskAnything}">
             <a:AlderPromptInput.Attachments>
-              <a:AlderChatAttachment FileName="{CompiledBinding FileName}" IsVisible="{CompiledBinding FileName, Converter={x:Static c:ObjectConverters.IsNotNull}}"
+              <a:AlderChatAttachment FileName="{CompiledBinding FileName}" Preview="{CompiledBinding AttachmentPreview}" IsVisible="{CompiledBinding FileName, Converter={x:Static c:ObjectConverters.IsNotNull}}"
                                      RemoveCommand="{CompiledBinding Remove}" />
             </a:AlderPromptInput.Attachments>
             <a:AlderPromptInput.LeadingTools>
@@ -48,6 +48,7 @@
         attach[!AlderToolTip.TipProperty] = new DynamicResourceExtension("GalleryText.AiAddContext");
         var attachment = new AlderChatAttachment { RemoveCommand = model.Remove };
         attachment.Bind(AlderChatAttachment.FileNameProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.FileName));
+        attachment.Bind(AlderChatAttachment.PreviewProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.AttachmentPreview));
         attachment.Bind(Visual.IsVisibleProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.FileName,
             converter: global::Avalonia.Data.Converters.ObjectConverters.IsNotNull));
         var composer = new AlderPromptInput

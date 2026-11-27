@@ -215,7 +215,7 @@
                 <alder:AlderAvatar Width="28" Height="28" FontSize="12" Variant="Soft" Color="Default" Fallback="NV" AutomationProperties.AccessibilityView="Raw" />
               </alder:AlderTimelineItem.Marker>
               <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                <alder:AlderInput Variant="Secondary" FullWidth="True" Text="{CompiledBinding IncidentDraft, Mode=TwoWay}" AutomationProperties.Name="{DynamicResource GalleryText.ProTimelineIncidentInput}" />
+                <alder:AlderInput Variant="Secondary" FullWidth="True" Margin="0,2" Text="{CompiledBinding IncidentDraft, Mode=TwoWay}" AutomationProperties.Name="{DynamicResource GalleryText.ProTimelineIncidentInput}" />
                 <alder:AlderButton Grid.Column="1" VerticalAlignment="Center" Size="Small" Command="{CompiledBinding Post}" Content="{DynamicResource GalleryText.ProTimelineIncidentPost}" />
               </Grid>
             </alder:AlderTimelineItem>

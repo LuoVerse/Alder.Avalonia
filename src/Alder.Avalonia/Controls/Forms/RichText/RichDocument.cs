@@ -22,6 +22,7 @@ internal sealed record RichParagraph(RichBlock Kind, RichRun[] Runs, RichContain
     public int Words { get; } = CountWords(Runs);
     public bool HasMarker => Kind is RichBlock.BulletList or RichBlock.OrderedList or RichBlock.Quote or RichBlock.HorizontalRule;
     internal byte[]? Json { get; set; }
+    internal string? JsonText { get; set; }
 
     private static int CountWords(RichRun[] runs)
     {
@@ -53,6 +54,8 @@ internal sealed class RichDocument
     private readonly LinkedList<Change> undo = new();
     private readonly Stack<Change> redo = new();
     private long historySize;
+    private ArrayBufferWriter<byte>? jsonBuffer;
+    private int nestedParagraphs;
     private sealed record Patch(int Offset, string Removed, string Added);
     private sealed record Change(int Row, RichParagraph[] Before, RichParagraph[] After, int Start, int End, Patch? Edit)
     {
@@ -235,6 +238,7 @@ internal sealed class RichDocument
         Words += delta * line.Words;
         if (line.HasMarker) MarkerCount += delta;
         if (line.Kind == RichBlock.CodeBlock) CodeBlocks += delta;
+        if (line.Parents.Length != 0) nestedParagraphs += delta;
     }
 
     public void Clear() => Commit(0, Count - 1, [Blank], Length, 0, new(0, Text, ""));
@@ -319,7 +323,9 @@ internal sealed class RichDocument
 
     public string Save()
     {
-        var bytes = new ArrayBufferWriter<byte>();
+        if (nestedParagraphs == 0) return SaveFlatDocument();
+        var bytes = jsonBuffer ??= new ArrayBufferWriter<byte>();
+        bytes.ResetWrittenCount();
         using var writer = new Utf8JsonWriter(bytes);
         writer.WriteStartObject();
         writer.WriteString("type", "doc");
@@ -338,16 +344,38 @@ internal sealed class RichDocument
                 writer.WriteStartArray("content");
             }
             open = line.Parents;
-            writer.WriteRawValue(line.Json ??= Encode(line), skipInputValidation: true);
+            writer.WriteRawValue(line.Json ??= Encoding.UTF8.GetBytes(line.JsonText ?? Encode(line)), skipInputValidation: true);
         }
         foreach (var _ in open) { writer.WriteEndArray(); writer.WriteEndObject(); }
         writer.WriteEndArray();
         writer.WriteEndObject();
         writer.Flush();
+        if (bytes.Capacity > 2_000_000) jsonBuffer = null;
         return Encoding.UTF8.GetString(bytes.WrittenSpan);
     }
 
-    private static byte[] Encode(RichParagraph line)
+    private string SaveFlatDocument()
+    {
+        const string prefix = "{\"type\":\"doc\",\"content\":[";
+        const string suffix = "]}";
+        int length = prefix.Length + suffix.Length + paragraphs.Count - 1;
+        foreach (var line in paragraphs) length += (line.JsonText ??= Encode(line)).Length;
+        return string.Create(length, paragraphs, static (target, lines) =>
+        {
+            prefix.CopyTo(target);
+            int index = prefix.Length;
+            for (int i = 0; i < lines.Count; i++)
+            {
+                if (i != 0) target[index++] = ',';
+                var json = lines[i].JsonText!;
+                json.CopyTo(target[index..]);
+                index += json.Length;
+            }
+            suffix.CopyTo(target[index..]);
+        });
+    }
+
+    private static string Encode(RichParagraph line)
     {
         bool heading = line.Kind is >= RichBlock.Heading1 and <= RichBlock.Heading3;
         var block = Node(heading ? "heading" : line.Kind switch { RichBlock.CodeBlock => "codeBlock", RichBlock.HorizontalRule => "horizontalRule", _ => "paragraph" }, line.Attributes);
@@ -372,7 +400,7 @@ internal sealed class RichDocument
             }
         }
         if (inline.Count > 0) block["content"] = inline;
-        return Encoding.UTF8.GetBytes(block.ToJsonString());
+        return block.ToJsonString();
     }
 
     private static JsonObject Node(string type, JsonObject? attributes = null)

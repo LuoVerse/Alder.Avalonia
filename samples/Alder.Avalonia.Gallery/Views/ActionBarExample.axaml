@@ -66,17 +66,20 @@
             <alder:AlderButton Size="Small" Variant="Secondary" HorizontalAlignment="Right"
                                Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding Files.Reset}" />
             <Border Background="{DynamicResource AlderSurface}" BorderBrush="{DynamicResource AlderBorder}"
-                    BorderThickness="1" CornerRadius="13" ClipToBounds="True" MaxWidth="430">
-              <alder:AlderItemsControl ItemsSource="{Binding Files.Rows}" AutomationProperties.Name="{DynamicResource GalleryText.ActionBarUsage}">
-                <alder:AlderItemsControl.ItemTemplate>
-                  <DataTemplate x:DataType="vm:ActionBarRow">
-                    <Border Classes="action-file" Classes.selected="{Binding IsSelected}">
-                      <alder:AlderCheckBox Classes="action-file-toggle" Variant="Secondary" Content="{Binding Name}"
-                                           IsChecked="{Binding IsSelected, Mode=TwoWay}" Padding="12,0" HorizontalAlignment="Stretch" />
-                    </Border>
-                  </DataTemplate>
-                </alder:AlderItemsControl.ItemTemplate>
-              </alder:AlderItemsControl>
+                    BorderThickness="1" CornerRadius="13" MaxWidth="430">
+              <!-- Clip the rows inside the outer border so their backgrounds leave the rounded stroke visible. -->
+              <Border CornerRadius="13" ClipToBounds="True">
+                <alder:AlderItemsControl ItemsSource="{Binding Files.Rows}" AutomationProperties.Name="{DynamicResource GalleryText.ActionBarUsage}">
+                  <alder:AlderItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:ActionBarRow">
+                      <Border Classes="action-file" Classes.selected="{Binding IsSelected}">
+                        <alder:AlderCheckBox Classes="action-file-toggle" Variant="Secondary" Content="{Binding Name}"
+                                             IsChecked="{Binding IsSelected, Mode=TwoWay}" Padding="12,0" HorizontalAlignment="Stretch" />
+                      </Border>
+                    </DataTemplate>
+                  </alder:AlderItemsControl.ItemTemplate>
+                </alder:AlderItemsControl>
+              </Border>
             </Border>
             <alder:AlderTextBlock Text="{Binding Files.Feedback}" IsVisible="{Binding Files.HasFeedback}" TextWrapping="Wrap"
                        Foreground="{DynamicResource AlderMuted}" AutomationProperties.LiveSetting="Polite" />

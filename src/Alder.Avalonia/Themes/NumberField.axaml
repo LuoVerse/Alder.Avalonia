@@ -161,7 +161,8 @@
                            AutomationProperties.IsRequiredForForm="{TemplateBinding IsRequired}" />
             </alder:AlderInputSpinner>
           </Border>
-          <alder:InputFocusRing Name="FieldRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+          <alder:InputFocusRing Name="FieldRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False"
+                                Classes.editing="{CompiledBinding #PART_TextBox.IsFocused}" />
         </Panel>
       </ControlTemplate>
     </Setter>
@@ -188,7 +189,7 @@
       <Setter Property="BoxShadow" Value="0 0 0 0 #000485F7" />
       <Setter Property="Transitions"><Transitions><BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions></Setter>
     </Style>
-    <Style Selector="^:focus-within /template/ alder|InputFocusRing#FieldRing">
+    <Style Selector="^ /template/ alder|InputFocusRing#FieldRing.editing">
       <Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" />
     </Style>
     <Style Selector="^[IsRequired=True]"><Setter Property="AutomationProperties.IsRequiredForForm" Value="True" /></Style>
@@ -196,7 +197,7 @@
     <Style Selector="^[IsInvalid=True] /template/ alder|InputFocusRing#FieldRing, ^[(DataValidationErrors.HasErrors)=True] /template/ alder|InputFocusRing#FieldRing">
       <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldInvalidOutline}" />
     </Style>
-    <Style Selector="^[IsInvalid=True]:focus-within /template/ alder|InputFocusRing#FieldRing, ^[(DataValidationErrors.HasErrors)=True]:focus-within /template/ alder|InputFocusRing#FieldRing">
+    <Style Selector="^[IsInvalid=True] /template/ alder|InputFocusRing#FieldRing.editing, ^[(DataValidationErrors.HasErrors)=True] /template/ alder|InputFocusRing#FieldRing.editing">
       <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldInvalidRing}" />
     </Style>
     <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
@@ -266,7 +267,8 @@
               </Panel>
             </alder:AlderInputSpinner>
           </Border>
-          <alder:InputFocusRing Name="FieldRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+          <alder:InputFocusRing Name="FieldRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False"
+                                Classes.editing="{CompiledBinding #PART_TextBox.IsFocused}" />
         </Panel>
       </ControlTemplate>
     </Setter>
@@ -302,7 +304,8 @@
               </Panel>
             </alder:AlderInputSpinner>
           </Border>
-          <alder:InputFocusRing Name="FieldRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+          <alder:InputFocusRing Name="FieldRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False"
+                                Classes.editing="{CompiledBinding #PART_TextBox.IsFocused}" />
         </Panel>
       </ControlTemplate>
     </Setter>

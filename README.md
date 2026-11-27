@@ -8,7 +8,7 @@ Alder.Avalonia 是一套 Avalonia 原生桌面控件库。它提供基础表单�
 
 在浏览器中试用 Gallery 控件、搜索示例、切换语言和主题，并查看 AXAML 和 C# 示例。首次打开会下载 WebAssembly 运行时，独立系统窗口示例在桌面版运行。[打开 Alder Gallery 在线预览](https://luoverse.github.io/Alder.Avalonia/)
 
-使用 .NET 11 SDK 在本地运行浏览器版。
+`Alder.Avalonia.Gallery.Browser` 在解决方案中可见。浏览器版需要 .NET 11 SDK 和 `wasm-tools` 工作负载，按项目单独构建和运行。常规解决方案构建只需要 .NET 11 SDK。
 
 ```sh
 cd samples/Alder.Avalonia.Gallery.Browser
@@ -28,12 +28,14 @@ dotnet run --project samples/Alder.Avalonia.Gallery
 
 Gallery 默认打开 Home。侧栏可以搜索组件，窗口支持浅色和深色切换，以及英文和简体中文。示例卡包含 Preview、AXAML 和 C# 标签。
 
+在 Gallery 的「实用工具 → 工作流编辑器」中，可以编辑审批、会签与条件分支，并通过预览页的按钮试跑流程或导入导出 JSON。
+
 ## 在 Avalonia 应用中使用
 
-从 [NuGet.org](https://www.nuget.org/packages/Alder.Avalonia/1.0.0) 安装 `Alder.Avalonia`。
+从 [NuGet.org](https://www.nuget.org/packages/Alder.Avalonia/2.0.0) 安装 `Alder.Avalonia`。
 
 ```sh
-dotnet package add Alder.Avalonia --version 1.0.0
+dotnet package add Alder.Avalonia --version 2.0.0
 ```
 
 在 `App.axaml` 中将 `AlderTheme` 加在宿主基础主题之后。下面使用 `Avalonia.Themes.Fluent` 包。
@@ -92,8 +94,11 @@ dotnet publish tests/Alder.Avalonia.AotSmoke -c Release -r osx-arm64 -p:PublishA
 
 ## 文档
 
+- [2.0.0 发布与升级说明](docs/releases/2.0.0.md)
 - [设计系统](DESIGN.md)
 - [组件目录与使用契约](docs/COMPONENTS.md)
+- [组件接入指南](docs/COMPONENTS.md#接入指南)
+- [Rich Text Editor：构建、保存与重新加载](docs/guides/rich-text-editor.md)
 
 ## 许可
 

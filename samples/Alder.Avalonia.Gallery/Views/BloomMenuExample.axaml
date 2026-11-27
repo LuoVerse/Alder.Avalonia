@@ -1,0 +1,67 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.BloomMenuExample" x:DataType="vm:BloomMenuViewModel">
+  <StackPanel>
+    <gallery:ExampleCard x:Name="SampleBloomMenu" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <Grid MinHeight="300">
+          <alder:AlderBloomMenu Header="{CompiledBinding TriggerLabel}" Icon="{CompiledBinding TriggerIcon}"
+                                CloseLabel="{DynamicResource GalleryText.BloomMenuClose}">
+            <alder:AlderBloomMenuItem Content="{DynamicResource GalleryText.BloomMenuDocument}"
+                                     Icon="{StaticResource AlderFileTreeFileIcon}" Command="{CompiledBinding Select}"
+                                     CommandParameter="BloomMenuDocument" />
+            <alder:AlderBloomMenuItem Content="{DynamicResource GalleryText.NavDemoBoard}"
+                                     Icon="{StaticResource GalleryNavDataGridIcon}" Command="{CompiledBinding Select}"
+                                     CommandParameter="NavDemoBoard" />
+            <alder:AlderBloomMenuItem Content="{DynamicResource GalleryText.Table}"
+                                     Icon="{StaticResource GalleryNavTableIcon}" Command="{CompiledBinding Select}"
+                                     CommandParameter="Table" />
+            <alder:AlderBloomMenuItem Content="{DynamicResource GalleryText.TableFolder}"
+                                     Icon="{StaticResource AlderFileTreeFolderIcon}" Command="{CompiledBinding Select}"
+                                     CommandParameter="TableFolder" />
+            <alder:AlderBloomMenuItem Content="{DynamicResource GalleryText.BloomMenuReminder}"
+                                     Icon="{StaticResource AlderIconBell}" Command="{CompiledBinding Select}"
+                                     CommandParameter="BloomMenuReminder" />
+            <alder:AlderBloomMenuItem Content="{DynamicResource GalleryText.Link}"
+                                     Icon="{StaticResource AlderIconLinkExternal}" Command="{CompiledBinding Select}"
+                                     CommandParameter="Link" />
+          </alder:AlderBloomMenu>
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.Feedback>
+        <alder:AlderTextBlock HorizontalAlignment="Center" Text="{CompiledBinding Feedback}"
+                              Foreground="{DynamicResource AlderMuted}" AutomationProperties.LiveSetting="Polite" />
+      </gallery:ExampleCard.Feedback>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        // vm is the BloomMenuViewModel instance.
+        var menu = new AlderBloomMenu();
+        menu.Bind(AlderBloomMenu.HeaderProperty, CompiledBinding.Create((BloomMenuViewModel model) => model.TriggerLabel, source: vm));
+        menu.Bind(AlderBloomMenu.IconProperty, CompiledBinding.Create((BloomMenuViewModel model) => model.TriggerIcon, source: vm));
+        menu[!AlderBloomMenu.CloseLabelProperty] = new DynamicResourceExtension("GalleryText.BloomMenuClose");
+
+        (string Label, string Icon)[] actions =
+        [
+            ("BloomMenuDocument", "AlderFileTreeFileIcon"),
+            ("NavDemoBoard", "GalleryNavDataGridIcon"),
+            ("Table", "GalleryNavTableIcon"),
+            ("TableFolder", "AlderFileTreeFolderIcon"),
+            ("BloomMenuReminder", "AlderIconBell"),
+            ("Link", "AlderIconLinkExternal")
+        ];
+        foreach (var (label, icon) in actions)
+        {
+            var item = new AlderBloomMenuItem
+            {
+                Icon = (Geometry)this.FindResource(icon)!,
+                Command = vm.Select,
+                CommandParameter = label
+            };
+            item[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText." + label);
+            menu.Items.Add(item);
+        }
+        var preview = new Grid { MinHeight = 300, Children = { menu } };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

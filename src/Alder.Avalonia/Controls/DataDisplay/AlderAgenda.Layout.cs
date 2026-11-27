@@ -24,7 +24,7 @@ public sealed partial class AlderAgenda
     private DateOnly[] visibleDays = [];
     private DateOnly[] scheduleDays = [];
     private int daysBefore;
-    private Grid? weekColumns;
+    private Grid? weekColumns, monthWeeks;
     private AgendaDayStrip? allDayStrip;
     private Grid? allDayColumns;
     private int[] allDayLanes = [];
@@ -49,24 +49,14 @@ public sealed partial class AlderAgenda
         string? focusId = restoreFocusId ?? focused?.Item.Id;
         restoreFocusId = null;
         var previousEvents = events;
-        events = Events?.Where(item => item is not null && !string.IsNullOrWhiteSpace(item.Id) && item.End >= item.Start)
-            .DistinctBy(item => item.Id).ToArray() ?? [];
-        if (pendingKeyboardCreate is { } creation)
-        {
-            var created = events.FirstOrDefault(item => item.Start == creation.Start && item.End == creation.End &&
-                !previousEvents.Any(previous => previous.Id == item.Id));
-            if (created is not null)
-            {
-                focusId = created.Id;
-                pendingKeyboardCreate = null;
-            }
-        }
+        events = ReadEvents();
+        focusId = TakeCreatedEventFocus(previousEvents) ?? focusId;
         eventButtons.Clear();
         monthCells.Clear();
         timeLabels.Clear();
         dayStrips.Clear();
         dayHeaders.Clear();
-        weekColumns = allDayColumns = null;
+        weekColumns = allDayColumns = monthWeeks = null;
         allDayStrip = null;
         allDayLanes = [];
         timedEvents = null;
@@ -93,6 +83,11 @@ public sealed partial class AlderAgenda
             }, DispatcherPriority.Loaded);
         }
 
+        RestoreEventFocus(focusId);
+    }
+
+    private void RestoreEventFocus(string? focusId)
+    {
         if (focusId is not null)
             Dispatcher.UIThread.Post(() =>
             {
@@ -105,6 +100,83 @@ public sealed partial class AlderAgenda
                 else timeScroll?.Focus(NavigationMethod.Tab);
             }, DispatcherPriority.Loaded);
     }
+
+    private AlderAgendaEvent[] ReadEvents() => Events?
+        .Where(item => item is not null && !string.IsNullOrWhiteSpace(item.Id) && item.End >= item.Start)
+        .DistinctBy(item => item.Id).ToArray() ?? [];
+
+    private string? TakeCreatedEventFocus(IReadOnlyList<AlderAgendaEvent> previous)
+    {
+        if (pendingKeyboardCreate is not { } creation) return null;
+        var created = events.FirstOrDefault(item => item.Start == creation.Start && item.End == creation.End &&
+            !previous.Any(old => old.Id == item.Id));
+        if (created is null) return null;
+        pendingKeyboardCreate = null;
+        return created.Id;
+    }
+
+    private void UpdateAgendaEvents()
+    {
+        if (body is null || visibleDays.Length == 0 || (timeline is null && monthWeeks is null) || renderedToday != Today)
+        {
+            RenderAgenda();
+            return;
+        }
+        var previous = events;
+        events = ReadEvents();
+        var focusId = TakeCreatedEventFocus(previous) ?? restoreFocusId;
+        restoreFocusId = null;
+        var focused = eventButtons.FirstOrDefault(button => button.IsFocused);
+        if (timeline is { } track)
+        {
+            var oldTimed = timedEvents!;
+            timedEvents = events.Where(item => !item.IsAllDay).ToLookup(item => DateOnly.FromDateTime(item.Start));
+            var changedColumns = new List<int>();
+            for (int i = 0; i < scheduleDays.Length; i++)
+            {
+                var day = scheduleDays[i];
+                if (!oldTimed[day].SequenceEqual(timedEvents[day], ReferenceEqualityComparer.Instance)) changedColumns.Add(i);
+            }
+            bool ribbonChanged = !EventsInRange(previous, scheduleDays[0], scheduleDays[^1], allDayOnly: true)
+                .SequenceEqual(EventsInRange(events, scheduleDays[0], scheduleDays[^1], allDayOnly: true), ReferenceEqualityComparer.Instance);
+            if (changedColumns.Count == 0 && !ribbonChanged)
+            {
+                RestoreEventFocus(focusId);
+                return;
+            }
+            CancelGesture(resetViewport: false);
+            foreach (int column in changedColumns) AddTimedEvents(track, scheduleDays[column], column, reuse: true);
+            if (ribbonChanged)
+            {
+                PopulateAllDay();
+                UpdateAllDayRows();
+            }
+        }
+        else if (monthWeeks is { } weeks)
+        {
+            for (int i = 0; i < weeks.Children.Count; i++)
+            {
+                int start = i * 7;
+                var first = visibleDays[start];
+                var last = visibleDays[start + 6];
+                if (EventsInRange(previous, first, last).SequenceEqual(EventsInRange(events, first, last), ReferenceEqualityComparer.Instance))
+                    continue;
+                eventButtons.RemoveAll(button => button.Day >= first && button.Day <= last);
+                monthCells.RemoveAll(cell => cell.Date >= first && cell.Date <= last);
+                var replacement = BuildMonthWeek(visibleDays.AsSpan(start, 7).ToArray());
+                Grid.SetRow(replacement, i);
+                weeks.Children[i] = replacement;
+            }
+        }
+        UpdateSelection();
+        if (focusId is not null || focused is not null && !eventButtons.Contains(focused))
+            RestoreEventFocus(focusId ?? focused?.Item.Id);
+    }
+
+    private static IEnumerable<AlderAgendaEvent> EventsInRange(IReadOnlyList<AlderAgendaEvent> items, DateOnly first,
+        DateOnly last, bool allDayOnly = false) => items.Where(item =>
+        DateOnly.FromDateTime(item.Start) <= last &&
+        (item.IsAllDay ? LastDay(item) >= first : !allDayOnly && DateOnly.FromDateTime(item.Start) >= first));
 
     private void UpdateHeading()
     {
@@ -488,7 +560,7 @@ public sealed partial class AlderAgenda
         return icon;
     }
 
-    private void AddTimedEvents(AgendaTimeline track, DateOnly day, int column, bool insertBeforeLaterDates = false)
+    private void AddTimedEvents(AgendaTimeline track, DateOnly day, int column, bool insertBeforeLaterDates = false, bool reuse = false)
     {
         var appointments = timedEvents![day]
             .Select(item => new TimedPlacement(item,
@@ -498,22 +570,38 @@ public sealed partial class AlderAgenda
             .Where(item => item.Start < item.End)
             .OrderBy(item => item.Start).ThenByDescending(item => item.End).ToArray();
 
+        var existing = reuse ? eventButtons.Where(button => button.Day == day && button.Presentation == EventPresentation.Timed)
+            .ToDictionary(button => button.Item.Id) : null;
+        if (existing is not null)
+        {
+            var retained = appointments.Select(appointment => appointment.Event).ToHashSet(ReferenceEqualityComparer.Instance);
+            foreach (var (id, button) in existing.ToArray())
+            {
+                if (retained.Contains(button.Item)) continue;
+                track.Remove(button);
+                eventButtons.Remove(button);
+                existing.Remove(id);
+            }
+        }
+        int visualIndex = reuse ? track.IndexForDay(day) : -1;
         int groupStart = 0;
         while (groupStart < appointments.Length)
         {
-            var lanes = new List<double>();
+            var occupied = new PriorityQueue<int, double>();
+            var available = new PriorityQueue<int, int>();
+            int lanes = 0;
             int i = groupStart;
             double end = appointments[i].End;
             for (; i < appointments.Length && (i == groupStart || appointments[i].Start < end); i++)
             {
                 var appointment = appointments[i];
-                int lane = lanes.FindIndex(value => value <= appointment.Start);
-                if (lane == -1)
+                while (occupied.TryPeek(out int freed, out double until) && until <= appointment.Start)
                 {
-                    lane = lanes.Count;
-                    lanes.Add(appointment.End);
+                    occupied.Dequeue();
+                    available.Enqueue(freed, freed);
                 }
-                else lanes[lane] = appointment.End;
+                int lane = available.TryDequeue(out int firstFree, out _) ? firstFree : lanes++;
+                occupied.Enqueue(lane, appointment.End);
                 end = Math.Max(end, appointment.End);
                 appointments[i] = appointment with { Lane = lane };
             }
@@ -521,12 +609,13 @@ public sealed partial class AlderAgenda
             {
                 var appointment = appointments[index];
                 double height = Math.Max(1, (appointment.End - appointment.Start) * PixelsPerMinute - 2);
-                var button = MakeEvent(appointment.Event, day, EventPresentation.Timed, height);
+                var button = existing?.GetValueOrDefault(appointment.Event.Id) ??
+                    MakeEvent(appointment.Event, day, EventPresentation.Timed, height);
                 button.IsTabStop = IsScheduledColumnVisible(column);
-                if (lanes.Count > 1 && button.Content is StackPanel content)
-                    content.Children[1].IsVisible = false;
-                track.Place(button, column + appointment.Lane / (double)lanes.Count,
-                    1d / lanes.Count, (appointment.Start - StartMinute) * PixelsPerMinute, height, insertBeforeLaterDates);
+                if (button.Content is StackPanel content) content.Children[1].IsVisible = lanes == 1;
+                track.Place(button, column + appointment.Lane / (double)lanes,
+                    1d / lanes, (appointment.Start - StartMinute) * PixelsPerMinute, height, insertBeforeLaterDates, visualIndex);
+                if (reuse) visualIndex++;
             }
             groupStart = i;
         }
@@ -551,7 +640,7 @@ public sealed partial class AlderAgenda
             Add(header, name, 0, i);
         }
         layout.Children.Add(header);
-        var weeks = new Grid();
+        var weeks = monthWeeks = new Grid();
         for (int i = 0; i < weekCount; i++)
         {
             weeks.RowDefinitions.Add(new RowDefinition(1, GridUnitType.Star));
@@ -911,21 +1000,31 @@ internal sealed class AgendaTimeline : Panel
         RefreshLines();
     }
 
-    public void Place(Control control, double column, double span, double y, double height, bool insertBeforeLaterDates = false)
+    public int IndexForDay(DateOnly day, bool after = false)
     {
-        if (!slots.ContainsKey(control))
+        for (int i = 1; i < Children.Count; i++)
+            if (Children[i] is AlderAgendaEventButton button && (after ? button.Day > day : button.Day >= day)) return i;
+        return Children.Count;
+    }
+
+    public void Place(Control control, double column, double span, double y, double height,
+        bool insertBeforeLaterDates = false, int visualIndex = -1)
+    {
+        var slot = new Rect(column, y, span, height);
+        if (slots.TryGetValue(control, out var previous))
         {
-            int index = Children.Count;
-            if (insertBeforeLaterDates && control is AlderAgendaEventButton entering)
-                for (int i = 1; i < Children.Count; i++)
-                {
-                    if (Children[i] is not AlderAgendaEventButton existing || existing.Day <= entering.Day) continue;
-                    index = i;
-                    break;
-                }
-            Children.Insert(index, control);
+            if (visualIndex >= 0 && !ReferenceEquals(Children[visualIndex], control))
+                Children.Move(Children.IndexOf(control), visualIndex);
+            if (previous == slot) return;
         }
-        slots[control] = new Rect(column, y, span, height);
+        else
+        {
+            if (visualIndex < 0)
+                visualIndex = insertBeforeLaterDates && control is AlderAgendaEventButton entering
+                    ? IndexForDay(entering.Day, after: true) : Children.Count;
+            Children.Insert(visualIndex, control);
+        }
+        slots[control] = slot;
         InvalidateMeasure();
     }
 

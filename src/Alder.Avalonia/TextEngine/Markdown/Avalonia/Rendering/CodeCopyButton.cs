@@ -2,6 +2,7 @@ using Alder.Avalonia.Controls;
 using Avalonia;
 using Avalonia.Animation.Easings;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media;
 using Avalonia.Rendering.Composition;
@@ -20,7 +21,7 @@ internal sealed class CodeCopyButton : Button
     private Glyph? _checkGlyph;
     private ButtonTint? _hoverTint;
     private CompositionVisual? _pressVisual;
-    private IPen? _focusPen;
+    private IPen? _borderPen;
 
     public CodeCopyButton()
     {
@@ -47,12 +48,24 @@ internal sealed class CodeCopyButton : Button
         context.FillRectangle(Brushes.Transparent, rect);
         if (BorderBrush is { } brush)
         {
-            if (!ReferenceEquals(_focusPen?.Brush, brush))
-                _focusPen = new Pen(brush, 2);
-            context.DrawRectangle(null, _focusPen, rect.Inflate(2), CornerRadius.TopLeft, CornerRadius.TopLeft);
+            if (!ReferenceEquals(_borderPen?.Brush, brush))
+                _borderPen = new Pen(brush, 2);
+            context.DrawRectangle(null, _borderPen, rect.Inflate(2), CornerRadius.TopLeft, CornerRadius.TopLeft);
         }
         if (_copyGlyph is null)
             DrawGlyph(context, GlyphBounds(Bounds.Size), GetValue(IsCopied ? CheckIconProperty : CopyIconProperty), Foreground);
+    }
+
+    protected override void OnGotFocus(FocusChangedEventArgs e)
+    {
+        base.OnGotFocus(e);
+        UpdateHover();
+    }
+
+    protected override void OnLostFocus(FocusChangedEventArgs e)
+    {
+        base.OnLostFocus(e);
+        UpdateHover();
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -95,7 +108,7 @@ internal sealed class CodeCopyButton : Button
 
     private void UpdateHover()
     {
-        var show = IsEffectivelyEnabled && (IsPointerOver || IsPressed);
+        var show = IsEffectivelyEnabled && (IsPointerOver || IsPressed || Classes.Contains(":focus-visible"));
         if (_hoverTint is null && show)
         {
             _hoverTint = new ButtonTint

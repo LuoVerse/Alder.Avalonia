@@ -25,6 +25,7 @@ internal sealed class MenuPopupMotion
     private CompositionVisual? visual;
     private Control? motionTarget;
     private IInputElement? focusTarget;
+    private bool openedFromKeyboard;
     private IDisposable? closeTimer;
     private bool waitingForPlacement;
     private bool finishingClose;
@@ -41,6 +42,7 @@ internal sealed class MenuPopupMotion
         this.preferredPlacement = preferredPlacement;
         motionTarget = target;
         focusTarget = previousFocus ?? target;
+        openedFromKeyboard = pointerAnchor is null && focusTarget is InputElement { } input && input.Classes.Contains(":focus-visible");
         target.PropertyChanged += OnTargetPropertyChanged;
         visual = ElementComposition.GetElementVisual(presenter);
         if (visual is not null && !AlderMotion.GetReduced(target))
@@ -63,9 +65,14 @@ internal sealed class MenuPopupMotion
             args.Cancel = true;
             return;
         }
-        if (waitingForPlacement || motionTarget is not { } target || popup is not { } host ||
-            !target.IsAttachedToVisualTree() || presenter is not { } content ||
-            visual is not { } surface || AlderMotion.GetReduced(target)) return;
+        if (motionTarget is not { } target || !target.IsAttachedToVisualTree() || presenter is not { } content) return;
+
+        if (focusTarget is { } anchor && TopLevel.GetTopLevel(content)?.FocusManager?.GetFocusedElement() is InputElement focused &&
+            (focused == content || content.IsVisualAncestorOf(focused)) &&
+            (openedFromKeyboard || focused.Classes.Contains(":focus-visible")))
+            anchor.Focus(NavigationMethod.Tab);
+
+        if (waitingForPlacement || popup is not { } host || visual is not { } surface || AlderMotion.GetReduced(target)) return;
 
         args.Cancel = true;
         previousHitTest = host.IsHitTestVisible;
@@ -97,6 +104,7 @@ internal sealed class MenuPopupMotion
             motionTarget.PropertyChanged -= OnTargetPropertyChanged;
         motionTarget = null;
         focusTarget = null;
+        openedFromKeyboard = false;
         popup = null;
         presenter = null;
         pointerAnchor = null;

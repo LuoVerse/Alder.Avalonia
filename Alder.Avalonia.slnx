@@ -4,8 +4,12 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="samples/Alder.Avalonia.Gallery.SourceGenerator/Alder.Avalonia.Gallery.SourceGenerator.csproj" />
   <Project Path="samples/Alder.Avalonia.Gallery/Alder.Avalonia.Gallery.csproj" />
+  <Project Path="samples/Alder.Avalonia.Gallery.Browser/Alder.Avalonia.Gallery.Browser.csproj">
+    <Build Project="false" />
+  </Project>
+  <Project Path="samples/Alder.Avalonia.Gallery.SourceGenerator/Alder.Avalonia.Gallery.SourceGenerator.csproj" />
+  <Project Path="samples/Alder.Avalonia.WorkflowPrototype/Alder.Avalonia.WorkflowPrototype.csproj" />
   <Project Path="src/Alder.Avalonia/Alder.Avalonia.csproj" />
   <Project Path="tests/Alder.Avalonia.AotSmoke/Alder.Avalonia.AotSmoke.csproj" />
   <Project Path="tests/Alder.Avalonia.Tests/Alder.Avalonia.Tests.csproj" />

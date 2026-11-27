@@ -62,8 +62,6 @@
               </Panel>
             </StackPanel>
           </Border>
-          <alder:InputFocusRing Name="Focus" CornerRadius="{TemplateBinding CornerRadius}"
-                                IsHitTestVisible="False" ClipToBounds="False" />
         </Panel>
       </ControlTemplate>
     </Setter>
@@ -89,10 +87,9 @@
       <Setter Property="Background" Value="{StaticResource AlderReactionSelectedFill}" />
       <Setter Property="BorderBrush" Value="{StaticResource AlderReactionSelectedBorder}" />
     </Style>
-    <Style Selector="^[IsReadOnly=False]:pointerover:not(:checked):not(:disabled)"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
-    <Style Selector="^[IsReadOnly=False]:checked:pointerover:not(:disabled)"><Setter Property="Background" Value="{StaticResource AlderReactionSelectedHover}" /></Style>
+    <Style Selector="^[IsReadOnly=False]:pointerover:not(:checked):not(:disabled), ^[IsReadOnly=False]:focus-visible:not(:checked):not(:disabled)"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
+    <Style Selector="^[IsReadOnly=False]:checked:pointerover:not(:disabled), ^[IsReadOnly=False]:checked:focus-visible:not(:disabled)"><Setter Property="Background" Value="{StaticResource AlderReactionSelectedHover}" /></Style>
     <Style Selector="^[IsReadOnly=False]:pressed /template/ Panel#Pill"><Setter Property="RenderTransform" Value="scale(0.97)" /></Style>
-    <Style Selector="^:focus-visible /template/ alder|InputFocusRing#Focus"><Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" /></Style>
     <Style Selector="^[IsReadOnly=True], ^:disabled"><Setter Property="Cursor" Value="Arrow" /></Style>
     <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
     <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#Face,

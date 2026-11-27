@@ -500,11 +500,11 @@ public class Interactions
         Assert.Equal(3, rows.Length);
         Assert.Contains(rows[0].GetVisualDescendants().OfType<TextBlock>(), text => text.IsVisible && text.Text == "Option Alpha");
         Assert.All(rows, row => Assert.False(row.ClipToBounds));
-        Assert.All(rows, row => Assert.False(FocusRing(row).IsVisible));
+        Assert.All(rows, row => Assert.Equal(Brushes.Transparent, OptionSurface(row).Background));
         Assert.Equal(1, CheckMark(rows[0]).Opacity);
         Assert.Equal(0, CheckMark(rows[1]).Opacity);
         Press(window, PhysicalKey.ArrowDown);
-        Assert.True(FocusRing(rows[1]).IsVisible);
+        Assert.Equal(rows[1].FindResource(rows[1].ActualThemeVariant, "AlderNeutralHover"), OptionSurface(rows[1]).Background);
         Assert.Equal(0, select.SelectedIndex);
         Press(window, PhysicalKey.Enter);
         Assert.Equal(1, select.SelectedIndex);
@@ -513,7 +513,7 @@ public class Interactions
         Assert.Equal(-1, select.SelectedIndex);
         window.Close();
 
-        static Control FocusRing(Control row) => row.GetVisualDescendants().OfType<Control>().Single(x => x.Name == "SelectOptionRing");
+        static Border OptionSurface(Control row) => row.GetVisualDescendants().OfType<Border>().Single(x => x.Name == "OptionSurface");
         static global::Avalonia.Controls.Shapes.Path CheckMark(Control row) => row.GetVisualDescendants().OfType<global::Avalonia.Controls.Shapes.Path>().Single();
     }
 
@@ -797,6 +797,40 @@ public class Interactions
         Assert.Equal(2, combo.SelectedItems!.Count);
         Assert.Equal("Alpha and Beta", combo.SelectionText);
         window.Close();
+    }
+
+    [AvaloniaFact]
+    public void AutocompleteUsesUiThreadLabelsAndPreservesLargeSearchResultOrder()
+    {
+        var options = Enumerable.Range(0, 5000).Select(i => $"Option {i}").Append("Café first").Append("Café second").ToArray();
+        var picker = new AlderAutocomplete
+        {
+            ItemsSource = options,
+            TextSelector = value =>
+            {
+                Assert.True(Dispatcher.UIThread.CheckAccess());
+                return (string)value!;
+            }
+        };
+        AlderMotion.SetReduced(picker, true);
+        var window = Show(picker);
+        try
+        {
+            picker.IsDropDownOpen = true;
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            Dispatcher.UIThread.RunJobs();
+            var popup = window.GetVisualDescendants().OfType<Control>().Single(control => control.Name == "AlderPopoverSurface");
+            var list = popup.GetVisualDescendants().OfType<ListBox>().Single();
+            var search = popup.GetVisualDescendants().OfType<AlderSearchField>().Single();
+            search.SetCurrentValue(TextBox.TextProperty, "CAFE");
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            Assert.Equal(2, list.ItemCount);
+            Assert.Collection(list.ItemsView.Cast<PickerEntry>(),
+                item => Assert.Equal("Café first", item.Item), item => Assert.Equal("Café second", item.Item));
+        }
+        finally { window.Close(); }
     }
 
     [AvaloniaFact]
@@ -1405,7 +1439,7 @@ public class Interactions
     }
 
     [AvaloniaFact]
-    public async Task DatePickerShowsCalendarFocusRingOnlyForKeyboardNavigation()
+    public async Task DatePickerHighlightsCalendarDaysOnlyForKeyboardNavigation()
     {
         var selectedDate = new DateOnly(2026, 11, 25);
         var picker = new AlderDatePicker { Value = selectedDate };
@@ -1424,13 +1458,13 @@ public class Interactions
             var selected = Day(selectedDate);
             Assert.True(selected.IsFocused);
             Assert.Contains("selected", selected.Classes);
-            Assert.False(Ring(selected).IsVisible);
-            Assert.Equal(new Size(36, 36), selected.GetVisualDescendants().OfType<Ellipse>().Single(shape => shape.Name == "DayFill").Bounds.Size);
+            Assert.Equal(selected.FindResource(selected.ActualThemeVariant, "AlderAccent"), DayFill(selected).Fill);
+            Assert.Equal(new Size(36, 36), DayFill(selected).Bounds.Size);
 
             Press(window, PhysicalKey.ArrowRight);
             var next = Day(selectedDate.AddDays(1));
             Assert.True(next.IsFocused);
-            Assert.True(Ring(next).IsVisible);
+            Assert.Equal(next.FindResource(next.ActualThemeVariant, "AlderNeutral"), DayFill(next).Fill);
             Assert.False(next.ClipToBounds);
             Assert.Equal(selectedDate, picker.Value);
 
@@ -1440,7 +1474,7 @@ public class Interactions
             await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
 
             Assert.True(Day(selectedDate).IsFocused);
-            Assert.True(Ring(Day(selectedDate)).IsVisible);
+            Assert.Equal(selected.FindResource(selected.ActualThemeVariant, "AlderAccentHover"), DayFill(Day(selectedDate)).Fill);
             Press(window, PhysicalKey.Escape);
             picker.IsReadOnly = true;
             Assert.False(trigger.IsEnabled);
@@ -1452,7 +1486,7 @@ public class Interactions
 
         AlderCalendarDayButton Day(DateOnly date) => window.GetVisualDescendants().OfType<AlderCalendarDayButton>()
             .Single(button => Equals(button.Tag, date) && !button.Classes.Contains("outside"));
-        static Ellipse Ring(AlderCalendarDayButton cell) => cell.GetVisualDescendants().OfType<Ellipse>().Single(shape => shape.Name == "DayFocusRing");
+        static Ellipse DayFill(AlderCalendarDayButton cell) => cell.GetVisualDescendants().OfType<Ellipse>().Single(shape => shape.Name == "DayFill");
     }
 
     [AvaloniaFact]
@@ -1792,8 +1826,8 @@ public class Interactions
         var window = Show(button);
         var clip = button.GetVisualDescendants().OfType<Border>().Single(x => x.Name == "RippleClip");
         var spinner = button.GetVisualDescendants().OfType<PathIcon>().Single(x => x.Name == "Spinner");
-        var icon = button.GetVisualDescendants().OfType<PathIcon>().Single(x => x.Name == "LeadingIcon");
-        Assert.Same(button.Icon, icon.Data);
+        var icon = button.GetVisualDescendants().OfType<AlderIconPresenter>().Single(x => x.Name == "LeadingIcon");
+        Assert.Same(button.Icon, icon.GetVisualDescendants().OfType<PathIcon>().Single().Data);
         Assert.True(icon.IsVisible);
         Assert.False(spinner.IsVisible);
         button.Focus();
@@ -1824,17 +1858,61 @@ public class Interactions
         var button = new AlderButton { IsIconOnly = true, Size = AlderSize.Small, Icon = Geometry.Parse("M0 0H8V8H0Z") };
         var window = Show(button);
         Assert.Equal(32, button.Bounds.Width);
-        var icon = button.GetVisualDescendants().OfType<PathIcon>().Single(x => x.Name == "LeadingIcon");
+        var icon = button.GetVisualDescendants().OfType<AlderIconPresenter>().Single(x => x.Name == "LeadingIcon");
+        Assert.Equal(new Size(14, 14), icon.Bounds.Size);
         var iconCenter = icon.TranslatePoint(new Rect(icon.Bounds.Size).Center, button)!.Value;
         Assert.Equal(new Rect(button.Bounds.Size).Center, iconCenter);
         button.Size = AlderSize.Large;
         window.UpdateLayout();
         Assert.Equal(40, button.Bounds.Width);
+        Assert.Equal(new Size(20, 20), icon.Bounds.Size);
         button.IsIconOnly = false;
         button.FullWidth = true;
         window.UpdateLayout();
         Assert.Equal(window.ClientSize.Width, button.Bounds.Width);
         window.Close();
+    }
+
+    [AvaloniaFact]
+    public void IconControlScalesWithTheButtonThemeAndCanBeReplacedWithGeometry()
+    {
+        var glyph = new Border { Width = 40, Height = 20, Background = Brushes.Red };
+        var button = new AlderButton { IsIconOnly = true, Size = AlderSize.Small, Icon = glyph };
+        var window = Show(button);
+        var slot = button.GetVisualDescendants().OfType<AlderIconPresenter>().Single(x => x.Name == "LeadingIcon");
+
+        CheckSize(14);
+        button.Size = AlderSize.Medium;
+        CheckSize(16);
+        button.Size = AlderSize.Large;
+        CheckSize(20);
+
+        button.IsPending = true;
+        Assert.False(slot.IsVisible);
+        button.IsPending = false;
+        button.Icon = "M0 0H16V16H0Z";
+        window.UpdateLayout();
+        Assert.Null(glyph.GetVisualParent());
+        var vector = slot.GetVisualDescendants().OfType<PathIcon>().Single();
+        Assert.Equal(new Rect(0, 0, 16, 16), vector.Data!.Bounds);
+
+        button.Icon = null;
+        window.UpdateLayout();
+        Assert.False(slot.IsVisible);
+        window.Close();
+
+        void CheckSize(double side)
+        {
+            window.UpdateLayout();
+            Assert.Equal(new Size(side, side), slot.Bounds.Size);
+            Assert.Contains(glyph, slot.GetVisualDescendants());
+            var topLeft = glyph.TranslatePoint(default, slot)!.Value;
+            var bottomRight = glyph.TranslatePoint(new Point(glyph.Bounds.Width, glyph.Bounds.Height), slot)!.Value;
+            Assert.Equal(side, bottomRight.X - topLeft.X, 4);
+            Assert.Equal(side / 2, bottomRight.Y - topLeft.Y, 4);
+            Assert.Equal(40, glyph.Width);
+            Assert.Equal(20, glyph.Height);
+        }
     }
 
     [AvaloniaFact]
@@ -1882,11 +1960,11 @@ public class Interactions
             Icon = Geometry.Parse("M0 0H16V16H0Z"),
         };
         var window = Show(new StackPanel { Children = { button } });
-        var icon = button.GetVisualDescendants().OfType<PathIcon>().Single(x => x.Name == "LeadingIcon");
+        var icon = button.GetVisualDescendants().OfType<AlderIconPresenter>().Single(x => x.Name == "LeadingIcon");
         var face = button.GetVisualDescendants().OfType<ButtonFeedback>().Single();
         var visual = global::Avalonia.Rendering.Composition.ElementComposition.GetElementVisual(face)!;
         Assert.Equal(new Size(32, 32), button.Bounds.Size);
-        Assert.Same(button.Icon, icon.Data);
+        Assert.Same(button.Icon, icon.GetVisualDescendants().OfType<PathIcon>().Single().Data);
         Assert.Equal(new Rect(button.Bounds.Size).Center, icon.TranslatePoint(new Rect(icon.Bounds.Size).Center, button));
         var fillTransition = Assert.IsType<global::Avalonia.Animation.BrushTransition>(Assert.Single(face.Transitions!));
         Assert.Equal(TimeSpan.FromMilliseconds(100), fillTransition.Duration);
@@ -2357,7 +2435,7 @@ public class Interactions
     }
 
     [AvaloniaFact]
-    public void SwitchKeepsTranslucentTrackAndKeyboardRingSeparate()
+    public void SwitchHighlightsItsTrackOnPointerAndKeyboardFocus()
     {
         Assert.True(Application.Current!.TryFindResource("AlderSwitchTheme", out var theme));
         var toggle = new AlderSwitch { Theme = (ControlTheme)theme!, IsChecked = true };
@@ -2387,8 +2465,8 @@ public class Interactions
         window.MouseMove(new Point(10, 10));
         Assert.Same(selected, track.Background);
         Assert.True(toggle.Focus(NavigationMethod.Tab));
-        Assert.True(outline.BoxShadow.Count > 0);
-        Assert.Same(selected, track.Background);
+        Assert.Equal(0, outline.BoxShadow.Count);
+        Assert.Same(hovered, track.Background);
         window.Close();
     }
 

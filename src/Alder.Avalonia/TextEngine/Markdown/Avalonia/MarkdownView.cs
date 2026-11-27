@@ -1,7 +1,9 @@
 #pragma warning disable CS1591 // Imported Markdown engine.
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Alder.NativeMarkdown.UI.Extensions;
@@ -59,6 +61,7 @@ public class MarkdownView : Control, ISelectionHost
 
     public MarkdownView()
     {
+        FocusAdorner = null;
         _presenter = new DocumentPresenter(
             (index, view) =>
             {
@@ -609,10 +612,33 @@ public class MarkdownView : Control, ISelectionHost
         return finalSize;
     }
 
-    public override void Render(global::Avalonia.Media.DrawingContext context)
+    protected override void OnGotFocus(FocusChangedEventArgs e)
+    {
+        base.OnGotFocus(e);
+        InvalidateFocusFeedback();
+    }
+
+    protected override void OnLostFocus(FocusChangedEventArgs e)
+    {
+        base.OnLostFocus(e);
+        InvalidateFocusFeedback();
+    }
+
+    private void InvalidateFocusFeedback()
+    {
+        InvalidateVisual();
+        foreach (var code in _presenter.Views.OfType<CodeBlockView>())
+            code.InvalidateVisual();
+    }
+
+    internal IBrush? KeyboardFocusBrush =>
+        Classes.Contains(":focus-visible") && this.TryFindResource("AlderSoftHoverTint", ActualThemeVariant, out var resource)
+            ? resource as IBrush : null;
+
+    public override void Render(DrawingContext context)
     {
         // 透明背景：块与块之间的空白也能开始拖拽选择
-        context.FillRectangle(global::Avalonia.Media.Brushes.Transparent, new Rect(Bounds.Size));
+        context.FillRectangle(KeyboardFocusBrush ?? Brushes.Transparent, new Rect(Bounds.Size), 4);
     }
 
     Control ISelectionHost.HostControl => this;

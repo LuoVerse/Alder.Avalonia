@@ -20,11 +20,12 @@
       <SolidColorBrush x:Key="AlderChartSeries5" Color="#F98FA9" />
       <SolidColorBrush x:Key="AlderChartGrid" Color="#269F9FA9" />
       <SolidColorBrush x:Key="AlderChartBand" Color="#249F9FA9" />
-      <BoxShadows x:Key="AlderChartTooltipShadow">0 3 8 0 #38000000, 0 9 18 0 #30000000</BoxShadows>
+      <BoxShadows x:Key="AlderChartTooltipShadow">0 8 16 0 #58000000, 0 3 8 0 #7434343C</BoxShadows>
     </ResourceDictionary>
   </ResourceDictionary.ThemeDictionaries>
 
   <ControlTheme x:Key="{x:Type alder:AlderChartTooltip}" TargetType="alder:AlderChartTooltip">
+    <Setter Property="ClipToBounds" Value="False" />
     <Setter Property="Template">
       <ControlTemplate>
         <Border MinWidth="138" MaxWidth="260" Padding="11,8" IsVisible="{TemplateBinding HasContent}"
@@ -60,6 +61,7 @@
   </DataTemplate>
 
   <ControlTheme x:Key="AlderPlotChartTheme" TargetType="alder:AlderPlotChart">
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
     <Setter Property="FontSize" Value="10" />
     <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
     <Setter Property="Padding" Value="4,8,4,0" />
@@ -69,8 +71,8 @@
     <Setter Property="Template">
       <ControlTemplate>
         <Panel>
-          <Border x:Name="FocusRing" BorderBrush="{DynamicResource AlderAccent}" BorderThickness="1"
-                  CornerRadius="6" IsVisible="False" IsHitTestVisible="False" />
+          <Panel Name="PART_PlotLayers" IsHitTestVisible="False" />
+          <Border Name="PlotHighlight" CornerRadius="6" IsHitTestVisible="False" />
           <Canvas IsHitTestVisible="False">
             <ContentPresenter x:Name="PART_Tooltip" Content="{TemplateBinding ActiveData}"
                               ContentTemplate="{TemplateBinding TooltipTemplate}" IsVisible="False" Opacity="0" IsHitTestVisible="False"
@@ -79,9 +81,7 @@
         </Panel>
       </ControlTemplate>
     </Setter>
-    <Style Selector="^:focus-visible /template/ Border#FocusRing">
-      <Setter Property="IsVisible" Value="True" />
-    </Style>
+    <Style Selector="^:focus-visible /template/ Border#PlotHighlight"><Setter Property="Background" Value="{DynamicResource AlderSoftHoverTint}" /></Style>
     <Style Selector="^[ShowTooltip=False]">
       <Setter Property="Focusable" Value="False" />
     </Style>
@@ -109,8 +109,7 @@
     <Setter Property="Template">
       <ControlTemplate>
         <Panel>
-          <Border x:Name="FocusRing" BorderBrush="{DynamicResource AlderAccent}" BorderThickness="1"
-                  CornerRadius="6" IsVisible="False" IsHitTestVisible="False" />
+          <Border Name="PlotHighlight" CornerRadius="6" IsHitTestVisible="False" />
           <ContentPresenter Content="{TemplateBinding CenterContent}" ContentTemplate="{TemplateBinding CenterContentTemplate}"
                             HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False"
                             TextElement.Foreground="{DynamicResource AlderInk}" />

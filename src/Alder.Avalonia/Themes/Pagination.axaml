@@ -32,8 +32,10 @@
                             FontSize="{TemplateBinding FontSize}" Padding="10,0"
                             AutomationProperties.Name="{TemplateBinding PreviousText}" alder:AlderToolTip.Tip="{TemplateBinding PreviousText}">
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                  <alder:AlderPathIcon Data="{TemplateBinding PreviousIcon}" Width="{TemplateBinding NavigationIconSize}" Height="{TemplateBinding NavigationIconSize}" />
-                  <alder:AlderTextBlock Name="PreviousLabel" Text="{TemplateBinding PreviousText}" IsVisible="{TemplateBinding ShowNavigationLabels}" />
+                  <alder:AlderPathIcon Data="{TemplateBinding PreviousIcon}" Width="{TemplateBinding NavigationIconSize}"
+                                       Height="{TemplateBinding NavigationIconSize}" VerticalAlignment="Center" />
+                  <alder:AlderTextBlock Name="PreviousLabel" Text="{TemplateBinding PreviousText}"
+                                        IsVisible="{TemplateBinding ShowNavigationLabels}" VerticalAlignment="Center" />
                 </StackPanel>
               </alder:AlderButton>
               <WrapPanel Name="PART_Pages" ItemSpacing="4" LineSpacing="4" IsVisible="{TemplateBinding ShowPageNumbers}" />
@@ -42,8 +44,10 @@
                             FontSize="{TemplateBinding FontSize}" Padding="10,0"
                             AutomationProperties.Name="{TemplateBinding NextText}" alder:AlderToolTip.Tip="{TemplateBinding NextText}">
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                  <alder:AlderTextBlock Name="NextLabel" Text="{TemplateBinding NextText}" IsVisible="{TemplateBinding ShowNavigationLabels}" />
-                  <alder:AlderPathIcon Data="{TemplateBinding NextIcon}" Width="{TemplateBinding NavigationIconSize}" Height="{TemplateBinding NavigationIconSize}" />
+                  <alder:AlderTextBlock Name="NextLabel" Text="{TemplateBinding NextText}"
+                                        IsVisible="{TemplateBinding ShowNavigationLabels}" VerticalAlignment="Center" />
+                  <alder:AlderPathIcon Data="{TemplateBinding NextIcon}" Width="{TemplateBinding NavigationIconSize}"
+                                       Height="{TemplateBinding NavigationIconSize}" VerticalAlignment="Center" />
                 </StackPanel>
               </alder:AlderButton>
             </WrapPanel>

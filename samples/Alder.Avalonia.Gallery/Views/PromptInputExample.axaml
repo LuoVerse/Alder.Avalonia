@@ -4,9 +4,13 @@
     <StreamGeometry x:Key="PromptAddContextIcon">F0 M8 1.5A6.5 6.5 0 1 0 8 14.5A6.5 6.5 0 1 0 8 1.5Z M8 3A5 5 0 1 1 8 13A5 5 0 1 1 8 3Z M7.25 5H8.75V7.25H11V8.75H8.75V11H7.25V8.75H5V7.25H7.25Z</StreamGeometry>
   </UserControl.Resources>
   <UserControl.Styles>
-    <Style Selector="Border.prompt-queue-row StackPanel.prompt-queue-actions"><Setter Property="Opacity" Value="0" /></Style>
-    <Style Selector="Border.prompt-queue-row:pointerover StackPanel.prompt-queue-actions, Border.prompt-queue-row:focus-within StackPanel.prompt-queue-actions">
+    <Style Selector="a|AlderButton.prompt-queue-action">
+      <Setter Property="Opacity" Value="0" />
+      <Setter Property="IsHitTestVisible" Value="False" />
+    </Style>
+    <Style Selector="Border.prompt-queue-row:pointerover a|AlderButton.prompt-queue-action, a|AlderButton.prompt-queue-action:focus-visible">
       <Setter Property="Opacity" Value="1" />
+      <Setter Property="IsHitTestVisible" Value="True" />
     </Style>
     <Style Selector="UniformGrid.prompt-suggestions"><Setter Property="Columns" Value="2" /></Style>
     <ContainerQuery Name="ModelSelectorComposer" Query="max-width:560">
@@ -27,7 +31,7 @@
           <StackPanel Spacing="4" MaxWidth="640">
             <a:AlderPromptInput Theme="{StaticResource AlderPromptComposerTheme}" Variant="Primary" Text="{CompiledBinding Draft}" SendCommand="{CompiledBinding Send}" IsRunning="{CompiledBinding Running}" StopCommand="{CompiledBinding Stop}" Placeholder="{DynamicResource GalleryText.AiAsk}" AttachCommand="{CompiledBinding Attach}">
               <a:AlderPromptInput.Attachments>
-                <a:AlderChatAttachment FileName="{CompiledBinding FileName}" IsVisible="{CompiledBinding FileName, Converter={x:Static c:ObjectConverters.IsNotNull}}" RemoveCommand="{CompiledBinding Remove}"/>
+                <a:AlderChatAttachment FileName="{CompiledBinding FileName}" Preview="{CompiledBinding AttachmentPreview}" IsVisible="{CompiledBinding FileName, Converter={x:Static c:ObjectConverters.IsNotNull}}" RemoveCommand="{CompiledBinding Remove}"/>
               </a:AlderPromptInput.Attachments>
               <a:AlderPromptInput.Tools>
                 <a:AlderModelSelector ItemTemplate="{DynamicResource AiModelRow}" ItemsSource="{CompiledBinding Models}" SelectedModel="{CompiledBinding Model}"/>
@@ -51,6 +55,7 @@
         prompt[!AlderPromptInput.PlaceholderProperty] = new DynamicResourceExtension("GalleryText.AiAsk");
         var attachment = new AlderChatAttachment { RemoveCommand = model.Remove };
         attachment.Bind(AlderChatAttachment.FileNameProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.FileName));
+        attachment.Bind(AlderChatAttachment.PreviewProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.AttachmentPreview));
         attachment.Bind(Visual.IsVisibleProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.FileName,
             converter: ObjectConverters.IsNotNull));
         prompt.Attachments = attachment;
@@ -89,7 +94,7 @@
                 <a:AlderToggleButton Theme="{StaticResource AlderPromptReviewVoiceTheme}" AutomationProperties.Name="{DynamicResource GalleryText.AiVoice}" IsChecked="{CompiledBinding VoicePreviewActive, Mode=TwoWay}" />
               </a:AlderPromptInput.EmptyAction>
               <a:AlderPromptInput.Attachments>
-                <a:AlderChatAttachment FileName="{CompiledBinding FileName}" IsVisible="{CompiledBinding FileName, Converter={x:Static c:ObjectConverters.IsNotNull}}" RemoveCommand="{CompiledBinding Remove}"/>
+                <a:AlderChatAttachment FileName="{CompiledBinding FileName}" Preview="{CompiledBinding AttachmentPreview}" IsVisible="{CompiledBinding FileName, Converter={x:Static c:ObjectConverters.IsNotNull}}" RemoveCommand="{CompiledBinding Remove}"/>
               </a:AlderPromptInput.Attachments>
               <a:AlderPromptInput.Tools>
                 <StackPanel Orientation="Horizontal" Spacing="4">
@@ -126,6 +131,7 @@
         prompt[!AlderPromptInput.PlaceholderProperty] = new DynamicResourceExtension("GalleryText.AiFollowUp");
         var attachment = new AlderChatAttachment { RemoveCommand = model.Remove };
         attachment.Bind(AlderChatAttachment.FileNameProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.FileName));
+        attachment.Bind(AlderChatAttachment.PreviewProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.AttachmentPreview));
         attachment.Bind(Visual.IsVisibleProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.FileName,
             converter: ObjectConverters.IsNotNull));
         prompt.Attachments = attachment;
@@ -204,7 +210,7 @@
           <StackPanel Spacing="4" MaxWidth="640">
             <a:AlderPromptInput Theme="{StaticResource AlderPromptComposerTheme}" Variant="Secondary" Text="{CompiledBinding Draft}" SendCommand="{CompiledBinding Send}" IsRunning="{CompiledBinding Running}" StopCommand="{CompiledBinding Stop}" Placeholder="{DynamicResource GalleryText.AiAsk}" AttachCommand="{CompiledBinding Attach}">
               <a:AlderPromptInput.Attachments>
-                <a:AlderChatAttachment FileName="{CompiledBinding FileName}" IsVisible="{CompiledBinding FileName, Converter={x:Static c:ObjectConverters.IsNotNull}}" RemoveCommand="{CompiledBinding Remove}"/>
+                <a:AlderChatAttachment FileName="{CompiledBinding FileName}" Preview="{CompiledBinding AttachmentPreview}" IsVisible="{CompiledBinding FileName, Converter={x:Static c:ObjectConverters.IsNotNull}}" RemoveCommand="{CompiledBinding Remove}"/>
               </a:AlderPromptInput.Attachments>
               <a:AlderPromptInput.Tools>
                 <a:AlderModelSelector ItemTemplate="{DynamicResource AiModelRow}" ItemsSource="{CompiledBinding Models}" SelectedModel="{CompiledBinding Model}"/>
@@ -228,6 +234,7 @@
         prompt[!AlderPromptInput.PlaceholderProperty] = new DynamicResourceExtension("GalleryText.AiAsk");
         var attachment = new AlderChatAttachment { RemoveCommand = model.Remove };
         attachment.Bind(AlderChatAttachment.FileNameProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.FileName));
+        attachment.Bind(AlderChatAttachment.PreviewProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.AttachmentPreview));
         attachment.Bind(Visual.IsVisibleProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.FileName,
             converter: ObjectConverters.IsNotNull));
         prompt.Attachments = attachment;
@@ -251,7 +258,7 @@
           <StackPanel Spacing="4" MaxWidth="640">
             <a:AlderPromptInput Theme="{StaticResource AlderPromptComposerTheme}" Variant="Inline" Text="{CompiledBinding Draft}" SendCommand="{CompiledBinding Send}" IsRunning="{CompiledBinding Running}" StopCommand="{CompiledBinding Stop}" Placeholder="{DynamicResource GalleryText.AiFollowUp}" AttachCommand="{CompiledBinding Attach}">
               <a:AlderPromptInput.Attachments>
-                <a:AlderChatAttachment FileName="{CompiledBinding FileName}" IsVisible="{CompiledBinding FileName, Converter={x:Static c:ObjectConverters.IsNotNull}}" RemoveCommand="{CompiledBinding Remove}"/>
+                <a:AlderChatAttachment FileName="{CompiledBinding FileName}" Preview="{CompiledBinding AttachmentPreview}" IsVisible="{CompiledBinding FileName, Converter={x:Static c:ObjectConverters.IsNotNull}}" RemoveCommand="{CompiledBinding Remove}"/>
               </a:AlderPromptInput.Attachments>
             </a:AlderPromptInput>
             <a:AlderTextBlock Text="{DynamicResource GalleryText.AiDisclaimer}" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" FontSize="12" HorizontalAlignment="Center" TextAlignment="Center"/>
@@ -272,6 +279,7 @@
         prompt[!AlderPromptInput.PlaceholderProperty] = new DynamicResourceExtension("GalleryText.AiFollowUp");
         var attachment = new AlderChatAttachment { RemoveCommand = model.Remove };
         attachment.Bind(AlderChatAttachment.FileNameProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.FileName));
+        attachment.Bind(AlderChatAttachment.PreviewProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.AttachmentPreview));
         attachment.Bind(Visual.IsVisibleProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.FileName,
             converter: ObjectConverters.IsNotNull));
         prompt.Attachments = attachment;
@@ -291,7 +299,7 @@
           <StackPanel Spacing="4" MaxWidth="640">
             <a:AlderPromptInput Theme="{StaticResource AlderPromptComposerTheme}" Variant="Compact" Text="{CompiledBinding Draft}" SendCommand="{CompiledBinding Send}" IsRunning="{CompiledBinding Running}" StopCommand="{CompiledBinding Stop}" Placeholder="{DynamicResource GalleryText.AiFollowUp}" AttachCommand="{CompiledBinding Attach}">
               <a:AlderPromptInput.Attachments>
-                <a:AlderChatAttachment FileName="{CompiledBinding FileName}" IsVisible="{CompiledBinding FileName, Converter={x:Static c:ObjectConverters.IsNotNull}}" RemoveCommand="{CompiledBinding Remove}"/>
+                <a:AlderChatAttachment FileName="{CompiledBinding FileName}" Preview="{CompiledBinding AttachmentPreview}" IsVisible="{CompiledBinding FileName, Converter={x:Static c:ObjectConverters.IsNotNull}}" RemoveCommand="{CompiledBinding Remove}"/>
               </a:AlderPromptInput.Attachments>
             </a:AlderPromptInput>
             <a:AlderTextBlock Text="{DynamicResource GalleryText.AiDisclaimer}" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" FontSize="12" HorizontalAlignment="Center" TextAlignment="Center"/>
@@ -312,6 +320,7 @@
         prompt[!AlderPromptInput.PlaceholderProperty] = new DynamicResourceExtension("GalleryText.AiFollowUp");
         var attachment = new AlderChatAttachment { RemoveCommand = model.Remove };
         attachment.Bind(AlderChatAttachment.FileNameProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.FileName));
+        attachment.Bind(AlderChatAttachment.PreviewProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.AttachmentPreview));
         attachment.Bind(Visual.IsVisibleProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.FileName,
             converter: ObjectConverters.IsNotNull));
         prompt.Attachments = attachment;
@@ -402,7 +411,7 @@
                 </StackPanel>
               </a:AlderPromptInput.LeadingTools>
               <a:AlderPromptInput.Attachments>
-                <a:AlderChatAttachment FileName="{CompiledBinding FileName}" IsVisible="{CompiledBinding FileName, Converter={x:Static c:ObjectConverters.IsNotNull}}" RemoveCommand="{CompiledBinding Remove}"/>
+                <a:AlderChatAttachment FileName="{CompiledBinding FileName}" Preview="{CompiledBinding AttachmentPreview}" IsVisible="{CompiledBinding FileName, Converter={x:Static c:ObjectConverters.IsNotNull}}" RemoveCommand="{CompiledBinding Remove}"/>
               </a:AlderPromptInput.Attachments>
             </a:AlderPromptInput>
             <Border Margin="0,8,0,0" MaxWidth="568">
@@ -438,6 +447,7 @@
         prompt[!AlderPromptInput.PlaceholderProperty] = new DynamicResourceExtension("GalleryText.AiDescribeApp");
         var attachment = new AlderChatAttachment { RemoveCommand = model.Remove };
         attachment.Bind(AlderChatAttachment.FileNameProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.FileName));
+        attachment.Bind(AlderChatAttachment.PreviewProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.AttachmentPreview));
         attachment.Bind(Visual.IsVisibleProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.FileName,
             converter: ObjectConverters.IsNotNull));
         prompt.Attachments = attachment;
@@ -509,7 +519,7 @@
                 </DataTemplate>
               </a:AlderPromptInput.TokenItemTemplate>
               <a:AlderPromptInput.Attachments>
-                <a:AlderChatAttachment FileName="{CompiledBinding FileName}" IsVisible="{CompiledBinding FileName, Converter={x:Static c:ObjectConverters.IsNotNull}}" RemoveCommand="{CompiledBinding Remove}"/>
+                <a:AlderChatAttachment FileName="{CompiledBinding FileName}" Preview="{CompiledBinding AttachmentPreview}" IsVisible="{CompiledBinding FileName, Converter={x:Static c:ObjectConverters.IsNotNull}}" RemoveCommand="{CompiledBinding Remove}"/>
               </a:AlderPromptInput.Attachments>
             </a:AlderPromptInput>
             <a:AlderTextBlock Text="{DynamicResource GalleryText.AiDisclaimer}" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" FontSize="12" HorizontalAlignment="Center" TextAlignment="Center"/>
@@ -530,6 +540,7 @@
         prompt[!AlderPromptInput.PlaceholderProperty] = new DynamicResourceExtension("GalleryText.AiAsk");
         var attachment = new AlderChatAttachment { RemoveCommand = model.Remove };
         attachment.Bind(AlderChatAttachment.FileNameProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.FileName));
+        attachment.Bind(AlderChatAttachment.PreviewProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.AttachmentPreview));
         attachment.Bind(Visual.IsVisibleProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.FileName,
             converter: ObjectConverters.IsNotNull));
         prompt.Attachments = attachment;
@@ -581,10 +592,10 @@
                             <a:AlderTextBlock Text="{DynamicResource GalleryText.AiOneFile}" IsVisible="{CompiledBinding !HasText}"
                                               Foreground="{DynamicResource AlderMuted}" FontSize="12" />
                           </Panel>
-                          <StackPanel Grid.Column="3" Classes="prompt-queue-actions" Orientation="Horizontal">
-                            <a:AlderButton Icon="{DynamicResource AlderIconXmark}" Variant="Ghost" Size="Small" Width="28" Height="28" MinHeight="28"
+                          <StackPanel Grid.Column="3" Orientation="Horizontal">
+                            <a:AlderButton Classes="prompt-queue-action" Icon="{DynamicResource AlderIconXmark}" Variant="Ghost" Size="Small" Width="28" Height="28" MinHeight="28"
                                            IsIconOnly="True" Click="RemoveItem" AutomationProperties.Name="{DynamicResource GalleryText.AiQueueRemove}" />
-                            <a:AlderButton Icon="{DynamicResource AlderIconEllipsis}" Variant="Ghost" Size="Small" Width="28" Height="28" MinHeight="28"
+                            <a:AlderButton Classes="prompt-queue-action" Icon="{DynamicResource AlderIconEllipsis}" Variant="Ghost" Size="Small" Width="28" Height="28" MinHeight="28"
                                            IsIconOnly="True" Click="OpenQueueMenu" AutomationProperties.Name="{DynamicResource GalleryText.AiQueueMenu}" />
                           </StackPanel>
                         </Grid>
@@ -596,9 +607,11 @@
             </Border>
             <a:AlderPromptInput Theme="{StaticResource AlderPromptComposerTheme}" Variant="Primary" Text="{CompiledBinding Draft}" SendCommand="{CompiledBinding Enqueue}" AllowEmpty="{CompiledBinding FileName, Converter={x:Static c:ObjectConverters.IsNotNull}}" IsRunning="{CompiledBinding Running}" StopCommand="{CompiledBinding Stop}" Placeholder="{DynamicResource GalleryText.AiQueueAsk}" AttachCommand="{CompiledBinding Attach}">
               <a:AlderPromptInput.Attachments>
-                <a:AlderChatAttachment FileName="{CompiledBinding FileName}" IsVisible="{CompiledBinding FileName, Converter={x:Static c:ObjectConverters.IsNotNull}}" RemoveCommand="{CompiledBinding Remove}"/>
+                <a:AlderChatAttachment FileName="{CompiledBinding FileName}" Preview="{CompiledBinding AttachmentPreview}" IsVisible="{CompiledBinding FileName, Converter={x:Static c:ObjectConverters.IsNotNull}}" RemoveCommand="{CompiledBinding Remove}"/>
               </a:AlderPromptInput.Attachments>
             </a:AlderPromptInput>
+            <a:AlderButton HorizontalAlignment="Right" Size="Small" Variant="Ghost" Command="{CompiledBinding ResetQueue}"
+                           Content="{DynamicResource GalleryText.Reset}" />
           </StackPanel>
         </Border>
       </g:ExampleCard.Preview>
@@ -616,6 +629,7 @@
         prompt[!AlderPromptInput.PlaceholderProperty] = new DynamicResourceExtension("GalleryText.AiQueueAsk");
         var attachment = new AlderChatAttachment { RemoveCommand = model.Remove };
         attachment.Bind(AlderChatAttachment.FileNameProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.FileName));
+        attachment.Bind(AlderChatAttachment.PreviewProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.AttachmentPreview));
         attachment.Bind(Visual.IsVisibleProperty, CompiledBinding.Create((AiExampleViewModel vm) => vm.FileName,
             converter: ObjectConverters.IsNotNull));
         prompt.Attachments = attachment;
@@ -650,6 +664,7 @@
             {
                 var button = new AlderButton { Variant = ButtonVariant.Ghost, Size = AlderSize.Small, IsIconOnly = true,
                     Width = 28, Height = 28, MinHeight = 28 };
+                button.Classes.Add("prompt-queue-action");
                 button[!AlderButton.IconProperty] = new DynamicResourceExtension(icon);
                 button[!AutomationProperties.NameProperty] = new DynamicResourceExtension($"GalleryText.{label}");
                 return button;
@@ -658,7 +673,7 @@
             remove.Click += (_, _) => model.Queue.Remove(item);
             var more = Action("AlderIconEllipsis", "AiQueueMenu");
             more.Click += (_, _) => PromptInputExample.ShowQueueMenu(model, item, more);
-            var actions = new StackPanel { Orientation = Orientation.Horizontal, Opacity = 0, Children = { remove, more } };
+            var actions = new StackPanel { Orientation = Orientation.Horizontal, Children = { remove, more } };
             var file = new AlderPathIcon { Width = 12, Height = 14 };
             file[!PathIcon.DataProperty] = new DynamicResourceExtension("AlderAiFile");
             file[!PathIcon.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
@@ -669,10 +684,18 @@
             Grid.SetColumn(actions, 3);
             var surface = new Border { MinHeight = 40, Padding = new Thickness(8, 4), Child = row,
                 Background = Brushes.Transparent, BorderThickness = new Thickness(0, 0, 0, 1) };
-            surface.PointerEntered += (_, _) => actions.Opacity = 1;
-            surface.PointerExited += (_, _) => actions.Opacity = surface.IsKeyboardFocusWithin ? 1 : 0;
-            surface.GotFocus += (_, _) => actions.Opacity = 1;
-            surface.LostFocus += (_, _) => actions.Opacity = surface.IsPointerOver ? 1 : 0;
+            surface.Styles.Add(new Style(s => s.OfType<AlderButton>().Class("prompt-queue-action"))
+            {
+                Setters = { new Setter(Visual.OpacityProperty, 0d), new Setter(InputElement.IsHitTestVisibleProperty, false) }
+            });
+            surface.Styles.Add(new Style(s => s.OfType<Border>().Class(":pointerover").Descendant().OfType<AlderButton>().Class("prompt-queue-action"))
+            {
+                Setters = { new Setter(Visual.OpacityProperty, 1d), new Setter(InputElement.IsHitTestVisibleProperty, true) }
+            });
+            surface.Styles.Add(new Style(s => s.OfType<AlderButton>().Class("prompt-queue-action").Class(":focus-visible"))
+            {
+                Setters = { new Setter(Visual.OpacityProperty, 1d), new Setter(InputElement.IsHitTestVisibleProperty, true) }
+            });
             surface[!Border.BorderBrushProperty] = new DynamicResourceExtension("AlderSeparator");
             return surface;
         });
@@ -682,7 +705,10 @@
             Child = new AlderScrollViewer { Content = queue, MaxHeight = 160, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled }
         };
         rail[!Border.BackgroundProperty] = new DynamicResourceExtension("AlderSurface");
-        var preview = new StackPanel { MaxWidth = 640, Spacing = 8, Children = { rail, prompt } };
+        var reset = new AlderButton { HorizontalAlignment = HorizontalAlignment.Right, Size = AlderSize.Small,
+            Variant = ButtonVariant.Ghost, Command = model.ResetQueue };
+        reset[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText.Reset");
+        var preview = new StackPanel { MaxWidth = 640, Spacing = 8, Children = { rail, prompt, reset } };
       ]]></g:ExampleCard.CSharpSource>
     </g:ExampleCard>
     <g:ExampleCard Classes="chat-message-preview" x:Name="SampleRunState" Title="{DynamicResource GalleryText.AiVariantRunState}">

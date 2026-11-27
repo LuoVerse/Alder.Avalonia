@@ -53,7 +53,7 @@
     <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
     <Setter Property="FontSize" Value="14" />
     <Setter Property="CornerRadius" Value="8" />
-    <Setter Property="ItemsPanel"><ItemsPanelTemplate><StackPanel /></ItemsPanelTemplate></Setter>
+    <Setter Property="ItemsPanel"><ItemsPanelTemplate><VirtualizingStackPanel /></ItemsPanelTemplate></Setter>
     <Setter Property="Template">
       <ControlTemplate>
         <StackPanel>
@@ -83,7 +83,7 @@
               </Panel>
               <Panel Grid.Column="3" Margin="1,0,4,0" IsVisible="{TemplateBinding ShowIcons}">
                 <alder:AlderPathIcon Name="DefaultIcon" Width="16" Height="16" IsVisible="{TemplateBinding DisplayIcon, Converter={x:Static conv:ObjectConverters.IsNull}}" Foreground="{DynamicResource AlderMuted}" Data="{StaticResource AlderFileTreeFileIcon}" />
-                <alder:AlderPathIcon Name="CustomIcon" Width="16" Height="16" Foreground="{DynamicResource AlderMuted}" Data="{TemplateBinding DisplayIcon}"
+                <alder:AlderIconPresenter Name="CustomIcon" Foreground="{DynamicResource AlderMuted}" Content="{TemplateBinding DisplayIcon}"
                           IsVisible="{TemplateBinding DisplayIcon, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
               </Panel>
               <ContentPresenter Name="PART_HeaderPresenter" Grid.Column="4" Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}"
@@ -91,11 +91,10 @@
               <ContentPresenter Grid.Column="5" Content="{TemplateBinding Badge}" VerticalAlignment="Center" Foreground="{DynamicResource AlderMuted}" />
               <Border Name="DropBefore" Grid.ColumnSpan="6" Height="2" CornerRadius="1" VerticalAlignment="Top" Background="{DynamicResource AlderAccent}" IsVisible="False" IsHitTestVisible="False" />
               <Border Name="DropAfter" Grid.ColumnSpan="6" Height="2" CornerRadius="1" VerticalAlignment="Bottom" Background="{DynamicResource AlderAccent}" IsVisible="False" IsHitTestVisible="False" />
-              <Border Name="Focus" Grid.ColumnSpan="6" BorderThickness="1" CornerRadius="5" BorderBrush="{DynamicResource AlderAccent}" IsVisible="False" IsHitTestVisible="False" />
             </Grid>
           </Border>
           <alder:AlderAccordionPanel Name="Subtree" ClipToBounds="True" IsEnabled="False" IsHitTestVisible="False">
-            <Grid>
+            <Grid Name="SubtreeContent">
               <Border Name="Guide" Width="1" Margin="{TemplateBinding GuideIndent}" HorizontalAlignment="Left" Background="{DynamicResource AlderSeparator}"
                       IsVisible="{TemplateBinding ShowGuides}" />
               <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
@@ -105,7 +104,7 @@
       </ControlTemplate>
     </Setter>
     <Style Selector="^:selected /template/ Border#PART_Row"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
-    <Style Selector="^:focus-visible /template/ Border#Focus"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#PART_Row"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
     <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
     <Style Selector="^:branch /template/ :is(ToggleButton)#Chevron"><Setter Property="IsVisible" Value="True" /></Style>
     <Style Selector="^:branch /template/ PathIcon#DefaultIcon"><Setter Property="Data" Value="{StaticResource AlderFileTreeFolderIcon}" /></Style>
@@ -114,11 +113,23 @@
     <Style Selector="^[IsExpanded=True] /template/ alder|AlderAccordionPanel#Subtree">
       <Setter Property="Progress" Value="1" /><Setter Property="IsEnabled" Value="True" /><Setter Property="IsHitTestVisible" Value="True" />
     </Style>
+    <Style Selector="^ /template/ alder|AlderAccordionPanel#Subtree[Progress=0] > Grid#SubtreeContent">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
     <Style Selector="^[(alder|AlderMotion.Reduced)=False] /template/ alder|AlderAccordionPanel#Subtree">
       <Setter Property="Transitions"><Transitions><DoubleTransition Property="Progress" Duration="0:0:0.18" Easing="CubicEaseOut" /></Transitions></Setter>
     </Style>
     <Style Selector="^[(alder|AlderMotion.Reduced)=False] /template/ PathIcon#Indicator">
       <Setter Property="Transitions"><Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.18" /></Transitions></Setter>
+    </Style>
+    <Style Selector="^ /template/ alder|AlderIconPresenter#CustomIcon">
+      <Setter Property="Width" Value="16" /><Setter Property="Height" Value="16" />
+    </Style>
+    <Style Selector="^[Size=Small] /template/ alder|AlderIconPresenter#CustomIcon">
+      <Setter Property="Width" Value="14" /><Setter Property="Height" Value="14" />
+    </Style>
+    <Style Selector="^[Size=Large] /template/ alder|AlderIconPresenter#CustomIcon">
+      <Setter Property="Width" Value="20" /><Setter Property="Height" Value="20" />
     </Style>
     <Style Selector="^[Size=Small]"><Setter Property="FontSize" Value="12" /></Style>
     <Style Selector="^[Size=Small] /template/ Border#PART_Row"><Setter Property="MinHeight" Value="24" /></Style>
@@ -152,6 +163,7 @@
 
   <ControlTheme x:Key="{x:Type alder:AlderFileTree}" TargetType="alder:AlderFileTree">
     <Setter Property="Padding" Value="4" />
+    <Setter Property="ItemsPanel"><ItemsPanelTemplate><VirtualizingStackPanel /></ItemsPanelTemplate></Setter>
     <Setter Property="IndicatorIcon" Value="{StaticResource AlderIconChevronRight}" />
     <Setter Property="ItemTemplate" Value="{StaticResource AlderFileTreeNodeTemplate}" />
     <Setter Property="ItemContainerTheme" Value="{StaticResource {x:Type alder:AlderFileTreeItem}}" />

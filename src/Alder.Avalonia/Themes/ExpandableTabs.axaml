@@ -1,7 +1,7 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:alder="using:Alder.Avalonia.Controls"
-                    xmlns:media="using:Avalonia.Media">
+                    xmlns:conv="using:Avalonia.Data.Converters">
   <ControlTheme x:Key="AlderExpandableTabItemTheme" TargetType="TabItem">
     <Setter Property="Height" Value="36" />
     <Setter Property="FontSize" Value="14" />
@@ -15,20 +15,12 @@
         <Border Background="{TemplateBinding Background}" CornerRadius="18">
           <Grid>
             <alder:AlderExpandableTabHeader Name="ExpandableHeader">
-              <ContentPresenter Content="{TemplateBinding Icon}" ContentTemplate="{TemplateBinding IconTemplate}"
-                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                <ContentPresenter.DataTemplates>
-                  <DataTemplate DataType="media:Geometry" x:DataType="media:Geometry">
-                    <alder:AlderPathIcon Width="16" Height="16" Data="{CompiledBinding}" />
-                  </DataTemplate>
-                </ContentPresenter.DataTemplates>
-              </ContentPresenter>
+              <alder:AlderIconPresenter Width="16" Height="16" Content="{TemplateBinding Icon}" ContentTemplate="{TemplateBinding IconTemplate}"
+                                        IsVisible="{TemplateBinding Icon, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
               <ContentPresenter Name="PART_HeaderPresenter" Content="{TemplateBinding Header}"
                                 ContentTemplate="{TemplateBinding HeaderTemplate}" RecognizesAccessKey="True"
                                 VerticalContentAlignment="Center" />
             </alder:AlderExpandableTabHeader>
-            <Border Name="FocusRing" BorderThickness="2" CornerRadius="18"
-                    BorderBrush="{DynamicResource AlderAccent}" IsHitTestVisible="False" IsVisible="False" />
           </Grid>
         </Border>
       </ControlTemplate>
@@ -44,9 +36,7 @@
     <Style Selector="^:selected /template/ alder|AlderExpandableTabHeader#ExpandableHeader">
       <Setter Property="IsExpanded" Value="True" />
     </Style>
-    <Style Selector="^:focus-visible /template/ Border#FocusRing">
-      <Setter Property="IsVisible" Value="True" />
-    </Style>
+    <Style Selector="^:focus-visible:not(:disabled)"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
     <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
   </ControlTheme>
 

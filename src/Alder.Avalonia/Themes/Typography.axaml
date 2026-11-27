@@ -25,7 +25,11 @@
   <x:String x:Key="AlderText.KbdAlt">Alt</x:String>
   <FontFamily x:Key="AlderTypographyMonoFont">Menlo,Consolas,DejaVu Sans Mono,monospace</FontFamily>
   <ControlTheme x:Key="{x:Type alder:AlderSelectableTextBlock}" TargetType="alder:AlderSelectableTextBlock">
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
     <Setter Property="SelectionBrush" Value="{DynamicResource AlderSoftHover}" />
+    <Style Selector="^:focus-visible">
+      <Setter Property="Background" Value="{DynamicResource AlderSoftHoverTint}" />
+    </Style>
     <Style Selector="^[IsEnabled=True]">
       <Setter Property="Cursor" Value="IBeam" />
       <Setter Property="ContextFlyout" Value="{DynamicResource AlderTextSelectionMenu}" />

@@ -1,6 +1,6 @@
-using System.Diagnostics;
 using System.Windows.Input;
 using Avalonia;
+using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
@@ -8,7 +8,8 @@ using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
-using Avalonia.Media;
+using Avalonia.Rendering.Composition;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 
 namespace Alder.Avalonia.Controls;
@@ -78,13 +79,15 @@ public sealed class AlderActionBar : ContentControl
     /// <summary>The argument passed to the dismiss command.</summary>
     public object? DismissCommandParameter { get => GetValue(DismissCommandParameterProperty); set => SetValue(DismissCommandParameterProperty, value); }
 
-    private readonly TranslateTransform offset = new();
+    private static readonly Vector3D HiddenOffset = new(0, 13, 0);
+    private static readonly TimeSpan EnterDuration = TimeSpan.FromMilliseconds(210);
+    private static readonly TimeSpan ExitDuration = TimeSpan.FromMilliseconds(145);
+    private static readonly CubicEaseOut EnterEase = new();
+    private static readonly QuadraticEaseIn ExitEase = new();
     private Border? surface;
     private Control? host;
     private InputElement? returnFocus;
-    private VisibilityAnimation? animation;
-    private Action<TimeSpan>? onFrame;
-    private bool framePending;
+    private IDisposable? settleTimer;
 
     /// <summary>Initializes a new instance of <see cref="AlderActionBar"/>.</summary>
     public AlderActionBar() => AddHandler(KeyDownEvent, HandleKeyDown, RoutingStrategies.Tunnel);
@@ -105,9 +108,9 @@ public sealed class AlderActionBar : ContentControl
     /// <inheritdoc />
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
+        FinishAnimation();
         base.OnApplyTemplate(e);
         surface = e.NameScope.Find<Border>("PART_Surface");
-        if (surface is not null) surface.RenderTransform = offset;
         UpdateSections();
         UpdatePresentation(animate: false);
     }
@@ -197,11 +200,13 @@ public sealed class AlderActionBar : ContentControl
     private void UpdatePresentation(bool animate)
     {
         if (surface is not { } border) return;
-        animation = null;
+        settleTimer?.Dispose();
+        settleTimer = null;
         border.IsHitTestVisible = IsOpen;
         KeyboardNavigation.SetTabNavigation(border, IsOpen ? KeyboardNavigationMode.Continue : KeyboardNavigationMode.None);
 
-        if (!animate || AlderMotion.GetReduced(this) || TopLevel.GetTopLevel(this) is null || !IsOpen && !border.IsVisible)
+        if (!animate || AlderMotion.GetReduced(this) || TopLevel.GetTopLevel(this) is null ||
+            ElementComposition.GetElementVisual(border) is not { } visual || !IsOpen && !border.IsVisible)
         {
             FinishAnimation();
             return;
@@ -210,47 +215,30 @@ public sealed class AlderActionBar : ContentControl
         if (!border.IsVisible)
         {
             border.Opacity = 0;
-            offset.Y = 13;
+            visual.Opacity = 0;
+            visual.Translation = HiddenOffset;
             border.IsVisible = true;
         }
-        animation = new VisibilityAnimation(border.Opacity, offset.Y, Stopwatch.GetTimestamp());
-        RequestFrame();
-    }
-
-    private void RequestFrame()
-    {
-        if (framePending || TopLevel.GetTopLevel(this) is not { } root) return;
-        framePending = true;
-        root.RequestAnimationFrame(onFrame ??= RenderFrame);
-    }
-
-    private void RenderFrame(TimeSpan _)
-    {
-        framePending = false;
-        if (animation is not { } transition || surface is not { } border) return;
-        double elapsed = Stopwatch.GetElapsedTime(transition.Started).TotalMilliseconds;
-        double progress = elapsed / (IsOpen ? 210 : 145);
-        if (progress >= 1)
-        {
-            FinishAnimation();
-            return;
-        }
-
-        double remaining = 1 - progress;
-        double eased = IsOpen ? 1 - remaining * remaining * remaining : progress * progress;
-        border.Opacity = transition.Opacity + ((IsOpen ? 1 : 0) - transition.Opacity) * eased;
-        offset.Y = transition.Offset + ((IsOpen ? 0 : 13) - transition.Offset) * eased;
-        RequestFrame();
+        var duration = IsOpen ? EnterDuration : ExitDuration;
+        // Retarget the current rendered position and opacity when an exit is interrupted.
+        OverlayMotion.Animate(border, IsOpen, HiddenOffset, 1, duration, duration, default,
+            IsOpen ? EnterEase : ExitEase, restartEntrance: false);
+        settleTimer = DispatcherTimer.RunOnce(FinishAnimation, duration, DispatcherPriority.Render);
     }
 
     private void FinishAnimation()
     {
-        animation = null;
+        settleTimer?.Dispose();
+        settleTimer = null;
         if (surface is not { } border) return;
+        if (ElementComposition.GetElementVisual(border) is { } visual)
+        {
+            visual.StopAnimation(nameof(CompositionVisual.Opacity));
+            visual.StopAnimation(nameof(CompositionVisual.Translation));
+            visual.Opacity = IsOpen ? 1 : 0;
+            visual.Translation = IsOpen ? default : HiddenOffset;
+        }
         border.Opacity = IsOpen ? 1 : 0;
         border.IsVisible = IsOpen;
-        offset.Y = IsOpen ? 0 : 13;
     }
-
-    private sealed record VisibilityAnimation(double Opacity, double Offset, long Started);
 }

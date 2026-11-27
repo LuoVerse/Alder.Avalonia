@@ -192,8 +192,7 @@
         <WrapPanel>
           <alder:AlderInputGroup Text="{DynamicResource GalleryText.SendingProgress}" IsReadOnly="True" AutomationProperties.Name="{DynamicResource GalleryText.Sending}">
             <alder:AlderInputGroup.Suffix>
-              <alder:ButtonSpinner Width="16" Height="16" Foreground="{DynamicResource AlderAccent}" IsHitTestVisible="False"
-                               Data="{StaticResource AlderSpinnerGlyph}" OpacityMask="{StaticResource AlderSpinnerMask}" />
+              <alder:AlderSpinner Size="Small" />
             </alder:AlderInputGroup.Suffix>
           </alder:AlderInputGroup>
           <alder:AlderInputGroup x:Name="CommandGroup" PlaceholderText="{DynamicResource GalleryText.Command}" SuffixPadding="12,0,8,0"
@@ -215,23 +214,39 @@
         </WrapPanel>
       </gallery:ExampleCard.Preview>
       <gallery:ExampleCard.CSharpSource><![CDATA[
-        var inputGroup1 = new AlderInputGroup { Text = "Sending...", IsReadOnly = true };
+        var inputGroup1 = new AlderInputGroup
+        {
+            Width = 248, Text = "Sending...", IsReadOnly = true, Suffix = new AlderSpinner { Size = SpinnerSize.Small },
+        };
         AutomationProperties.SetName(inputGroup1, "Sending");
 
+        var shortcut = new Border { CornerRadius = new CornerRadius(5), Padding = new Thickness(5, 2),
+            Child = new AlderTextBlock { FontSize = 12, Text = "Ctrl K" } };
+        shortcut[!Border.BackgroundProperty] = new DynamicResourceExtension("AlderNeutral");
         var inputGroup2 = new AlderInputGroup
         {
+            Width = 248,
             PlaceholderText = "Command",
             SuffixPadding = new Thickness(12, 0, 8, 0),
+            Suffix = shortcut,
         };
         AutomationProperties.SetName(inputGroup2, "Command");
+        AutomationProperties.SetHelpText(inputGroup2, "Keyboard shortcut Control K");
 
+        var proLabel = new AlderTextBlock { FontSize = 12, Text = "Pro" };
+        proLabel[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderInk");
+        var badge = new Border { CornerRadius = new CornerRadius(10), Padding = new Thickness(8, 3), Child = proLabel };
+        badge[!Border.BackgroundProperty] = new DynamicResourceExtension("AlderNeutral");
         var inputGroup3 = new AlderInputGroup
         {
+            Width = 248,
             Type = InputType.Email,
             PlaceholderText = "Email address",
             SuffixPadding = new Thickness(12, 0, 8, 0),
+            Suffix = badge,
         };
         AutomationProperties.SetName(inputGroup3, "Pro email address");
+        var preview = new WrapPanel { ItemSpacing = 16, LineSpacing = 12, Children = { inputGroup1, inputGroup2, inputGroup3 } };
       ]]></gallery:ExampleCard.CSharpSource>
     </gallery:ExampleCard>
     <gallery:ExampleCard x:Name="SampleRequiredDisabledAndValidation" Title="{DynamicResource GalleryText.RequiredDisabledAndValidation}">

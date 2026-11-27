@@ -6,10 +6,12 @@
     <ResourceDictionary x:Key="Light">
       <SolidColorBrush x:Key="AlderSegmentIndicator" Color="#FFFFFF" />
       <SolidColorBrush x:Key="AlderSegmentSeparator" Color="#4071717A" />
+      <SolidColorBrush x:Key="AlderSegmentHighlight" Color="#1418181B" />
     </ResourceDictionary>
     <ResourceDictionary x:Key="Dark">
       <SolidColorBrush x:Key="AlderSegmentIndicator" Color="#46464C" />
       <SolidColorBrush x:Key="AlderSegmentSeparator" Color="#409F9FA9" />
+      <SolidColorBrush x:Key="AlderSegmentHighlight" Color="#20FCFCFC" />
     </ResourceDictionary>
   </ResourceDictionary.ThemeDictionaries>
 
@@ -25,26 +27,25 @@
     <Setter Property="Template">
       <ControlTemplate>
         <Grid Background="Transparent">
+          <Border Name="ItemHighlight" Background="{DynamicResource AlderSegmentHighlight}"
+                  CornerRadius="{TemplateBinding CornerRadius}" Opacity="0" IsHitTestVisible="False" />
           <Border Name="Separator" Width="1" Height="16" HorizontalAlignment="Left" VerticalAlignment="Center"
                   Background="{DynamicResource AlderSegmentSeparator}" Opacity="0" IsHitTestVisible="False" />
           <StackPanel Name="ItemContent" Orientation="Horizontal" Margin="{TemplateBinding Padding}"
                       HorizontalAlignment="Center" VerticalAlignment="Center">
-            <alder:AlderPathIcon Name="Icon" Width="16" Height="16" Data="{TemplateBinding Icon}"
+            <alder:AlderIconPresenter Name="Icon" Content="{TemplateBinding Icon}"
                       IsVisible="{TemplateBinding Icon, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
             <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
                               ContentTemplate="{TemplateBinding ContentTemplate}" VerticalAlignment="Center" />
           </StackPanel>
-          <Border Name="FocusRing" Margin="-4" BorderBrush="{DynamicResource AlderAccent}" BorderThickness="2"
-                  CornerRadius="{TemplateBinding CornerRadius}" Opacity="0" IsHitTestVisible="False">
-            <Border BorderBrush="{DynamicResource AlderAppLayoutBackground}" BorderThickness="2"
-                    CornerRadius="{TemplateBinding CornerRadius}" />
-          </Border>
         </Grid>
       </ControlTemplate>
     </Setter>
     <Style Selector="^:selected"><Setter Property="Foreground" Value="{DynamicResource AlderInk}" /></Style>
     <Style Selector="^:has-content /template/ StackPanel#ItemContent"><Setter Property="Spacing" Value="6" /></Style>
-    <Style Selector="^:not(:selected):not(:disabled):pointerover"><Setter Property="Opacity" Value="0.7" /></Style>
+    <Style Selector="^:not(:selected):not(:disabled):pointerover, ^:not(:selected):not(:disabled):focus-visible">
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    </Style>
     <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /><Setter Property="Cursor" Value="Arrow" /></Style>
     <Style Selector="^[(alder|AlderMotion.Reduced)=False]">
       <Setter Property="Transitions">
@@ -53,12 +54,27 @@
           <BrushTransition Property="Foreground" Duration="0:0:0.15" />
         </Transitions>
       </Setter>
-      <Style Selector="^ /template/ Border#Separator, ^ /template/ Border#FocusRing">
+      <Style Selector="^ /template/ Border#Separator, ^ /template/ Border#ItemHighlight">
         <Setter Property="Transitions"><Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" /></Transitions></Setter>
       </Style>
     </Style>
     <Style Selector="^:separator /template/ Border#Separator"><Setter Property="Opacity" Value="1" /></Style>
-    <Style Selector="^:focus-visible /template/ Border#FocusRing"><Setter Property="Opacity" Value="1" /></Style>
+    <Style Selector="^:pointerover:not(:disabled) /template/ Border#ItemHighlight,
+                     ^:focus-visible:not(:disabled) /template/ Border#ItemHighlight">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="^ /template/ alder|AlderIconPresenter#Icon">
+      <Setter Property="Width" Value="16" /><Setter Property="Height" Value="16" />
+    </Style>
+    <Style Selector="^[(alder|AlderSegment.Size)=Small] /template/ alder|AlderIconPresenter#Icon">
+      <Setter Property="Width" Value="14" /><Setter Property="Height" Value="14" />
+    </Style>
+    <Style Selector="^[(alder|AlderSegment.Size)=Large] /template/ alder|AlderIconPresenter#Icon">
+      <Setter Property="Width" Value="20" /><Setter Property="Height" Value="20" />
+    </Style>
+    <Style Selector="^[(alder|AlderSegment.Size)=Small]:has-icon">
+      <Setter Property="MinWidth" Value="36" />
+    </Style>
     <Style Selector="^[(alder|AlderSegment.Size)=Small]">
       <Setter Property="MinHeight" Value="28" /><Setter Property="Padding" Value="10,0" /><Setter Property="FontSize" Value="12" />
     </Style>

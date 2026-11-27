@@ -8,6 +8,7 @@
   <x:String x:Key="AlderText.CarouselPause">Pause</x:String>
 
   <ControlTheme x:Key="AlderCarouselArrowTheme" TargetType="Button">
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
     <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
     <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
     <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
@@ -26,23 +27,34 @@
         </Border>
       </ControlTemplate>
     </Setter>
-    <Style Selector="^:pointerover"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
+    <Style Selector="^:pointerover:not(:disabled), ^:focus-visible:not(:disabled)">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
     <Style Selector="^:pressed"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
-    <Style Selector="^:focus-visible"><Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" /></Style>
     <Style Selector="^:disabled"><Setter Property="Opacity" Value=".5" /></Style>
     <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#Face">
       <Setter Property="Transitions" Value="{x:Null}" />
     </Style>
   </ControlTheme>
 
+  <ControlTheme x:Key="{x:Type alder:AlderFilmstrip}" TargetType="alder:AlderFilmstrip">
+    <Setter Property="ItemsPanel">
+      <ItemsPanelTemplate><VirtualizingStackPanel Orientation="Horizontal" /></ItemsPanelTemplate>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate><ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" /></ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
   <ControlTheme x:Key="AlderCarouselDotTheme" TargetType="Button">
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
     <Setter Property="Width" Value="22" />
     <Setter Property="Height" Value="24" />
     <Setter Property="Background" Value="{DynamicResource AlderBorder}" />
     <Setter Property="Cursor" Value="Hand" />
     <Setter Property="Template">
       <ControlTemplate>
-        <Border Name="DotFocus" CornerRadius="8" BorderBrush="Transparent" BorderThickness="1" Background="Transparent">
+        <Border Name="DotSurface" CornerRadius="8" BorderThickness="1" Background="Transparent">
           <Border Name="Mark" Width="7" Height="7" CornerRadius="4" Background="{TemplateBinding Background}"
                   HorizontalAlignment="Center" VerticalAlignment="Center">
             <Border.Transitions>
@@ -54,8 +66,8 @@
     </Setter>
     <Style Selector="^:pointerover"><Setter Property="Background" Value="{DynamicResource AlderMuted}" /></Style>
     <Style Selector="^.selected"><Setter Property="Background" Value="{DynamicResource AlderAccent}" /></Style>
-    <Style Selector="^:focus-visible /template/ Border#DotFocus">
-      <Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" />
+    <Style Selector="^:pointerover /template/ Border#DotSurface, ^:focus-visible /template/ Border#DotSurface">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
     </Style>
     <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#Mark">
       <Setter Property="Transitions" Value="{x:Null}" />
@@ -63,6 +75,7 @@
   </ControlTheme>
 
   <ControlTheme x:Key="AlderCarouselThumbnailTheme" TargetType="Button">
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
     <Setter Property="Width" Value="64" />
     <Setter Property="Height" Value="64" />
     <Setter Property="Padding" Value="2" />
@@ -72,7 +85,7 @@
     <Setter Property="Cursor" Value="Hand" />
     <Setter Property="Template">
       <ControlTemplate>
-        <Border Background="Transparent">
+        <Panel Background="Transparent">
           <Border Name="ThumbnailFace" BorderThickness="1.5" CornerRadius="14" Padding="{TemplateBinding Padding}"
                   Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}">
             <Border.Transitions>
@@ -81,18 +94,19 @@
                 <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.14" Easing="CubicEaseOut" />
               </Transitions>
             </Border.Transitions>
-            <Border ClipToBounds="True" CornerRadius="10">
+            <Border Name="ThumbnailImage" ClipToBounds="True" CornerRadius="10">
               <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
                                 Foreground="{TemplateBinding Foreground}"
                                 HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
             </Border>
           </Border>
-        </Border>
+        </Panel>
       </ControlTemplate>
     </Setter>
     <Style Selector="^:pointerover /template/ Border#ThumbnailFace"><Setter Property="Opacity" Value=".85" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#ThumbnailImage"><Setter Property="Opacity" Value=".75" /></Style>
     <Style Selector="^:pressed /template/ Border#ThumbnailFace"><Setter Property="RenderTransform" Value="scale(0.95)" /></Style>
-    <Style Selector="^.selected, ^:focus-visible"><Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" /></Style>
+    <Style Selector="^.selected"><Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" /></Style>
     <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#ThumbnailFace">
       <Setter Property="Transitions" Value="{x:Null}" />
     </Style>
@@ -113,6 +127,7 @@
   </ControlTheme>
 
   <ControlTheme x:Key="{x:Type alder:AlderCarousel}" TargetType="alder:AlderCarousel">
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
     <Setter Property="Focusable" Value="True" />
     <Setter Property="Background" Value="{DynamicResource AlderSurfaceSecondary}" />
     <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
@@ -145,7 +160,7 @@
           <Grid Grid.Row="1" ColumnDefinitions="*,Auto,*">
             <alder:AlderScrollViewer Name="PART_DotStrip" Grid.ColumnSpan="3" Margin="2,8,2,0" HorizontalAlignment="Center"
                           HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled" Focusable="False">
-              <StackPanel Name="PART_Dots" Orientation="Horizontal" />
+              <alder:AlderFilmstrip Name="PART_Dots" ItemWidth="22" />
             </alder:AlderScrollViewer>
             <alder:AlderButton Name="PART_PlayPause" Grid.Column="2" Size="Small" Variant="Ghost"
                                Margin="4,4,0,0" HorizontalAlignment="Right" />
@@ -153,7 +168,7 @@
           <Grid Name="PART_MiniatureBar" Grid.Row="2" ColumnDefinitions="Auto,*,Auto">
             <alder:AlderScrollShadow Name="PART_ThumbnailStrip" Grid.Column="1" Margin="0,8,0,0"
                                      Orientation="Horizontal" HideScrollBar="True" ShadowSize="12" Focusable="False">
-              <StackPanel Name="PART_Thumbnails" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="6" Margin="2" />
+              <alder:AlderFilmstrip Name="PART_Thumbnails" HorizontalAlignment="Center" ItemWidth="64" Spacing="6" Margin="2" />
             </alder:AlderScrollShadow>
           </Grid>
         </Grid>
@@ -175,5 +190,12 @@
     <Style Selector="^:miniatures /template/ Grid#PART_MiniatureBar"><Setter Property="Margin" Value="0,10,0,0" /></Style>
     <Style Selector="^:miniatures /template/ alder|AlderScrollShadow#PART_ThumbnailStrip"><Setter Property="Margin" Value="0" /></Style>
     <Style Selector="^:dragging /template/ Border#PART_Viewport"><Setter Property="Cursor" Value="SizeWestEast" /></Style>
+    <Style Selector="^:focus-visible /template/ :is(Button)#PART_Previous, ^:focus-visible /template/ :is(Button)#PART_Next">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ alder|AlderScrollViewer#PART_DotStrip">
+      <Setter Property="Background" Value="{DynamicResource AlderSurfaceSecondary}" />
+    </Style>
   </ControlTheme>
 </ResourceDictionary>

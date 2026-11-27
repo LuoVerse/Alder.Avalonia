@@ -7,6 +7,7 @@ using Alder.NativeMarkdown.Core.Model;
 using Alder.NativeMarkdown.Core.Streaming;
 using Alder.NativeMarkdown.UI;
 using Alder.NativeMarkdown.UI.Rendering;
+using Alder.NativeMarkdown.UI.Selection;
 using Alder.NativeMarkdown.UI.Transcript;
 using Avalonia;
 using Avalonia.Automation;
@@ -409,6 +410,60 @@ public sealed class AiInteractions
         Assert.Equal(label, CodeBlockView.LanguageLabel(input));
     }
 
+    [AvaloniaTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task CodeScrollbarDragsToBothEndsWithoutSelectingText(bool fenced)
+    {
+        var source = new string('x', 200) + " end";
+        MarkdownView view = fenced
+            ? new AlderMarkdown { Markdown = "```text\n" + source + "\n```" }
+            : new AlderCodeBlock { Code = source };
+        view.Width = 320;
+        var window = Show(new AlderScrollViewer { Content = view });
+        try
+        {
+            // The fenced Markdown case parses on a worker before creating the code view.
+            var deadline = DateTime.UtcNow.AddSeconds(3);
+            while (!view.GetVisualDescendants().OfType<CodeTextView>().Any() && DateTime.UtcNow < deadline)
+            {
+                await Task.Delay(10);
+                Pump(window);
+            }
+            var text = Assert.Single(view.GetVisualDescendants().OfType<CodeTextView>());
+            var origin = text.TranslatePoint(default, window)!.Value;
+            var trackY = origin.Y + text.Bounds.Height - 4;
+            var left = new Point(origin.X + 5, trackY);
+            var right = new Point(origin.X + text.Bounds.Width - 5, trackY);
+            var beyondRight = right + new Vector(32, 12);
+            var beyondLeft = left - new Vector(32, -12);
+            var initialEnd = text.GetCharacterBounds(source.Length).X;
+            Assert.True(initialEnd > text.Bounds.Width);
+
+            Drag(left, beyondRight);
+            Assert.InRange(text.GetCharacterBounds(source.Length).X, text.Bounds.Width - 2, text.Bounds.Width + 2);
+            Drag(right, beyondLeft);
+            Assert.Equal(initialEnd, text.GetCharacterBounds(source.Length).X, 2);
+
+            var middle = new Point((left.X + right.X) / 2, trackY);
+            window.MouseMove(middle);
+            window.MouseDown(middle, MouseButton.Left);
+            window.MouseUp(middle, MouseButton.Left);
+            Assert.InRange(text.GetCharacterBounds(source.Length).X, text.Bounds.Width + 4, initialEnd - 4);
+            Assert.True(((ISelectionHost)view).Selection.IsEmpty);
+
+            void Drag(Point start, Point end)
+            {
+                window.MouseMove(start);
+                window.MouseDown(start, MouseButton.Left);
+                window.MouseMove(end, RawInputModifiers.LeftMouseButton);
+                window.MouseUp(end, MouseButton.Left);
+                Pump(window);
+            }
+        }
+        finally { window.Close(); }
+    }
+
     [Fact]
     public void JsxTagsRemainHighlightedWhenAnAttributeSpansChunks()
     {
@@ -660,7 +715,9 @@ public sealed class AiInteractions
             Assert.Empty(block.GetVisualDescendants().OfType<IconButton>());
             Assert.True(copy.Focus(NavigationMethod.Tab));
             Pump(window);
-            Assert.NotNull(copy.BorderBrush);
+            var tint = Assert.Single(copy.GetVisualDescendants().OfType<ButtonTint>());
+            Assert.Equal(1, tint.Opacity);
+            Assert.Null(copy.BorderBrush);
             window.KeyPressQwerty(PhysicalKey.Enter, RawInputModifiers.None);
             window.KeyReleaseQwerty(PhysicalKey.Enter, RawInputModifiers.None);
             Pump(window);
@@ -672,11 +729,10 @@ public sealed class AiInteractions
             AlderMotion.SetReduced(window, false);
             var faceVisual = global::Avalonia.Rendering.Composition.ElementComposition.GetElementVisual(copy)!;
             Assert.Null(faceVisual.ImplicitAnimations);
-            Assert.Empty(copy.GetVisualDescendants().OfType<ButtonTint>());
             var target = copy.TranslatePoint(new Rect(copy.Bounds.Size).Center, window)!.Value;
             window.MouseMove(target);
             Pump(window);
-            var tint = Assert.Single(copy.GetVisualDescendants().OfType<ButtonTint>());
+            Assert.Same(tint, Assert.Single(copy.GetVisualDescendants().OfType<ButtonTint>()));
             var tintVisual = global::Avalonia.Rendering.Composition.ElementComposition.GetElementVisual(tint)!;
             Assert.NotNull(tintVisual.ImplicitAnimations);
             window.MouseDown(target, MouseButton.Left);
@@ -762,6 +818,45 @@ public sealed class AiInteractions
             Pump(window);
             Assert.Equal(new object?[] { "attachment" }, removed);
             Assert.Empty(opened);
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaFact]
+    public void PromptAttachmentOpensItsImageAndRestoresFocusOnDismissal()
+    {
+        var image = new DrawingImage
+        {
+            Drawing = new GeometryDrawing { Brush = Brushes.CornflowerBlue, Geometry = new RectangleGeometry(new Rect(0, 0, 160, 90)) }
+        };
+        var attachment = new AlderChatAttachment { FileName = "screenshot.png", Preview = image };
+        var prompt = new AlderPromptInput { Attachments = attachment };
+        var window = Show(prompt);
+        try
+        {
+            var open = attachment.GetVisualDescendants().OfType<AlderButton>().Single(button => button.Name == "Open");
+            Assert.True(open.IsEffectivelyVisible);
+            var center = open.TranslatePoint(new Rect(open.Bounds.Size).Center, window)!.Value;
+            window.MouseMove(center);
+            window.MouseDown(center, MouseButton.Left);
+            window.MouseUp(center, MouseButton.Left);
+            Pump(window);
+            var viewer = Assert.Single(window.GetVisualDescendants().OfType<ImageViewer>());
+            Assert.True(viewer.IsFocused);
+
+            window.KeyPressQwerty(PhysicalKey.Escape, RawInputModifiers.None);
+            window.KeyReleaseQwerty(PhysicalKey.Escape, RawInputModifiers.None);
+            Pump(window);
+            Assert.Empty(window.GetVisualDescendants().OfType<ImageViewer>());
+            Assert.True(open.IsFocused);
+
+            var customOpens = 0;
+            attachment.OpenCommand = new ActionCommand(_ => customOpens++);
+            Pump(window);
+            window.KeyPressQwerty(PhysicalKey.Space, RawInputModifiers.None);
+            window.KeyReleaseQwerty(PhysicalKey.Space, RawInputModifiers.None);
+            Assert.Equal(1, customOpens);
+            Assert.Empty(window.GetVisualDescendants().OfType<ImageViewer>());
         }
         finally { window.Close(); }
     }
@@ -1015,7 +1110,7 @@ public sealed class AiInteractions
         try
         {
             var image = source.GetVisualDescendants().OfType<Image>().Single(part => part.Name == "CitationLogo");
-            var icon = source.GetVisualDescendants().OfType<PathIcon>().Single(part => part.Name == "CitationIcon");
+            var icon = source.GetVisualDescendants().OfType<AlderIconPresenter>().Single(part => part.Name == "CitationIcon");
             Assert.Equal(24, source.Bounds.Height);
             Assert.Same(logo, image.Source);
             Assert.True(image.IsEffectivelyVisible);

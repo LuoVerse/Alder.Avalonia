@@ -21,7 +21,7 @@ public sealed class GalleryExampleTemplate : Template
         var card = (ExampleCard)Build()!;
         card.Name = Name;
         if (SetSources is { } setSources)
-            card.PrepareSourcesOnDemand(() => setSources(card));
+            card.DeferSources(() => setSources(card));
         return card;
     }
 }

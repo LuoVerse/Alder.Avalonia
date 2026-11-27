@@ -1,0 +1,106 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:conv="using:Avalonia.Data.Converters">
+  <ControlTheme x:Key="{x:Type alder:AlderExpandableActionBar}" TargetType="alder:AlderExpandableActionBar">
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="CornerRadius" Value="24" />
+    <Setter Property="Padding" Value="6" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="HighlightBrush" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.ActionBarActions}" />
+    <Setter Property="ItemsPanel">
+      <ItemsPanelTemplate><alder:AlderExpandableActionRail Spacing="6" /></ItemsPanelTemplate>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="PART_Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}"
+                Padding="{TemplateBinding Padding}" BoxShadow="{DynamicResource AlderToolbarShadow}" ClipToBounds="False">
+          <ScrollViewer Name="PART_ScrollViewer" HorizontalScrollBarVisibility="Hidden"
+                        VerticalScrollBarVisibility="Disabled" Focusable="False">
+            <Grid>
+              <alder:AlderExpandableActionHighlight Name="PART_Highlight" IsHitTestVisible="False" />
+              <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+            </Grid>
+          </ScrollViewer>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Size=Small]">
+      <Setter Property="Padding" Value="4" />
+      <Setter Property="CornerRadius" Value="20" />
+      <Setter Property="ItemsPanel">
+        <ItemsPanelTemplate><alder:AlderExpandableActionRail Spacing="4" /></ItemsPanelTemplate>
+      </Setter>
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderExpandableActionBarItem}" TargetType="alder:AlderExpandableActionBarItem">
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="Padding" Value="8,0" />
+    <Setter Property="MinWidth" Value="32" />
+    <Setter Property="Height" Value="32" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="PART_ButtonSurface" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+          <Grid>
+            <alder:AlderExpandableActionContent Name="ActionContent" Margin="{TemplateBinding Padding}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False">
+              <alder:AlderIconPresenter Name="PART_Icon" Width="16" Height="16" Content="{TemplateBinding Icon}" />
+              <Decorator>
+                <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
+              </Decorator>
+              <TextBlock Text="{TemplateBinding Shortcut}" FontSize="10" Foreground="{DynamicResource AlderMuted}" TextWrapping="NoWrap" />
+              <alder:AlderBadge Content="{TemplateBinding Badge}" Size="Small" Color="Danger" Variant="Soft"
+                                IsVisible="{CompiledBinding Badge, RelativeSource={RelativeSource TemplatedParent},
+                                                    Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+            </alder:AlderExpandableActionContent>
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Size=Small]">
+      <Setter Property="Padding" Value="7,0" />
+      <Setter Property="MinWidth" Value="28" />
+      <Setter Property="Height" Value="28" />
+      <Setter Property="CornerRadius" Value="14" />
+      <Setter Property="FontSize" Value="12" />
+    </Style>
+    <Style Selector="^[Size=Small] /template/ alder|AlderIconPresenter#PART_Icon">
+      <Setter Property="Width" Value="14" />
+      <Setter Property="Height" Value="14" />
+    </Style>
+    <Style Selector="^:highlighted, ^:focus-visible">
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    </Style>
+    <Style Selector="^:focus-visible:not(:highlighted):not(:disabled)">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.4" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=False] /template/ alder|AlderExpandableActionContent">
+      <Setter Property="Transitions">
+        <Transitions>
+          <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.32">
+            <TransformOperationsTransition.Easing>
+              <alder:AlderExpandableActionItemEasing />
+            </TransformOperationsTransition.Easing>
+          </TransformOperationsTransition>
+        </Transitions>
+      </Setter>
+      <Setter Property="RenderTransform" Value="scale(1)" />
+    </Style>
+    <Style Selector="^:pressed[(alder|AlderMotion.Reduced)=False] /template/ alder|AlderExpandableActionContent">
+      <Setter Property="RenderTransform" Value="scale(0.96)" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

@@ -40,8 +40,6 @@
                 <DoubleTransition Property="Height" Duration="0:0:0.15" Easing="0,0,0.2,1" />
               </Transitions>
             </Border.Transitions>
-            <Border Name="ThumbFocus" Margin="-7" CornerRadius="16" BorderThickness="2"
-                    BorderBrush="{DynamicResource AlderAccent}" IsHitTestVisible="False" IsVisible="False" />
           </Border>
         </Canvas>
       </ControlTemplate>
@@ -49,7 +47,7 @@
     <Style Selector="^:color-dragging /template/ Border#PART_Thumb">
       <Setter Property="Width" Value="20" /><Setter Property="Height" Value="20" />
     </Style>
-    <Style Selector="^:focus-visible /template/ Border#ThumbFocus"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#PART_Thumb"><Setter Property="BorderThickness" Value="4" /></Style>
     <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#PART_Thumb">
       <Setter Property="Transitions" Value="{x:Null}" />
     </Style>
@@ -83,7 +81,7 @@
     <Style Selector="^:invalid-color /template/ alder|InputFocusRing#FieldRing">
       <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldInvalidOutline}" />
     </Style>
-    <Style Selector="^:invalid-color:focus-within /template/ alder|InputFocusRing#FieldRing">
+    <Style Selector="^:invalid-color:focus /template/ alder|InputFocusRing#FieldRing">
       <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldInvalidRing}" />
     </Style>
   </ControlTheme>
@@ -96,17 +94,12 @@
         <Panel Background="Transparent">
           <Border Name="Face" Margin="2" CornerRadius="8" Background="{TemplateBinding Background}"
                   BorderBrush="White" BorderThickness="3" BoxShadow="{DynamicResource AlderToolbarShadow}" />
-          <Border Name="FocusRing" Margin="-2" CornerRadius="12" BorderThickness="2"
-                  BorderBrush="{DynamicResource AlderAccent}" IsHitTestVisible="False" Opacity="0">
-            <Border.Transitions>
-              <Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions>
-            </Border.Transitions>
-          </Border>
         </Panel>
       </ControlTemplate>
     </Setter>
-    <Style Selector="^[Tag=alder-color-focus] /template/ Border#FocusRing"><Setter Property="Opacity" Value="1" /></Style>
-    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#FocusRing"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^[Tag=alder-color-focus] /template/ Border#Face">
+      <Setter Property="BorderThickness" Value="4" />
+    </Style>
   </ControlTheme>
 
   <ControlTheme x:Key="{x:Type alder:AlderColorSlider}" TargetType="alder:AlderColorSlider">
@@ -224,8 +217,6 @@
               </alder:AlderPathIcon>
             </Panel>
           </Border>
-          <Border Name="FocusRing" Margin="-4" CornerRadius="{TemplateBinding CornerRadius}" BorderThickness="2"
-                  BorderBrush="{DynamicResource AlderAccent}" IsHitTestVisible="False" IsVisible="False" />
         </Panel>
       </ControlTemplate>
     </Setter>
@@ -260,7 +251,7 @@
     </Style>
     <Style Selector="^:selected /template/ alder|AlderColorSwatch#Swatch"><Setter Property="RenderTransform" Value="scale(0.77)" /></Style>
     <Style Selector="^:selected /template/ PathIcon#SelectedMark"><Setter Property="RenderTransform" Value="scale(1)" /></Style>
-    <Style Selector="^:focus-visible /template/ Border#FocusRing"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:focus-visible:not(:disabled) /template/ Border#Frame"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
     <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#Frame, ^[(alder|AlderMotion.Reduced)=True] /template/ alder|AlderColorSwatch#Swatch, ^[(alder|AlderMotion.Reduced)=True] /template/ PathIcon#SelectedMark">
       <Setter Property="Transitions" Value="{x:Null}" />
     </Style>
@@ -276,19 +267,14 @@
     <Setter Property="FocusAdorner" Value="{x:Null}" />
     <Setter Property="Template">
       <ControlTemplate>
-        <Panel Background="{TemplateBinding Background}">
+        <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
           <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
-          <Border Name="FocusRing" Margin="-4" CornerRadius="8" BorderThickness="2"
-                  BorderBrush="{DynamicResource AlderAccent}" IsHitTestVisible="False" Opacity="0">
-            <Border.Transitions>
-              <Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions>
-            </Border.Transitions>
-          </Border>
-        </Panel>
+        </Border>
       </ControlTemplate>
     </Setter>
-    <Style Selector="^:focus-visible /template/ Border#FocusRing"><Setter Property="Opacity" Value="1" /></Style>
-    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#FocusRing"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^:pointerover:not(:disabled), ^:focus-visible:not(:disabled)">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
     <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
   </ControlTheme>
 

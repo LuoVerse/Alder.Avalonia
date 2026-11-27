@@ -16,6 +16,41 @@ namespace Alder.Avalonia.Tests;
 public sealed class ChartInteractions
 {
     [AvaloniaFact]
+    public void DenseLineHoverUsesTheOriginalValuesAfterReplacingTheSeries()
+    {
+        const int count = 10001;
+        const int center = count / 2;
+        var values = new double?[count];
+        Array.Fill(values, 1d);
+        values[center] = 547;
+        var chart = new AlderLineChart
+        {
+            IsAnimationEnabled = false, ShowXAxis = false, ShowYAxis = false, ShowGrid = false,
+            Categories = Enumerable.Range(0, count).Select(i => i.ToString()).ToArray(),
+            Series = [new("Sample", values)]
+        };
+        var window = Show(chart);
+        try
+        {
+            MoveTo(window, chart, .5, .5);
+            Assert.Equal("5000", chart.ActiveData?.Label);
+            Assert.Equal("547", Assert.Single(chart.ActiveData!.Entries).Value);
+            var replacement = (double?[])values.Clone();
+            replacement[center] = null;
+            chart.Series = [new("Sample", replacement)];
+            Assert.Null(chart.ActiveData);
+            MoveTo(window, chart, .5, .55);
+            Assert.Null(chart.ActiveData);
+            replacement = (double?[])replacement.Clone();
+            replacement[center] = 13;
+            chart.Series = [new("Sample", replacement)];
+            MoveTo(window, chart, .5, .6);
+            Assert.Equal("13", Assert.Single(chart.ActiveData!.Entries).Value);
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaFact]
     public void AreaTooltipFollowsThePointerAndClearsWhenThePointerLeaves()
     {
         var chart = new AlderAreaChart

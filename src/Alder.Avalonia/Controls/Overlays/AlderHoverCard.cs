@@ -290,7 +290,7 @@ public sealed class AlderHoverCard : TemplatedControl
 
         body = new ContentPresenter { FontSize = FontSize, Foreground = Foreground };
         SetContent(body);
-        surface = new AnchoredSurface(tooltip: false) { Name = "AlderHoverCardSurface", Child = body, Focusable = true };
+        surface = new AnchoredSurface(tooltip: false) { Name = "AlderHoverCardSurface", Child = body, Focusable = true, FocusAdorner = null };
         AutomationProperties.SetControlTypeOverride(surface, AutomationControlType.Pane);
         KeyboardNavigation.SetIsTabStop(surface, false);
         surface.LayoutUpdated += PositionPreview;

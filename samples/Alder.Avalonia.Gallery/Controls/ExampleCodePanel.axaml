@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:md="using:Alder.NativeMarkdown.UI"
+             x:Class="Alder.Avalonia.Gallery.Controls.ExampleCodePanel">
+  <Grid RowDefinitions="Auto,Auto" Background="{DynamicResource GalleryCodeSurface}">
+    <Border Padding="6,0,6,6"
+            BorderBrush="{DynamicResource AlderBorder}" BorderThickness="0,0,0,1">
+      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+        <alder:AlderScrollViewer x:Name="CodeTabs" IsVisible="False"
+                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+          <Panel>
+            <alder:AlderListBox x:Name="AxamlKinds" Classes="segment" AutoScrollToSelectedItem="False"
+                     AutomationProperties.Name="AXAML" SelectionChanged="SourceChanged" />
+            <alder:AlderListBox x:Name="CodeKinds" Classes="segment" AutoScrollToSelectedItem="False"
+                     AutomationProperties.Name="{DynamicResource GalleryText.CSharpSourceKind}" SelectionChanged="SourceChanged" />
+          </Panel>
+        </alder:AlderScrollViewer>
+        <alder:AlderButton x:Name="CopyCodeButton" Grid.Column="1" Size="Small" Variant="Ghost"
+                           VerticalAlignment="Center" Icon="{DynamicResource AlderIconCopy}" Click="CopyCode">
+          <alder:AlderButton.Styles>
+            <Style Selector="alder|AlderButton#CopyCodeButton">
+              <Setter Property="Content" Value="{DynamicResource GalleryText.Copy}" />
+            </Style>
+            <Style Selector="alder|AlderButton#CopyCodeButton.copied">
+              <Setter Property="Content" Value="{DynamicResource GalleryText.CopiedCode}" />
+            </Style>
+            <Style Selector="alder|AlderButton#CopyCodeButton.copyFailed">
+              <Setter Property="Content" Value="{DynamicResource GalleryText.ClipboardIsUnavailable}" />
+            </Style>
+          </alder:AlderButton.Styles>
+        </alder:AlderButton>
+      </Grid>
+    </Border>
+    <alder:AlderCodeBlock x:Name="SourceCode" Grid.Row="1" FlowDirection="LeftToRight" Margin="0,4,0,6"
+                          AutomationProperties.Name="{DynamicResource GalleryText.FormattedExampleSource}">
+      <alder:AlderCodeBlock.Resources>
+        <md:MarkdownResourceAlias x:Key="Md.CodeBackground"><x:Arguments><x:String>GalleryCodeSurface</x:String></x:Arguments></md:MarkdownResourceAlias>
+        <md:MarkdownResourceAlias x:Key="Md.CodeForeground"><x:Arguments><x:String>GalleryCodeInk</x:String></x:Arguments></md:MarkdownResourceAlias>
+        <md:MarkdownResourceAlias x:Key="Md.SecondaryForeground"><x:Arguments><x:String>GalleryMuted</x:String></x:Arguments></md:MarkdownResourceAlias>
+        <md:MarkdownResourceAlias x:Key="Md.SelectionBackground"><x:Arguments><x:String>GalleryCodeSelection</x:String></x:Arguments></md:MarkdownResourceAlias>
+        <FontFamily x:Key="Md.MonospaceFontFamily">Menlo,Consolas,DejaVu Sans Mono,monospace</FontFamily>
+        <x:Double x:Key="Md.CodeFontSize">13</x:Double>
+        <x:Double x:Key="Md.CodeLineHeight">18.2</x:Double>
+        <CornerRadius x:Key="Md.CornerRadius">0</CornerRadius>
+      </alder:AlderCodeBlock.Resources>
+    </alder:AlderCodeBlock>
+  </Grid>
+</UserControl>

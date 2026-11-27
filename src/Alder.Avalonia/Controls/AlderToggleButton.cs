@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using Avalonia.Media;
 
 namespace Alder.Avalonia.Controls;
 
@@ -37,7 +36,7 @@ public class AlderToggleButton : ToggleButton
     public static readonly StyledProperty<bool> FullWidthProperty =
         AlderButton.FullWidthProperty.AddOwner<AlderToggleButton>();
     /// <summary>Identifies the <see cref="Icon"/> Avalonia property.</summary>
-    public static readonly StyledProperty<Geometry?> IconProperty =
+    public static readonly StyledProperty<object?> IconProperty =
         AlderButton.IconProperty.AddOwner<AlderToggleButton>();
 
     /// <summary>The visual treatment applied to the control.</summary>
@@ -48,8 +47,8 @@ public class AlderToggleButton : ToggleButton
     public bool IsIconOnly { get => GetValue(IsIconOnlyProperty); set => SetValue(IsIconOnlyProperty, value); }
     /// <summary>Whether the control stretches to fill the available width.</summary>
     public bool FullWidth { get => GetValue(FullWidthProperty); set => SetValue(FullWidthProperty, value); }
-    /// <summary>The optional geometry displayed with the content.</summary>
-    public Geometry? Icon { get => GetValue(IconProperty); set => SetValue(IconProperty, value); }
+    /// <summary>An optional geometry or icon control displayed with the content.</summary>
+    public object? Icon { get => GetValue(IconProperty); set => SetValue(IconProperty, value); }
 
     /// <inheritdoc />
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)

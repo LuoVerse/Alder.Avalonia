@@ -11,6 +11,7 @@ using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
 using Avalonia.Layout;
+using Avalonia.Rendering.Composition;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Xunit;
@@ -104,8 +105,10 @@ public sealed class DataGridInteractions
             Pump(window);
             Assert.Equal(252, customer.ActualWidth);
             AssertAligned(view, grid, customer, secondary, actions);
-            window.MouseUp(end, MouseButton.Left);
+            window.MouseUp(end + new Vector(18, 0), MouseButton.Left);
             Pump(window);
+            Assert.Equal(270, customer.ActualWidth);
+            AssertAligned(view, grid, customer, secondary, actions);
             Assert.DoesNotContain("column-resizing", header.Classes);
             Assert.False(Header(view, actions).GetVisualDescendants().OfType<Thumb>().Single().IsVisible);
 
@@ -122,10 +125,14 @@ public sealed class DataGridInteractions
     {
         var grid = CreateGrid(32, Column("Name", 350), Column("Details", 420));
         grid.RowHeight = 36;
+        grid.HeadingHeight = 52;
         var window = Show(grid);
         try
         {
             var scroll = Assert.IsType<AlderScrollViewer>(View(grid).Scroll);
+            var rows = scroll.GetVisualDescendants().OfType<Border>().Single(border => border.Name == "RowsSurface");
+            var rowsTop = Position(rows, scroll).Y;
+            Assert.Equal(52, rowsTop, 1);
             var bars = scroll.GetVisualDescendants().OfType<ScrollBar>().ToArray();
             Assert.Equal(2, bars.Length);
             foreach (var bar in bars)
@@ -133,8 +140,9 @@ public sealed class DataGridInteractions
                 bool vertical = bar.Orientation == Orientation.Vertical;
                 Assert.True(bar.IsVisible);
                 Assert.Equal(10, vertical ? bar.Bounds.Width : bar.Bounds.Height);
-                Assert.Equal(0, Grid.GetRow(bar));
                 Assert.Equal(0, Grid.GetColumn(bar));
+                var barTop = Position(bar, scroll).Y;
+                Assert.InRange(barTop, rowsTop, rowsTop + rows.Bounds.Height - bar.Bounds.Height);
                 Assert.All(bar.GetVisualDescendants().OfType<RepeatButton>(), button => Assert.Contains("Page", button.Name!));
                 var thumb = bar.GetVisualDescendants().OfType<Thumb>().Single();
                 var fill = thumb.GetVisualDescendants().OfType<Border>().Single(border => border.Name == "ThumbFill");
@@ -150,6 +158,77 @@ public sealed class DataGridInteractions
                 Pump(window);
                 Assert.True(vertical ? scroll.Offset.Y > 0 : scroll.Offset.X > 0);
             }
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaTheory]
+    [InlineData(TableVariant.Primary)]
+    [InlineData(TableVariant.Secondary)]
+    public void TableVerticalScrollbarStartsAtTheFirstDataRow(TableVariant variant)
+    {
+        var table = new AlderTable
+        {
+            Variant = variant,
+            ItemsSource = Enumerable.Range(1, 40).ToArray(),
+            Columns = { Column("Name", 240) },
+        };
+        var window = new Window { Width = 490, Height = 272, Content = table };
+        window.Show();
+        try
+        {
+            Pump(window);
+            var view = table.GetVisualDescendants().OfType<TableView>().Single();
+            var scroll = Assert.IsType<AlderScrollViewer>(view.Scroll);
+            var vertical = ScrollBarFor(scroll, Orientation.Vertical);
+            var rows = scroll.GetVisualDescendants().OfType<Border>().Single(border => border.Name == "RowsSurface");
+            Assert.True(vertical.IsVisible);
+            Assert.True(Position(rows, scroll).Y > 0);
+            Assert.Equal(Position(rows, scroll).Y, Position(vertical, scroll).Y, 1);
+            Assert.Equal(rows.Bounds.Height, vertical.Bounds.Height, 1);
+
+            table.ShowColumnHeaders = false;
+            Pump(window);
+            Assert.Equal(0, Position(vertical, scroll).Y, 1);
+            Assert.Equal(rows.Bounds.Height, vertical.Bounds.Height, 1);
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaFact]
+    public void PaginatedGridKeepsItsVerticalThumbBetweenTheHeaderAndFooterAtTheFarRight()
+    {
+        var grid = CreateGrid(10, Column("Member", 528), Column("Country", 149),
+            Column("Start date", 160), Column("Teams", 330));
+        grid.Height = 614;
+        grid.MinRowHeight = 57;
+        grid.SelectionMode = TableSelectionMode.Multiple;
+        grid.ShowSelectionCheckboxes = true;
+        var footer = new AlderPagination { PageCount = 10, Summary = "1 to 10 of 100" };
+        grid.Footer = footer;
+        var window = new Window { Width = 936, Height = 700, Content = grid };
+        AlderMotion.SetReduced(window, true);
+        window.Show();
+        window.SetRenderScaling(2);
+        try
+        {
+            Pump(window);
+            var scroll = Assert.IsType<AlderScrollViewer>(View(grid).Scroll);
+            Assert.True(scroll.ScrollBarMaximum.X > 0 && scroll.ScrollBarMaximum.Y > 0);
+            var bar = ScrollBarFor(scroll, Orientation.Vertical);
+            var rows = scroll.GetVisualDescendants().OfType<Border>().Single(border => border.Name == "RowsSurface");
+            var thumb = bar.GetVisualDescendants().OfType<Thumb>().Single();
+
+            scroll.Offset = new Vector(scroll.ScrollBarMaximum.X, 0);
+            Pump(window);
+            window.MouseMove(Position(thumb, window) + new Vector(thumb.Bounds.Width / 2, thumb.Bounds.Height / 2));
+            Pump(window);
+            Assert.Equal(1, bar.Opacity);
+            Assert.True(Position(thumb, window).Y >= Position(rows, window).Y);
+
+            scroll.Offset = scroll.ScrollBarMaximum;
+            Pump(window);
+            Assert.True(Position(thumb, window).Y + thumb.Bounds.Height <= Position(footer, window).Y);
         }
         finally { window.Close(); }
     }
@@ -173,6 +252,12 @@ public sealed class DataGridInteractions
             void Check(double horizontalOpacity, double verticalOpacity) =>
                 Assert.Equal((horizontalOpacity, verticalOpacity), (horizontal.Opacity, vertical.Opacity));
 
+            Check(0, 0);
+
+            var header = scroll.GetVisualDescendants().OfType<Border>().Single(border => border.Name == "HeaderSurface");
+            window.MouseMove(new Point(Position(vertical, window).X + vertical.Bounds.Width / 2,
+                Position(header, window).Y + header.Bounds.Height / 2));
+            Pump(window);
             Check(0, 0);
 
             var inside = grid.TranslatePoint(new Point(30, 60), window)!.Value;
@@ -243,20 +328,28 @@ public sealed class DataGridInteractions
     [AvaloniaFact]
     public void VirtualizationRecyclesRowsAndUsesAnExplicitRowHeight()
     {
-        var grid = CreateGrid(10_000, Column("Name", 175));
+        var start = Column("Name", 100, TableColumnPin.Start);
+        var end = Column("Actions", 90, TableColumnPin.End);
+        var grid = CreateGrid(100_000, start, Column("Description", 580), end);
         grid.RowHeight = 40;
         grid.HeadingHeight = 48;
         var window = Show(grid);
         try
         {
             var view = View(grid);
-            Assert.Equal(10_000, grid.VisibleRowCount);
+            Assert.Equal(100_000, grid.VisibleRowCount);
             Assert.InRange(view.GetRealizedContainers().Count(), 2, 15);
             Assert.All(view.GetRealizedContainers(), row => Assert.Equal(40, row.Bounds.Height));
             Assert.Equal(48, Header(view, grid.Columns[0]).Bounds.Height);
-            view.ScrollIntoView(9_999);
+            view.ScrollIntoView(99_999);
             Pump(window);
-            Assert.Contains(view.GetRealizedContainers(), row => view.IndexFromContainer(row) == 9_999);
+            Assert.Contains(view.GetRealizedContainers(), row => view.IndexFromContainer(row) == 99_999);
+            Assert.InRange(view.GetRealizedContainers().Count(), 2, 15);
+            var scroll = Assert.IsType<AlderScrollViewer>(view.Scroll);
+            scroll.Offset = new Vector(220, 0);
+            Pump(window);
+            Assert.Contains(view.GetRealizedContainers(), row => view.IndexFromContainer(row) == 0);
+            AssertAligned(view, grid, start, end);
 
             grid.ItemsSource = Enumerable.Range(1, 24).ToArray();
             grid.Virtualized = false;
@@ -266,6 +359,66 @@ public sealed class DataGridInteractions
             grid.Virtualized = true;
             Pump(window);
             Assert.InRange(view.GetRealizedContainers().Count(), 2, 15);
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaFact]
+    public void FixedHeightRowsDeferOffscreenCellTemplatesAndRestoreThemOnScroll()
+    {
+        var columns = Enumerable.Range(0, 30).Select(i => Column($"Column {i}", 100)).ToArray();
+        var grid = CreateGrid(1000, columns);
+        grid.RowHeight = 36;
+        var window = Show(grid);
+        try
+        {
+            var view = View(grid);
+            var row = Assert.IsType<TableViewRow>(view.ContainerFromIndex(0));
+            var cells = row.GetVisualDescendants().OfType<TableViewCell>().ToArray();
+            Assert.Equal(30, cells.Length);
+            Assert.True(cells[0].IsVisible);
+            Assert.False(cells[^1].IsVisible);
+            Assert.Empty(cells[^1].GetVisualChildren());
+            var scroll = Assert.IsType<AlderScrollViewer>(view.Scroll);
+            scroll.Offset = new Vector(scroll.Extent.Width - scroll.Viewport.Width, 0);
+            Pump(window);
+            Assert.False(cells[0].IsVisible);
+            Assert.True(cells[^1].IsVisible);
+            Assert.NotEmpty(cells[^1].GetVisualChildren());
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaFact]
+    public void TableAutoHeightMeasuresWideCellsAndFixedHeightDefersTheirTemplates()
+    {
+        var table = new AlderTable { ItemsSource = new[] { 1, 2, 3 } };
+        var columns = Enumerable.Range(0, 12).Select(i => Column($"Column {i}", 100)).ToArray();
+        columns[^1].CellTemplate = new FuncDataTemplate<int>((_, _) => new Border { Height = 90 });
+        table.Columns.AddRange(columns);
+        var window = Show(table);
+        try
+        {
+            var view = View(table);
+            var row = Assert.IsType<TableViewRow>(view.ContainerFromIndex(0));
+            var cells = row.GetVisualDescendants().OfType<TableViewCell>().ToArray();
+            Assert.True(row.Bounds.Height >= 90);
+            Assert.NotEmpty(cells[^1].GetVisualChildren());
+
+            table.RowHeight = 40;
+            Pump(window);
+            Assert.Equal(40, row.Bounds.Height);
+            Assert.False(cells[^1].IsVisible);
+            var scroll = Assert.IsType<AlderScrollViewer>(view.Scroll);
+            scroll.Offset = new Vector(scroll.Extent.Width - scroll.Viewport.Width, 0);
+            Pump(window);
+            Assert.True(cells[^1].IsVisible);
+            Assert.False(cells[0].IsVisible);
+
+            table.RowHeight = double.NaN;
+            Pump(window);
+            Assert.True(row.Bounds.Height >= 90);
+            Assert.True(cells[0].IsVisible);
         }
         finally { window.Close(); }
     }
@@ -428,7 +581,8 @@ public sealed class DataGridInteractions
             var image = preview.GetVisualDescendants().OfType<Image>().Single();
             var source = Assert.IsType<global::Avalonia.Media.Imaging.RenderTargetBitmap>(image.Source);
             var expected = Position(row, window) + (first - origin);
-            var actual = Position(preview, window);
+            Assert.Null(preview.RenderTransform);
+            var actual = PreviewPosition(preview, window);
             Assert.Equal(expected.X - 1, actual.X, 1);
             Assert.Equal(expected.Y - 1, actual.Y, 1);
             Assert.False(preview.IsHitTestVisible);
@@ -436,7 +590,7 @@ public sealed class DataGridInteractions
             var nearBottom = new Point(first.X + 45, window.ClientSize.Height - 12);
             window.MouseMove(nearBottom, RawInputModifiers.LeftMouseButton);
             Pump(window);
-            var atBottom = Position(preview, window);
+            var atBottom = PreviewPosition(preview, window);
             Assert.Equal(atBottom.X - actual.X, nearBottom.X - first.X, 1);
             Assert.Equal(atBottom.Y - actual.Y, nearBottom.Y - first.Y, 1);
 
@@ -444,10 +598,15 @@ public sealed class DataGridInteractions
             Pump(window);
             var scroll = Assert.IsType<AlderScrollViewer>(view.Scroll);
             Assert.True(scroll.Offset.Y > 0);
-            Assert.Equal(atBottom, Position(preview, window));
+            Assert.Equal(atBottom, PreviewPosition(preview, window));
             Assert.Same(source, image.Source);
 
-            window.MouseUp(nearBottom, MouseButton.Left);
+            // Native backends can send the last move without the button flag before dispatching release.
+            var released = nearBottom - new Vector(12, 6);
+            window.MouseMove(released);
+            Pump(window);
+            Assert.Equal(atBottom - new Vector(12, 6), PreviewPosition(preview, window));
+            window.MouseUp(released, MouseButton.Left);
             Pump(window);
             Assert.Equal(1, Assert.Single(moves).RowKey);
             Assert.Null(preview.GetVisualParent());
@@ -486,6 +645,8 @@ public sealed class DataGridInteractions
             Pump(window);
 
             Assert.Equal(commitMove ? new[] { 2, 3, 4, 1, 5 } : [1, 2, 3, 4, 5], view.ItemsView.OfType<int>().Take(5));
+            var movedRow = view.ContainerFromIndex(commitMove ? 3 : 0)!;
+            Assert.Equal(commitMove && !reducedMotion, movedRow.Classes.Contains("grid-drop-settling"));
             var field = typeof(AlderDataGrid).GetField("movingRows", BindingFlags.Instance | BindingFlags.NonPublic)!;
             var moving = Assert.IsType<HashSet<Control>>(field.GetValue(grid));
             Assert.Equal(commitMove && !reducedMotion ? new[] { 2, 3, 4 } : [], moving.Select(row => (int)row.DataContext!).Order());
@@ -494,6 +655,8 @@ public sealed class DataGridInteractions
             scroll.Offset = new Vector(0, 4200);
             Pump(window);
             Assert.Empty(moving);
+            Assert.DoesNotContain("grid-drop-settling", movedRow.Classes);
+            Assert.DoesNotContain(window.GetVisualDescendants().OfType<Border>(), border => border.Name == "DataGridDragPreview");
         }
         finally { window.Close(); }
     }
@@ -569,12 +732,18 @@ public sealed class DataGridInteractions
     private static AlderTableColumn Column(string title, double width, TableColumnPin pin = TableColumnPin.None) =>
         new() { Header = title, Key = title.ToLowerInvariant(), Width = new GridLength(width), Pin = pin };
 
-    private static TableView View(AlderDataGrid grid) => grid.GetVisualDescendants().OfType<TableView>().Single();
+    private static TableView View(AlderTable grid) => grid.GetVisualDescendants().OfType<TableView>().Single();
     private static ScrollBar ScrollBarFor(ScrollViewer scroll, Orientation orientation) =>
         scroll.GetVisualDescendants().OfType<ScrollBar>().Single(bar => bar.Orientation == orientation);
     private static TableViewColumnHeader Header(TableView view, TableViewColumn column) =>
         view.GetVisualDescendants().OfType<TableViewColumnHeader>().Single(header => header.Column == column);
     private static Point Position(Control control, Control relativeTo) => control.TranslatePoint(default, relativeTo)!.Value;
+
+    private static Point PreviewPosition(Control preview, Control relativeTo)
+    {
+        var visual = ElementComposition.GetElementVisual(preview)!;
+        return Position(preview, relativeTo) + new Vector(visual.Translation.X, visual.Translation.Y);
+    }
 
     private static Button DragHandle(TableView view, int index) =>
         view.ContainerFromIndex(index)!.GetVisualDescendants().OfType<Button>().Single(button => AutomationProperties.GetName(button) == "Reorder row");
@@ -589,7 +758,7 @@ public sealed class DataGridInteractions
         }
     }
 
-    private static Window Show(AlderDataGrid grid)
+    private static Window Show(AlderTable grid)
     {
         var window = new Window { Width = 490, Height = 272, Content = grid };
         window.Show();

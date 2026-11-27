@@ -44,7 +44,7 @@
             <Panel>
               <alder:AlderTextBlock Name="Number" Text="{TemplateBinding Number}" FontWeight="SemiBold"
                          HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource AlderMuted}" />
-              <alder:AlderPathIcon Name="Glyph" Data="{TemplateBinding DisplayIcon}" Width="14" Height="14" FlowDirection="LeftToRight"
+              <alder:AlderIconPresenter Name="Glyph" Content="{TemplateBinding DisplayIcon}" Width="14" Height="14" FlowDirection="LeftToRight"
                         HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource AlderMuted}" IsVisible="False" />
               <Border Name="Dot" Width="7" Height="7" CornerRadius="4" HorizontalAlignment="Center" VerticalAlignment="Center"
                       Background="{DynamicResource AlderMuted}" IsVisible="False" />
@@ -76,12 +76,12 @@
     <Style Selector="^:small">
       <Setter Property="FontSize" Value="11" />
       <Style Selector="^ /template/ Border#Indicator"><Setter Property="Width" Value="22" /><Setter Property="Height" Value="22" /></Style>
-      <Style Selector="^ /template/ PathIcon#Glyph"><Setter Property="Width" Value="12" /><Setter Property="Height" Value="12" /></Style>
+      <Style Selector="^ /template/ alder|AlderIconPresenter#Glyph"><Setter Property="Width" Value="12" /><Setter Property="Height" Value="12" /></Style>
     </Style>
     <Style Selector="^:large">
       <Setter Property="FontSize" Value="14" />
       <Style Selector="^ /template/ Border#Indicator"><Setter Property="Width" Value="36" /><Setter Property="Height" Value="36" /></Style>
-      <Style Selector="^ /template/ PathIcon#Glyph"><Setter Property="Width" Value="18" /><Setter Property="Height" Value="18" /></Style>
+      <Style Selector="^ /template/ alder|AlderIconPresenter#Glyph"><Setter Property="Width" Value="18" /><Setter Property="Height" Value="18" /></Style>
     </Style>
     <Style Selector="^:first /template/ alder|AlderStepperRail#LeadingRail, ^:last /template/ alder|AlderStepperRail#TrailingRail, ^:vertical /template/ alder|AlderStepperRail#LeadingRail">
       <Setter Property="IsVisible" Value="False" />
@@ -103,11 +103,11 @@
     <Style Selector="^:vertical:last /template/ Grid#Labels"><Setter Property="Margin" Value="10,1,0,0" /></Style>
     <Style Selector="^:vertical /template/ TextBlock#Title, ^:vertical /template/ TextBlock#Description"><Setter Property="TextAlignment" Value="Start" /></Style>
     <Style Selector="^:vertical /template/ ContentPresenter#ItemContent"><Setter Property="HorizontalAlignment" Value="Left" /></Style>
-    <Style Selector="^:icon /template/ PathIcon#Glyph, ^:bullet /template/ Border#Dot, ^:custom-indicator /template/ ContentPresenter#CustomIndicator">
+    <Style Selector="^:icon /template/ alder|AlderIconPresenter#Glyph, ^:bullet /template/ Border#Dot, ^:custom-indicator /template/ ContentPresenter#CustomIndicator">
       <Setter Property="IsVisible" Value="True" />
     </Style>
     <Style Selector="^:icon /template/ TextBlock#Number, ^:bullet /template/ TextBlock#Number, ^:custom-indicator /template/ TextBlock#Number,
-                     ^:custom-indicator /template/ PathIcon#Glyph, ^:custom-indicator /template/ Border#Dot">
+                     ^:custom-indicator /template/ alder|AlderIconPresenter#Glyph, ^:custom-indicator /template/ Border#Dot">
       <Setter Property="IsVisible" Value="False" />
     </Style>
     <Style Selector="^[Status=Active]"><Setter Property="AutomationProperties.ItemStatus" Value="{DynamicResource AlderText.StepperActive}" /></Style>
@@ -129,13 +129,13 @@
     <Style Selector="^[Status=Active] /template/ TextBlock#Number">
       <Setter Property="Foreground" Value="{CompiledBinding StepAccent, RelativeSource={RelativeSource AncestorType=alder:AlderStepperStep}}" />
     </Style>
-    <Style Selector="^[Status=Active] /template/ PathIcon#Glyph">
+    <Style Selector="^[Status=Active] /template/ alder|AlderIconPresenter#Glyph">
       <Setter Property="Foreground" Value="{CompiledBinding StepAccent, RelativeSource={RelativeSource AncestorType=alder:AlderStepperStep}}" />
     </Style>
     <Style Selector="^[Status=Complete] /template/ TextBlock#Number">
       <Setter Property="Foreground" Value="{CompiledBinding StepOnAccent, RelativeSource={RelativeSource AncestorType=alder:AlderStepperStep}}" />
     </Style>
-    <Style Selector="^[Status=Complete] /template/ PathIcon#Glyph">
+    <Style Selector="^[Status=Complete] /template/ alder|AlderIconPresenter#Glyph">
       <Setter Property="Foreground" Value="{CompiledBinding StepOnAccent, RelativeSource={RelativeSource AncestorType=alder:AlderStepperStep}}" />
     </Style>
     <Style Selector="^[Status=Active] /template/ Border#Dot">
@@ -144,10 +144,10 @@
     <Style Selector="^[Status=Complete] /template/ Border#Dot">
       <Setter Property="Background" Value="{CompiledBinding StepOnAccent, RelativeSource={RelativeSource AncestorType=alder:AlderStepperStep}}" />
     </Style>
-    <Style Selector="^:focus-visible /template/ Border#Indicator">
-      <Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" />
-    </Style>
-    <Style Selector="^:pointerover:not(:display-only) /template/ TextBlock#Title">
+    <Style Selector="^:focus-visible:not(:display-only):not(:disabled) /template/ Border#Indicator"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
+    <Style Selector="^[Status=Active]:focus-visible:not(:display-only):not(:disabled) /template/ Border#Indicator"><Setter Property="Background" Value="{DynamicResource AlderSoftHover}" /></Style>
+    <Style Selector="^[Status=Complete]:focus-visible:not(:display-only):not(:disabled) /template/ Border#Indicator"><Setter Property="Background" Value="{DynamicResource AlderAccentHover}" /></Style>
+    <Style Selector="^:pointerover:not(:display-only) /template/ TextBlock#Title, ^:focus-visible:not(:display-only) /template/ TextBlock#Title">
       <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
     </Style>
     <Style Selector="^:disabled /template/ Grid#StepLayout"><Setter Property="Opacity" Value="0.5" /></Style>

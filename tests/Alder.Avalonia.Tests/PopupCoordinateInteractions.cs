@@ -118,6 +118,51 @@ public sealed class PopupCoordinateInteractions
         }, TestContext.Current.CancellationToken);
     }
 
+    [Theory]
+    [InlineData(typeof(LogicalDesktopTestApp), true)]
+    [InlineData(typeof(CompositorPositionedTestApp), false)]
+    public async Task NativeFlyoutAnchorsAtTwoTimesRenderScaling(Type appType, bool canPositionWindow)
+    {
+        await using var session = HeadlessUnitTestSession.StartNew(appType);
+        await session.Dispatch(() =>
+        {
+            var flyout = new AlderMenuFlyout { Placement = PlacementMode.Bottom };
+            flyout.Items.Add(new AlderMenuItem { Header = "Edit" });
+            flyout.Popup.ShouldUseOverlayLayer = false;
+            var trigger = new AlderButton
+            {
+                Content = "Options", Width = 120, HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            var window = new Window { Width = 380, Height = 360, Content = trigger };
+            AlderMotion.SetReduced(window, true);
+            window.Show();
+            try
+            {
+                window.SetRenderScaling(2);
+                var position = new PixelPoint(52, 56);
+                window.Position = position;
+                Assert.Equal(canPositionWindow ? position : default, window.Position);
+
+                flyout.ShowAt(trigger);
+                Dispatcher.UIThread.RunJobs();
+                window.UpdateLayout();
+                Dispatcher.UIThread.RunJobs();
+                var menu = Assert.IsType<AlderMenuFlyoutPresenter>(flyout.Popup.Child);
+                Assert.NotSame(window, TopLevel.GetTopLevel(menu));
+                Assert.True(menu.IsAttachedToVisualTree() && menu.Bounds.Width > 0);
+
+                var triggerStart = trigger.TranslatePoint(default, window)!.Value;
+                var popupStart = window.PointToClient(menu.PointToScreen(default));
+                Assert.InRange(popupStart.Y - (triggerStart.Y + trigger.Bounds.Height), 0, 16);
+                Assert.InRange(popupStart.X + menu.Bounds.Width / 2 - (triggerStart.X + trigger.Bounds.Width / 2), -1, 1);
+                flyout.Hide();
+                Assert.False(flyout.IsOpen);
+            }
+            finally { window.Close(); }
+        }, TestContext.Current.CancellationToken);
+    }
+
     private static void ConfigureWindow(Window window, double scale, bool canPositionWindow)
     {
         window.SetRenderScaling(scale);

@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:conv="using:Avalonia.Data.Converters"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.WorkflowEditorExample"
+             x:DataType="vm:WorkflowEditorViewModel">
+  <gallery:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.Usage}">
+    <gallery:ExampleCard.Preview>
+      <Grid RowDefinitions="Auto,Auto,*" RowSpacing="10">
+        <WrapPanel ItemSpacing="8" LineSpacing="8">
+          <alder:AlderButton Variant="Outline" Content="{DynamicResource GalleryText.WorkflowEditorImport}"
+                             Command="{CompiledBinding ImportCommand}" CommandParameter="{CompiledBinding #Editor}" />
+          <alder:AlderButton Variant="Outline" Content="{DynamicResource GalleryText.WorkflowEditorExport}"
+                             Command="{CompiledBinding ExportCommand}" CommandParameter="{CompiledBinding #Editor}" />
+          <alder:AlderButton Variant="Secondary" Content="{DynamicResource GalleryText.WorkflowEditorTrial}"
+                             Command="{CompiledBinding TrialCommand}" CommandParameter="{CompiledBinding #Editor}" />
+          <alder:AlderButton Variant="Ghost" Content="{DynamicResource GalleryText.WorkflowEditorReset}"
+                             Command="{CompiledBinding ResetCommand}" />
+        </WrapPanel>
+        <alder:AlderTextBlock Grid.Row="1" Text="{CompiledBinding Status}" TextWrapping="Wrap"
+                             IsVisible="{CompiledBinding Status, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}"
+                             Foreground="{DynamicResource AlderMuted}" AutomationProperties.LiveSetting="Polite" />
+        <alder:AlderWorkflowEditor x:Name="Editor" Grid.Row="2" Height="730"
+                                   Workflow="{CompiledBinding Workflow, Mode=TwoWay}" SaveCommand="{CompiledBinding SaveCommand}"
+                                   UserItems="{CompiledBinding Users}" RoleItems="{CompiledBinding Roles}"
+                                   ConditionalTypes="{CompiledBinding Conditions}" />
+      </Grid>
+    </gallery:ExampleCard.Preview>
+    <gallery:ExampleCard.CSharpSource><![CDATA[
+      var editor = new AlderWorkflowEditor
+      {
+          Workflow = AlderWorkflowDefinition.FromJson(savedJson),
+          UserItems = users,
+          RoleItems = roles,
+          ConditionalTypes = fields,
+          SaveCommand = ReactiveCommand.Create<AlderWorkflowDefinition>(definition =>
+          {
+              savedJson = definition.ToJson();
+          })
+      };
+    ]]></gallery:ExampleCard.CSharpSource>
+  </gallery:ExampleCard>
+</UserControl>

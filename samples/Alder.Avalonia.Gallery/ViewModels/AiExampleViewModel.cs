@@ -9,6 +9,7 @@ using Avalonia.Input.Platform;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Avalonia.Platform.Storage;
 using ReactiveUI;
 
 namespace Alder.Avalonia.Gallery.ViewModels;
@@ -18,13 +19,17 @@ public sealed partial class AiExampleViewModel : GalleryViewModel
 {
     private CancellationTokenSource? response;
     private string? feedbackKey;
+    private readonly HashSet<ChatAttachmentFile> pickedAttachments = [];
+    private ChatAttachmentFile? attachment;
+    private int attachmentGeneration;
     private static TopLevel? Owner => App.GalleryTopLevel;
 
     public string? Draft { get => field; set => this.RaiseAndSetIfChanged(ref field, value); }
     public bool VoicePreviewActive { get => field; set => this.RaiseAndSetIfChanged(ref field, value); }
     public bool Running { get => field; private set => this.RaiseAndSetIfChanged(ref field, value); }
     public bool Submitting { get => field; private set => this.RaiseAndSetIfChanged(ref field, value); }
-    public string? FileName { get => field; private set => this.RaiseAndSetIfChanged(ref field, value); }
+    public string? FileName => attachment?.Name;
+    public IImage? AttachmentPreview => attachment?.Preview;
     public string? Feedback => feedbackKey is null ? null : Text(feedbackKey);
     public object? Model { get => field; set => this.RaiseAndSetIfChanged(ref field, value); }
     public object? Effort { get => field; set => this.RaiseAndSetIfChanged(ref field, value); } = "High";
@@ -220,11 +225,7 @@ public sealed partial class AiExampleViewModel : GalleryViewModel
         {
             field = value;
             if (value == AiGalleryScenario.Mentions) Draft = Text("AiMentionDraft");
-            if (value == AiGalleryScenario.Queue && Queue.Count == 0)
-            {
-                foreach (var key in new[] { "AiQueueOne", "AiQueueTwo", "AiQueueThree" }) Queue.Add(new AiQueuedPrompt(Text(key)));
-                Queue.Add(new AiQueuedPrompt("", "mockup.png"));
-            }
+            if (value == AiGalleryScenario.Queue && Queue.Count == 0) SeedQueue();
             if (value == AiGalleryScenario.Effort) { Model = Models[2]; Effort = "Max"; }
             if (value == AiGalleryScenario.ModelUsage) Effort = "Ultra";
             if (value == AiGalleryScenario.Models) Effort = "Medium";
@@ -352,10 +353,12 @@ public sealed partial class AiExampleViewModel : GalleryViewModel
     public ICommand Copy { get; }
     public ICommand Attach { get; }
     public ICommand Remove { get; }
+    public ICommand ResetQueue { get; }
     public ICommand Enqueue { get; }
 
     public AiExampleViewModel()
     {
+        Queue.CollectionChanged += (_, _) => ReleaseUnusedAttachments();
         Model = Models[1];
         Dismiss = ReactiveCommand.Create(() => Dismissed = true);
         Restart = ReactiveCommand.Create(() =>
@@ -387,19 +390,20 @@ public sealed partial class AiExampleViewModel : GalleryViewModel
             if (Owner?.Clipboard is { } clipboard) await clipboard.SetTextAsync(value ?? Text("AiAssistantReply"));
             Notify("AiCopied");
         });
-        Attach = ReactiveCommand.CreateFromTask(async () =>
+        Attach = ReactiveCommand.CreateFromTask(PickAttachmentAsync);
+        Remove = ReactiveCommand.Create(() => { attachmentGeneration++; SetAttachment(null); });
+        ResetQueue = ReactiveCommand.Create(() =>
         {
-            if (Owner is not { } owner) return;
-            var files = await owner.StorageProvider.OpenFilePickerAsync(new() { AllowMultiple = false });
-            if (files.Count > 0) FileName = files[0].Name;
-            foreach (var file in files) file.Dispose();
+            attachmentGeneration++;
+            SetAttachment(null);
+            SeedQueue();
+            Draft = "";
         });
-        Remove = ReactiveCommand.Create(() => FileName = null);
         Enqueue = ReactiveCommand.Create<string?>(value =>
         {
-            if (string.IsNullOrWhiteSpace(value) && FileName is null) return;
-            Queue.Add(new AiQueuedPrompt(value ?? "", FileName));
-            FileName = null;
+            if (string.IsNullOrWhiteSpace(value) && attachment is null) return;
+            Queue.Add(new AiQueuedPrompt(value ?? "", attachment));
+            SetAttachment(null);
             Draft = "";
         });
     }
@@ -449,11 +453,78 @@ public sealed partial class AiExampleViewModel : GalleryViewModel
         this.RaisePropertyChanged(nameof(SkippedLabel));
     }
 
+    private async Task PickAttachmentAsync()
+    {
+        if (Owner?.StorageProvider is not { CanOpen: true } storage) return;
+        int generation = attachmentGeneration;
+        IReadOnlyList<IStorageFile> files;
+        try
+        {
+            files = await storage.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = Text("AiChooseAttachments"),
+                AllowMultiple = false
+            });
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or NotSupportedException)
+        {
+            return;
+        }
+
+        try
+        {
+            if (generation != attachmentGeneration || files.Count == 0) return;
+            var picked = await ChatAttachmentFile.ReadAsync(files[0]);
+            if (generation == attachmentGeneration)
+            {
+                pickedAttachments.Add(picked);
+                SetAttachment(picked);
+            }
+            else
+                picked.Preview?.Dispose();
+        }
+        finally
+        {
+            foreach (var file in files) file.Dispose();
+        }
+    }
+
+    private void SetAttachment(ChatAttachmentFile? value)
+    {
+        if (ReferenceEquals(attachment, value)) return;
+        attachment = value;
+        this.RaisePropertyChanged(nameof(AttachmentPreview));
+        this.RaisePropertyChanged(nameof(FileName));
+        ReleaseUnusedAttachments();
+    }
+
+    private void ReleaseUnusedAttachments()
+    {
+        // A queued prompt and its duplicates can reference the same bitmap as the draft.
+        pickedAttachments.RemoveWhere(file =>
+        {
+            if (ReferenceEquals(attachment, file) || Queue.Any(item => ReferenceEquals(item.Attachment, file)))
+                return false;
+            file.Preview?.Dispose();
+            return true;
+        });
+    }
+
+    private void SeedQueue()
+    {
+        Queue.Clear();
+        foreach (var key in new[] { "AiQueueOne", "AiQueueTwo", "AiQueueThree" })
+            Queue.Add(new AiQueuedPrompt(Text(key)));
+        Queue.Add(new AiQueuedPrompt("", new ChatAttachmentFile("mockup.png", null, null)));
+    }
+
     internal void EditQueued(AiQueuedPrompt item)
     {
-        if (!Queue.Remove(item)) return;
+        if (!Queue.Contains(item)) return;
+        attachmentGeneration++;
+        SetAttachment(item.Attachment);
+        Queue.Remove(item);
         Draft = item.Text;
-        FileName = item.Attachment;
     }
 
     private ContentEntry Assistant(string text, bool actions = false)
@@ -598,10 +669,10 @@ public enum AiGalleryScenario { Default, Flight, Markdown, RepairMarkdown, Chain
 
 
 /// <summary>A queued prompt has an identity even when two drafts contain the same text.</summary>
-public sealed class AiQueuedPrompt(string text, string? attachment = null)
+public sealed class AiQueuedPrompt(string text, ChatAttachmentFile? attachment = null)
 {
     public string Text { get; } = text;
-    public string? Attachment { get; } = attachment;
+    public ChatAttachmentFile? Attachment { get; } = attachment;
     public bool HasText => !string.IsNullOrWhiteSpace(Text);
 }
 

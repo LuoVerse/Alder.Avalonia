@@ -66,7 +66,7 @@
         <Border Name="Row" Padding="{TemplateBinding Padding}" CornerRadius="{TemplateBinding CornerRadius}"
                 Background="{TemplateBinding Background}">
           <DockPanel>
-            <ContentPresenter Name="RowIcon" DockPanel.Dock="Right" Content="{TemplateBinding Icon}" Margin="8,0,0,0"
+            <alder:AlderIconPresenter Width="16" Height="16" Name="RowIcon" DockPanel.Dock="Right" Content="{TemplateBinding Icon}" Margin="8,0,0,0"
                               VerticalAlignment="Center" Foreground="{DynamicResource AlderMuted}" IsHitTestVisible="False"
                               IsVisible="{TemplateBinding Icon, Converter={x:Static c:ObjectConverters.IsNotNull}}"
                               AutomationProperties.AccessibilityView="Raw" />
@@ -77,11 +77,10 @@
       </ControlTemplate>
     </Setter>
     <Style Selector="^:focus-visible, ^:pointerover"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
-    <Style Selector="^:focus-visible /template/ Border#Row"><Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" /></Style>
     <Style Selector="^.danger"><Setter Property="Foreground" Value="{DynamicResource AlderDanger}" /></Style>
-    <Style Selector="^.danger /template/ ContentPresenter#RowIcon"><Setter Property="Foreground" Value="{DynamicResource AlderDanger}" /></Style>
+    <Style Selector="^.danger /template/ alder|AlderIconPresenter#RowIcon"><Setter Property="Foreground" Value="{DynamicResource AlderDanger}" /></Style>
     <Style Selector="^.danger:focus-visible, ^.danger:pointerover"><Setter Property="Background" Value="{DynamicResource AlderDangerSoft}" /></Style>
-    <Style Selector="^.leading-icon /template/ ContentPresenter#RowIcon">
+    <Style Selector="^.leading-icon /template/ alder|AlderIconPresenter#RowIcon">
       <Setter Property="DockPanel.Dock" Value="Left" /><Setter Property="Margin" Value="0,0,12,0" />
     </Style>
     <Style Selector="^:separator">
@@ -98,14 +97,11 @@
     <Setter Property="CornerRadius" Value="16" />
     <Setter Property="FocusAdorner" Value="{x:Null}" />
     <Setter Property="ItemContainerTheme" Value="{DynamicResource AlderDropdownItemTheme}" />
-    <Style Selector="^ /template/ ContentPresenter#PART_IconPresenter">
+    <Style Selector="^ /template/ alder|AlderIconPresenter#PART_IconPresenter">
       <Setter Property="Margin" Value="0,0,12,0" />
     </Style>
     <Style Selector="^:pointerover:not(:pressed) /template/ Border#PART_LayoutRoot, ^:focus-visible:not(:pressed) /template/ Border#PART_LayoutRoot">
       <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
-    </Style>
-    <Style Selector="^:focus-visible /template/ Border#PART_LayoutRoot">
-      <Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" />
     </Style>
     <Style Selector="^.danger:pointerover /template/ Border#PART_LayoutRoot, ^.danger:focus-visible /template/ Border#PART_LayoutRoot">
       <Setter Property="Background" Value="{DynamicResource AlderDangerSoft}" />
@@ -192,33 +188,45 @@
       <ControlTemplate>
         <alder:ButtonFeedback Name="TriggerSurface" CornerRadius="{TemplateBinding CornerRadius}" Background="{TemplateBinding Background}"
                 Padding="{TemplateBinding Padding}">
-          <Panel>
-            <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
-                              VerticalContentAlignment="Center"
-                              IsVisible="{TemplateBinding Content, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
-            <Grid ColumnDefinitions="Auto,*,Auto" IsVisible="{TemplateBinding Content, Converter={x:Static c:ObjectConverters.IsNull}}">
-              <alder:AlderContentControl Width="24" Height="24" VerticalAlignment="Center" ContentTemplate="{StaticResource AlderUserMenuAvatarTemplate}"
-                              Content="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
-              <Panel Name="TriggerLabel" Grid.Column="1">
-                <Panel Margin="6,0" IsVisible="{TemplateBinding ShowLabel}">
-                  <alder:AlderTextBlock FontWeight="Medium" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
-                             Text="{TemplateBinding Title}"
-                             IsVisible="{TemplateBinding TriggerTitle, Converter={x:Static c:ObjectConverters.IsNull}}" />
-                  <alder:AlderTextBlock FontWeight="Medium" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
-                             Text="{TemplateBinding TriggerTitle}"
-                             IsVisible="{TemplateBinding TriggerTitle, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+          <Grid ColumnDefinitions="Auto,*">
+            <alder:AlderIconPresenter Content="{TemplateBinding Icon}" Margin="0,0,6,0" VerticalAlignment="Center"
+                  Width="{CompiledBinding Size, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static alder:AlderIconPresenter.SizeToExtent}}"
+                  Height="{CompiledBinding Size, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static alder:AlderIconPresenter.SizeToExtent}}"
+                  IsVisible="{TemplateBinding Icon, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+            <Panel Grid.Column="1">
+              <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                VerticalContentAlignment="Center"
+                                IsVisible="{TemplateBinding Content, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+              <Grid ColumnDefinitions="Auto,*,Auto" IsVisible="{TemplateBinding Content, Converter={x:Static c:ObjectConverters.IsNull}}">
+                <alder:AlderContentControl Width="24" Height="24" VerticalAlignment="Center" ContentTemplate="{StaticResource AlderUserMenuAvatarTemplate}"
+                                Content="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                IsVisible="{TemplateBinding Icon, Converter={x:Static c:ObjectConverters.IsNull}}" />
+                <Panel Name="TriggerLabel" Grid.Column="1">
+                  <Panel Margin="6,0" IsVisible="{TemplateBinding ShowLabel}">
+                    <alder:AlderTextBlock FontWeight="Medium" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                               Text="{TemplateBinding Title}"
+                               IsVisible="{TemplateBinding TriggerTitle, Converter={x:Static c:ObjectConverters.IsNull}}" />
+                    <alder:AlderTextBlock FontWeight="Medium" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                               Text="{TemplateBinding TriggerTitle}"
+                               IsVisible="{TemplateBinding TriggerTitle, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
+                  </Panel>
                 </Panel>
-              </Panel>
-              <Panel Name="TriggerChevron" Grid.Column="2">
-                <alder:AlderPathIcon Width="12" Height="12" Data="{StaticResource AlderIconChevronDown}"
-                          Foreground="{DynamicResource AlderMuted}" IsVisible="{TemplateBinding ShowChevron}" />
-              </Panel>
-            </Grid>
-          </Panel>
+                <Panel Name="TriggerChevron" Grid.Column="2">
+                  <alder:AlderUserMenuChevron Name="TriggerChevronMotion" Width="12" Height="12"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{TemplateBinding ShowChevron}">
+                    <alder:AlderPathIcon Name="TriggerChevronIcon" Width="12" Height="12" Data="{StaticResource AlderIconChevronDown}"
+                                Foreground="{DynamicResource AlderMuted}" />
+                  </alder:AlderUserMenuChevron>
+                </Panel>
+              </Grid>
+            </Panel>
+          </Grid>
         </alder:ButtonFeedback>
       </ControlTemplate>
     </Setter>
-    <Style Selector="^:pointerover"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
+    <Style Selector="^:pointerover:not(:disabled), ^:focus-visible:not(:disabled)">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
     <Style Selector="^:pressed"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
     <Style Selector="^:pressed /template/ alder|ButtonFeedback#TriggerSurface">
       <Setter Property="PressScale" Value="0.97" />
@@ -226,8 +234,8 @@
     <Style Selector="^:flyout-open:not(:flyout-dismissing) /template/ alder|ButtonFeedback#TriggerSurface">
       <Setter Property="ActiveScale" Value="0.97" />
     </Style>
-    <Style Selector="^:focus-visible /template/ alder|ButtonFeedback#TriggerSurface">
-      <Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" />
+    <Style Selector="^:flyout-open:not(:flyout-dismissing) /template/ alder|AlderUserMenuChevron#TriggerChevronMotion">
+      <Setter Property="IsOpen" Value="True" />
     </Style>
     <Style Selector="^[(alder|AlderSidebar.Rail)=True] /template/ Panel#TriggerLabel,
                      ^[(alder|AlderSidebar.Rail)=True] /template/ Panel#TriggerChevron">

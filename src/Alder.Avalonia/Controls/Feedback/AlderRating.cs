@@ -26,7 +26,7 @@ public sealed class AlderRatingItem
     /// <summary>The rating represented by the item.</summary>
     public double Value { get; set; }
     /// <summary>An optional icon for this item.</summary>
-    public Geometry? Icon { get; set; }
+    public object? Icon { get; set; }
     /// <summary>An optional template receiving a <see cref="RatingItemState"/> value.</summary>
     public IDataTemplate? ContentTemplate { get; set; }
 }
@@ -57,9 +57,9 @@ public sealed partial class AlderRating : TemplatedControl
     /// <summary>Whether tapping the currently selected item clears the rating.</summary>
     [GeneratedStyledProperty]
     public partial bool AllowClear { get; set; }
-    /// <summary>The geometry used when an item has no custom icon.</summary>
+    /// <summary>The geometry or icon control used when an item has no custom icon.</summary>
     [GeneratedStyledProperty]
-    public partial Geometry? Icon { get; set; }
+    public partial object? Icon { get; set; }
     /// <summary>The foreground applied to active portions of rating items.</summary>
     [GeneratedStyledProperty]
     public partial IBrush? ActiveBrush { get; set; }
@@ -83,6 +83,7 @@ public sealed partial class AlderRating : TemplatedControl
 
     private readonly List<Glyph> glyphs = [];
     private StackPanel? itemsHost;
+    private Canvas? iconSources;
     private IPointer? pointer;
     private double? preview;
     private double? pressedValue;
@@ -104,13 +105,16 @@ public sealed partial class AlderRating : TemplatedControl
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
+        ClearIconSources();
         itemsHost = e.NameScope.Find<StackPanel>("PART_Items");
+        iconSources = e.NameScope.Find<Canvas>("PART_IconSources");
         Rebuild();
     }
 
     private void Rebuild()
     {
         if (itemsHost is null) return;
+        ClearIconSources();
         itemsHost.Children.Clear();
         glyphs.Clear();
         var items = Items.Count != 0 ? Items.Where(item => item.Value > 0 && double.IsFinite(item.Value))
@@ -124,13 +128,34 @@ public sealed partial class AlderRating : TemplatedControl
             _ => (20d, 5d)
         };
         itemsHost.Spacing = space;
+        var masks = new Dictionary<Control, VisualBrush>(ReferenceEqualityComparer.Instance);
         foreach (var item in items)
         {
-            var visual = new Glyph(item, diameter, Icon, InactiveBrush, ActiveBrush, ItemTemplate);
+            var template = item.ContentTemplate ?? ItemTemplate;
+            var icon = item.Icon ?? Icon;
+            VisualBrush? mask = null;
+            if (template is null && icon is Control control && iconSources is not null &&
+                !masks.TryGetValue(control, out mask))
+            {
+                // One live source supplies all rating cells that use this icon.
+                var source = new AlderIconPresenter { Content = control, Width = diameter, Height = diameter };
+                iconSources.Children.Add(source);
+                mask = new VisualBrush(source);
+                masks.Add(control, mask);
+            }
+            var visual = new Glyph(item.Value, diameter, AlderIconPresenter.AsGeometry(icon), mask, InactiveBrush, ActiveBrush, template);
             glyphs.Add(visual);
             itemsHost.Children.Add(visual);
         }
         UpdateGlyphs();
+    }
+
+    private void ClearIconSources()
+    {
+        if (iconSources is null) return;
+        foreach (var source in iconSources.Children.OfType<AlderIconPresenter>())
+            source.Content = null;
+        iconSources.Children.Clear();
     }
 
     private void UpdateGlyphs()
@@ -324,7 +349,7 @@ public sealed partial class AlderRating : TemplatedControl
     private sealed class Glyph : Panel
     {
         private readonly ContentPresenter? custom;
-        private readonly PathIcon? fill;
+        private readonly Control? fill;
         private readonly RectangleGeometry? fillClip;
         private readonly double diameter;
         private static readonly TransformOperations Rest = TransformOperations.Parse("scale(1)");
@@ -340,32 +365,33 @@ public sealed partial class AlderRating : TemplatedControl
             Easing = new SplineEasing(0, 0, .58, 1)
         } };
 
-        internal Glyph(AlderRatingItem item, double diameter, Geometry? defaultIcon, IBrush? empty, IBrush? active, IDataTemplate? template)
+        internal Glyph(double value, double diameter, Geometry? icon, VisualBrush? mask,
+            IBrush? empty, IBrush? active, IDataTemplate? template)
         {
-            Value = item.Value;
+            Value = value;
             this.diameter = diameter;
             Width = Height = diameter;
             RenderTransform = Rest;
             IsHitTestVisible = false;
-            var itemTemplate = item.ContentTemplate ?? template;
-            if (itemTemplate is not null)
+            if (template is not null)
             {
-                custom = new ContentPresenter { ContentTemplate = itemTemplate, HorizontalContentAlignment = HorizontalAlignment.Center,
+                custom = new ContentPresenter { ContentTemplate = template, HorizontalContentAlignment = HorizontalAlignment.Center,
                     VerticalContentAlignment = VerticalAlignment.Center };
                 Children.Add(custom);
             }
             else
             {
-                var icon = item.Icon ?? defaultIcon;
-                Children.Add(new AlderPathIcon { Data = icon, Foreground = empty, Width = diameter, Height = diameter });
+                Children.Add(CreateLayer(empty));
                 fillClip = new RectangleGeometry();
-                fill = new AlderPathIcon
-                {
-                    Data = icon, Foreground = active, Width = diameter, Height = diameter,
-                    Clip = fillClip, Opacity = 0
-                };
+                fill = CreateLayer(active);
+                fill.Clip = fillClip;
+                fill.Opacity = 0;
                 Children.Add(fill);
             }
+
+            Control CreateLayer(IBrush? brush) => mask is null
+                ? new AlderPathIcon { Data = icon, Foreground = brush, Width = diameter, Height = diameter }
+                : new Border { Background = brush, OpacityMask = mask, Width = diameter, Height = diameter };
         }
 
         internal double Value { get; }

@@ -18,7 +18,7 @@
             <Viewbox Name="LinkIconBox" Width="12" Height="12" Margin="4,-4,0,0" DockPanel.Dock="Right"
                      IsHitTestVisible="False" Opacity="0.6"
                      IsVisible="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}">
-              <alder:AlderPathIcon Width="16" Height="16" Data="{TemplateBinding Icon}" Foreground="{TemplateBinding Foreground}" />
+              <alder:AlderIconPresenter Width="16" Height="16" Content="{TemplateBinding Icon}" Foreground="{TemplateBinding Foreground}" />
             </Viewbox>
             <StackPanel VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
               <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
@@ -30,7 +30,7 @@
             </StackPanel>
           </DockPanel>
           <Border Name="FocusRing" Margin="-3" CornerRadius="6" BorderThickness="2"
-                  BorderBrush="{DynamicResource AlderAccent}" IsHitTestVisible="False" IsVisible="False" />
+                  BorderBrush="{DynamicResource AlderInk}" IsHitTestVisible="False" IsVisible="False" />
         </Grid>
       </ControlTemplate>
     </Setter>
@@ -52,7 +52,8 @@
       <Setter Property="Transitions" Value="{x:Null}" />
     </Style>
     <Style Selector="^[Underline=Always] /template/ Border#UnderlineMark,
-                     ^[Underline=Hover]:pointerover:not(:disabled) /template/ Border#UnderlineMark">
+                     ^[Underline=Hover]:pointerover:not(:disabled) /template/ Border#UnderlineMark,
+                     ^[Underline=Hover]:focus-visible /template/ Border#UnderlineMark">
       <Setter Property="Opacity" Value="0.5" />
     </Style>
     <Style Selector="^[Underline=Hover]:pressed /template/ Border#UnderlineMark, ^[Underline=Always]:pressed /template/ Border#UnderlineMark">
@@ -63,7 +64,9 @@
                      ^:focus-visible /template/ Viewbox#LinkIconBox">
       <Setter Property="Opacity" Value="1" />
     </Style>
-    <Style Selector="^:focus-visible /template/ Border#FocusRing"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^[Underline=Always]:focus-visible /template/ Border#FocusRing, ^[Underline=None]:focus-visible /template/ Border#FocusRing">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
     <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /><Setter Property="Cursor" Value="Arrow" /></Style>
   </ControlTheme>
 </ResourceDictionary>

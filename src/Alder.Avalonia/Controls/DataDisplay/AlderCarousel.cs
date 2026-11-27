@@ -147,6 +147,7 @@ public sealed class AlderCarousel : ItemsControl
     private Grid? stage, miniatureBar;
     private Button? previous, next, playPause;
     private StackPanel? dots, thumbnails;
+    private AlderFilmstrip? virtualDots, virtualThumbnails;
     private ScrollViewer? thumbnailStrip, dotStrip;
     private object? selectedItem;
     private bool settingIndex;
@@ -178,9 +179,9 @@ public sealed class AlderCarousel : ItemsControl
             inViewport = visible;
             RefreshAutoPlay();
         };
-        ItemsView.CollectionChanged += (_, _) =>
+        ItemsView.CollectionChanged += (_, change) =>
         {
-            if (itemsPrepared) RefreshItems(preserveSelection: true);
+            if (itemsPrepared) RefreshItems(preserveSelection: true, resetIndicators: !AlderFilmstrip.IsTailChange(change, ItemCount));
         };
         AddHandler(PointerPressedEvent, HandlePressed, RoutingStrategies.Tunnel);
         AddHandler(PointerMovedEvent, HandleMoved, RoutingStrategies.Tunnel, handledEventsToo: true);
@@ -231,8 +232,14 @@ public sealed class AlderCarousel : ItemsControl
         previous = e.NameScope.Find<Button>("PART_Previous");
         next = e.NameScope.Find<Button>("PART_Next");
         playPause = e.NameScope.Find<Button>("PART_PlayPause");
-        dots = e.NameScope.Find<StackPanel>("PART_Dots");
-        thumbnails = e.NameScope.Find<StackPanel>("PART_Thumbnails");
+        var dotsPart = e.NameScope.Find<Control>("PART_Dots");
+        var thumbnailsPart = e.NameScope.Find<Control>("PART_Thumbnails");
+        dots = dotsPart as StackPanel;
+        thumbnails = thumbnailsPart as StackPanel;
+        virtualDots = dotsPart as AlderFilmstrip;
+        virtualThumbnails = thumbnailsPart as AlderFilmstrip;
+        if (virtualDots is not null) virtualDots.CreateButton = index => Indicator(index, thumbnail: false);
+        if (virtualThumbnails is not null) virtualThumbnails.CreateButton = index => Indicator(index, thumbnail: true);
         thumbnailStrip = e.NameScope.Find<ScrollViewer>("PART_ThumbnailStrip");
         dotStrip = e.NameScope.Find<ScrollViewer>("PART_DotStrip");
         if (previous is not null) previous.Click += PreviousClick;
@@ -295,7 +302,7 @@ public sealed class AlderCarousel : ItemsControl
             GoTo(SelectedIndex);
     }
 
-    private void RefreshItems(bool preserveSelection)
+    private void RefreshItems(bool preserveSelection, bool resetIndicators = true)
     {
         CancelDrag();
         animation = null;
@@ -304,7 +311,7 @@ public sealed class AlderCarousel : ItemsControl
         SetAndRaise(SelectedItemProperty, ref selectedItem, ItemCount == 0 ? null : ItemsView[SelectedIndex]);
         Paint(ItemCount == 0 ? 0 : SelectedIndex);
         Track?.InvalidateMeasure();
-        UpdateIndicators();
+        UpdateIndicators(resetIndicators);
     }
 
     private void Select(int requested, int direction, bool animate, double? releaseVelocity = null)
@@ -406,20 +413,25 @@ public sealed class AlderCarousel : ItemsControl
         Grid.SetColumn(button, column);
     }
 
-    private void UpdateIndicators()
+    private void UpdateIndicators(bool reset = true)
     {
         dots?.Children.Clear();
         thumbnails?.Children.Clear();
-        markedIndex = -1;
         int count = SnapCount;
-        for (int i = 0; count > 1 && i < count; i++)
+        virtualDots?.UpdateCount(ShowDots && count > 1 ? count : 0, reset);
+        virtualThumbnails?.UpdateCount(ShowThumbnails && count > 1 ? count : 0, reset);
+        if (dots is not null || thumbnails is not null)
         {
-            if (ShowDots && dots is not null) dots.Children.Add(Indicator(i, thumbnail: false));
-            if (ShowThumbnails && thumbnails is not null) thumbnails.Children.Add(Indicator(i, thumbnail: true));
+            for (int i = 0; count > 1 && i < count; i++)
+            {
+                if (ShowDots && dots is not null) dots.Children.Add(Indicator(i, thumbnail: false));
+                if (ShowThumbnails && thumbnails is not null) thumbnails.Children.Add(Indicator(i, thumbnail: true));
+            }
         }
         if (dotStrip is not null) dotStrip.IsVisible = ShowDots && count > 1;
         if (thumbnailStrip is not null) thumbnailStrip.IsVisible = ShowThumbnails && count > 1;
         UpdateNavigation();
+        RequestIndicatorReveal();
     }
 
     private Button Indicator(int index, bool thumbnail)
@@ -439,6 +451,7 @@ public sealed class AlderCarousel : ItemsControl
             else button.Content = number;
         }
         AutomationProperties.SetName(button, string.Format(DisplayCulture, Caption("CarouselGoToSlide", "Go to slide {0}"), number));
+        MarkButton(button, index == SelectedIndex);
         button.Click += (_, _) => GoTo(index);
         return button;
     }
@@ -464,9 +477,13 @@ public sealed class AlderCarousel : ItemsControl
         {
             MarkSelection(dots, markedIndex, false);
             MarkSelection(thumbnails, markedIndex, false);
+            MarkButton(virtualDots?.ContainerFromIndex(markedIndex) as Button, false);
+            MarkButton(virtualThumbnails?.ContainerFromIndex(markedIndex) as Button, false);
             markedIndex = SelectedIndex;
             MarkSelection(dots, markedIndex, true);
             MarkSelection(thumbnails, markedIndex, true);
+            MarkButton(virtualDots?.ContainerFromIndex(markedIndex) as Button, true);
+            MarkButton(virtualThumbnails?.ContainerFromIndex(markedIndex) as Button, true);
             RequestIndicatorReveal();
         }
         RefreshAutoPlay();
@@ -475,7 +492,12 @@ public sealed class AlderCarousel : ItemsControl
     private void MarkSelection(StackPanel? row, int index, bool selected)
     {
         if (row is null || (uint)index >= (uint)row.Children.Count) return;
-        var button = row.Children[index];
+        MarkButton(row.Children[index] as Button, selected);
+    }
+
+    private void MarkButton(Button? button, bool selected)
+    {
+        if (button is null) return;
         button.Classes.Set("selected", selected);
         AutomationProperties.SetItemStatus(button, selected ? Caption("Selected", "Selected") : null);
     }
@@ -491,6 +513,8 @@ public sealed class AlderCarousel : ItemsControl
             indicatorRevealQueued = false;
             RevealIndicator(thumbnailStrip, thumbnails);
             RevealIndicator(dotStrip, dots);
+            virtualThumbnails?.Reveal(thumbnailStrip, SelectedIndex, (thumbnailStrip as AlderScrollShadow)?.ShadowSize ?? 0);
+            virtualDots?.Reveal(dotStrip, SelectedIndex);
         }, DispatcherPriority.Loaded);
     }
 

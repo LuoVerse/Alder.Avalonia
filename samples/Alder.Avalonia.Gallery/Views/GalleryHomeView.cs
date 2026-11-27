@@ -52,7 +52,19 @@ internal sealed class GalleryHomeView : UserControl
                     secondary: ("Chip", new("Chip", "SampleUsage"))),
                 Tile("Alert", Alert(), new("Alert", "SampleBasic"))));
 
-        var navigation = Section("HomeFormsAndNavigation",
+        sections.Add(Intro(basics));
+        sections.Add(QuickStart());
+        sections.Add(basics);
+        sections.Add(BuildNavigation);
+        sections.Add(BuildData);
+        sections.Add(BuildAdvanced);
+        var page = Stack(0, sections);
+        page.Classes.Add("galleryPage");
+        Content = page;
+    }
+
+    private Control BuildNavigation() =>
+        Section("HomeFormsAndNavigation",
             Columns("*,*,*",
                 Stack(14,
                     Tile("Segment", Segment(), new("Segment", "SampleBasic"), minHeight: 112),
@@ -67,10 +79,12 @@ internal sealed class GalleryHomeView : UserControl
                         Inline(new ColorPickerExample { DataContext = new ColorsViewModel() }, "SampleColorPickerFields")),
                     new("ColorArea", "SampleUsage"), secondary: ("ColorPicker", new("ColorPicker", "SampleColorPickerFields")))));
 
+    private Control BuildData()
+    {
         var actionBar = new ActionBarExample();
         var employees = ((ActionBarViewModel)actionBar.DataContext!).Employees;
         employees.SetInitialSelection(employees.Rows[1], employees.Rows[3]);
-        var data = Section("NavGroupDataDisplay",
+        return Section("NavGroupDataDisplay",
             Columns("1.7*,*",
                 Tile("HomeTileGridActions", Inline(actionBar, "DataGridExample"), new("ActionBar", "DataGridExample"),
                     secondary: ("DataGrid", new("DataGrid", "SampleUsers"))),
@@ -80,8 +94,10 @@ internal sealed class GalleryHomeView : UserControl
             Columns("*,*",
                 Tile("AreaChart", Inline(new AreaChartExample { DataContext = new ChartViewModel() }, "SampleUsage"), new("AreaChart", "SampleUsage")),
                 Tile("BarChart", Inline(new BarChartExample { DataContext = new ChartViewModel() }, "SampleUsage"), new("BarChart", "SampleUsage"))));
+    }
 
-        var advanced = Section("HomeAdvanced",
+    private Control BuildAdvanced() =>
+        Section("HomeAdvanced",
             Tile("Agenda", Inline(new AgendaExample(), "SampleAgenda"), new("Agenda", "SampleAgenda")),
             Columns("*,*",
                 Tile("Carousel", Inline(new CarouselExample(), "ProductExample"), new("Carousel", "ProductExample")),
@@ -89,13 +105,6 @@ internal sealed class GalleryHomeView : UserControl
                     Tile("HoloCard", Inline(new HoloCardExample { DataContext = new HoloCardViewModel() }, "Usage", 245), new("HoloCard", "Usage")),
                     Tile("HoverCard", Inline(new HoverCardExample { DataContext = new HoverCardViewModel() }, "Usage", 143), new("HoverCard", "Usage")))),
             Tile("FloatingToc", Inline(new FloatingTocExample(), "InPage", 300), new("FloatingToc", "InPage")));
-
-        foreach (var section in new Control[] { Intro(basics), QuickStart(), basics, navigation, data, advanced })
-            sections.Add(section);
-        var page = Stack(0, sections);
-        page.Classes.Add("galleryPage");
-        Content = page;
-    }
 
     private void KeepPreviewScrollLocal(object? sender, RequestBringIntoViewEventArgs e)
     {

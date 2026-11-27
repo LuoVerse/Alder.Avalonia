@@ -195,7 +195,7 @@
               <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
               <Setter Property="BorderThickness" Value="1" />
             </Style>
-            <Style Selector="alder|AlderToggleButton.article /template/ PathIcon#LeadingIcon">
+            <Style Selector="alder|AlderToggleButton.article /template/ :is(TemplatedControl)#LeadingIcon">
               <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
             </Style>
             <Style Selector="alder|AlderToggleButton.article:checked">
@@ -203,7 +203,7 @@
               <Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" />
               <Setter Property="BorderBrush" Value="#4D0485F7" />
             </Style>
-            <Style Selector="alder|AlderToggleButton.article:checked /template/ PathIcon#LeadingIcon">
+            <Style Selector="alder|AlderToggleButton.article:checked /template/ :is(TemplatedControl)#LeadingIcon">
               <Setter Property="Foreground" Value="{DynamicResource AlderAccent}" />
             </Style>
           </StackPanel.Styles>

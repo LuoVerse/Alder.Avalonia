@@ -1,6 +1,6 @@
-using System.Buffers;
 using System.Collections.Specialized;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Automation;
@@ -633,63 +633,96 @@ public sealed partial class AlderMap : TemplatedControl
         DrawMarkers(context, outer, projection);
     }
 
+    private const double PathCoordinateScale = 65536;
+    private readonly ConditionalWeakTable<AlderMapPath, ProjectedPath> projectedPaths = new();
+
     private void DrawPath(DrawingContext context, AlderMapPath path, Rect viewport, in ViewportProjection projection, bool land)
     {
-        int count = path.Points.Count;
-        if (count < 2) return;
-        Point[]? buffer = count > 128 ? ArrayPool<Point>.Shared.Rent(count) : null;
-        Span<Point> projected = buffer is null ? stackalloc Point[count] : buffer.AsSpan(0, count);
-        try
-        {
-            DrawProjectedPath(context, path, viewport, projection, land, projected);
-        }
-        finally
-        {
-            if (buffer is not null) ArrayPool<Point>.Shared.Return(buffer);
-        }
-    }
+        var cached = projectedPaths.GetValue(path, static _ => new());
+        cached.Update(path);
+        if (cached.Geometry is not { } geometry) return;
 
-    private void DrawProjectedPath(DrawingContext context, AlderMapPath path, Rect viewport,
-        in ViewportProjection projection, bool land, Span<Point> projected)
-    {
-        double previous = projection.Center.X;
-        double minX = double.PositiveInfinity, minY = double.PositiveInfinity;
-        double maxX = double.NegativeInfinity, maxY = double.NegativeInfinity;
-        for (int i = 0; i < projected.Length; i++)
-        {
-            var coordinate = path.Points[i];
-            if (!coordinate.IsFinite) return;
-            var position = Project(coordinate);
-            // Unwrap relative to the previous vertex so a path crosses the antimeridian continuously.
-            previous += WrapDelta(position.X - previous);
-            var point = projected[i] = projection.ToViewport(previous - projection.Center.X, position.Y - projection.Center.Y);
-            minX = Math.Min(minX, point.X);
-            minY = Math.Min(minY, point.Y);
-            maxX = Math.Max(maxX, point.X);
-            maxY = Math.Max(maxY, point.Y);
-        }
-        var bounds = new Rect(new Point(minX, minY), new Point(maxX, maxY));
-        if (!bounds.Inflate(32).Intersects(viewport)) return;
-
-        var geometry = new StreamGeometry();
-        using (var draw = geometry.Open())
-        {
-            draw.BeginFigure(projected[0], path.IsClosed);
-            for (int i = 1; i < projected.Length; i++)
-            {
-                var next = projected[i];
-                var vector = next - projected[i - 1];
-                if (path.Curved && !path.IsClosed)
-                    draw.QuadraticBezierTo(projected[i - 1] + vector * .5 + new Vector(vector.Y, -vector.X) * .24, next);
-                else
-                    draw.LineTo(next);
-            }
-            draw.EndFigure(path.IsClosed);
-        }
+        var origin = projection.ProjectWorldMarker(cached.Origin);
+        double scale = projection.World / PathCoordinateScale;
+        double cosine = projection.Cosine * scale, sine = projection.Sine * scale;
+        var transform = new Matrix(cosine, sine, -sine, cosine, origin.X, origin.Y);
+        if (!cached.Bounds.TransformToAABB(transform).Inflate(Math.Max(32, path.Thickness)).Intersects(viewport)) return;
         var fill = path.IsClosed ? path.Fill ?? (path.IsWater ? Background : LandBrush) : null;
         var stroke = path.Stroke ?? (land ? CoastlineBrush : MarkerBrush);
-        var pen = stroke is not null && path.Thickness > 0 ? new Pen(stroke, path.Thickness) : null;
-        context.DrawGeometry(fill, pen, geometry);
+        // Keep relative gradients and other non-solid brushes in viewport coordinates.
+        if (fill is not (null or ISolidColorBrush) || stroke is not (null or ISolidColorBrush))
+        {
+            var transformed = geometry.Clone();
+            transformed.Transform = new MatrixTransform(transform);
+            context.DrawGeometry(fill, cached.GetPen(stroke, path.Thickness), transformed);
+            return;
+        }
+        using var placement = context.PushTransform(transform);
+        context.DrawGeometry(fill, cached.GetPen(stroke, path.Thickness / scale), geometry);
+    }
+
+    private sealed class ProjectedPath
+    {
+        private MapCoordinate[] coordinates = [];
+        private Pen? pen;
+        public StreamGeometry? Geometry { get; private set; }
+        public Point Origin { get; private set; }
+        public Rect Bounds { get; private set; }
+
+        public Pen? GetPen(IBrush? brush, double thickness)
+        {
+            if (brush is null || !(thickness > 0)) return null;
+            if (pen is null || !ReferenceEquals(pen.Brush, brush) || thickness != pen.Thickness)
+                pen = new Pen(brush, thickness);
+            return pen;
+        }
+
+        public void Update(AlderMapPath path)
+        {
+            // Callers can mutate the supplied list in place. Check its coordinates
+            // before reusing world geometry across camera changes.
+            if (HasSameCoordinates(path.Points)) return;
+            coordinates = path.Points.ToArray();
+            if (coordinates.Length < 2 || Array.Exists(coordinates, static point => !point.IsFinite))
+            {
+                Geometry = null;
+                return;
+            }
+
+            Origin = Project(coordinates[0]);
+            double longitude = Origin.X;
+            var previous = new Point();
+            var geometry = new StreamGeometry();
+            using (var draw = geometry.Open())
+            {
+                draw.BeginFigure(previous, path.IsClosed);
+                for (int i = 1; i < coordinates.Length; i++)
+                {
+                    var point = Project(coordinates[i]);
+                    longitude += WrapDelta(point.X - longitude);
+                    var next = new Point((longitude - Origin.X) * PathCoordinateScale, (point.Y - Origin.Y) * PathCoordinateScale);
+                    if (path.Curved && !path.IsClosed)
+                    {
+                        var delta = next - previous;
+                        draw.QuadraticBezierTo(previous + delta * .5 + new Vector(delta.Y, -delta.X) * .24, next);
+                    }
+                    else draw.LineTo(next);
+                    previous = next;
+                }
+                draw.EndFigure(path.IsClosed);
+            }
+            Geometry = geometry;
+            Bounds = geometry.Bounds;
+        }
+
+        private bool HasSameCoordinates(IReadOnlyList<MapCoordinate> points)
+        {
+            if (points is MapCoordinate[] array) return coordinates.AsSpan().SequenceEqual(array);
+            if (points.Count != coordinates.Length) return false;
+            for (int i = 0; i < coordinates.Length; i++)
+                if (coordinates[i] != points[i]) return false;
+            return true;
+        }
     }
 
     private void DrawMarkers(DrawingContext context, Rect outer, ViewportProjection projection)

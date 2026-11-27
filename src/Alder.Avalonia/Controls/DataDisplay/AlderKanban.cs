@@ -219,7 +219,7 @@ public sealed class AlderKanban : ItemsControl
             }
             var insertion = session.Destination + (e.Key == Key.Up ? -1 : e.Key == Key.Down ? 1 : 0);
             SetTarget(session, target, insertion);
-            if (target.ItemCount > 0) target.ContainerFromIndex(Math.Min(session.Destination, target.ItemCount - 1))?.BringIntoView();
+            if (target.ItemCount > 0) target.ScrollIntoView(Math.Min(session.Destination, target.ItemCount - 1));
             target.BringIntoView();
             e.Handled = true;
         }
@@ -240,14 +240,20 @@ public sealed class AlderKanban : ItemsControl
                 panel.DropSlotBounds is { Height: > 0 } slot &&
                 this.TranslatePoint(session.Position, panel) is { } local && slot.Contains(local)) return;
             int raw = column.ItemCount;
-            foreach (var row in column.GetRealizedContainers().OfType<AlderKanbanCard>())
+            if (column.CardPanel is { } cardPanel && this.TranslatePoint(session.Position, cardPanel) is { } cardPoint &&
+                column.CardsScroll is { } cardsScroll && BoundsInBoard(cardsScroll) is { } cardsBounds && cardsBounds.Contains(session.Position))
+                raw = cardPanel.GetInsertionIndex(cardPoint.Y);
+            else
             {
-                if (BoundsInBoard(row) is not { } rowBounds ||
-                    (column.CardsScroll is { } viewport && BoundsInBoard(viewport) is { } clipped && !clipped.Intersects(rowBounds))) continue;
-                if (session.Position.Y < rowBounds.Center.Y)
+                foreach (var row in column.GetRealizedContainers().OfType<AlderKanbanCard>())
                 {
-                    raw = column.IndexFromContainer(row);
-                    break;
+                    if (BoundsInBoard(row) is not { } rowBounds ||
+                        (column.CardsScroll is { } viewport && BoundsInBoard(viewport) is { } clipped && !clipped.Intersects(rowBounds))) continue;
+                    if (session.Position.Y < rowBounds.Center.Y)
+                    {
+                        raw = column.IndexFromContainer(row);
+                        break;
+                    }
                 }
             }
             if (column == session.Column && column.ItemsView.IndexOf(session.Item) < raw) raw--;
@@ -395,7 +401,9 @@ public sealed class AlderKanban : ItemsControl
         {
             if (move is not null) return;
             var newIndex = destination.ItemsView.IndexOf(session.Item);
-            if (newIndex < 0 || destination.ContainerFromIndex(newIndex) is not { } row) return;
+            if (newIndex < 0) return;
+            if (keyboard && destination.ContainerFromIndex(newIndex) is null) destination.ScrollIntoView(newIndex);
+            if (destination.ContainerFromIndex(newIndex) is not { } row) return;
             if (keyboard)
                 row.FindDescendantOfType<AlderKanbanHandle>()?.Focus(NavigationMethod.Tab);
             else if (dropOrigin is { } origin && BoundsInBoard(row) is { } bounds)

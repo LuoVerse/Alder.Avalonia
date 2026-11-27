@@ -53,9 +53,9 @@
         <Transitions><BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions>
       </Setter>
     </Style>
-    <Style Selector="^:focus-within /template/ alder|InputFocusRing#FieldRing"><Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" /></Style>
+    <Style Selector="^ /template/ alder|InputFocusRing#FieldRing.editing"><Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" /></Style>
     <Style Selector="^:alder-invalid /template/ alder|InputFocusRing#FieldRing"><Setter Property="BoxShadow" Value="{DynamicResource AlderFieldInvalidOutline}" /></Style>
-    <Style Selector="^:alder-invalid:focus-within /template/ alder|InputFocusRing#FieldRing"><Setter Property="BoxShadow" Value="{DynamicResource AlderFieldInvalidRing}" /></Style>
+    <Style Selector="^:alder-invalid /template/ alder|InputFocusRing#FieldRing.editing"><Setter Property="BoxShadow" Value="{DynamicResource AlderFieldInvalidRing}" /></Style>
     <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
     <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#FieldSurface,
                      ^[(alder|AlderMotion.Reduced)=True] /template/ alder|InputFocusRing#FieldRing">
@@ -77,7 +77,8 @@
               <ContentPresenter Name="Suffix" Grid.Column="2" Content="{TemplateBinding Suffix}" VerticalContentAlignment="Center" />
             </Grid>
           </Border>
-          <alder:InputFocusRing Name="FieldRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+          <alder:InputFocusRing Name="FieldRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False"
+                                Classes.editing="{CompiledBinding #PART_Segments.IsKeyboardFocusWithin}" />
         </Panel>
       </ControlTemplate>
     </Setter>

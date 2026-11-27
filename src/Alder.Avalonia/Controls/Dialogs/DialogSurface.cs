@@ -35,6 +35,7 @@ internal sealed class DialogSurface : Border
         scrollOutside = options is DialogOptions { ScrollMode: DialogScrollMode.Outside, IsContentFullBleed: false };
         Name = "AlderDialogSurface";
         Focusable = true;
+        FocusAdorner = null;
         KeyboardNavigation.SetIsTabStop(this, false);
         CornerRadius = new CornerRadius(24);
         this[!BackgroundProperty] = new DynamicResourceExtension("AlderSurface");
@@ -231,17 +232,17 @@ internal sealed class DialogSurface : Border
     public IReadOnlyList<Control> DragZones => dragZones;
     public bool RequestClose(DialogResult result) => close(result);
 
-    public void FocusInitial()
+    public void FocusInitial(NavigationMethod method = NavigationMethod.Unspecified)
     {
-        if (scrollOutside && Focus()) return;
-        if (isAlert && secondaryAction?.Focus() == true) return;
+        if (scrollOutside && Focus(method)) return;
+        if (isAlert && secondaryAction?.Focus(method) == true) return;
         foreach (var input in body.GetVisualDescendants().OfType<InputElement>())
         {
-            if (KeyboardNavigation.GetIsTabStop(input) && input.Focus()) return;
+            if (KeyboardNavigation.GetIsTabStop(input) && input.Focus(method)) return;
         }
 
-        if (primaryAction?.Focus() == true || closeButton?.Focus() == true) return;
-        Focus();
+        if (primaryAction?.Focus(method) == true || closeButton?.Focus(method) == true) return;
+        Focus(method);
     }
 
     public void ReleaseContent()
@@ -293,10 +294,10 @@ internal sealed class DialogSurface : Border
             MessageBoxStatus.Danger => ("AlderDangerSoft", "AlderDangerInk", "AlderIconAlert"),
             _ => ("AlderNeutral", "AlderInk", "AlderIconInfo")
         };
-        var icon = new AlderPathIcon { Width = 20, Height = 20, IsHitTestVisible = false };
-        icon[!PathIcon.ForegroundProperty] = new DynamicResourceExtension(ink);
-        if (options.Icon is not null) icon.Data = options.Icon;
-        else icon[!PathIcon.DataProperty] = new DynamicResourceExtension(geometry);
+        var icon = new AlderIconPresenter { Width = 20, Height = 20 };
+        icon[!TemplatedControl.ForegroundProperty] = new DynamicResourceExtension(ink);
+        if (options.Icon is not null) icon.Content = options.Icon;
+        else icon[!AlderIconPresenter.ContentProperty] = new DynamicResourceExtension(geometry);
         var badge = new Border
         {
             Width = 40, Height = 40, CornerRadius = new CornerRadius(20),

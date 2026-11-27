@@ -23,17 +23,14 @@
               <alder:AlderPathIcon Data="{StaticResource AlderIconXmark}" Width="8" Height="8"
                         HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}" />
             </Grid>
-            <Border Name="TabCloseFocus" BorderBrush="{DynamicResource AlderAccent}" CornerRadius="{TemplateBinding CornerRadius}"
-                    BorderThickness="2" IsVisible="False" IsHitTestVisible="False" />
           </Grid>
         </Border>
       </ControlTemplate>
     </Setter>
-    <Style Selector="^:pointerover:not(:disabled), ^:pressed:not(:disabled)">
+    <Style Selector="^:pointerover:not(:disabled), ^:focus-visible:not(:disabled), ^:pressed:not(:disabled)">
       <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
       <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
     </Style>
-    <Style Selector="^:focus-visible /template/ Border#TabCloseFocus"><Setter Property="IsVisible" Value="True" /></Style>
     <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
     <Style Selector="^[(alder|AlderMotion.Reduced)=False] /template/ Border#TabCloseFace">
       <Setter Property="Transitions"><Transitions><BrushTransition Property="Background" Duration="0:0:0.15" /></Transitions></Setter>
@@ -53,7 +50,7 @@
     <Setter Property="FocusAdorner" Value="{x:Null}" />
     <Setter Property="Template">
       <ControlTemplate>
-        <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+        <Border Name="TabFace" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
           <Grid>
             <Border Name="MorphingHeaderFace" Margin="0,0,0,8" CornerRadius="20"
                     Background="{DynamicResource AlderNeutralHover}" Opacity="0"
@@ -69,14 +66,12 @@
               <DockPanel LastChildFill="True" Margin="{TemplateBinding Padding}"
                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
-                <ContentPresenter Content="{TemplateBinding Icon}" DockPanel.Dock="Left" Margin="0,0,6,0" VerticalAlignment="Center"
+                <alder:AlderIconPresenter Width="16" Height="16" Content="{TemplateBinding Icon}" DockPanel.Dock="Left" Margin="0,0,6,0" VerticalAlignment="Center"
                                   IsVisible="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
                 <ContentPresenter Name="PART_HeaderPresenter" Content="{TemplateBinding Header}"
                                   ContentTemplate="{TemplateBinding HeaderTemplate}" RecognizesAccessKey="True" />
               </DockPanel>
             </DockPanel>
-            <Border Name="FocusRing" Margin="1" CornerRadius="{TemplateBinding CornerRadius}" BorderBrush="{DynamicResource AlderAccent}"
-                    BorderThickness="2" IsHitTestVisible="False" IsVisible="False" />
           </Grid>
         </Border>
       </ControlTemplate>
@@ -90,7 +85,7 @@
       </Style>
     </Style>
     <Style Selector="^.alder-tab-separator /template/ Border#Separator"><Setter Property="Opacity" Value="0.25" /></Style>
-    <Style Selector="^:focus-visible /template/ Border#FocusRing"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:focus-visible:not(:disabled) /template/ Border#TabFace"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
     <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /><Setter Property="Cursor" Value="Arrow" /></Style>
   </ControlTheme>
 

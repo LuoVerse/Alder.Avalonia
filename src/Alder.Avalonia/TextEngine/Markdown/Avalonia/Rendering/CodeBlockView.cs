@@ -494,6 +494,8 @@ public sealed class CodeBlockView : BlockView
         if (_chunkCount == 1)
         {
             context.DrawRectangle(style.CodeBackground, hasBorder ? FramePenFor(style.CodeBorderBrush) : null, bounds, r, r);
+            if (this.GetVisualParent() is MarkdownView { KeyboardFocusBrush: { } focusBrush })
+                context.DrawRectangle(focusBrush, null, bounds, r, r);
         }
         else
         {
@@ -713,6 +715,8 @@ public sealed class CodeTextView : Control, ISelectableSegment
     private double _contentWidth;
     internal const double ScrollbarHeight = 8;
     private double _reservedScrollbarSpace;
+    private IPointer? _scrollbarPointer;
+    private double _thumbGrabOffset;
     private bool _hover;
     private bool _allStripsDirty = true;
     private int _dirtyLineStart = int.MaxValue;
@@ -1304,6 +1308,33 @@ public sealed class CodeTextView : Control, ISelectableSegment
 
     private void ClampOffset(double viewport) => _offsetX = Math.Clamp(_offsetX, 0, Math.Max(0, _contentWidth - viewport));
 
+    private bool TryGetScrollbar(out Rect track, out Rect thumb)
+    {
+        var width = Bounds.Width;
+        var overflow = _contentWidth - width;
+        if (_wrap || overflow <= .5 || width <= 0 || Bounds.Height < ScrollbarHeight)
+        {
+            track = thumb = default;
+            return false;
+        }
+
+        track = new Rect(0, Bounds.Height - ScrollbarHeight, width, ScrollbarHeight);
+        var thumbWidth = Math.Max(Math.Min(24, width / 2), width * (width / _contentWidth));
+        var thumbX = Math.Clamp(_offsetX / overflow, 0, 1) * (width - thumbWidth);
+        thumb = new Rect(thumbX, track.Y + 2, thumbWidth, 4);
+        return true;
+    }
+
+    private void SetHorizontalOffset(double offset)
+    {
+        var oldOffset = _offsetX;
+        _offsetX = offset;
+        ClampOffset(Bounds.Width);
+        if (_offsetX == oldOffset) return;
+        InvalidateVisual();
+        InvalidateAllStrips();
+    }
+
     public override void Render(DrawingContext context)
     {
         if (_context is null)
@@ -1318,13 +1349,9 @@ public sealed class CodeTextView : Control, ISelectableSegment
             RenderHighlights(context, _context);
         }
 
-        // 横向滚动条（悬停时显示）
-        if (!_wrap && _contentWidth > Bounds.Width + 0.5 && _hover)
+        if ((_hover || _scrollbarPointer is not null) && TryGetScrollbar(out _, out var thumb))
         {
-            var ratio = Bounds.Width / _contentWidth;
-            var thumbWidth = Math.Max(24, Bounds.Width * ratio);
-            var x = (_offsetX / (_contentWidth - Bounds.Width)) * (Bounds.Width - thumbWidth);
-            context.FillRectangle(_context.Style.HoverBackground, new Rect(x, Bounds.Height - 6, thumbWidth, 4), 2);
+            context.FillRectangle(_context.Style.HoverBackground, thumb, 2);
         }
         if (_inlineLineCount > 0)
             RenderLines(context, 0, _inlineLineCount, localOrigin: false);
@@ -1400,7 +1427,7 @@ public sealed class CodeTextView : Control, ISelectableSegment
     {
         base.OnPointerEntered(e);
         _hover = true;
-        Cursor = IbeamCursor;
+        UpdatePointerCursor(e.GetPosition(this));
         InvalidateVisual();
     }
 
@@ -1410,6 +1437,73 @@ public sealed class CodeTextView : Control, ISelectableSegment
         _hover = false;
         InvalidateVisual();
     }
+
+    protected override void OnPointerPressed(PointerPressedEventArgs e)
+    {
+        base.OnPointerPressed(e);
+        var point = e.GetCurrentPoint(this);
+        if (e.Handled || _scrollbarPointer is not null ||
+            (e.Pointer.Type != PointerType.Touch && !point.Properties.IsLeftButtonPressed) ||
+            !TryGetScrollbar(out var track, out var thumb) || !track.Contains(point.Position))
+            return;
+
+        // Keep the grabbed point on the thumb under the pointer. A track click jumps to that position.
+        double x = point.Position.X;
+        _thumbGrabOffset = x >= thumb.Left && x <= thumb.Right ? x - thumb.Left : thumb.Width / 2;
+        _scrollbarPointer = e.Pointer;
+        e.Pointer.Capture(this);
+        e.PreventGestureRecognition();
+        ScrollFromPointer(x, track, thumb);
+        Cursor = Cursor.Default;
+        InvalidateVisual();
+        e.Handled = true;
+    }
+
+    protected override void OnPointerMoved(PointerEventArgs e)
+    {
+        base.OnPointerMoved(e);
+        var point = e.GetPosition(this);
+        if (e.Pointer == _scrollbarPointer)
+        {
+            if (TryGetScrollbar(out var track, out var thumb))
+                ScrollFromPointer(point.X, track, thumb);
+            e.Handled = true;
+        }
+        UpdatePointerCursor(point);
+    }
+
+    protected override void OnPointerReleased(PointerReleasedEventArgs e)
+    {
+        base.OnPointerReleased(e);
+        if (e.Pointer != _scrollbarPointer ||
+            (e.Pointer.Type != PointerType.Touch && e.InitialPressMouseButton != MouseButton.Left)) return;
+        var point = e.GetPosition(this);
+        if (TryGetScrollbar(out var track, out var thumb))
+            ScrollFromPointer(point.X, track, thumb);
+        _scrollbarPointer = null;
+        e.Pointer.Capture(null);
+        UpdatePointerCursor(point);
+        InvalidateVisual();
+        e.Handled = true;
+    }
+
+    protected override void OnPointerCaptureLost(PointerCaptureLostEventArgs e)
+    {
+        base.OnPointerCaptureLost(e);
+        if (e.Pointer != _scrollbarPointer) return;
+        _scrollbarPointer = null;
+        InvalidateVisual();
+    }
+
+    private void UpdatePointerCursor(Point point)
+    {
+        var cursor = _scrollbarPointer is not null || (TryGetScrollbar(out var track, out _) && track.Contains(point))
+            ? Cursor.Default : IbeamCursor;
+        if (Cursor != cursor) Cursor = cursor;
+    }
+
+    private void ScrollFromPointer(double x, Rect track, Rect thumb) =>
+        SetHorizontalOffset((x - track.X - _thumbGrabOffset) * (_contentWidth - track.Width) / (track.Width - thumb.Width));
 
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
     {
@@ -1425,14 +1519,7 @@ public sealed class CodeTextView : Control, ISelectableSegment
             base.OnPointerWheelChanged(e);
             return;
         }
-        var oldOffsetX = _offsetX;
-        _offsetX += dx * 40;
-        ClampOffset(Bounds.Width);
-        if (!oldOffsetX.Equals(_offsetX))
-        {
-            InvalidateVisual();
-            InvalidateAllStrips();
-        }
+        SetHorizontalOffset(_offsetX + dx * 40);
         e.Handled = true;
     }
 
@@ -1513,6 +1600,10 @@ public sealed class CodeTextView : Control, ISelectableSegment
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromVisualTree(e);
+        var pointer = _scrollbarPointer;
+        _scrollbarPointer = null;
+        if (pointer?.Captured == this) pointer.Capture(null);
+        _hover = false;
         if (_context is not null)
         {
             _context.Selection.Changed -= InvalidateVisual;

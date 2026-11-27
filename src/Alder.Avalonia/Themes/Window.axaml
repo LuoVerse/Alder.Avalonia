@@ -7,7 +7,13 @@
   <StreamGeometry x:Key="AlderWindowRestoreIcon">F0 M2,0 H10 V8 H8 V10 H0 V2 H2 Z M1,3 V9 H7 V3 Z M3,1 V2 H8 V7 H9 V1 Z</StreamGeometry>
   <StreamGeometry x:Key="AlderWindowCloseIcon">M0,0 L5,4.3 10,0 10.7,0.7 5.7,5 10.7,9.3 10,10 5,5.7 0,10 -0.7,9.3 4.3,5 -0.7,0.7 Z</StreamGeometry>
 
-  <ControlTheme x:Key="AlderWindowCaptionButton" TargetType="Button">
+  <ControlTheme x:Key="AlderWindowCaptionButtonBase" TargetType="Button">
+    <Setter Property="IsTabStop" Value="False" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.35" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderWindowCaptionButton" TargetType="Button" BasedOn="{StaticResource AlderWindowCaptionButtonBase}">
     <Setter Property="Width" Value="42" />
     <Setter Property="Height" Value="32" />
     <Setter Property="CornerRadius" Value="7" />
@@ -15,7 +21,6 @@
     <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="BorderBrush" Value="Transparent" />
-    <Setter Property="FocusAdorner" Value="{x:Null}" />
     <Setter Property="Template">
       <ControlTemplate>
         <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
@@ -40,15 +45,9 @@
       <Setter Property="Background" Value="#A4262C" />
       <Setter Property="Foreground" Value="White" />
     </Style>
-    <Style Selector="^:focus-visible">
-      <Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" />
-    </Style>
-    <Style Selector="^:disabled">
-      <Setter Property="Opacity" Value="0.35" />
-    </Style>
   </ControlTheme>
 
-  <ControlTheme x:Key="AlderWindowMacCaptionButton" TargetType="Button">
+  <ControlTheme x:Key="AlderWindowMacCaptionButton" TargetType="Button" BasedOn="{StaticResource AlderWindowCaptionButtonBase}">
     <Setter Property="Width" Value="19" />
     <Setter Property="Height" Value="28" />
     <Setter Property="Template">
@@ -63,12 +62,8 @@
         </Border>
       </ControlTemplate>
     </Setter>
-    <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter,
-                     ^:focus-visible /template/ ContentPresenter#PART_ContentPresenter">
+    <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
       <Setter Property="Opacity" Value="1" />
-    </Style>
-    <Style Selector="^:disabled">
-      <Setter Property="Opacity" Value="0.35" />
     </Style>
   </ControlTheme>
 
@@ -102,6 +97,8 @@
                   </Grid>
                 </alder:DialogHost>
 
+                <Border Name="PART_SalashTitleBar" Height="40" VerticalAlignment="Top" IsVisible="False"
+                        Background="Transparent" chrome:WindowDecorationProperties.ElementRole="TitleBar" />
                 <StackPanel Name="PART_DesktopCaption" Orientation="Horizontal" Spacing="3" IsVisible="False"
                             Margin="{TemplateBinding CaptionMargin}" FlowDirection="LeftToRight"
                             HorizontalAlignment="Right" VerticalAlignment="Top">
@@ -144,6 +141,9 @@
                   <Border Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Background="Transparent" chrome:WindowDecorationProperties.ElementRole="ResizeSW" />
                   <Border Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Transparent" chrome:WindowDecorationProperties.ElementRole="ResizeSE" />
                 </Panel>
+                <Border Name="PART_WindowOutline" CornerRadius="{CompiledBinding #PART_WindowFrame.CornerRadius}"
+                        BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                        IsHitTestVisible="False" />
               </Panel>
             </alder:AlderRoundedFrame>
           </VisualLayerManager>
@@ -161,6 +161,7 @@
     <Style Selector="^:not(:restore) /template/ alder|AlderRoundedFrame#PART_WindowFrame">
       <Setter Property="CornerRadius" Value="{TemplateBinding CornerRadius}" />
     </Style>
+    <Style Selector="^:restore /template/ Border#PART_WindowOutline"><Setter Property="IsVisible" Value="False" /></Style>
     <Style Selector="^:custom-chrome[ShowTitleBar=True] /template/ Border#PART_TitleBar,
                      ^:custom-chrome:not(.mac) /template/ StackPanel#PART_DesktopCaption,
                      ^:custom-chrome.mac /template/ StackPanel#PART_MacCaption,
@@ -182,5 +183,23 @@
     <Style Selector="^:restore /template/ :is(Button)#PART_MacMaximizeButton"><Setter Property="Content" Value="−" /></Style>
     <Style Selector="^ /template/ PathIcon#PART_MaximizeIcon"><Setter Property="Data" Value="{StaticResource AlderWindowMaximizeIcon}" /></Style>
     <Style Selector="^:restore /template/ PathIcon#PART_MaximizeIcon"><Setter Property="Data" Value="{StaticResource AlderWindowRestoreIcon}" /></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="{x:Type alder:AlderSalashWindow}" TargetType="alder:AlderSalashWindow"
+                BasedOn="{StaticResource {x:Type alder:AlderWindow}}">
+    <Setter Property="Width" Value="1000" />
+    <Setter Property="Height" Value="620" />
+    <Setter Property="MinWidth" Value="400" />
+    <Setter Property="MinHeight" Value="440" />
+    <Setter Property="ShowTitleBar" Value="False" />
+    <Setter Property="TransparencyLevelHint" Value="Transparent" />
+    <Setter Property="CornerRadius" Value="18" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="Padding" Value="30,48,34,32" />
+    <Setter Property="HorizontalContentAlignment" Value="Right" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Style Selector="^:custom-chrome[ShowTitleBar=False] /template/ Border#PART_SalashTitleBar">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
   </ControlTheme>
 </ResourceDictionary>

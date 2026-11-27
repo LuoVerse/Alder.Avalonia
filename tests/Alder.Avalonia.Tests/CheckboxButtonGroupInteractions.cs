@@ -42,7 +42,7 @@ public class CheckboxButtonGroupInteractions
             Assert.Equal(new[] { "security", "storage" }, group.SelectedKeys);
 
             Assert.True(security.Focus(NavigationMethod.Tab));
-            Assert.True(Part<Border>(security, "CardFocusRing").IsVisible);
+            Assert.Equal(security.FindResource(security.ActualThemeVariant, "AlderNeutralHover"), Part<Border>(security, "CardFace").Background);
             PressSpace(window);
             Assert.Equal(new[] { "storage" }, group.SelectedKeys);
             Assert.False(indicator.IsChecked);

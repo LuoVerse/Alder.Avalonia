@@ -268,12 +268,11 @@ public class AppLayoutInteractions
         var rail = Find<Button>(sidebar, "PART_Rail");
         var edge = Find<Border>(rail, "Edge");
         var toggle = Find<AlderToggleButton>(layout, "PART_SidebarToggle");
-        var focusRing = Find<Border>(toggle, "FocusRing");
 
         Click(rail);
         Assert.False(layout.IsSidebarOpen);
         Assert.True(toggle.IsFocused);
-        Assert.False(focusRing.IsVisible);
+        Assert.DoesNotContain(":focus-visible", toggle.Classes);
 
         Click(toggle);
         Assert.True(layout.IsSidebarOpen);
@@ -284,8 +283,8 @@ public class AppLayoutInteractions
 
         Assert.True(toggle.Focus(NavigationMethod.Tab));
         view.Pump();
-        Assert.True(focusRing.IsVisible);
-        Assert.True(focusRing.Margin.Left >= 0);
+        Assert.Contains(":focus-visible", toggle.Classes);
+        Assert.NotEqual(Colors.Transparent, Assert.IsAssignableFrom<ISolidColorBrush>(toggle.Background).Color);
 
         void Click(Control control)
         {

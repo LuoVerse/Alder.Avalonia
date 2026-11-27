@@ -1,6 +1,6 @@
 namespace Alder.Avalonia.Controls;
 
-/// <summary>Lets a dialog's view model close its own dialog and return a result.</summary>
+/// <summary>Lets a view model request that its dialog or <see cref="AlderSalashWindow"/> close with a result.</summary>
 public interface IDialogContext
 {
     /// <summary>Raised by the dialog content to request dismissal with a result.</summary>

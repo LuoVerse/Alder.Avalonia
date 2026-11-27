@@ -244,6 +244,7 @@
     <Setter Property="Template">
       <ControlTemplate>
         <alder:ButtonSpinner Name="SpinnerGlyph" FlowDirection="LeftToRight"
+                         Theme="{StaticResource AlderFittedPathIconTheme}"
                          Data="{StaticResource AlderFeedbackSpinnerViewport}" OpacityMask="{StaticResource AlderFeedbackSpinnerMask}"
                          Width="24" Height="24" SpinDuration="{TemplateBinding SpinDuration}"
                          Foreground="{TemplateBinding Foreground}" />

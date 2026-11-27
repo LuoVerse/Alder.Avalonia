@@ -28,8 +28,8 @@ public enum AlderLinkIconPlacement
 public sealed class AlderLink : HyperlinkButton
 {
     /// <summary>Identifies the <see cref="Icon"/> Avalonia property.</summary>
-    public static readonly StyledProperty<Geometry?> IconProperty =
-        AvaloniaProperty.Register<AlderLink, Geometry?>(nameof(Icon));
+    public static readonly StyledProperty<object?> IconProperty =
+        AvaloniaProperty.Register<AlderLink, object?>(nameof(Icon));
     /// <summary>Identifies the <see cref="ShowExternalIcon"/> Avalonia property.</summary>
     public static readonly StyledProperty<bool> ShowExternalIconProperty =
         AvaloniaProperty.Register<AlderLink, bool>(nameof(ShowExternalIcon));
@@ -49,8 +49,8 @@ public sealed class AlderLink : HyperlinkButton
     public static readonly StyledProperty<double> UnderlineThicknessProperty =
         AvaloniaProperty.Register<AlderLink, double>(nameof(UnderlineThickness), 1.5, validate: NonnegativeFinite);
 
-    /// <summary>The optional geometry displayed with the content.</summary>
-    public Geometry? Icon { get => GetValue(IconProperty); set => SetValue(IconProperty, value); }
+    /// <summary>An optional geometry or icon control displayed with the content.</summary>
+    public object? Icon { get => GetValue(IconProperty); set => SetValue(IconProperty, value); }
     /// <summary>Whether the link displays the built-in external navigation icon.</summary>
     public bool ShowExternalIcon { get => GetValue(ShowExternalIconProperty); set => SetValue(ShowExternalIconProperty, value); }
     /// <summary>Where the icon is placed relative to the link text.</summary>

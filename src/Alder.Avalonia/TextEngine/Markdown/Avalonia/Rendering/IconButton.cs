@@ -1,6 +1,10 @@
 #pragma warning disable CS1591 // Imported Markdown engine.
+using System.Runtime.CompilerServices;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
+using Avalonia.VisualTree;
+using Alder.Avalonia.Controls;
 using Avalonia.Media.TextFormatting;
 using Avalonia.Input;
 using Avalonia.Media;
@@ -12,9 +16,16 @@ namespace Alder.NativeMarkdown.UI.Rendering;
 /// </summary>
 public sealed class IconButton : Control
 {
+    private static readonly ConditionalWeakTable<Control, List<IconButton>> IconUsers = new();
+
     private bool _hover;
     private bool _pressed;
-    private Geometry? _icon;
+    private object? _icon;
+    private Geometry? _geometry;
+    private Viewbox? _iconViewbox;
+    private ContentPresenter? _controlIcon;
+    private Control? _registeredIcon;
+    private IBrush? _foreground;
     private TextLayout? _label;
     private string? _labelText;
 
@@ -31,19 +42,86 @@ public sealed class IconButton : Control
 
     protected override global::Avalonia.Automation.Peers.AutomationPeer OnCreateAutomationPeer() => new Automation.IconButtonAutomationPeer(this);
 
-    public IBrush? Foreground { get; set; }
+    public IBrush? Foreground
+    {
+        get => _foreground;
+        set
+        {
+            _foreground = value;
+            if (_controlIcon is not null) _controlIcon.Foreground = value;
+        }
+    }
 
     public IBrush? HoverBackground { get; set; }
 
-    /// <summary>16×16 坐标系下的图标路径。</summary>
-    public Geometry? Icon
+    /// <summary>16×16 坐标系下的路径，或缩放到图标槽的图标控件。</summary>
+    public object? Icon
     {
         get => _icon;
         set
         {
+            if (ReferenceEquals(_icon, value)) return;
             _icon = value;
+            _geometry = AlderIconPresenter.AsGeometry(value);
+            UpdateControlIcon();
             InvalidateVisual();
         }
+    }
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        UpdateControlIcon();
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        ReleaseControlIcon();
+        base.OnDetachedFromVisualTree(e);
+    }
+
+    private void UpdateControlIcon()
+    {
+        ReleaseControlIcon();
+        if (_icon is Control control && this.IsAttachedToVisualTree())
+        {
+            if (_controlIcon is null)
+            {
+                _controlIcon = new ContentPresenter { Foreground = Foreground };
+                _iconViewbox = new Viewbox { Child = _controlIcon, IsHitTestVisible = false };
+                LogicalChildren.Add(_iconViewbox);
+                VisualChildren.Add(_iconViewbox);
+            }
+
+            // A plugin descriptor is reused for every matching block.
+            var users = IconUsers.GetOrCreateValue(control);
+            users.Add(this);
+            _registeredIcon = control;
+            ShowControlIcon(control, users[0]);
+        }
+        InvalidateMeasure();
+    }
+
+    private void ShowControlIcon(Control control, IconButton owner)
+    {
+        _controlIcon!.Content = owner == this ? control : new Border
+        {
+            Width = 16, Height = 16, Background = new VisualBrush(owner._iconViewbox!)
+        };
+    }
+
+    private void ReleaseControlIcon()
+    {
+        if (_registeredIcon is not { } control) return;
+        _registeredIcon = null;
+        _controlIcon!.Content = null;
+        if (!IconUsers.TryGetValue(control, out var users)) return;
+        var wasOwner = users[0] == this;
+        users.Remove(this);
+        if (users.Count == 0)
+            IconUsers.Remove(control);
+        else if (wasOwner)
+            foreach (var user in users) user.ShowControlIcon(control, users[0]);
     }
 
     /// <summary>可选的文字标签（显示在图标右侧，例如"已复制"）。</summary>
@@ -61,7 +139,17 @@ public sealed class IconButton : Control
 
     public bool IsActive { get; set; }
 
-    protected override Size MeasureOverride(Size availableSize) => new(26 + (_label is null ? 0 : _label.WidthIncludingTrailingWhitespace + 4), 26);
+    protected override Size MeasureOverride(Size availableSize)
+    {
+        _iconViewbox?.Measure(new Size(16, 16));
+        return new Size(26 + (_label is null ? 0 : _label.WidthIncludingTrailingWhitespace + 4), 26);
+    }
+
+    protected override Size ArrangeOverride(Size finalSize)
+    {
+        _iconViewbox?.Arrange(new Rect(5, 5, 16, 16));
+        return finalSize;
+    }
 
     public override void Render(DrawingContext context)
     {
@@ -76,11 +164,11 @@ public sealed class IconButton : Control
             context.DrawRectangle(Brushes.Transparent, null, bounds);
         }
         var foreground = Foreground ?? Brushes.Gray;
-        if (_icon is not null)
+        if (_geometry is not null)
         {
             using (context.PushTransform(Matrix.CreateTranslation(5, 5)))
             {
-                context.DrawGeometry(null, new Pen(foreground, 1.4, lineCap: PenLineCap.Round, lineJoin: PenLineJoin.Round), _icon);
+                context.DrawGeometry(null, new Pen(foreground, 1.4, lineCap: PenLineCap.Round, lineJoin: PenLineJoin.Round), _geometry);
             }
         }
         _label?.Draw(context, new Point(26, (bounds.Height - _label.Height) / 2));

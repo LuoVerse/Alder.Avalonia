@@ -44,6 +44,7 @@
     <Setter Property="Template">
       <ControlTemplate>
         <Grid>
+          <Border Name="MapHighlight" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
           <ContentPresenter HorizontalAlignment="{TemplateBinding OverlayHorizontalAlignment}"
                             VerticalAlignment="{TemplateBinding OverlayVerticalAlignment}"
                             Margin="12" Content="{TemplateBinding OverlayContent}" ContentTemplate="{TemplateBinding OverlayContentTemplate}" />
@@ -98,12 +99,12 @@
                   IsVisible="{CompiledBinding Attribution, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}">
             <alder:AlderTextBlock Text="{TemplateBinding Attribution}" FontSize="10" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource AlderMuted}" />
           </Border>
-          <Border Name="FocusFrame" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}"
+          <Border BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}"
                   CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
         </Grid>
       </ControlTemplate>
     </Setter>
-    <Style Selector="^:focus-visible /template/ Border#FocusFrame"><Setter Property="BorderThickness" Value="2" /><Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#MapHighlight"><Setter Property="Background" Value="{DynamicResource AlderSoftHoverTint}" /></Style>
     <Style Selector="^[IsInteractive=False]"><Setter Property="Focusable" Value="False" /></Style>
     <Style Selector="^[IsInteractive=False] /template/ StackPanel#ControlStack"><Setter Property="IsVisible" Value="False" /></Style>
     <Style Selector="^ /template/ alder|AlderButton#PART_Fullscreen">

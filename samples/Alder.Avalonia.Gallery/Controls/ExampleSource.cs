@@ -8,7 +8,7 @@ internal static class ExampleSource
 {
     public static void AttachFiles(ExampleCard card, UserControl view, bool showOnlyThisCard = false)
     {
-        card.PrepareSourcesOnDemand(() =>
+        card.DeferSources(() =>
         {
             var type = view.GetType();
             var axaml = showOnlyThisCard
@@ -26,7 +26,7 @@ internal static class ExampleSource
             () => ReadNavigationFiles(view, ReadFile(type, ".axaml")));
         foreach (var card in CardsIn(view))
         {
-            card.PrepareSourcesOnDemand(() =>
+            card.DeferSources(() =>
             {
                 if (card.Preview is UserControl { DataContext: NavigationBindingViewModel model } preview)
                 {
@@ -81,7 +81,7 @@ internal static class ExampleSource
         }
 
         foreach (var card in CardsIn(view))
-            card.PrepareSourcesOnDemand(() => PopulateCard(view, viewName, card));
+            card.DeferSources(() => PopulateCard(view, viewName, card));
     }
 
     private static IEnumerable<ExampleCard> CardsIn(UserControl view)

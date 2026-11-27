@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:a="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls" xmlns:conv="using:Avalonia.Data.Converters" xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" x:Class="Alder.Avalonia.Gallery.Views.ApprovalCardExample" x:DataType="vm:AiExampleViewModel">
   <UserControl.Resources>
     <ControlTheme x:Key="ApprovalStepTheme" TargetType="a:AlderStepperStep">
+      <Setter Property="FocusAdorner" Value="{x:Null}" />
       <Setter Property="MinWidth" Value="16" />
       <Setter Property="Height" Value="28" />
       <Setter Property="Cursor" Value="Hand" />
@@ -20,12 +21,15 @@
           </Panel>
         </ControlTemplate>
       </Setter>
-      <Style Selector="^:pointerover /template/ Border#Marker">
+      <Style Selector="^:pointerover /template/ Border#Marker, ^:focus-visible /template/ Border#Marker">
         <Setter Property="Background" Value="{DynamicResource AlderMuted}" />
       </Style>
       <Style Selector="^[Status=Active] /template/ Border#Marker">
         <Setter Property="Width" Value="18" />
         <Setter Property="Background" Value="{DynamicResource AlderAccent}" />
+      </Style>
+      <Style Selector="^[Status=Active]:focus-visible /template/ Border#Marker">
+        <Setter Property="Background" Value="{DynamicResource AlderAccentHover}" />
       </Style>
       <Style Selector="^[(a|AlderMotion.Reduced)=True] /template/ Border#Marker">
         <Setter Property="Transitions" Value="{x:Null}" />

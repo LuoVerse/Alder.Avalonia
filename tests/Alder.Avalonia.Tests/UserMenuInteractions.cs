@@ -202,6 +202,9 @@ public sealed class UserMenuInteractions
         try
         {
             AlderMotion.SetReduced(window, false);
+            var chevron = FindTriggerChevron(menu);
+            var rotation = ElementComposition.GetElementVisual(chevron)!;
+            Assert.Equal(0, rotation.RotationAngle);
             var surface = menu.GetVisualDescendants().OfType<ButtonFeedback>().Single();
             var visual = ElementComposition.GetElementVisual(surface)!;
             var bounds = menu.Bounds;
@@ -213,6 +216,8 @@ public sealed class UserMenuInteractions
             Assert.Equal(1, surface.PressScale);
             var flyout = Assert.IsType<AlderMenuFlyout>(menu.Flyout);
             Assert.True(flyout.IsOpen);
+            Assert.Equal(MathF.PI, rotation.RotationAngle);
+            Assert.NotNull(rotation.ImplicitAnimations);
             var outside = new Point(5, 5);
             window.MouseMove(outside);
             Refresh(window);
@@ -231,6 +236,7 @@ public sealed class UserMenuInteractions
             window.MouseUp(outside, MouseButton.Left);
             Assert.True(flyout.IsOpen);
             Assert.False(flyout.Popup.IsHitTestVisible);
+            Assert.Equal(0, rotation.RotationAngle);
             Assert.Equal(1, visual.Scale.X);
             await Task.Delay(180);
             Assert.False(flyout.IsOpen);
@@ -247,6 +253,8 @@ public sealed class UserMenuInteractions
         var window = Show(new StackPanel { Children = { menu, outside } });
         try
         {
+            var chevron = FindTriggerChevron(menu);
+            var rotation = ElementComposition.GetElementVisual(chevron)!;
             var surface = menu.GetVisualDescendants().OfType<ButtonFeedback>().Single();
             var visual = ElementComposition.GetElementVisual(surface)!;
             Assert.True(menu.Focus(NavigationMethod.Tab));
@@ -257,6 +265,8 @@ public sealed class UserMenuInteractions
             Refresh(window);
             var flyout = Assert.IsType<AlderMenuFlyout>(menu.Flyout);
             Assert.True(flyout.IsOpen);
+            Assert.Equal(MathF.PI, rotation.RotationAngle);
+            Assert.Null(rotation.ImplicitAnimations);
             Assert.Equal(.97, visual.Scale.X, 4);
             Assert.Null(visual.ImplicitAnimations);
 
@@ -264,6 +274,7 @@ public sealed class UserMenuInteractions
             window.KeyReleaseQwerty(PhysicalKey.Escape, RawInputModifiers.None);
             Refresh(window);
             Assert.False(flyout.IsOpen);
+            Assert.Equal(0, rotation.RotationAngle);
             Assert.True(menu.IsFocused);
             Assert.Equal(1, visual.Scale.X);
 
@@ -377,6 +388,9 @@ public sealed class UserMenuInteractions
         Refresh(window);
         return window;
     }
+
+    private static AlderUserMenuChevron FindTriggerChevron(AlderUserMenu menu) =>
+        menu.GetVisualDescendants().OfType<AlderUserMenuChevron>().Single();
 
     private static void Click(Window window, Control control)
     {

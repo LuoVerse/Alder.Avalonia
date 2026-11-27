@@ -53,6 +53,8 @@ public partial class AlderLoader : TemplatedControl
     private bool inViewport = true;
     private double elapsedSeconds;
     private LoaderGlyph? glyph;
+    private LoaderMotionLayer? motion;
+    private Visual[]? observedAncestors;
 
     /// <summary>The nominal indicator height. Infinity is one and a half times as wide.</summary>
     [GeneratedStyledProperty(DefaultValue = SpinnerSize.Medium)] public partial SpinnerSize Size { get; set; }
@@ -77,17 +79,43 @@ public partial class AlderLoader : TemplatedControl
         AutomationProperties.SetLiveSetting(this, AutomationLiveSetting.Polite);
         EffectiveViewportChanged += (_, e) =>
         {
-            inViewport = new Rect(Bounds.Size).Intersects(e.EffectiveViewport);
+            bool visible = new Rect(Bounds.Size).Intersects(e.EffectiveViewport);
+            if (visible == inViewport) return;
+            inViewport = visible;
+            RefreshMotion();
             if (inViewport) InvalidateVisual();
         };
     }
 
+    internal bool CanAnimate =>
+        inViewport && Opacity > 0 && IsEffectivelyVisible && this.IsAttachedToVisualTree() && !AlderMotion.GetReduced(this);
+
     private void Advance(TimeSpan elapsed)
     {
         pending = false;
-        if (!inViewport || Opacity <= 0 || !IsEffectivelyVisible || !this.IsAttachedToVisualTree() || AlderMotion.GetReduced(this)) return;
+        if (!CanAnimate || motion?.IsComposed == true) return;
         elapsedSeconds = elapsed.TotalSeconds;
         InvalidateVisual();
+    }
+
+    /// <inheritdoc/>
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    {
+        motion?.Suspend();
+        base.OnApplyTemplate(e);
+        motion = e.NameScope.Find<LoaderMotionLayer>("PART_LoaderMotion");
+        motion?.Attach(this);
+        ObserveAncestors();
+        InvalidateVisual();
+    }
+
+    /// <inheritdoc/>
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        inViewport = true;
+        ObserveAncestors();
+        RefreshMotion();
     }
 
     /// <inheritdoc/>
@@ -95,6 +123,8 @@ public partial class AlderLoader : TemplatedControl
     {
         // A closed top level may never deliver its outstanding animation frame.
         pending = false;
+        motion?.Suspend();
+        ClearAncestors();
         base.OnDetachedFromVisualTree(e);
     }
 
@@ -106,16 +136,20 @@ public partial class AlderLoader : TemplatedControl
         if (change.Property == LabelProperty && ControlAutomationPeer.FromElement(this) is LoaderAutomationPeer peer)
             peer.RaisePropertyChangedEvent(AutomationElementIdentifiers.NameProperty, change.OldValue as string, peer.GetName());
         if (change.Property == ForegroundProperty || change.Property == VariantProperty ||
+            change.Property == SizeProperty || change.Property == LabelProperty ||
             change.Property == IsVisibleProperty || change.Property == AlderMotion.ReducedProperty ||
-            (change.Property == OpacityProperty && Opacity > 0 && change.GetOldValue<double>() <= 0))
+            (change.Property == OpacityProperty && (Opacity <= 0 || change.GetOldValue<double>() <= 0)))
+        {
+            RefreshMotion();
             InvalidateVisual();
+        }
     }
 
     /// <inheritdoc/>
     public override void Render(DrawingContext context)
     {
         base.Render(context);
-        if (Foreground is not { } ink) return;
+        if (motion?.IsComposed == true || Foreground is not { } ink) return;
         bool reduced = AlderMotion.GetReduced(this);
         if (this is AlderChatLoader chat)
         {
@@ -128,15 +162,21 @@ public partial class AlderLoader : TemplatedControl
                 return;
             }
         }
-        double aspect = Variant == AiLoaderVariant.Infinity ? 1.5 : 1;
-        double height = Label is null
-            ? Math.Min(Bounds.Width / aspect, Bounds.Height)
-            : Math.Min(IndicatorHeight, Math.Min(Bounds.Width / aspect, Bounds.Height));
-        if (height <= 0) return;
-        var center = Label is null ? new Rect(Bounds.Size).Center : new Point(height * aspect / 2, Bounds.Height / 2);
-        using (context.PushTransform(Matrix.CreateScale(height / 24, height / 24) * Matrix.CreateTranslation(center.X, center.Y)))
+        var box = GetGlyphBox(Bounds.Size);
+        if (box.Height <= 0) return;
+        var center = box.Center;
+        using (context.PushTransform(Matrix.CreateScale(box.Height / 24, box.Height / 24) * Matrix.CreateTranslation(center.X, center.Y)))
             (glyph ??= new LoaderGlyph(ink)).Draw(context, Variant, elapsedSeconds, reduced);
         RequestNextFrame(reduced);
+    }
+
+    internal Rect GetGlyphBox(Size bounds)
+    {
+        double aspect = Variant == AiLoaderVariant.Infinity ? 1.5 : 1;
+        double height = Math.Min(bounds.Width / aspect, bounds.Height);
+        if (Label is not null) height = Math.Min(IndicatorHeight, height);
+        var center = Label is null ? new Rect(bounds).Center : new Point(height * aspect / 2, bounds.Height / 2);
+        return new Rect(center.X - height / 2, center.Y - height / 2, height, height);
     }
 
     /// <inheritdoc/>
@@ -163,12 +203,42 @@ public partial class AlderLoader : TemplatedControl
             top.RequestAnimationFrame(frame);
         }
     }
+
+    private void RefreshMotion()
+    {
+        if (motion is null) return;
+        if (!CanAnimate || !LoaderMotionLayer.Supports(this)) motion.Suspend();
+        motion.InvalidateArrange();
+    }
+
+    private void ObserveAncestors()
+    {
+        ClearAncestors();
+        if (motion is null || !this.IsAttachedToVisualTree()) return;
+        observedAncestors = this.GetVisualAncestors().ToArray();
+        foreach (var ancestor in observedAncestors) ancestor.PropertyChanged += AncestorChanged;
+    }
+
+    private void ClearAncestors()
+    {
+        if (observedAncestors is null) return;
+        foreach (var ancestor in observedAncestors) ancestor.PropertyChanged -= AncestorChanged;
+        observedAncestors = null;
+    }
+
+    private void AncestorChanged(object? sender, AvaloniaPropertyChangedEventArgs change)
+    {
+        if (change.Property != IsVisibleProperty) return;
+        if (!change.GetNewValue<bool>()) motion?.Suspend();
+        motion?.InvalidateArrange();
+        InvalidateVisual();
+    }
 }
 
 /// <summary>A chat typing indicator with dots, pulse and spinner variants.</summary>
 public sealed partial class AlderChatLoader : AlderLoader
 {
-    private static readonly SplineEasing TypingEase = new(.42, 0, .58, 1);
+    private static readonly SplineEasing TypingEase = LoaderGlyph.Ease;
 
     static AlderChatLoader()
     {
@@ -196,22 +266,27 @@ public sealed partial class AlderChatLoader : AlderLoader
     internal void DrawTypingIndicator(DrawingContext context, IBrush ink, double seconds, bool reduced)
     {
         bool dots = Variant == AiLoaderVariant.Dots;
-        double diameter = dots ? DotDiameter : PulseDiameter;
-        double width = dots ? diameter * 3 + 8 : diameter;
-        double fit = Math.Min(1, Math.Min(Bounds.Width / width, Bounds.Height / diameter));
-        if (fit <= 0) return;
-
-        var center = new Rect(Bounds.Size).Center;
+        var (center, diameter, spacing) = GetTypingBox(Bounds.Size);
+        if (diameter <= 0) return;
         for (int i = 0; i < (dots ? 3 : 1); i++)
         {
             double strength = dots ? DotStrength(seconds, i) : PulseStrength(seconds);
             double opacity = reduced ? .7 : dots ? .35 + .65 * strength : .45 + .55 * strength;
             double scale = reduced ? 1 : dots ? .85 + .15 * strength : .92 + .08 * strength;
-            double radius = diameter * fit * scale / 2;
-            double x = dots ? (i - 1) * (diameter + 4) * fit : 0;
+            double radius = diameter * scale / 2;
+            double x = dots ? (i - 1) * spacing : 0;
             using var fade = context.PushOpacity(opacity);
             context.DrawEllipse(ink, null, center + new Vector(x, 0), radius, radius);
         }
+    }
+
+    internal (Point Center, double Diameter, double Spacing) GetTypingBox(Size bounds)
+    {
+        bool dots = Variant == AiLoaderVariant.Dots;
+        double diameter = dots ? DotDiameter : PulseDiameter;
+        double width = dots ? diameter * 3 + 8 : diameter;
+        double fit = Math.Min(1, Math.Min(bounds.Width / width, bounds.Height / diameter));
+        return (new Rect(bounds).Center, diameter * fit, (diameter + 4) * fit);
     }
 
     private static double DotStrength(double seconds, int index)

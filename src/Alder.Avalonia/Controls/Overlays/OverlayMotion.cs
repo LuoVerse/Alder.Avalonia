@@ -8,20 +8,21 @@ namespace Alder.Avalonia.Controls;
 internal static class OverlayMotion
 {
     public static void Animate(Control control, bool entering, Vector3D offset, double scale,
-        TimeSpan duration, TimeSpan fadeDuration, Point pivot, Easing easing)
+        TimeSpan duration, TimeSpan fadeDuration, Point pivot, Easing easing, bool restartEntrance = true)
     {
         if (ElementComposition.GetElementVisual(control) is not { } visual) return;
         visual.CenterPoint = new Vector3D(pivot.X, pivot.Y, 0);
         var opacity = visual.Compositor.CreateScalarKeyFrameAnimation();
         opacity.Duration = fadeDuration;
-        if (entering) opacity.InsertKeyFrame(0, 0);
+        bool fromEntrance = entering && restartEntrance;
+        if (fromEntrance) opacity.InsertKeyFrame(0, 0);
         opacity.InsertKeyFrame(1, entering ? 1 : 0, easing);
         visual.StartAnimation(nameof(CompositionVisual.Opacity), opacity);
 
         var unit = new Vector3D(1, 1, 1);
         var scaled = new Vector3D(scale, scale, 1);
-        if (scale != 1) AnimateVector(nameof(CompositionVisual.Scale), entering ? scaled : null, entering ? unit : scaled);
-        AnimateVector(nameof(CompositionVisual.Translation), entering ? offset : null, entering ? default : offset);
+        if (scale != 1) AnimateVector(nameof(CompositionVisual.Scale), fromEntrance ? scaled : null, entering ? unit : scaled);
+        AnimateVector(nameof(CompositionVisual.Translation), fromEntrance ? offset : null, entering ? default : offset);
 
         void AnimateVector(string property, Vector3D? from, Vector3D to)
         {

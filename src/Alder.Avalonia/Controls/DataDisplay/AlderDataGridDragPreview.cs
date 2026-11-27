@@ -24,6 +24,6 @@ public sealed partial class AlderDataGrid
 
         var theme = this.TryFindResource("AlderDataGridDragPreviewTheme", out var value) ? value as ControlTheme : null;
         return new FloatingDragPreview(overlay, row, visible.Translate(-(Vector)rowOrigin), session.Origin - visible.Position,
-            root.RenderScaling, theme, "DataGridDragPreview");
+            root.RenderScaling, theme, "DataGridDragPreview", useComposition: true);
     }
 }

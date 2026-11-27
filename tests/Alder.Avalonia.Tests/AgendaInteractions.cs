@@ -69,6 +69,48 @@ public sealed class AgendaInteractions
     }
 
     [AvaloniaFact]
+    public void AgendaKeepsExistingControlsAndFocusWhenTheCollectionChanges()
+    {
+        var original = new AlderAgendaEvent("original", "Visible event", At(Monday, 9), At(Monday, 11));
+        var outside = new AlderAgendaEvent("outside", "Outside current week", At(Monday.AddDays(60), 9), At(Monday.AddDays(60), 11));
+        var otherDay = new AlderAgendaEvent("other", "Other day", At(Monday.AddDays(1), 9), At(Monday.AddDays(1), 11));
+        var events = new ObservableCollection<AlderAgendaEvent> { original, otherDay };
+        var agenda = new AlderAgenda
+        {
+            Events = events, FirstDayOfWeek = DayOfWeek.Monday, DisplayDate = Monday,
+            View = AlderCalendarView.Week, StartHour = 8, EndHour = 15
+        };
+        using var preview = new AgendaWindow(agenda);
+        var button = EventButton(agenda, original.Title);
+        var unaffected = EventButton(agenda, otherDay.Title);
+        var scroll = Part<ScrollViewer>(agenda, "TimeScroll");
+        Assert.True(button.Focus());
+        double fullWidth = button.Bounds.Width;
+
+        events.Add(outside);
+        preview.Pump();
+        Assert.Same(button, EventButton(agenda, original.Title));
+        Assert.True(button.IsFocused);
+        Assert.Same(scroll, Part<ScrollViewer>(agenda, "TimeScroll"));
+
+        var overlap = new AlderAgendaEvent("overlap", "Overlap", At(Monday, 10), At(Monday, 12));
+        events.Add(overlap);
+        preview.Pump();
+        Assert.Same(button, EventButton(agenda, original.Title));
+        Assert.Same(unaffected, EventButton(agenda, otherDay.Title));
+        Assert.True(button.IsFocused);
+        Assert.True(button.Bounds.Width < fullWidth);
+        events.Remove(overlap);
+        preview.Pump();
+        Assert.Equal(fullWidth, button.Bounds.Width);
+        Assert.True(button.IsFocused);
+
+        agenda.DisplayDate = Monday.AddDays(60);
+        preview.Pump();
+        Assert.NotNull(EventButton(agenda, outside.Title));
+    }
+
+    [AvaloniaFact]
     public void AgendaDispatchesCreateMoveResizeAndDeleteAndProtectsReadOnlyEvents()
     {
         var events = new ObservableCollection<AlderAgendaEvent>

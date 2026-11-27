@@ -113,7 +113,8 @@ internal sealed class AlderEmojiPickerPanel : TemplatedControl
     {
         if (property == AlderEmojiPicker.RecentEmojisProperty) ObserveRecents();
         if (property == AlderEmojiPicker.SkinToneProperty) UpdateTone();
-        if (property == AlderEmojiPicker.CategoriesProperty || property == AlderEmojiPicker.ShowRecentProperty)
+        if (property == AlderEmojiPicker.CategoriesProperty || property == AlderEmojiPicker.ShowRecentProperty ||
+            property == AlderEmojiPicker.SizeProperty)
             CreateCategories();
         bool reset = property == AlderEmojiPicker.CategoriesProperty || property == AlderEmojiPicker.FilterProperty;
         Rebuild(reset);
@@ -229,9 +230,14 @@ internal sealed class AlderEmojiPickerPanel : TemplatedControl
             if (!categoryButtons.ContainsKey(section.Key))
                 Add(section.Key, section.Icon, section.ResourceKey, section.Title, section.IconData);
 
-        void Add(string key, string icon, string? labelKey, string title, Geometry? iconData = null)
+        void Add(string key, object? icon, string? labelKey, string title, Geometry? iconData = null)
         {
-            var button = GlyphButton(icon, "AlderEmojiCategoryButtonTheme", 16);
+            var button = GlyphButton(icon as string ?? "", "AlderEmojiCategoryButtonTheme", 16);
+            if (icon is Control or Geometry || icon is string && AlderIconPresenter.AsGeometry(icon) is not null)
+                {
+                double extent = owner.Size switch { AlderSize.Small => 14, AlderSize.Large => 18, _ => 16 };
+                button.Content = new AlderIconPresenter { Content = icon, Width = extent, Height = extent };
+            }
             if (iconData is not null)
             {
                 var outline = new ShapePath

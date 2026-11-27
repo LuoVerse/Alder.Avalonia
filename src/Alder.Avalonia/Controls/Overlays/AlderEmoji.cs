@@ -82,9 +82,9 @@ public sealed class AlderEmoji
 /// <summary>A labeled section of emoji in the picker.</summary>
 /// <param name="Key">A stable, unique key used for category navigation.</param>
 /// <param name="Title">The accessible category label.</param>
-/// <param name="Icon">The emoji shown in the category selector.</param>
+/// <param name="Icon">The emoji, geometry, or icon control shown in the category selector.</param>
 /// <param name="Items">The emoji in their display order.</param>
-public sealed record AlderEmojiCategory(string Key, string Title, string Icon, IReadOnlyList<AlderEmoji> Items)
+public sealed record AlderEmojiCategory(string Key, string Title, object? Icon, IReadOnlyList<AlderEmoji> Items)
 {
     /// <summary>Optional outline geometry displayed in place of the emoji icon.</summary>
     public Geometry? IconData { get; init; }

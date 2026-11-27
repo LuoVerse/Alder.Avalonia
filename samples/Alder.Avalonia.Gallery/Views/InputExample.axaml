@@ -115,14 +115,14 @@
       <gallery:ExampleCard.Preview>
         <StackPanel Spacing="8">
           <WrapPanel ItemSpacing="8" LineSpacing="4">
-            <alder:AlderInput x:Name="DomainInput" Text="{Binding Domain, Mode=TwoWay}" PlaceholderText="{DynamicResource GalleryText.DomainPlaceholder}" AutomationProperties.Name="{DynamicResource GalleryText.Domain}" />
+            <alder:AlderInput x:Name="DomainInput" ShowClearButton="True" Text="{Binding Domain, Mode=TwoWay}" PlaceholderText="{DynamicResource GalleryText.DomainPlaceholder}" AutomationProperties.Name="{DynamicResource GalleryText.Domain}" />
             <alder:AlderButton x:Name="ResetDomain" Content="{DynamicResource GalleryText.Reset}" Variant="Ghost" Command="{Binding Reset}" />
           </WrapPanel>
           <alder:AlderTextBlock Classes="domainPreview" Foreground="{DynamicResource AlderMuted}" FontSize="14" TextWrapping="Wrap" Text="{Binding DomainPreview}" />
         </StackPanel>
       </gallery:ExampleCard.Preview>
       <gallery:ExampleCard.CSharpSource><![CDATA[
-        var input = new AlderInput { PlaceholderText = "domain" };
+        var input = new AlderInput { PlaceholderText = "domain", ShowClearButton = true };
         input.Bind(AlderInput.TextProperty, CompiledBinding.Create((InputViewModel model) => model.Domain, mode: BindingMode.TwoWay));
         AutomationProperties.SetName(input, "Domain");
       ]]></gallery:ExampleCard.CSharpSource>

@@ -1,8 +1,10 @@
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows.Input;
 using Alder.Avalonia.Controls;
 using Avalonia;
+using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
@@ -17,6 +19,38 @@ namespace Alder.Avalonia.Tests;
 
 public sealed class ProDataDisplayInteractions
 {
+    [AvaloniaFact]
+    public void WorkflowSelectionReusesThePaletteAndUpdatesTheInspector()
+    {
+        var start = new AlderWorkflowNode(Guid.NewGuid(), WorkflowNodeKind.Start, "Start", 80, 60);
+        var copy = new AlderWorkflowNode(Guid.NewGuid(), WorkflowNodeKind.Copy, "Notify", 80, 180,
+            CopyRecipients: ImmutableArray<AlderWorkflowAssignee>.Empty);
+        var end = new AlderWorkflowNode(Guid.NewGuid(), WorkflowNodeKind.End, "End", 80, 300);
+        var editor = new AlderWorkflowEditor
+        {
+            Workflow = new AlderWorkflowDefinition(Guid.NewGuid(), "Example", [start, copy, end],
+                [new(start.Id, WorkflowRoute.Next, copy.Id), new(copy.Id, WorkflowRoute.Next, end.Id)])
+        };
+        var window = new Window { Width = 960, Height = 540, Content = editor };
+        AlderMotion.SetReduced(window, true);
+        window.Show();
+        Pump(window);
+        try
+        {
+            var original = FindButton("Start");
+            var target = FindButton("Notify");
+            Click(window, Center(target, window));
+            Assert.Same(original, FindButton("Start"));
+            Assert.Same(target, FindButton("Notify"));
+            Assert.Equal(ButtonVariant.Secondary, target.Variant);
+            Assert.Contains(editor.GetVisualDescendants().OfType<TextBox>(), item => item.Text == "Notify");
+        }
+        finally { window.Close(); }
+
+        AlderButton FindButton(string name) => editor.GetVisualDescendants().OfType<AlderButton>()
+            .Single(button => AutomationProperties.GetName(button) == $"定位{name}");
+    }
+
     [AvaloniaTheory]
     [InlineData(false)]
     [InlineData(true)]
@@ -305,6 +339,25 @@ public sealed class ProDataDisplayInteractions
     }
 
     [AvaloniaFact]
+    public void LongTimelineRealizesTheVisibleEntriesAndKeepsTheRailAtTheEnd()
+    {
+        var timeline = new AlderTimeline { ItemsSource = Enumerable.Range(0, 200).Select(i => $"Event {i}").ToArray() };
+        var scroll = new ScrollViewer { Content = timeline, Height = 250 };
+        var window = Show(scroll);
+        try
+        {
+            Assert.InRange(timeline.GetRealizedContainers().Count(), 1, 12);
+            timeline.ScrollIntoView(199);
+            Pump(window);
+            var last = Assert.IsType<AlderTimelineItem>(timeline.ContainerFromIndex(199));
+            Assert.Contains("connect-before", last.Classes);
+            Assert.DoesNotContain("connect-after", last.Classes);
+            Assert.InRange(timeline.GetRealizedContainers().Count(), 1, 12);
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaFact]
     public void TimelineMovesTheRailAndAlternatingEntriesWhenCrossingTheCompactBreakpoint()
     {
         var first = new AlderTimelineItem { Header = "Proposed" };
@@ -351,7 +404,7 @@ public sealed class ProDataDisplayInteractions
         {
             var footer = column.GetVisualDescendants().OfType<AlderButton>().Single(button => button.Name == "PART_AddButton");
             var surface = column.GetVisualDescendants().OfType<Border>().Single(border => border.Name == "ColumnSurface");
-            var icon = footer.GetVisualDescendants().OfType<PathIcon>().Single(element => element.Name == "LeadingIcon");
+            var icon = footer.GetVisualDescendants().OfType<AlderIconPresenter>().Single(element => element.Name == "LeadingIcon");
             Assert.Equal(ButtonVariant.Outline, footer.Variant);
             Assert.NotNull(footer.Icon);
             Assert.True(icon.IsVisible);
@@ -385,6 +438,28 @@ public sealed class ProDataDisplayInteractions
             var dataColumn = Assert.IsType<AlderKanbanColumn>(board.ContainerFromIndex(0));
             Assert.Same(data, dataColumn.DataContext);
             Assert.Same(explicitColumn, board.ContainerFromIndex(1));
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaFact]
+    public void LongKanbanColumnRealizesTheViewportAndUpdatesIndicesAfterReordering()
+    {
+        var cards = new ObservableCollection<string>(Enumerable.Range(0, 200).Select(i => $"Card {i}"));
+        var column = new AlderKanbanColumn { Header = "Backlog", ItemsSource = cards };
+        var window = Show(new AlderKanban { Items = { column }, Height = 260 });
+        try
+        {
+            Assert.InRange(column.GetRealizedContainers().Count(), 1, 14);
+            var first = Assert.IsType<AlderKanbanCard>(column.ContainerFromIndex(0));
+            cards.Move(0, 2);
+            Pump(window);
+            Assert.Same(first, column.ContainerFromIndex(2));
+            column.ScrollIntoView(199);
+            Pump(window);
+            Assert.IsType<AlderKanbanCard>(column.ContainerFromIndex(199));
+            Assert.Null(column.ContainerFromIndex(0));
+            Assert.InRange(column.GetRealizedContainers().Count(), 1, 14);
         }
         finally { window.Close(); }
     }

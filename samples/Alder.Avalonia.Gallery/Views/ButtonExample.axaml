@@ -3,6 +3,8 @@
     x:DataType="vm:ButtonViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:alder="using:Alder.Avalonia.Controls"
+    xmlns:mi="using:Material.Icons.Avalonia"
+    xmlns:fi="using:FluentIcons.Avalonia.Markup"
     xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Resources>
@@ -268,6 +270,78 @@
         </Border>
       </gallery:ExampleCard.Feedback>
     </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleIconSources" Title="{DynamicResource GalleryText.ButtonIconSources}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="16">
+          <!-- On the view root:
+               xmlns:mi="using:Material.Icons.Avalonia"
+               xmlns:fi="using:FluentIcons.Avalonia.Markup"
+               Include MaterialIconStyles in Application.Styles. -->
+          <StackPanel Spacing="6">
+            <TextBlock Text="{DynamicResource GalleryText.ButtonIconGeometry}" FontWeight="Medium" />
+            <WrapPanel ItemSpacing="12" LineSpacing="8">
+              <alder:AlderButton Size="Small" Content="{DynamicResource GalleryText.Small}"
+                                 Icon="{StaticResource AlderIconInfo}" VerticalAlignment="Center" />
+              <alder:AlderButton Size="Medium" Content="{DynamicResource GalleryText.Medium}"
+                                 Icon="{StaticResource AlderIconInfo}" VerticalAlignment="Center" />
+              <alder:AlderButton Size="Large" Content="{DynamicResource GalleryText.Large}"
+                                 Icon="{StaticResource AlderIconInfo}" VerticalAlignment="Center" />
+            </WrapPanel>
+          </StackPanel>
+          <StackPanel Spacing="6">
+            <TextBlock Text="{DynamicResource GalleryText.ButtonIconMaterial}" FontWeight="Medium" />
+            <WrapPanel ItemSpacing="12" LineSpacing="8">
+              <alder:AlderButton Size="Small" Content="{DynamicResource GalleryText.Small}"
+                                 Icon="{mi:MaterialIconExt Kind=Info}" VerticalAlignment="Center" />
+              <alder:AlderButton Size="Medium" Content="{DynamicResource GalleryText.Medium}"
+                                 Icon="{mi:MaterialIconExt Kind=Info}" VerticalAlignment="Center" />
+              <alder:AlderButton Size="Large" Content="{DynamicResource GalleryText.Large}"
+                                 Icon="{mi:MaterialIconExt Kind=Info}" VerticalAlignment="Center" />
+            </WrapPanel>
+          </StackPanel>
+          <StackPanel Spacing="6">
+            <TextBlock Text="{DynamicResource GalleryText.ButtonIconFluent}" FontWeight="Medium" />
+            <WrapPanel ItemSpacing="12" LineSpacing="8">
+              <alder:AlderButton Size="Small" Content="{DynamicResource GalleryText.Small}"
+                                 Icon="{fi:SymbolIcon Symbol=Info}" VerticalAlignment="Center" />
+              <alder:AlderButton Size="Medium" Content="{DynamicResource GalleryText.Medium}"
+                                 Icon="{fi:SymbolIcon Symbol=Info}" VerticalAlignment="Center" />
+              <alder:AlderButton Size="Large" Content="{DynamicResource GalleryText.Large}"
+                                 Icon="{fi:SymbolIcon Symbol=Info}" VerticalAlignment="Center" />
+            </WrapPanel>
+          </StackPanel>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        // App.axaml includes MaterialIconStyles from Material.Icons.Avalonia.
+        WrapPanel Buttons(Func<object> createIcon)
+        {
+            var row = new WrapPanel { ItemSpacing = 12, LineSpacing = 8 };
+            foreach (var size in new[] { AlderSize.Small, AlderSize.Medium, AlderSize.Large })
+            {
+                var button = new AlderButton { Size = size, Icon = createIcon(), VerticalAlignment = VerticalAlignment.Center };
+                button[!ContentControl.ContentProperty] = new DynamicResourceExtension($"GalleryText.{size}");
+                row.Children.Add(button);
+            }
+            return row;
+        }
+
+        var rows = new StackPanel { Spacing = 16 };
+        void AddRow(string labelKey, Func<object> createIcon)
+        {
+            var row = new StackPanel { Spacing = 6 };
+            var label = new TextBlock { FontWeight = FontWeight.Medium };
+            label[!TextBlock.TextProperty] = new DynamicResourceExtension(labelKey);
+            row.Children.Add(label);
+            row.Children.Add(Buttons(createIcon));
+            rows.Children.Add(row);
+        }
+
+        AddRow("GalleryText.ButtonIconGeometry", () => this.FindResource("AlderIconInfo")!);
+        AddRow("GalleryText.ButtonIconMaterial", () => new Material.Icons.Avalonia.MaterialIcon { Kind = Material.Icons.MaterialIconKind.Info });
+        AddRow("GalleryText.ButtonIconFluent", () => new FluentIcons.Avalonia.SymbolIcon { Symbol = FluentIcons.Common.Symbol.Info });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
     <gallery:ExampleCard x:Name="SampleIconOnly" Title="{DynamicResource GalleryText.IconOnly}">
       <gallery:ExampleCard.Preview>
         <WrapPanel>
@@ -469,7 +543,10 @@
                   Command="{Binding Demonstrate}"
                   CommandParameter=""
                   Theme="{StaticResource AlderCloseButtonTheme}"
-                  VerticalAlignment="Center" />
+                  VerticalAlignment="Center">
+                <alder:AlderPathIcon Theme="{StaticResource AlderFittedPathIconTheme}"
+                                     Width="12" Height="12" Data="{StaticResource AlderIconXmark}" />
+              </alder:AlderButton>
           </WrapPanel>
         </StackPanel>
       </gallery:ExampleCard.Preview>
@@ -481,6 +558,22 @@
         };
         button.Classes.Add("upgrade");
         button.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
+
+        var close = new AlderButton
+        {
+            CommandParameter = "",
+            Theme = (ControlTheme)this.FindResource("AlderCloseButtonTheme")!,
+            VerticalAlignment = VerticalAlignment.Center,
+            Content = new AlderPathIcon
+            {
+                Theme = (ControlTheme)this.FindResource("AlderFittedPathIconTheme")!,
+                Data = (Geometry)this.FindResource("AlderIconXmark")!,
+                Width = 12,
+                Height = 12,
+            },
+        };
+        close[!AutomationProperties.NameProperty] = new DynamicResourceExtension("GalleryText.ClearFeedback");
+        close.Bind(AlderButton.CommandProperty, CompiledBinding.Create((ButtonViewModel model) => model.Demonstrate));
       ]]></gallery:ExampleCard.CSharpSource>
       <gallery:ExampleCard.Feedback>
         <Border

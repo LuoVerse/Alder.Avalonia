@@ -9,16 +9,18 @@
     <PackageReference Include="Avalonia.Desktop" Version="12.2.0" PrivateAssets="all" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="12.2.0" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="12.2.0" />
+    <PackageReference Include="Material.Icons.Avalonia" Version="3.0.2" />
+    <PackageReference Include="FluentIcons.Avalonia" Version="2.1.345" />
     <PackageReference Include="ReactiveUI.Avalonia" Version="12.1.6" />
     <ProjectReference Include="../Alder.Avalonia.Gallery.SourceGenerator/Alder.Avalonia.Gallery.SourceGenerator.csproj"
                       OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all" />
     <ProjectReference Include="../../src/Alder.Avalonia/Alder.Avalonia.csproj" />
     <AvaloniaResource Include="Assets/Card/*.jpg;Assets/Card/*.jpeg;Assets/Card/ai-*.png;Assets/Carousel/*.png" />
-    <AvaloniaResource Include="Assets/Separator/*.png" />
+    <AvaloniaResource Include="Assets/Separator/*.png;Assets/Window/*.jpg" />
     <AvaloniaResource Include="Assets/Avatar/*.jpg" />
     <AvaloniaResource Include="Assets/Map/*.json" />
     <EmbeddedResource Include="Localization/*.json" />
-    <AdditionalFiles Include="Views/*Example.axaml;Views/*Example.axaml.cs;Views/GalleryView.axaml.cs;Views/NavigationPreview*.axaml;Views/NavigationPreview*.axaml.cs" />
+    <AdditionalFiles Include="Views/*Example.axaml;Views/*Example.axaml.cs;Views/GalleryView.axaml.cs;Views/NavigationPreview*.axaml;Views/NavigationPreview*.axaml.cs;Views/SalashPreviewWindow.axaml;Views/SalashPreviewWindow.axaml.cs" />
     <AdditionalFiles Include="ViewModels/*ViewModel.cs;ViewModels/NavigationPreview.cs;ViewModels/NavigationPreviewCatalog.cs;ViewModels/LayoutSamples.cs;ViewModels/AiExampleViewModel.Chain.cs;Controls/AiLivePreview.cs" />
   </ItemGroup>
 </Project>

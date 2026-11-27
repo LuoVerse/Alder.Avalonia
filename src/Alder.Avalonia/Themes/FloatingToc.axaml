@@ -12,8 +12,9 @@
         </Border>
       </ControlTemplate>
     </Setter>
-    <Style Selector="^:focus-visible /template/ Border#TriggerSurface">
-      <Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" />
+    <Style Selector="^:pointerover:not(:disabled) /template/ Border#TriggerSurface,
+                     ^:focus-visible:not(:disabled) /template/ Border#TriggerSurface">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
     </Style>
   </ControlTheme>
 

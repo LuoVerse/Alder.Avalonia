@@ -73,45 +73,16 @@ public sealed class ChatAttachmentViewModel : GalleryViewModel
             foreach (var file in picked)
             {
                 if (session != generation) return;
-                var name = file.Name;
-                ulong? size = null;
-                Bitmap? preview = null;
-                try
-                {
-                    size = (await file.GetBasicPropertiesAsync()).Size;
-                }
-                catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or NotSupportedException)
-                {
-                    // Files with unavailable metadata still have a usable attachment name.
-                }
-
-                if (session != generation) return;
-                if (AlderChatAttachment.InferFileKind(null, name) == ChatAttachmentFileKind.Image)
-                    preview = await LoadThumbnailAsync(file);
-
+                var attachment = await ChatAttachmentFile.ReadAsync(file);
                 if (session == generation)
-                    files.Add(new(name, size, preview));
+                    files.Add(attachment);
                 else
-                    preview?.Dispose();
+                    attachment.Preview?.Dispose();
             }
         }
         finally
         {
             foreach (var file in picked) file.Dispose();
-        }
-    }
-
-    private static async Task<Bitmap?> LoadThumbnailAsync(IStorageFile file)
-    {
-        try
-        {
-            await using var stream = await file.OpenReadAsync();
-            return await Task.Run(() => Bitmap.DecodeToWidth(stream, 128));
-        }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or
-                                           ArgumentException or InvalidOperationException or NotSupportedException)
-        {
-            return null;
         }
     }
 
@@ -129,4 +100,37 @@ public sealed class ChatAttachmentFile(string name, ulong? size, Bitmap? preview
     public string Name { get; } = name;
     public ulong? Size { get; } = size;
     public Bitmap? Preview { get; } = preview;
+
+    internal static async Task<ChatAttachmentFile> ReadAsync(IStorageFile file)
+    {
+        var name = file.Name;
+        ulong? size = null;
+        try
+        {
+            size = (await file.GetBasicPropertiesAsync()).Size;
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or NotSupportedException)
+        {
+            // Files with unavailable metadata still have a usable attachment name.
+        }
+
+        var preview = AlderChatAttachment.InferFileKind(null, name) == ChatAttachmentFileKind.Image
+            ? await LoadPreviewAsync(file) : null;
+        return new ChatAttachmentFile(name, size, preview);
+    }
+
+    private static async Task<Bitmap?> LoadPreviewAsync(IStorageFile file)
+    {
+        try
+        {
+            await using var stream = await file.OpenReadAsync();
+            return await Task.Run(() => new Bitmap(stream));
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or
+                                           ArgumentException or InvalidOperationException or NotSupportedException)
+        {
+            return null;
+        }
+    }
+
 }

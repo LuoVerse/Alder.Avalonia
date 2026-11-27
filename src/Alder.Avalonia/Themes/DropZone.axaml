@@ -99,7 +99,9 @@
                   <alder:AlderPathIcon Name="DefaultIcon" Width="32" Height="32" Foreground="{DynamicResource AlderMuted}"
                             Data="{StaticResource AlderDropUploadIcon}" HorizontalAlignment="Center"
                             IsVisible="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNull}}" />
-                  <ContentPresenter Content="{TemplateBinding Icon}" HorizontalAlignment="Center" />
+                  <alder:AlderIconPresenter Width="34" Height="34" Content="{TemplateBinding Icon}" HorizontalAlignment="Center"
+                                         Foreground="{DynamicResource AlderMuted}"
+                                         IsVisible="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
                 </Panel>
                 <alder:AlderTextBlock Name="DropTitle" Text="{TemplateBinding Title}" TextWrapping="Wrap" TextAlignment="Center" FontSize="14" LineHeight="20" FontWeight="Medium" />
                 <alder:AlderTextBlock Text="{TemplateBinding Description}" TextWrapping="Wrap" TextAlignment="Center" FontSize="12" LineHeight="16"
@@ -136,7 +138,7 @@
     </Style>
     <Style Selector="^:has-files[ShowFileList=True] /template/ ItemsControl#FileList"><Setter Property="IsVisible" Value="True" /></Style>
     <Style Selector="^:drop-target /template/ Border#PART_DropArea"><Setter Property="Background" Value="{DynamicResource AlderDropHighlightBrush}" /></Style>
-    <Style Selector="^:drop-target /template/ Rectangle#Outline, ^:focus-within /template/ Rectangle#Outline">
+    <Style Selector="^:drop-target /template/ Rectangle#Outline">
       <Setter Property="Stroke" Value="{DynamicResource AlderAccent}" />
     </Style>
     <Style Selector="^[LastError=Type] /template/ TextBlock#DropError">

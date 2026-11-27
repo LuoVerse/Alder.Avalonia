@@ -13,7 +13,13 @@ public sealed class AlderLineChart : AlderCartesianChart
     /// <summary>Whether the plotted lines are curved between adjacent data points.</summary>
     public bool IsSmooth { get => GetValue(IsSmoothProperty); set => SetValue(IsSmoothProperty, value); }
 
-    static AlderLineChart() => AffectsRender<AlderLineChart>(IsSmoothProperty);
+    /// <inheritdoc />
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+        if (change.Property == IsSmoothProperty)
+            InvalidateSeries();
+    }
 
     private protected override void DrawSeries(DrawingContext context, ChartLayout chart)
     {

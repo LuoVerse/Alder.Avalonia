@@ -35,8 +35,6 @@ public sealed class AlderComposedChart : AlderCartesianChart
     /// <summary>The max bar width in device-independent pixels.</summary>
     public double MaxBarWidth { get => GetValue(MaxBarWidthProperty); set => SetValue(MaxBarWidthProperty, value); }
 
-    static AlderComposedChart() => AffectsRender<AlderComposedChart>(IsSmoothProperty, MaxBarWidthProperty);
-
     private protected override string? SecondaryAxisFormat => SecondaryAxisValueFormat ?? "#,0.##";
     private protected override double? SecondaryMaximum => SecondaryAxisMaximum;
     private protected override bool UsesBands => Series.Any(series => series.Kind == AlderChartSeriesKind.Bar);
@@ -50,6 +48,8 @@ public sealed class AlderComposedChart : AlderCartesianChart
         base.OnPropertyChanged(change);
         if (change.Property == SecondaryAxisValueFormatProperty || change.Property == SecondaryAxisMaximumProperty)
             ResetLayout();
+        if (change.Property == IsSmoothProperty || change.Property == MaxBarWidthProperty)
+            InvalidateSeries();
     }
 
     private protected override void DrawSeries(DrawingContext context, ChartLayout chart)

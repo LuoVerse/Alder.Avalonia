@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Collections;
 using System.Globalization;
 using System.Windows.Input;
@@ -865,12 +866,14 @@ public abstract class AlderPicker : SelectingItemsControl
         var result = new List<PickerEntry>(shouldFilter ? 0 : ItemsView.Count);
         var compare = CultureInfo.CurrentCulture.CompareInfo;
         var filter = Filter;
+        var matches = filter is null && query.Length != 0 && SearchWork.CanPartition(ItemsView.Count)
+            ? MatchOptions(query, compare) : null;
         string? group = null;
         bool hasSection = false;
         for (int index = 0; index < ItemsView.Count; index++)
         {
             var item = ItemsView[index];
-            if (shouldFilter && !(filter?.Invoke(query, item) ?? Matches(query, item, compare))) continue;
+            if (shouldFilter && !(matches?[index] ?? filter?.Invoke(query, item) ?? Matches(query, item, compare))) continue;
             var nextGroup = (item as AlderPickerOption)?.Group;
             if (!string.IsNullOrEmpty(nextGroup) && nextGroup != group)
             {
@@ -919,12 +922,35 @@ public abstract class AlderPicker : SelectingItemsControl
         if (search is not null) search.ShowClearButton = !IsLoading;
     }
 
-    private bool Matches(string query, object? item, CompareInfo compare)
+    private const CompareOptions PickerSearchOptions = CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace;
+
+    private bool[] MatchOptions(string query, CompareInfo compare)
     {
-        const CompareOptions options = CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace;
-        return compare.IndexOf(GetText(item), query, options) >= 0 ||
-            this is AlderModelPicker && item is AlderPickerOption { Group: { } provider } && compare.IndexOf(provider, query, options) >= 0;
+        // Model values and user-supplied label selectors can be bound to the UI thread.
+        int count = ItemsView.Count;
+        var text = ArrayPool<string>.Shared.Rent(count);
+        var providers = this is AlderModelPicker ? ArrayPool<string?>.Shared.Rent(count) : null;
+        try
+        {
+            for (int i = 0; i < count; i++)
+            {
+                var item = ItemsView[i];
+                text[i] = GetText(item);
+                if (providers is not null) providers[i] = (item as AlderPickerOption)?.Group;
+            }
+            return SearchWork.Match(count, index => compare.IndexOf(text[index], query, PickerSearchOptions) >= 0 ||
+                providers?[index] is { } provider && compare.IndexOf(provider, query, PickerSearchOptions) >= 0);
+        }
+        finally
+        {
+            ArrayPool<string>.Shared.Return(text, clearArray: true);
+            if (providers is not null) ArrayPool<string?>.Shared.Return(providers, clearArray: true);
+        }
     }
+
+    private bool Matches(string query, object? item, CompareInfo compare) =>
+        compare.IndexOf(GetText(item), query, PickerSearchOptions) >= 0 ||
+        this is AlderModelPicker && item is AlderPickerOption { Group: { } provider } && compare.IndexOf(provider, query, PickerSearchOptions) >= 0;
 
     private bool IsEnabledOption(PickerEntry entry) => (uint)entry.SourceIndex < (uint)ItemsView.Count &&
         entry.Item is not AlderPickerOption { IsEnabled: false };

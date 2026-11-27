@@ -40,6 +40,7 @@ try
     VerifyNavigation();
     VerifyMorphing();
     VerifyExpandableTabs();
+    TransitioningContentRenderSmoke.Run();
     VerifyDialogs();
     VerifyOverlays();
     VerifyAlderWindow();
@@ -52,9 +53,11 @@ try
     VerifyEmojiControls();
     AiTraceButtonRenderSmoke.Run();
     AiStreamingRenderSmoke.Run();
+    CompositionUpgradeSmoke.Run();
     VerifyAiControls();
     VerifyChatToolStatusIcons();
     VerifyShimmerFrames();
+    VerifyModelEffortFrames();
     VerifyRichEditor();
     VerifyRichLinkArrow();
     Task.Run(EditorProtocolSmoke.Run).GetAwaiter().GetResult();
@@ -125,7 +128,7 @@ void VerifyChatToolStatusIcons()
                 using var pixels = SKBitmap.Decode(stream);
                 foreach (var tool in stack.Children.OfType<AlderChatTool>())
                 {
-                    var icon = tool.GetVisualDescendants().OfType<AlderPathIcon>().Single(part => part.Name == "StatusIcon");
+                    var icon = tool.GetVisualDescendants().OfType<AlderIconPresenter>().Single(part => part.Name == "StatusIcon");
                     var point = icon.TranslatePoint(default, host)!.Value;
                     int left = (int)Math.Round(point.X * scale);
                     int top = (int)Math.Round(point.Y * scale);
@@ -155,39 +158,121 @@ void VerifyChatToolStatusIcons()
 void VerifyShimmerFrames()
 {
     var text = new AlderTextShimmer { Text = "Generating a response…", FontSize = 22, Foreground = Brushes.Black };
-    var host = new Window { Width = 270, Height = 40, Background = Brushes.White, Content = text };
+    var scope = new Border { Child = text };
+    var host = new Window { Width = 270, Height = 40, Background = Brushes.White, Content = scope };
     host.Show();
     try
     {
         AlderMotion.SetReduced(host, false);
+        CheckSweep("AI shimmer paints new glyph opacity as the highlight passes");
+
+        scope.IsVisible = false;
         Pump();
-        var first = Capture();
-        bool moved = false;
-        for (int frame = 0; frame < 30 && !moved; frame++)
-        {
-            Thread.Sleep(30);
-            Pump();
-            moved = !first.AsSpan().SequenceEqual(Capture());
-        }
-        Check(moved, "AI shimmer paints new glyph opacity as the highlight passes");
+        scope.IsVisible = true;
+        CheckSweep("AI shimmer restarts after an ancestor is shown");
+
+        host.SetRenderScaling(2);
+        host.Background = new SolidColorBrush(Color.Parse("#18181B"));
+        text.Foreground = Brushes.White;
+        host.Width = 210;
+        CheckSweep("AI shimmer animates at 2× after changing foreground and width");
+
         AlderMotion.SetReduced(host, true);
         Pump();
         var reduced = Capture();
         Thread.Sleep(60);
         Pump();
         Check(reduced.AsSpan().SequenceEqual(Capture()), "reduced-motion AI shimmer stays at rest");
+
+        AlderMotion.SetReduced(host, false);
+        text.Spread = 0;
+        Pump();
+        var zeroSpread = Capture();
+        Thread.Sleep(60);
+        Pump();
+        Check(zeroSpread.AsSpan().SequenceEqual(Capture()), "zero-spread AI shimmer stays at rest");
+        text.Spread = 4;
+        CheckSweep("AI shimmer resumes when the spread is restored");
     }
     finally { host.Close(); }
 
-    byte[] Capture()
+    void CheckSweep(string message)
     {
-        using var frame = host.CaptureRenderedFrame()!;
-        using var png = new MemoryStream();
-        frame.Save(png, PngBitmapEncoderOptions.Default);
-        png.Position = 0;
-        using var pixelMap = SKBitmap.Decode(png);
-        return pixelMap.Bytes;
+        Pump();
+        var first = Capture();
+        for (int frame = 0; frame < 45; frame++)
+        {
+            Thread.Sleep(25);
+            Pump();
+            if (!first.AsSpan().SequenceEqual(Capture())) return;
+        }
+        Check(false, message);
     }
+
+    byte[] Capture() => CaptureFramePixels(host);
+}
+
+void VerifyModelEffortFrames()
+{
+    var track = new AlderModelEffortTrack
+    {
+        Width = 216, Height = 24, Maximum = 4, Value = 3, AccentAmount = 1, SheenAmount = 1
+    };
+    track.Classes.Add("accent-effort");
+    var scope = new Border { Child = track };
+    var host = new Window { Width = 248, Height = 56, Background = Brushes.White, Content = scope };
+    host.Show();
+    try
+    {
+        AlderMotion.SetReduced(host, false);
+        CheckMotion("Max sheen moves across the effort fill");
+        scope.IsVisible = false;
+        Pump();
+
+        host.RequestedThemeVariant = ThemeVariant.Dark;
+        host.Background = new SolidColorBrush(Color.Parse("#18181B"));
+        host.SetRenderScaling(2);
+        scope.IsVisible = true;
+        CheckMotion("Max sheen resumes on a 2× dark surface after being hidden");
+
+        track.Classes.Add("ultra-effort");
+        track.Value = 4;
+        track.UltraAmount = 1;
+        track.SheenAmount = .25;
+        CheckMotion("Ultra continues to paint moving particles");
+
+        AlderMotion.SetReduced(host, true);
+        Pump();
+        byte[] reduced = CaptureFramePixels(host);
+        Thread.Sleep(80);
+        Pump();
+        Check(reduced.AsSpan().SequenceEqual(CaptureFramePixels(host)),
+            "effort sheen and particles stop in reduced motion");
+    }
+    finally { host.Close(); }
+
+    void CheckMotion(string message)
+    {
+        Pump();
+        byte[] first = CaptureFramePixels(host);
+        for (int frame = 0; frame < 50; frame++)
+        {
+            Thread.Sleep(35);
+            Pump();
+            if (!first.AsSpan().SequenceEqual(CaptureFramePixels(host))) return;
+        }
+        Check(false, message);
+    }
+}
+
+static byte[] CaptureFramePixels(Window host)
+{
+    using var frame = host.CaptureRenderedFrame()!;
+    using var png = new MemoryStream();
+    frame.Save(png, PngBitmapEncoderOptions.Default);
+    png.Position = 0;
+    using var pixelMap = SKBitmap.Decode(png);
+    return pixelMap.Bytes;
 }
 
 void VerifyRichEditor()
@@ -503,7 +588,9 @@ void VerifyMetricCardEdges()
                     var far = Sample(x, bottom + 8);
                     Check(edge == fill && fill != far, "the KPI card's outline follows its fill at the straight edge");
                     Check(Sample(origin.X + 1, origin.Y + 1) != fill, "the KPI card retains its rounded corner");
-                    Check(variant == ThemeVariant.Light ? near.Red < fade.Red && fade.Red < far.Red : near == far && fade == far,
+                    Check(variant == ThemeVariant.Light
+                            ? near.Red < fade.Red && fade.Red < far.Red
+                            : near.Red > fade.Red && fade.Red >= far.Red && near.Red - far.Red >= 4,
                         $"{card.GetType().Name} exterior shadow matches {variant} at {scale}×");
                 }
 
@@ -585,7 +672,7 @@ void VerifyMapProjection()
     var map = new AlderMap
     {
         Center = new MapCoordinate(0, 179), Zoom = 4, Bearing = 35,
-        ShowControls = false, Markers = [marker], Paths = [new AlderMapPath(path)]
+        ShowControls = false, Markers = [marker], Paths = [new AlderMapPath(path, Stroke: Brushes.Magenta, Thickness: 3)]
     };
     var owner = new Window { Width = 340, Height = 240, Content = map };
     owner.Show();
@@ -598,8 +685,33 @@ void VerifyMapProjection()
         owner.MouseDown(point!.Value, MouseButton.Left);
         owner.MouseUp(point.Value, MouseButton.Left);
         Check(ReferenceEquals(map.SelectedMarker, marker), "map marker hit testing after rotating the viewport");
+        Check(PathInkAt(path[25]), "cached map path follows the rotated antimeridian projection");
+        var former = path[25];
+        for (int i = 0; i < path.Length; i++)
+            path[i] = path[i] with { Latitude = path[i].Latitude + 4 };
+        map.InvalidateVisual();
+        Check(PathInkAt(path[25]) && !PathInkAt(former), "map invalidates cached geometry after an in-place coordinate change");
     }
     finally { owner.Close(); }
+
+    bool PathInkAt(MapCoordinate position)
+    {
+        Pump();
+        using var bitmap = owner.CaptureRenderedFrame()!;
+        using var png = new MemoryStream();
+        bitmap.Save(png, PngBitmapEncoderOptions.Default);
+        png.Position = 0;
+        using var pixels = SKBitmap.Decode(png);
+        var point = map.TranslatePoint(map.LocationToPoint(position), owner)!.Value;
+        int x = (int)point.X, y = (int)point.Y;
+        for (int dy = -1; dy <= 1; dy++)
+        for (int dx = -1; dx <= 1; dx++)
+        {
+            var color = pixels.GetPixel(x + dx, y + dy);
+            if (color.Red > 180 && color.Blue > 180 && color.Green < 105) return true;
+        }
+        return false;
+    }
 }
 
 void VerifyCardPreviews()
@@ -793,8 +905,8 @@ void VerifyTypography()
 void VerifyBindings()
 {
     var button = Find<AlderButton>("ActionButton");
-    var icon = Part<PathIcon>(button, "LeadingIcon");
-    Check(icon.IsVisible && ReferenceEquals(model.Icon, icon.Data), "compiled templated-parent icon");
+    var icon = Part<AlderIconPresenter>(button, "LeadingIcon");
+    Check(icon.IsVisible && ReferenceEquals(model.Icon, icon.GetVisualDescendants().OfType<PathIcon>().Single().Data), "compiled templated-parent icon");
     Press(button, PhysicalKey.Enter);
     Check(model.Activations == 1, "compiled command");
 
@@ -1064,7 +1176,7 @@ void VerifyMorphing()
     var start = second.TranslatePoint(new Point(second.Bounds.Width / 2 - 16, second.Bounds.Height / 2), window)!.Value;
     window.MouseMove(start);
     Pump();
-    Check(second.IsPointerOver && !Part<Border>(second, "FocusRing").IsVisible, "morphing hover has no focus outline");
+    Check(second.IsPointerOver && !second.Classes.Contains(":focus-visible"), "morphing hover leaves keyboard focus off");
     window.MouseDown(start, MouseButton.Left);
     Check(ReferenceEquals(model.SelectedMorphTab, model.MorphItems[0]), "morphing selection waits for click release");
     window.MouseUp(start, MouseButton.Left);
@@ -1073,7 +1185,7 @@ void VerifyMorphing()
     var incoming = Part<ContentPresenter>(tabs, "PART_SelectedContentHost2");
     Check(ReferenceEquals(selected, model.SelectedMorphTab) && second.IsSelected && ReferenceEquals(incoming.Content, selected),
         "pointer click updates compiled morphing selection and content");
-    Check(!Part<Border>(second, "FocusRing").IsVisible, "pointer click has no focus outline");
+    Check(!second.Classes.Contains(":focus-visible"), "pointer click leaves keyboard focus off");
     Check(outgoing.IsVisible && !outgoing.IsHitTestVisible && incoming.IsVisible && incoming.Opacity < 1 &&
           incoming.RenderTransform is TranslateTransform { Y: > 0 } && incoming.Effect is BlurEffect { Radius: > 0 },
         "morphing click overlaps the old content with the entering fade, lift and blur");
@@ -1110,9 +1222,10 @@ void VerifyMorphing()
 
     var moved = (TabItem)tabs.ContainerFromIndex(0)!;
     Check(!Part<Border>(moved, "MorphingDragFace").IsVisible, "selected drag face is removed after settling");
-    Check(!Part<Border>(moved, "FocusRing").IsVisible, "pointer reorder has no focus outline");
+    Check(!moved.Classes.Contains(":focus-visible"), "pointer reorder leaves keyboard focus off");
     Press((TabItem)tabs.ContainerFromIndex(1)!, PhysicalKey.ArrowLeft);
-    Check(Part<Border>(moved, "FocusRing").IsVisible, "keyboard navigation shows the focus outline");
+    Check(ReferenceEquals(Part<Border>(moved, "TabFace").Background, moved.FindResource(moved.ActualThemeVariant, "AlderNeutralHover")),
+        "keyboard navigation highlights the tab face");
     window.KeyPressQwerty(PhysicalKey.ArrowRight, RawInputModifiers.Alt);
     window.KeyReleaseQwerty(PhysicalKey.ArrowRight, RawInputModifiers.Alt);
     Pump();

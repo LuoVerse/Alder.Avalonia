@@ -1,0 +1,146 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls"
+                    xmlns:conv="using:Avalonia.Data.Converters">
+  <ControlTheme x:Key="{x:Type alder:AlderBloomMenuCaption}" TargetType="alder:AlderBloomMenuCaption">
+    <Setter Property="IsHitTestVisible" Value="False" />
+    <Setter Property="UseLayoutRounding" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid ColumnDefinitions="Auto,Auto" HorizontalAlignment="Center" VerticalAlignment="Center">
+          <TextBlock Text="{TemplateBinding Content}" MaxWidth="100" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+          <alder:AlderIconPresenter Name="PART_Icon" Grid.Column="1" Margin="8,0,0,0" Width="12" Height="12"
+                              Content="{TemplateBinding Icon}" VerticalAlignment="Center"
+                              IsVisible="{TemplateBinding Icon, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderBloomMenuTriggerTheme" TargetType="alder:AlderBloomMenuTrigger">
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <alder:ButtonFeedback Name="Face" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                              BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}"
+                              BoxShadow="{TemplateBinding BoxShadow}" ClipToBounds="False">
+          <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" />
+        </alder:ButtonFeedback>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover:not(:disabled) /template/ alder|ButtonFeedback#Face,
+                     ^:focus-visible:not(:disabled) /template/ alder|ButtonFeedback#Face">
+      <Setter Property="Background" Value="{DynamicResource AlderSurfaceSecondary}" />
+    </Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.4" /></Style>
+    <Style Selector="^:pressed /template/ alder|ButtonFeedback#Face">
+      <Setter Property="PressScale" Value="0.97" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderBloomMenu}" TargetType="alder:AlderBloomMenu">
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="CornerRadius" Value="24" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="BoxShadow" Value="{DynamicResource AlderToolbarShadow}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="Icon" Value="{StaticResource AlderIconPlus}" />
+    <Setter Property="ItemsPanel">
+      <ItemsPanelTemplate><alder:AlderBloomMenuGrid /></ItemsPanelTemplate>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid>
+          <alder:AlderBloomMenuTrigger Name="PART_Trigger" Theme="{StaticResource AlderBloomMenuTriggerTheme}" Width="144" Height="44"
+                  HorizontalAlignment="Center" VerticalAlignment="Center" ClipToBounds="False"
+                  Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}"
+                  BoxShadow="{TemplateBinding BoxShadow}" Foreground="{TemplateBinding Foreground}"
+                  AutomationProperties.Name="{TemplateBinding Header}">
+            <alder:AlderBloomMenuCaption Name="PART_TriggerCaption"
+                                         Content="{TemplateBinding Header}" Icon="{TemplateBinding Icon}"
+                                         FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}"
+                                         FontWeight="{TemplateBinding FontWeight}" FontStyle="{TemplateBinding FontStyle}"
+                                         Foreground="{TemplateBinding Foreground}" />
+          </alder:AlderBloomMenuTrigger>
+          <Popup Name="PART_Popup" Placement="Center" ShouldUseOverlayLayer="True" TakesFocusFromNativeControl="False">
+            <alder:AlderBloomMenuSurface Name="PART_Surface" ClipToBounds="False" KeyboardNavigation.TabNavigation="None">
+              <alder:AlderBloomMenuChrome IsHitTestVisible="False">
+                <Border Name="PART_Chrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}"
+                        BoxShadow="{TemplateBinding BoxShadow}" ClipToBounds="False" />
+              </alder:AlderBloomMenuChrome>
+              <Border CornerRadius="{TemplateBinding CornerRadius}" ClipToBounds="True">
+                <Border Name="PART_Body" Background="Transparent" CornerRadius="{TemplateBinding CornerRadius}" ClipToBounds="True">
+                  <Grid RowDefinitions="Auto,*">
+                    <Border BorderThickness="0,0,0,1" BorderBrush="{DynamicResource AlderSeparator}">
+                      <Grid ColumnDefinitions="*,Auto" Height="44" Margin="16,0,12,0">
+                        <TextBlock Text="{TemplateBinding Header}" Foreground="{DynamicResource AlderMuted}"
+                                   VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                        <Button Name="PART_Close" Grid.Column="1" Theme="{StaticResource AlderCloseButtonTheme}"
+                                VerticalAlignment="Center" AutomationProperties.Name="{TemplateBinding CloseLabel}">
+                          <alder:AlderPathIcon Width="14" Height="14" Data="{StaticResource AlderIconXmark}" />
+                        </Button>
+                      </Grid>
+                    </Border>
+                    <Decorator Name="PART_Iris" Grid.Row="1" ClipToBounds="True">
+                      <ScrollViewer Name="PART_GridViewport" HorizontalScrollBarVisibility="Disabled"
+                                    VerticalScrollBarVisibility="Auto" Focusable="False">
+                        <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+                      </ScrollViewer>
+                    </Decorator>
+                  </Grid>
+                </Border>
+              </Border>
+              <alder:AlderBloomMenuCaption Name="PART_MorphCaption"
+                                           Content="{TemplateBinding Header}" Icon="{CompiledBinding #PART_TriggerCaption.MirroredIcon}"
+                                           FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}"
+                                           FontWeight="{TemplateBinding FontWeight}" FontStyle="{TemplateBinding FontStyle}"
+                                           Foreground="{TemplateBinding Foreground}" />
+            </alder:AlderBloomMenuSurface>
+          </Popup>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderBloomMenuItem}" TargetType="alder:AlderBloomMenuItem">
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="MinHeight" Value="96" />
+    <Setter Property="Padding" Value="6,12" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="KeyboardNavigation.IsTabStop" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}">
+          <Grid>
+            <StackPanel Name="PART_ItemContent" Margin="{TemplateBinding Padding}"
+                        HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8" IsHitTestVisible="False">
+              <alder:AlderIconPresenter Width="20" Height="20" Content="{TemplateBinding Icon}"
+                                  IsVisible="{TemplateBinding Icon, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+              <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                HorizontalContentAlignment="Center" TextBlock.TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+            <Border IsHitTestVisible="False" BorderThickness="{TemplateBinding SeparatorThickness}"
+                    BorderBrush="{DynamicResource AlderSeparator}" />
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover, ^:focus-visible">
+      <Setter Property="Background" Value="{DynamicResource AlderSurfaceSecondary}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    </Style>
+    <Style Selector="^:pressed"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.4" /></Style>
+  </ControlTheme>
+</ResourceDictionary>

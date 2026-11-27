@@ -1,9 +1,9 @@
 using Avalonia;
 using Avalonia.Animation.Easings;
 using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
-using Avalonia.Media;
 using Avalonia.Rendering.Composition;
 using Avalonia.VisualTree;
 
@@ -166,16 +166,16 @@ public sealed class AlderSegmentItem : ListBoxItem
     public static readonly StyledProperty<object?> KeyProperty =
         AvaloniaProperty.Register<AlderSegmentItem, object?>(nameof(Key));
     /// <summary>Identifies the <see cref="Icon"/> Avalonia property.</summary>
-    public static readonly StyledProperty<Geometry?> IconProperty =
-        AvaloniaProperty.Register<AlderSegmentItem, Geometry?>(nameof(Icon));
+    public static readonly StyledProperty<object?> IconProperty =
+        AvaloniaProperty.Register<AlderSegmentItem, object?>(nameof(Icon));
     /// <summary>Identifies the <see cref="ShowSeparator"/> Avalonia property.</summary>
     public static readonly StyledProperty<bool?> ShowSeparatorProperty =
         AvaloniaProperty.Register<AlderSegmentItem, bool?>(nameof(ShowSeparator));
 
     /// <summary>The stable value represented by this segment.</summary>
     public object? Key { get => GetValue(KeyProperty); set => SetValue(KeyProperty, value); }
-    /// <summary>The optional geometry displayed with the content.</summary>
-    public Geometry? Icon { get => GetValue(IconProperty); set => SetValue(IconProperty, value); }
+    /// <summary>An optional geometry or icon control displayed with the content.</summary>
+    public object? Icon { get => GetValue(IconProperty); set => SetValue(IconProperty, value); }
     /// <summary>Overrides the group's separator setting for the leading edge of this item.</summary>
     public bool? ShowSeparator { get => GetValue(ShowSeparatorProperty); set => SetValue(ShowSeparatorProperty, value); }
 

@@ -50,10 +50,10 @@
       <Setter Property="AutomationProperties.HelpText" Value="{DynamicResource AlderText.CurrentPage}" />
     </Style>
     <Style Selector="^:disabled:not(:current) /template/ Border#Link"><Setter Property="Opacity" Value="0.5" /></Style>
-    <Style Selector="^:pointerover:not(:disabled) /template/ ContentPresenter#PART_ContentPresenter">
+    <Style Selector="^:pointerover:not(:disabled) /template/ ContentPresenter#PART_ContentPresenter,
+                     ^:focus-visible:not(:disabled) /template/ ContentPresenter#PART_ContentPresenter">
       <Setter Property="TextBlock.TextDecorations" Value="Underline" />
     </Style>
     <Style Selector="^:pressed:not(:disabled) /template/ Border#Link"><Setter Property="Opacity" Value="0.75" /></Style>
-    <Style Selector="^:focus-visible /template/ Border#Link"><Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" /></Style>
   </ControlTheme>
 </ResourceDictionary>

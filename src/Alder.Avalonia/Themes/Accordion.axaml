@@ -27,11 +27,8 @@
         </Border>
       </ControlTemplate>
     </Setter>
-    <Style Selector="^:pointerover:not(:checked):not(:disabled)">
+    <Style Selector="^:pointerover:not(:checked):not(:disabled), ^:focus-visible:not(:disabled)">
       <Setter Property="Background" Value="{DynamicResource AlderAccordionHover}" />
-    </Style>
-    <Style Selector="^:focus-visible /template/ Border#Face">
-      <Setter Property="BoxShadow" Value="inset 0 0 0 2 #0485F7" />
     </Style>
     <Style Selector="^:disabled">
       <Setter Property="Opacity" Value="0.5" />

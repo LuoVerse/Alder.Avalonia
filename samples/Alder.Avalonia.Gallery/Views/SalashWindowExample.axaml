@@ -1,0 +1,20 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" x:DataType="vm:SalashWindowViewModel"
+             x:Class="Alder.Avalonia.Gallery.Views.SalashWindowExample">
+  <g:ExampleCard x:Name="SampleSalash" Title="{DynamicResource GalleryText.SalashWindow}">
+    <g:ExampleCard.Preview>
+      <alder:AlderButton x:Name="OpenButton" HorizontalAlignment="Center" Click="OpenPreview"
+                         Content="{DynamicResource GalleryText.SalashOpen}" />
+    </g:ExampleCard.Preview>
+    <g:ExampleCard.CSharpSource><![CDATA[
+        public partial class LoginWindow : AlderSalashWindow
+        {
+            protected override Task<Window?> CreateNextWindow()
+                => Task.FromResult<Window?>(CloseResult == DialogResult.OK ? new AlderWindow() : null);
+        }
+    ]]></g:ExampleCard.CSharpSource>
+  </g:ExampleCard>
+</UserControl>

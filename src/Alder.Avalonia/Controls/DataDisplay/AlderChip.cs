@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Automation.Peers;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Media;
 
 namespace Alder.Avalonia.Controls;
@@ -18,6 +19,62 @@ public enum ChipVariant
     Soft
 }
 
+// Paint vectors directly. The presenter is only needed for non-geometry content.
+internal sealed class AlderChipIcon : Decorator
+{
+    public static readonly StyledProperty<object?> IconProperty =
+        AvaloniaProperty.Register<AlderChipIcon, object?>(nameof(Icon));
+    public static readonly StyledProperty<IBrush?> ForegroundProperty =
+        TemplatedControl.ForegroundProperty.AddOwner<AlderChipIcon>();
+    private Geometry? geometry;
+
+    static AlderChipIcon() => AffectsRender<AlderChipIcon>(IconProperty, ForegroundProperty);
+
+    public object? Icon { get => GetValue(IconProperty); set => SetValue(IconProperty, value); }
+    public IBrush? Foreground { get => GetValue(ForegroundProperty); set => SetValue(ForegroundProperty, value); }
+
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+        if (change.Property == IconProperty)
+        {
+            var icon = Icon;
+            geometry = AlderIconPresenter.AsGeometry(icon);
+            if (geometry is null && icon is not null)
+            {
+                var presenter = Child as AlderIconPresenter ?? new AlderIconPresenter();
+                presenter.Content = icon;
+                SetChild(presenter);
+            }
+            else Child = null;
+        }
+        else if (change.Property == ForegroundProperty && Child is TemplatedControl current)
+            current.Foreground = Foreground;
+        else if ((change.Property == WidthProperty || change.Property == HeightProperty) && Child is { } child)
+            SizeChild(child);
+    }
+
+    public override void Render(DrawingContext context)
+    {
+        base.Render(context);
+        if (geometry is { } data && Foreground is { } fill)
+            AlderFittedIcon.Draw(context, data, fill, new Rect(Bounds.Size));
+    }
+
+    private void SetChild(TemplatedControl child)
+    {
+        child.Foreground = Foreground;
+        SizeChild(child);
+        Child = child;
+    }
+
+    private void SizeChild(Control child)
+    {
+        child.Width = Width;
+        child.Height = Height;
+    }
+}
+
 /// <summary>A compact label for a status or category with optional icon and templated content.</summary>
 public sealed class AlderChip : ContentControl
 {
@@ -29,7 +86,7 @@ public sealed class AlderChip : ContentControl
     public static readonly StyledProperty<ChipVariant> VariantProperty =
         AvaloniaProperty.Register<AlderChip, ChipVariant>(nameof(Variant));
     /// <summary>Identifies the <see cref="Icon"/> Avalonia property.</summary>
-    public static readonly StyledProperty<Geometry?> IconProperty = AlderBadge.IconProperty.AddOwner<AlderChip>();
+    public static readonly StyledProperty<object?> IconProperty = AlderBadge.IconProperty.AddOwner<AlderChip>();
     /// <summary>Identifies the <see cref="IconSize"/> Avalonia property.</summary>
     public static readonly StyledProperty<double> IconSizeProperty = AlderBadge.IconSizeProperty.AddOwner<AlderChip>();
     /// <summary>Identifies the <see cref="TrailingIcon"/> Avalonia property.</summary>
@@ -42,8 +99,8 @@ public sealed class AlderChip : ContentControl
     public AlderStatusColor Color { get => GetValue(ColorProperty); set => SetValue(ColorProperty, value); }
     /// <summary>The visual treatment applied to the control.</summary>
     public ChipVariant Variant { get => GetValue(VariantProperty); set => SetValue(VariantProperty, value); }
-    /// <summary>The optional geometry displayed with the content.</summary>
-    public Geometry? Icon { get => GetValue(IconProperty); set => SetValue(IconProperty, value); }
+    /// <summary>An optional geometry or icon control displayed with the content.</summary>
+    public object? Icon { get => GetValue(IconProperty); set => SetValue(IconProperty, value); }
     /// <summary>The width and height of the icon in device-independent pixels.</summary>
     public double IconSize { get => GetValue(IconSizeProperty); set => SetValue(IconSizeProperty, value); }
     /// <summary>The geometry used for the trailing icon.</summary>

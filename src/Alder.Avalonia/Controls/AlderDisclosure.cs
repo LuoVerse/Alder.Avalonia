@@ -15,8 +15,8 @@ public class AlderDisclosure : Expander
     public static readonly StyledProperty<string?> KeyProperty =
         AvaloniaProperty.Register<AlderDisclosure, string?>(nameof(Key));
     /// <summary>Identifies the <see cref="Icon"/> Avalonia property.</summary>
-    public static readonly StyledProperty<Geometry?> IconProperty =
-        AvaloniaProperty.Register<AlderDisclosure, Geometry?>(nameof(Icon));
+    public static readonly StyledProperty<object?> IconProperty =
+        AvaloniaProperty.Register<AlderDisclosure, object?>(nameof(Icon));
     /// <summary>Identifies the <see cref="IndicatorIcon"/> Avalonia property.</summary>
     public static readonly StyledProperty<Geometry?> IndicatorIconProperty =
         AvaloniaProperty.Register<AlderDisclosure, Geometry?>(nameof(IndicatorIcon));
@@ -35,8 +35,8 @@ public class AlderDisclosure : Expander
     public ControlTheme? TriggerTheme { get => GetValue(TriggerThemeProperty); set => SetValue(TriggerThemeProperty, value); }
     /// <summary>The identifier used when a containing group tracks expanded items.</summary>
     public string? Key { get => GetValue(KeyProperty); set => SetValue(KeyProperty, value); }
-    /// <summary>The optional geometry displayed with the content.</summary>
-    public Geometry? Icon { get => GetValue(IconProperty); set => SetValue(IconProperty, value); }
+    /// <summary>An optional geometry or icon control displayed with the content.</summary>
+    public object? Icon { get => GetValue(IconProperty); set => SetValue(IconProperty, value); }
     /// <summary>The geometry shown in the collapsed state.</summary>
     public Geometry? IndicatorIcon { get => GetValue(IndicatorIconProperty); set => SetValue(IndicatorIconProperty, value); }
     /// <summary>The optional replacement geometry shown in the expanded state.</summary>

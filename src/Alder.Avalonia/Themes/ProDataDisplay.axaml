@@ -15,16 +15,15 @@
     </ResourceDictionary>
   </ResourceDictionary.ThemeDictionaries>
   <ControlTheme x:Key="AlderItemRowCommand" TargetType="Button">
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
     <Setter Property="Template">
       <ControlTemplate><Border Name="Feedback" Background="Transparent" CornerRadius="{TemplateBinding CornerRadius}" /></ControlTemplate>
     </Setter>
     <Setter Property="Cursor" Value="Hand" />
-    <Style Selector="^:pointerover /template/ Border#Feedback"><Setter Property="Background" Value="{DynamicResource AlderSurfaceSecondary}" /></Style>
-    <Style Selector="^:pressed /template/ Border#Feedback"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
-    <Style Selector="^:focus-visible /template/ Border#Feedback">
-      <Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" />
-      <Setter Property="BorderThickness" Value="2" />
+    <Style Selector="^:pointerover /template/ Border#Feedback, ^:focus-visible /template/ Border#Feedback">
+      <Setter Property="Background" Value="{DynamicResource AlderSurfaceSecondary}" />
     </Style>
+    <Style Selector="^:pressed /template/ Border#Feedback"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
   </ControlTheme>
   <ControlTheme x:Key="{x:Type alder:AlderItemCard}" TargetType="alder:AlderItemCard">
     <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
@@ -46,7 +45,7 @@
               <Border Name="IconPart" Background="{DynamicResource AlderSurfaceSecondary}" CornerRadius="9"
                       Width="38" Height="38" VerticalAlignment="Center" HorizontalAlignment="Left" IsVisible="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}"
                       IsHitTestVisible="False">
-                <ContentPresenter Content="{TemplateBinding Icon}" ContentTemplate="{TemplateBinding IconTemplate}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                <alder:AlderIconPresenter Name="ItemIcon" Content="{TemplateBinding Icon}" ContentTemplate="{TemplateBinding IconTemplate}" HorizontalAlignment="Center" VerticalAlignment="Center" />
               </Border>
               <StackPanel Name="ItemText" Grid.Column="1" Spacing="3" VerticalAlignment="Center">
                 <alder:AlderTextBlock Text="{TemplateBinding Title}" FontSize="14" FontWeight="SemiBold" TextWrapping="Wrap" IsHitTestVisible="False" IsVisible="{CompiledBinding Title, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
@@ -70,6 +69,15 @@
     <Style Selector="^[Variant=Transparent]"><Setter Property="Background" Value="Transparent" /></Style>
     <Style Selector="^[Variant=Secondary], ^[Variant=Tertiary], ^[Variant=Outline], ^[Variant=Transparent]">
       <Setter Property="alder:DataDisplaySurface.Shadow" Value="none" />
+    </Style>
+    <Style Selector="^ /template/ alder|AlderIconPresenter#ItemIcon">
+      <Setter Property="Width" Value="16" /><Setter Property="Height" Value="16" />
+    </Style>
+    <Style Selector="^[Size=Small] /template/ alder|AlderIconPresenter#ItemIcon">
+      <Setter Property="Width" Value="14" /><Setter Property="Height" Value="14" />
+    </Style>
+    <Style Selector="^[Size=Large] /template/ alder|AlderIconPresenter#ItemIcon">
+      <Setter Property="Width" Value="20" /><Setter Property="Height" Value="20" />
     </Style>
     <Style Selector="^[Size=Small]"><Setter Property="Padding" Value="10,8" /></Style>
     <Style Selector="^[Size=Large]"><Setter Property="Padding" Value="18,16" /></Style>
@@ -162,7 +170,7 @@
                 BoxShadow="{CompiledBinding (alder:DataDisplaySurface.Shadow), RelativeSource={RelativeSource TemplatedParent}}">
           <StackPanel Spacing="11">
             <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
-              <ContentPresenter Content="{TemplateBinding Icon}" VerticalAlignment="Center" IsVisible="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+              <alder:AlderIconPresenter Width="16" Height="16" Content="{TemplateBinding Icon}" VerticalAlignment="Center" IsVisible="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
               <alder:AlderTextBlock Text="{TemplateBinding Title}" Grid.Column="1" VerticalAlignment="Center" FontSize="13" TextWrapping="Wrap" Foreground="{DynamicResource AlderMuted}" IsVisible="{CompiledBinding Title, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
               <ContentPresenter Content="{TemplateBinding Actions}" Grid.Column="2" VerticalAlignment="Center" IsVisible="{CompiledBinding Actions, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
             </Grid>
@@ -246,6 +254,7 @@
     </Style>
   </ControlTheme>
   <ControlTheme x:Key="AlderProListViewItemTheme" TargetType="alder:AlderListViewItem">
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
     <Setter Property="Padding" Value="16,12" />
@@ -258,7 +267,7 @@
                                  IsChecked="{TemplateBinding IsSelected, Mode=OneWay}"
                                  IsVisible="False" Focusable="False" IsHitTestVisible="False" IsReadOnly="True"
                                  AutomationProperties.AccessibilityView="Raw" />
-            <ContentPresenter Content="{TemplateBinding Icon}" Grid.Column="1" VerticalAlignment="Center" IsVisible="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+            <alder:AlderIconPresenter Width="16" Height="16" Content="{TemplateBinding Icon}" Grid.Column="1" VerticalAlignment="Center" IsVisible="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
             <StackPanel Grid.Column="2" Spacing="3" VerticalAlignment="Center">
               <alder:AlderTextBlock Text="{TemplateBinding Title}" FontWeight="SemiBold" TextWrapping="Wrap" IsVisible="{CompiledBinding Title, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
               <alder:AlderTextBlock Text="{TemplateBinding Description}" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" IsVisible="{CompiledBinding Description, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
@@ -272,11 +281,12 @@
     <Style Selector="^:pointerover"><Setter Property="Background" Value="{DynamicResource AlderSurfaceSecondary}" /></Style>
     <Style Selector="^.selection-indicator /template/ alder|AlderCheckBox#SelectMark"><Setter Property="IsVisible" Value="True" /></Style>
     <Style Selector="^:selected"><Setter Property="Background" Value="{DynamicResource AlderSurfaceSecondary}" /></Style>
-    <Style Selector="^:focus-visible /template/ Border#RowSurface"><Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" /><Setter Property="BorderThickness" Value="1" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#RowSurface"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
     <Style Selector="^:disabled"><Setter Property="Opacity" Value=".5" /></Style>
   </ControlTheme>
   <ControlTheme x:Key="{x:Type alder:AlderListViewItem}" TargetType="alder:AlderListViewItem" BasedOn="{StaticResource AlderProListViewItemTheme}" />
   <ControlTheme x:Key="{x:Type alder:AlderTimeline}" TargetType="alder:AlderTimeline">
+    <Setter Property="ItemsPanel"><ItemsPanelTemplate><VirtualizingStackPanel /></ItemsPanelTemplate></Setter>
     <Setter Property="Template"><ControlTemplate><ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" /></ControlTemplate></Setter>
   </ControlTheme>
   <ControlTheme x:Key="{x:Type alder:AlderTimelineItem}" TargetType="alder:AlderTimelineItem">

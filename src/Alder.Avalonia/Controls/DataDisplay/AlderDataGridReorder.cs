@@ -134,7 +134,10 @@ public sealed partial class AlderDataGrid
     {
         base.OnPointerMoved(e);
         if (reorder is not { Pointer: { } pointer } session || pointer != e.Pointer) return;
-        if (pointer.Type == PointerType.Mouse && !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        // A desktop backend can deliver the last move without button flags just before release.
+        // For a captured drag, release and capture loss are the authoritative end of the gesture.
+        if (pointer.Type == PointerType.Mouse && !ReferenceEquals(pointer.Captured, this) &&
+            !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
         {
             CancelReorder();
             return;
@@ -172,6 +175,7 @@ public sealed partial class AlderDataGrid
         }
 
         session.Position = e.GetPosition(this);
+        session.Preview?.Move(this, session.Position);
         UpdatePointerTarget(session);
         FinishReorder(restoreFocus: false);
         e.Handled = true;
@@ -358,28 +362,25 @@ public sealed partial class AlderDataGrid
         UpdatePointerTarget(session);
     }
 
-    private int FindIndex(object key)
-    {
-        if (NativeView is not { } view) return -1;
-        for (int i = 0; i < view.ItemCount; i++)
-            if (view.ItemsView[i] is { } item && Equals(GetRowKey(item), key)) return i;
-        return -1;
-    }
+    private int FindIndex(object key) => GetDisplayedRowIndex(key);
 
     private void FinishReorder(bool restoreFocus)
     {
         if (reorder is not { } session) return;
         var request = session.Candidate;
-        CancelReorder();
         if (request is not null && CanStartReorder && NativeView is { } view &&
-            FindIndex(request.RowKey) is >= 0 and var source && view.ItemsView[source] is { } sourceItem &&
+            FindIndex(request.RowKey) is >= 0 and var source && source < view.ItemCount && view.ItemsView[source] is { } sourceItem &&
             !IsRowDisabled(sourceItem) && Equals(GetRowParentKey(request.RowKey), session.Parent) &&
-            FindIndex(request.TargetKey) is >= 0 and var target && view.ItemsView[target] is { } targetItem &&
+            FindIndex(request.TargetKey) is >= 0 and var target && target < view.ItemCount && view.ItemsView[target] is { } targetItem &&
             TryGetTarget(session, targetItem, out _) && ReorderCommand is { } command && command.CanExecute(request))
         {
-            if (session.Pointer is not null) TrackPointerDrop(request, source, target);
-            command.Execute(request);
+            if (session.Pointer is not null) TrackPointerDrop(session, request, source, target);
+            CancelReorder();
+            var preview = landingPreview;
+            try { command.Execute(request); }
+            finally { if (preview is not null) ReleaseUncommittedPreview(preview); }
         }
+        else CancelReorder();
         if (restoreFocus) RestoreHandleFocus(session.Source);
     }
 

@@ -32,11 +32,8 @@
       <Setter Property="Background" Value="Transparent" />
       <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
     </Style>
-    <Style Selector="^:not(:disabled):pointerover, ^:not(:disabled):pressed">
+    <Style Selector="^:not(:disabled):pointerover, ^:not(:disabled):focus-visible, ^:not(:disabled):pressed">
       <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
-    </Style>
-    <Style Selector="^:focus-visible /template/ Border#FocusRing">
-      <Setter Property="Margin" Value="1" />
     </Style>
   </ControlTheme>
 

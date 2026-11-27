@@ -1,9 +1,13 @@
+using System.Diagnostics;
 using Alder.Avalonia.Controls;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Headless;
 using Avalonia.Input;
+using Avalonia.Input.Raw;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
@@ -23,17 +27,32 @@ internal static class ControlEdgeRenderSmoke
             foreach (double scale in new[] { 1d, 1.25d, 2d })
             {
                 VerifyRoundedWindow(theme, scale);
+                VerifySalashWindowFrame(theme, scale);
                 VerifyColorArea(theme, scale);
                 VerifyColorSlider(theme, scale);
                 VerifyEmojiGlyph(theme, scale);
+                VerifyChartTooltipShadow(theme, scale);
+                VerifyPromptStarterShadow(theme, scale);
             }
 
             foreach (double scale in new[] { 1d, 2d })
             {
                 VerifyIndicators(theme, scale);
+                VerifyChatSourcesChevron(theme, scale);
+                VerifyInputLoadingIndicator(theme, scale);
+                VerifyButtonFocus(theme, scale);
+                VerifyPopoverFocusReturn(theme, scale);
+                VerifySegmentFocus(theme, scale);
+                VerifyFieldActionFocus(theme, scale);
                 VerifyFileTreeArrow(theme, scale);
+                VerifyDenseLineChart(theme, scale);
+                VerifyChipGeometry(theme, scale);
                 VerifyCells(theme, scale);
+                VerifyPickerChartAndMarkdownFocus(theme, scale);
                 VerifyInlineSelectScrollBar(theme, scale);
+                VerifyAgendaCorners(theme, scale);
+                VerifyBloomMenuEdges(theme, scale);
+                VerifyApprovalDismissIcon(theme, scale);
             }
         }
         VerifyRowHover();
@@ -45,6 +64,121 @@ internal static class ControlEdgeRenderSmoke
             VerifyDataGridActionMenu(TableColumnPin.End, scale);
             VerifyDataGridActionMenu(TableColumnPin.None, scale);
         }
+    }
+
+    private static void VerifyBloomMenuEdges(ThemeVariant theme, double scale)
+    {
+        var menu = new AlderBloomMenu { Foreground = new SolidColorBrush(Color.Parse("#129B38")) };
+        var itemInk = new SolidColorBrush(Color.Parse("#D52B69"));
+        var glyph = Geometry.Parse("M0 0 H16 V16 H0 Z");
+        foreach (var label in new[] { "Doc", "Board", "Table", "Folder", "Reminder", "Link" })
+            menu.Items.Add(new AlderBloomMenuItem { Content = label, Icon = glyph, Foreground = itemInk });
+
+        var preview = new Border { Child = menu, Height = 300, CornerRadius = new CornerRadius(14), ClipToBounds = true };
+        var window = Show(new ScrollViewer { Content = preview }, theme, scale);
+        window.Width = 280;
+        try
+        {
+            using var before = Capture(window);
+            AlderMotion.SetReduced(window, false);
+            menu.IsOpen = true;
+            var surface = window.GetVisualDescendants().OfType<AlderBloomMenuSurface>().Single();
+            VerifyBloomMenuHandoff(window, menu, scale);
+            surface.FinishMotion();
+            using var after = Capture(window);
+            var chrome = surface.GetVisualDescendants().OfType<Border>().Single(part => part.Name == "PART_Chrome");
+            var bounds = new Rect(chrome.TranslatePoint(default, window)!.Value, chrome.Bounds.Size);
+            var shadowSample = new Point(bounds.Center.X, bounds.Bottom + 5);
+            var offset = new Vector(0, -28);
+            var edge = Pixel(after, new Point(bounds.Left + .25, bounds.Center.Y) + offset, scale);
+            var fill = Pixel(after, new Point(bounds.Left + 4, bounds.Center.Y) + offset, scale);
+
+            if (Difference(edge, fill) < 6)
+                throw new InvalidOperationException($"Bloom Menu lost its panel edge in {theme} at {scale}×.");
+            var near = Difference(Pixel(after, shadowSample, scale), Pixel(before, shadowSample, scale));
+            var tail = shadowSample + new Vector(0, 17);
+            var far = Difference(Pixel(after, tail, scale), Pixel(before, tail, scale));
+            if (near < 4 || far >= near)
+                throw new InvalidOperationException($"Bloom Menu shadow was clipped in {theme} at {scale}× (near {near}, tail {far}).");
+
+            menu.IsOpen = false;
+            VerifyBloomMenuHandoff(window, menu, scale);
+            surface.FinishMotion();
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyChartTooltipShadow(ThemeVariant theme, double scale)
+    {
+        var tooltip = new AlderChartTooltip
+        {
+            Label = "Week 1",
+            ItemsSource = [new("Revenue", 42)],
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        VerifyExteriorShadow(tooltip, "Chart Tooltip", theme, scale);
+    }
+
+    private static void VerifyPromptStarterShadow(ThemeVariant theme, double scale)
+    {
+        var prompt = new AlderPromptInput
+        {
+            Width = 200,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            Classes = { "starter-composer" }
+        };
+        VerifyExteriorShadow(prompt, "Prompt Input", theme, scale);
+    }
+
+    private static void VerifyExteriorShadow(Control control, string name, ThemeVariant theme, double scale)
+    {
+        var preview = new Border { Child = control, Padding = new Thickness(24), CornerRadius = new CornerRadius(14), ClipToBounds = true };
+        var window = Show(preview, theme, scale);
+        window.Width = 280;
+        try
+        {
+            using var frame = Capture(window);
+            var bounds = new Rect(control.TranslatePoint(default, window)!.Value, control.Bounds.Size);
+            SKColor Read(double offset) => Pixel(frame, new Point(bounds.Center.X, bounds.Bottom + offset), scale);
+            var backdrop = Read(24);
+            int near = Difference(Read(2), backdrop);
+            int tail = Difference(Read(7), backdrop);
+            if (near < 5 || near <= tail)
+                throw new InvalidOperationException($"{name} needs a visible shadow outside its bounds in {theme} at {scale}× (near {near}, tail {tail}).");
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyBloomMenuHandoff(Window window, AlderBloomMenu menu, double scale)
+    {
+        var origin = menu.TranslatePoint(default, window)!.Value;
+        var anchorBounds = new Rect(origin, menu.Bounds.Size);
+        var animationBounds = anchorBounds.Inflate(new Thickness(32, 100));
+        var time = Stopwatch.StartNew();
+        do
+        {
+            using var frame = Capture(window);
+            bool hasCaption = false, hasItem = false;
+            for (int y = (int)(animationBounds.Top * scale); y < (int)(animationBounds.Bottom * scale); y++)
+            for (int x = (int)(animationBounds.Left * scale); x < (int)(animationBounds.Right * scale); x++)
+            {
+                var pixel = frame.GetPixel(x, y);
+                if (pixel.Green > pixel.Red + 18 && pixel.Green > pixel.Blue + 15)
+                {
+                    hasCaption = true;
+                    if (y / scale < anchorBounds.Center.Y - 9 || y / scale > anchorBounds.Center.Y + 9)
+                        throw new InvalidOperationException($"Bloom Menu caption jumped vertically at {scale}×.");
+                }
+                hasItem |= pixel.Red > pixel.Green + 16 && pixel.Red > pixel.Blue + 11;
+            }
+
+            if (!hasCaption && !hasItem)
+                throw new InvalidOperationException($"Bloom Menu showed an empty transition frame at {time.ElapsedMilliseconds} ms ({scale}×).");
+
+            Thread.Sleep(13);
+        } while (time.ElapsedMilliseconds < 310);
     }
 
     private static void VerifyOpenColorPickerEdge(double scale)
@@ -286,6 +420,176 @@ internal static class ControlEdgeRenderSmoke
         finally { window.Close(); }
     }
 
+    private static void VerifySalashWindowFrame(ThemeVariant theme, double scale)
+    {
+        var window = new RenderSalashWindow { Width = 416, Height = 444, RequestedThemeVariant = theme, Background = Brushes.Gray };
+        window.Show();
+        window.SetRenderScaling(scale);
+        try
+        {
+            using var presented = Capture(window);
+            var chrome = window.GetVisualDescendants().OfType<Border>().Single(border => border.Name == "PART_WindowFrame");
+            using var frame = CaptureVisual(chrome, scale);
+            var outline = window.GetVisualDescendants().OfType<Border>().Single(border => border.Name == "PART_WindowOutline");
+            var brush = (ISolidColorBrush)outline.BorderBrush!;
+            var edge = presented.GetPixel(presented.Width / 2, 0);
+            var center = frame.GetPixel(frame.Width / 2, frame.Height / 2);
+            if (frame.GetPixel(0, 0).Alpha != 0 || frame.GetPixel(frame.Width - 1, frame.Height - 1).Alpha != 0 ||
+                center != SKColors.Gray || Difference(edge, new SKColor(brush.Color.R, brush.Color.G, brush.Color.B)) > 4)
+                throw new InvalidOperationException($"Login window corner or themed border was lost ({theme.Key}, {scale}×).");
+        }
+        finally
+        {
+            window.Close();
+            Dispatcher.UIThread.RunJobs();
+        }
+    }
+
+    private sealed class RenderSalashWindow : AlderSalashWindow
+    {
+        protected override Task<Window?> CreateNextWindow() => Task.FromResult<Window?>(null);
+    }
+
+    private static void VerifyPopoverFocusReturn(ThemeVariant theme, double scale)
+    {
+        var popover = new AlderPopover
+        {
+            Content = new StackPanel
+            {
+                Children = { new AlderButton { Content = "First" }, new AlderButton { Content = "Last" } }
+            }
+        };
+        var trigger = new AlderButton { Content = "Open", Flyout = popover, HorizontalAlignment = HorizontalAlignment.Center };
+        var window = Show(new StackPanel { Margin = new Thickness(32), Children = { trigger } }, theme, scale);
+        try
+        {
+            trigger.Focus(NavigationMethod.Tab);
+            using var initial = Capture(window);
+            Press(PhysicalKey.Enter);
+            Press(PhysicalKey.Tab, RawInputModifiers.Shift);
+            if (!popover.IsOpen || window.FocusManager?.GetFocusedElement() is not AlderButton { Content: "Last" })
+                throw new InvalidOperationException("Shift+Tab focused the popover chrome instead of its last action.");
+            Press(PhysicalKey.Escape);
+            using var returned = Capture(window);
+            if (popover.IsOpen || !trigger.IsFocused || !trigger.Classes.Contains(":focus-visible"))
+                throw new InvalidOperationException("The popover did not return keyboard focus to its trigger.");
+
+            var origin = trigger.TranslatePoint(default, window)!.Value;
+            for (int y = -4; y < trigger.Bounds.Height + 4; y++)
+            for (int x = -4; x < trigger.Bounds.Width + 4; x++)
+            {
+                var point = origin + new Vector(x, y);
+                if (Difference(Pixel(initial, point, scale), Pixel(returned, point, scale)) > 2)
+                    throw new InvalidOperationException($"The trigger changed appearance after the popover closed ({theme.Key}, {scale}×).");
+            }
+        }
+        finally { window.Close(); }
+
+        void Press(PhysicalKey key, RawInputModifiers modifiers = RawInputModifiers.None)
+        {
+            window.KeyPressQwerty(key, modifiers);
+            window.KeyReleaseQwerty(key, modifiers);
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+        }
+    }
+
+    private static void VerifyButtonFocus(ThemeVariant theme, double scale)
+    {
+        var enter = new AlderButton { Content = "Sign in", Width = 160, Height = 44 };
+        var start = new AlderButton { Content = "Previous", Variant = ButtonVariant.Ghost };
+        var clip = new Border { Child = enter, ClipToBounds = true, HorizontalAlignment = HorizontalAlignment.Left };
+        var picker = new AlderColorPicker();
+        var window = Show(new StackPanel { Margin = new Thickness(24), Spacing = 12, Children = { start, clip, picker } }, theme, scale);
+        try
+        {
+            start.Focus();
+            using var rest = Capture(window);
+            Tab(window);
+            using var focused = Capture(window);
+            CheckFocusFill(enter, rest, focused, "AlderAccentHover");
+
+            Tab(window);
+            using var pickerFocused = Capture(window);
+            var trigger = picker.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "PART_Trigger");
+            CheckFocusFill(trigger, focused, pickerFocused, "AlderNeutral");
+        }
+        finally { window.Close(); }
+
+        void CheckFocusFill(Button button, SKBitmap before, SKBitmap after, string key)
+        {
+            var center = button.Bounds.Width / 2;
+            var inside = button.TranslatePoint(new Point(center, 2), window)!.Value;
+            var outside = button.TranslatePoint(new Point(center, -1), window)!.Value;
+            button.TryFindResource(key, theme, out var value);
+            var color = ((ISolidColorBrush)value!).Color;
+            var fill = Pixel(after, inside, scale);
+            if (!button.IsFocused || fill == Pixel(before, inside, scale) ||
+                Difference(fill, new SKColor(color.R, color.G, color.B)) > 4 ||
+                Pixel(after, outside, scale) != Pixel(before, outside, scale))
+                throw new InvalidOperationException($"{button.Name ?? button.Content} did not show its focus fill inside the button ({theme.Key}, {scale}×).");
+        }
+    }
+
+    private static void VerifySegmentFocus(ThemeVariant theme, double scale)
+    {
+        var light = new AlderSegmentItem { Key = "light", Content = "Light" };
+        var dark = new AlderSegmentItem { Key = "dark", Content = "Dark" };
+        var segment = new AlderSegment { Size = AlderSegmentSize.Small, SelectedKey = "light", Items = { light, dark } };
+        var start = new AlderButton { Content = "Previous" };
+        var panel = new StackPanel { Margin = new Thickness(24), Spacing = 12, Children = { start, segment } };
+        var window = Show(panel, theme, scale);
+        try
+        {
+            start.Focus();
+            using var rest = Capture(window);
+            Tab(window);
+            using var focused = Capture(window);
+            var inside = light.TranslatePoint(new Point(light.Bounds.Width / 2, 4), window)!.Value;
+            var corner = light.TranslatePoint(new Point(0, 0), window)!.Value;
+            var outside = light.TranslatePoint(new Point(light.Bounds.Width / 2, -2), window)!.Value;
+            if (!light.IsFocused || !Equals(segment.SelectedKey, "light") ||
+                Pixel(focused, inside, scale) == Pixel(rest, inside, scale) ||
+                Pixel(focused, corner, scale) != Pixel(rest, corner, scale) ||
+                Pixel(focused, outside, scale) != Pixel(rest, outside, scale))
+                throw new InvalidOperationException($"The selected segment did not show a borderless focus fill ({theme.Key}, {scale}×).");
+
+            start.Focus();
+            window.MouseMove(inside);
+            using var hover = Capture(window);
+            if (Pixel(hover, inside, scale) != Pixel(focused, inside, scale))
+                throw new InvalidOperationException($"Segment keyboard focus differed from pointer hover ({theme.Key}, {scale}×).");
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyFieldActionFocus(ThemeVariant theme, double scale)
+    {
+        var field = new AlderSearchField { Text = "Find a project" };
+        var window = Show(new Border { Child = field, Padding = new Thickness(24) }, theme, scale);
+        try
+        {
+            field.Focus(NavigationMethod.Tab);
+            using var editing = Capture(window);
+            Tab(window);
+            using var acting = Capture(window);
+            var action = field.GetVisualDescendants().OfType<Button>().Single(button => button.IsFocused);
+            var point = action.TranslatePoint(new Point(action.Bounds.Width / 2, 2), window)!.Value;
+            action.TryFindResource("AlderNeutralHover", theme, out var brush);
+            var color = ((ISolidColorBrush)brush!).Color;
+            if (!editing.Pixels.Any(IsAccent) || acting.Pixels.Any(IsAccent) ||
+                Difference(Pixel(acting, point, scale), new SKColor(color.R, color.G, color.B)) > 5)
+                throw new InvalidOperationException($"Search suffix did not use its hover fill or retained the editor outline ({theme.Key}, {scale}×).");
+        }
+        finally { window.Close(); }
+    }
+
+    private static void Tab(Window window)
+    {
+        window.KeyPressQwerty(PhysicalKey.Tab, RawInputModifiers.None);
+        window.KeyReleaseQwerty(PhysicalKey.Tab, RawInputModifiers.None);
+    }
+
     private static void VerifyColorArea(ThemeVariant theme, double scale)
     {
         var area = new AlderColorArea
@@ -480,6 +784,72 @@ internal static class ControlEdgeRenderSmoke
             throw new InvalidOperationException($"Chevron arms were clipped or offset ({theme.Key}, {scale}×, expanded={expanded}).");
     }
 
+    private static void VerifyChatSourcesChevron(ThemeVariant theme, double scale)
+    {
+        var group = new AlderDisclosure
+        {
+            Theme = (ControlTheme)Application.Current!.FindResource("AlderChatSourcesTheme")!,
+            Header = new StackPanel
+            {
+                Orientation = Orientation.Horizontal, Spacing = 8,
+                Children =
+                {
+                    new Panel { Width = 44, Height = 20 },
+                    new AlderTextBlock { Text = "3 sources", FontSize = 12, LineHeight = 16, VerticalAlignment = VerticalAlignment.Center }
+                }
+            },
+            Content = new AlderChatSource { Content = "Avalonia Docs" }
+        };
+        var preview = new Border { Padding = new Thickness(22, 24), MaxWidth = 248, Child = group };
+        preview.Styles.Add(new Style(x => x.OfType<AlderToggleButton>().Descendant().OfType<PathIcon>())
+        {
+            Setters = { new Setter(StyledElement.ThemeProperty, Application.Current!.FindResource("AlderIcon16Theme")) }
+        });
+        var window = Show(preview, theme, scale);
+        try
+        {
+            using var collapsed = Capture(window);
+            var icon = group.GetVisualDescendants().OfType<PathIcon>().Single(x => x.Name == "PART_Indicator");
+            var center = icon.TranslatePoint(new Rect(icon.Bounds.Size).Center, window)!.Value;
+            VerifyChevronInk(collapsed, center, scale, expanded: false, theme);
+
+            window.MouseMove(center);
+            window.MouseDown(center, MouseButton.Left);
+            window.MouseUp(center, MouseButton.Left);
+            using var expanded = Capture(window);
+            if (!group.IsExpanded)
+                throw new InvalidOperationException("The Chat Source group did not expand when its chevron was clicked.");
+            VerifyChevronInk(expanded, center, scale, expanded: true, theme);
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyInputLoadingIndicator(ThemeVariant theme, double scale)
+    {
+        var app = Application.Current!;
+        var spinner = new AlderSpinner { Size = SpinnerSize.Small };
+        var input = new AlderInputGroup { Width = 160, Text = "Sending...", IsReadOnly = true, Suffix = spinner };
+        var preview = new WrapPanel { Children = { input } };
+        preview.Styles.Add(new Style(x => x.OfType<PathIcon>())
+        {
+            Setters = { new Setter(StyledElement.ThemeProperty, app.FindResource("AlderIcon16Theme")) }
+        });
+        var window = Show(preview, theme, scale);
+        try
+        {
+            using var frame = Capture(window);
+            var center = spinner.TranslatePoint(new Rect(spinner.Bounds.Size).Center, window)!.Value;
+            var background = Pixel(frame, center, scale);
+            foreach (var offset in new[] { new Vector(-3, -5), new Vector(-5.5, 0), new Vector(0, 5), new Vector(5, 2) })
+            {
+                var ink = Pixel(frame, center + offset, scale);
+                if (ink.Blue - ink.Red - (background.Blue - background.Red) < 25)
+                    throw new InvalidOperationException($"The Input loading arc is clipped at {offset} ({theme.Key}, {scale}×).");
+            }
+        }
+        finally { window.Close(); }
+    }
+
     private static void VerifyFileTreeArrow(ThemeVariant theme, double scale)
     {
         var folder = new AlderFileTreeNode("src", "src") { IsFolder = true };
@@ -512,6 +882,79 @@ internal static class ControlEdgeRenderSmoke
         finally { window.Close(); }
     }
 
+    private static void VerifyChipGeometry(ThemeVariant theme, double scale)
+    {
+        var geometry = Geometry.Parse("M10 10H26V20H10Z");
+        var chip = new AlderChip { Content = "Ready", Icon = geometry, TrailingIcon = geometry, Foreground = Brushes.Magenta };
+        var window = Show(chip, theme, scale);
+        try
+        {
+            foreach (var size in new[] { AlderSize.Small, AlderSize.Large })
+            {
+                chip.Size = size;
+                using var bitmap = Capture(window);
+                var slots = chip.GetVisualDescendants().OfType<AlderChipIcon>().Where(slot => slot.IsVisible).ToArray();
+                if (slots.Length != 2) throw new InvalidOperationException("Chip did not retain both icon slots.");
+                foreach (var slot in slots)
+                {
+                    var point = slot.TranslatePoint(new Rect(slot.Bounds.Size).Center, window)!.Value;
+                    var color = Pixel(bitmap, point, scale);
+                    if (slot.Bounds.Width != chip.IconSize || color.Red < 220 || color.Blue < 220 || color.Green > 35)
+                        throw new InvalidOperationException($"Chip did not center the vector at {size} ({theme.Key}, {scale}×).");
+                }
+            }
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyDenseLineChart(ThemeVariant theme, double scale)
+    {
+        const int count = 10001;
+        var values = Enumerable.Repeat<double?>(25, count).ToArray();
+        values[count / 2] = 80;
+        Array.Clear(values, 7000, 1000);
+        var chart = new AlderLineChart
+        {
+            Width = 220, Height = 100, Padding = default, IsAnimationEnabled = false,
+            ShowXAxis = false, ShowYAxis = false, ShowGrid = false, ShowTooltip = false,
+            ValueAxisTicks = [0, 100],
+            Categories = Enumerable.Range(0, count).Select(i => i.ToString()).ToArray(),
+            Series = [new("Sample", values, Brushes.Magenta)]
+        };
+        var window = Show(chart, theme, scale);
+        try
+        {
+            var origin = chart.TranslatePoint(default, window)!.Value;
+            using var rest = Capture(window);
+            if (!HasInk(rest, 110, 20) || !HasInk(rest, 77, 75) || HasInk(rest, 165, 75))
+                throw new InvalidOperationException($"Dense line lost its peak, baseline, or gap ({theme.Key}, {scale}×).");
+
+            window.MouseMove(origin + new Vector(77, 50));
+            using var hover = Capture(window);
+            if (!HasInk(hover, 77, 72) || !HasInk(hover, 110, 20))
+                throw new InvalidOperationException($"Hover did not paint the active point over the retained line ({theme.Key}, {scale}×).");
+
+            var replacement = (double?[])values.Clone();
+            replacement[count / 2] = 50;
+            chart.Series = [new("Sample", replacement, Brushes.Magenta)];
+            using var updated = Capture(window);
+            if (HasInk(updated, 110, 20) || !HasInk(updated, 110, 50) || HasInk(updated, 77, 72))
+                throw new InvalidOperationException($"Replacing the series left stale line or hover pixels ({theme.Key}, {scale}×).");
+
+            bool HasInk(SKBitmap frame, double x, double y)
+            {
+                for (int dx = -1; dx <= 1; dx++)
+                {
+                    var pixel = Pixel(frame, origin + new Vector(x + dx / scale, y), scale);
+                    if (pixel.Red > pixel.Green + 55 && pixel.Blue > pixel.Green + 55)
+                        return true;
+                }
+                return false;
+            }
+        }
+        finally { window.Close(); }
+    }
+
     private static void VerifyCells(ThemeVariant theme, double scale)
     {
         var select = new AlderCellSelect { Label = "Theme", Items = { "Default", "Dark" }, Width = 252 };
@@ -520,22 +963,60 @@ internal static class ControlEdgeRenderSmoke
         var window = Show(preview, theme, scale);
         try
         {
-            using var rest = Capture(window);
             var button = select.GetVisualDescendants().OfType<Button>().Single(x => x.Name == "PART_Trigger");
             var swatchButton = color.GetVisualDescendants().OfType<Button>().Single(x => x.Name == "PART_Trigger");
+            using var rest = Capture(window);
             foreach (var trigger in new[] { button, swatchButton })
             {
-                var top = trigger.TranslatePoint(new Point(trigger.Bounds.Width / 2, -3), window)!.Value;
-                if (IsAccent(Pixel(rest, top, scale)))
-                    throw new InvalidOperationException($"The unfocused cell rendered a blue outline ({theme.Key}, {scale}×).");
-
                 trigger.Focus(NavigationMethod.Tab);
                 using var focused = Capture(window);
-                if (!IsAccent(Pixel(focused, top, scale)))
-                    throw new InvalidOperationException($"The cell lost its keyboard focus ring ({theme.Key}, {scale}×).");
+                CheckFocusInside(trigger, window, rest, focused, theme, scale);
             }
         }
         finally { window.Close(); }
+    }
+
+    private static void VerifyPickerChartAndMarkdownFocus(ThemeVariant theme, double scale)
+    {
+        var select = new AlderNativeSelect { Items = { "Default", "Dark" }, SelectedIndex = 0 };
+        var chart = new AlderAreaChart { Width = 220, Height = 120 };
+        var markdown = new AlderMarkdown { Markdown = "Selectable text", Width = 220, MinHeight = 40 };
+        var code = new AlderCodeBlock { Code = "42", Width = 220 };
+        var preview = new StackPanel { Spacing = 20, Margin = new Thickness(20), Children = { select, chart, markdown, code } };
+        var window = Show(preview, theme, scale);
+        try
+        {
+            using var rest = Capture(window);
+            var trigger = select.GetVisualDescendants().OfType<Button>().Single(x => x.Name == "PART_Trigger");
+            foreach (var target in new Control[] { trigger, chart, markdown, code })
+            {
+                if (!target.Focus(NavigationMethod.Tab))
+                    throw new InvalidOperationException($"{target.GetType().Name} could not receive keyboard focus.");
+
+                using var focused = Capture(window);
+                CheckFocusInside(target, window, rest, focused, theme, scale);
+            }
+        }
+        finally { window.Close(); }
+    }
+
+    private static void CheckFocusInside(Control target, Window window, SKBitmap rest, SKBitmap focused, ThemeVariant theme, double scale)
+    {
+        var middleX = target.Bounds.Width / 2;
+        var samplesOutside = new[] { new Point(middleX, -3), new Point(1, -1), new Point(-1, target.Bounds.Height / 2) };
+        var inside = target.TranslatePoint(new Point(middleX, 5), window)!.Value;
+        var edge = target.TranslatePoint(new Point(middleX, 0.5), window)!.Value;
+        if (Difference(Pixel(rest, edge, scale), Pixel(focused, edge, scale)) > 64)
+            throw new InvalidOperationException($"{target.GetType().Name} painted a high-contrast focus edge ({theme.Key}, {scale}×).");
+        foreach (var sample in samplesOutside)
+        {
+            var point = target.TranslatePoint(sample, window)!.Value;
+            if (Difference(Pixel(rest, point, scale), Pixel(focused, point, scale)) > 2)
+                throw new InvalidOperationException($"{target.GetType().Name} painted a focus outline outside the surface ({theme.Key}, {scale}×).");
+        }
+
+        if (Difference(Pixel(rest, inside, scale), Pixel(focused, inside, scale)) < 5)
+            throw new InvalidOperationException($"{target.GetType().Name} lost its visible keyboard focus feedback ({theme.Key}, {scale}×).");
     }
 
     private static void VerifyInlineSelectScrollBar(ThemeVariant theme, double scale)
@@ -553,11 +1034,32 @@ internal static class ControlEdgeRenderSmoke
             using var frame = Capture(window);
             var surface = window.GetVisualDescendants().OfType<Panel>().Single(x => x.Name == "AlderPopoverSurface");
             var scroll = surface.GetVisualDescendants().OfType<ScrollViewer>().Single(x => x.Name == "PART_PickerScroll");
+            var content = scroll.GetVisualDescendants().OfType<ScrollContentPresenter>().Single(x => x.Name == "PART_ContentPresenter");
+            var bar = scroll.GetVisualDescendants().OfType<ScrollBar>().Single(x => x.Orientation == Orientation.Vertical);
+            if (!bar.IsVisible || Math.Abs(content.Bounds.Width - scroll.Bounds.Width) > 0.5 || bar.Bounds.Width > 8)
+                throw new InvalidOperationException($"Inline Select scrollbar layout is incorrect ({theme.Key}, {scale}×): " +
+                    $"content width {content.Bounds.Width} of {scroll.Bounds.Width}, scrollbar width {bar.Bounds.Width}, visible {bar.IsVisible}.");
+
+            var viewportTop = content.TranslatePoint(default, surface)!.Value.Y;
+            if (viewportTop < 8 || surface.Bounds.Height - viewportTop - content.Bounds.Height < 8)
+                throw new InvalidOperationException($"Inline Select did not inset the scrolling content from its corners ({theme.Key}, {scale}×).");
+
             var origin = surface.TranslatePoint(default, window)!.Value;
             var leftCorner = Pixel(frame, origin + new Vector(5, 4), scale);
             var rightCorner = Pixel(frame, origin + new Vector(surface.Bounds.Width - 5, 4), scale);
             if (scroll.Extent.Height <= scroll.Viewport.Height || Difference(leftCorner, rightCorner) > 9)
                 throw new InvalidOperationException($"Inline Select painted its scrollbar through the rounded corner ({theme.Key}, {scale}×).");
+
+            var thumb = bar.GetVisualDescendants().OfType<Thumb>().Single();
+            var start = thumb.TranslatePoint(new Rect(thumb.Bounds.Size).Center, window)!.Value;
+            var endOfDrag = start + new Vector(0, 36);
+            window.MouseMove(start);
+            window.MouseDown(start, MouseButton.Left);
+            window.MouseMove(endOfDrag);
+            using var dragged = Capture(window);
+            window.MouseUp(endOfDrag, MouseButton.Left);
+            if (scroll.Offset.Y <= 0 || !select.IsDropDownOpen || select.SelectedIndex != 0)
+                throw new InvalidOperationException($"Dragging the Inline Select scrollbar did not scroll independently of selection ({theme.Key}, {scale}×).");
 
             scroll.Offset = new Vector(0, scroll.Extent.Height);
             using var end = Capture(window);
@@ -566,6 +1068,100 @@ internal static class ControlEdgeRenderSmoke
             var bottomRight = Pixel(end, origin + new Vector(surface.Bounds.Width - 5, bottomY), scale);
             if (scroll.Offset.Y <= 0 || Difference(bottomLeft, bottomRight) > 9)
                 throw new InvalidOperationException($"Inline Select overflowed the lower corner or could not be scrolled ({theme.Key}, {scale}×).");
+
+            var list = surface.GetVisualDescendants().OfType<ListBox>().Single();
+            if (list.ContainerFromIndex(list.ItemCount - 1) is not Control last ||
+                last.TranslatePoint(new Point(0, last.Bounds.Height), content) is not { } bottom ||
+                bottom.Y > content.Bounds.Height + 0.5)
+                throw new InvalidOperationException($"The last Inline Select option did not scroll fully into view ({theme.Key}, {scale}×).");
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyAgendaCorners(ThemeVariant theme, double scale)
+    {
+        var agenda = new AlderAgenda
+        {
+            Height = 380,
+            Margin = new Thickness(16),
+            DisplayDate = new DateOnly(2026, 1, 14),
+            BorderBrush = Brushes.Magenta,
+            BorderThickness = new Thickness(3)
+        };
+        var window = Show(new ScrollViewer { Content = agenda }, theme, scale);
+        try
+        {
+            foreach (var view in new[] { AlderCalendarView.Day, AlderCalendarView.Week, AlderCalendarView.Month })
+            {
+                agenda.View = view;
+                using var frame = Capture(window);
+                var origin = agenda.TranslatePoint(default, window)!.Value;
+                var backdrop = Pixel(frame, origin - new Vector(2, 2), scale);
+                foreach (bool bottom in new[] { false, true })
+                foreach (bool right in new[] { false, true })
+                {
+                    // The 14 DIP corner with a 3 DIP stroke crosses the diagonal at 5.25 DIP.
+                    Point AtCorner(double inset) => origin + new Vector(
+                        right ? agenda.Bounds.Width - inset : inset,
+                        bottom ? agenda.Bounds.Height - inset : inset);
+                    if (Difference(Pixel(frame, AtCorner(5.25), scale), SKColors.Magenta) > 24 ||
+                        Difference(Pixel(frame, AtCorner(2), scale), backdrop) > 4)
+                        throw new InvalidOperationException(
+                            $"The Agenda corner outline is obscured or content overflows ({view}, {theme.Key}, {scale}×, bottom={bottom}, right={right}).");
+                }
+            }
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyApprovalDismissIcon(ThemeVariant theme, double scale)
+    {
+        var model = new SmokeModel();
+        var card = new AlderApprovalCard
+        {
+            Width = 240, Header = "How should users sign in?", DismissCommand = model.Activate
+        };
+        var window = Show(new Border { Padding = new Thickness(16), Child = card }, theme, scale);
+        try
+        {
+            using var rest = Capture(window);
+            var dismiss = card.GetVisualDescendants().OfType<AlderButton>().Single(button => button.Name == "Dismiss");
+            var center = dismiss.TranslatePoint(new Rect(dismiss.Bounds.Size).Center, window)!.Value;
+            var restingInk = VerifyInk(rest);
+            dismiss.FontSize = 24;
+            using var largerFont = Capture(window);
+            if (VerifyInk(largerFont) != restingInk)
+                throw new InvalidOperationException($"The Approval Card dismiss icon moved when the font size changed ({theme.Key}, {scale}×).");
+
+            window.MouseMove(center);
+            using var hover = Capture(window);
+            VerifyInk(hover);
+
+            window.MouseDown(center, MouseButton.Left);
+            window.MouseUp(center, MouseButton.Left);
+            if (model.Activations != 1) throw new InvalidOperationException("The Approval Card dismiss button did not execute on click.");
+
+            PixelRect VerifyInk(SKBitmap frame)
+            {
+                var background = Pixel(frame, center + new Vector(-8, 0), scale);
+                int left = frame.Width, top = frame.Height, right = -1, bottom = -1;
+                for (int y = (int)((center.Y - 7) * scale); y < (center.Y + 7) * scale; y++)
+                for (int x = (int)((center.X - 7) * scale); x < (center.X + 7) * scale; x++)
+                {
+                    var pixelCenter = new Point((x + .5) / scale, (y + .5) / scale);
+                    if (((Vector)(pixelCenter - center)).SquaredLength > 81 || Difference(frame.GetPixel(x, y), background) < 30) continue;
+                    left = Math.Min(left, x);
+                    right = Math.Max(right, x);
+                    top = Math.Min(top, y);
+                    bottom = Math.Max(bottom, y);
+                }
+
+                if ((right - left + 1) / scale < 7 || (bottom - top + 1) / scale < 7 ||
+                    Math.Abs((left + right + 1) / (2 * scale) - center.X) > .75 ||
+                    Math.Abs((top + bottom + 1) / (2 * scale) - center.Y) > .75)
+                    throw new InvalidOperationException($"The Approval Card dismiss icon is clipped or off-center ({theme.Key}, {scale}×).");
+                return new PixelRect(left, top, right - left + 1, bottom - top + 1);
+            }
         }
         finally { window.Close(); }
     }

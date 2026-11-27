@@ -1,0 +1,96 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.OverflowActionsExample" x:DataType="vm:OverflowActionsViewModel">
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleOverflowActions" Title="{DynamicResource GalleryText.Usage}">
+      <gallery:ExampleCard.Preview>
+        <Grid MinHeight="92">
+          <alder:AlderOverflowActions x:Name="PreviewOverflowActions" IsExpanded="{CompiledBinding IsExpanded}">
+            <alder:AlderOverflowActions.PrimaryActions>
+              <alder:AlderOverflowAction Content="{DynamicResource GalleryText.Preview}" Icon="{StaticResource AlderIconEye}"
+                                         Command="{CompiledBinding Run}" CommandParameter="Preview" />
+              <alder:AlderOverflowAction Content="{DynamicResource GalleryText.OverflowActionsPin}" Icon="{StaticResource AlderIconBookmark}"
+                                         Command="{CompiledBinding Run}" CommandParameter="OverflowActionsPin" />
+            </alder:AlderOverflowActions.PrimaryActions>
+            <alder:AlderOverflowActions.OverflowActions>
+              <alder:AlderOverflowAction Content="{DynamicResource GalleryText.OverflowActionsBranch}" Icon="{StaticResource AlderIconArrowUpRight}"
+                                         Command="{CompiledBinding Run}" CommandParameter="OverflowActionsBranch" />
+              <alder:AlderOverflowAction Content="{DynamicResource GalleryText.AgendaTimeGrid}" Icon="{StaticResource AlderIconCalendar}"
+                                         Command="{CompiledBinding Run}" CommandParameter="AgendaTimeGrid" />
+            </alder:AlderOverflowActions.OverflowActions>
+          </alder:AlderOverflowActions>
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.Feedback>
+        <alder:AlderTextBlock Text="{CompiledBinding Feedback}" Foreground="{DynamicResource AlderMuted}"
+                              HorizontalAlignment="Center" AutomationProperties.LiveSetting="Polite" />
+      </gallery:ExampleCard.Feedback>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var bar = new AlderOverflowActions();
+        bar.Bind(AlderOverflowActions.IsExpandedProperty,
+            CompiledBinding.Create((OverflowActionsViewModel model) => model.IsExpanded));
+        foreach (var (label, icon, actionKey, isOverflow) in new[]
+        {
+            ("Preview", "AlderIconEye", "Preview", false),
+            ("Pin", "AlderIconBookmark", "OverflowActionsPin", false),
+            ("Branch", "AlderIconArrowUpRight", "OverflowActionsBranch", true),
+            ("Schedule", "AlderIconCalendar", "AgendaTimeGrid", true),
+        })
+        {
+            var action = new AlderOverflowAction
+            {
+                Content = label,
+                Icon = (Geometry)this.FindResource(icon)!,
+                CommandParameter = actionKey,
+            };
+            action.Bind(AlderOverflowAction.CommandProperty,
+                CompiledBinding.Create((OverflowActionsViewModel model) => model.Run));
+            (isOverflow ? bar.OverflowActions : bar.PrimaryActions).Add(action);
+        }
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleCompactOverflowActions" Title="{DynamicResource GalleryText.OverflowActionsCompact}">
+      <gallery:ExampleCard.Preview>
+        <Grid MinHeight="84" MaxWidth="235">
+          <alder:AlderOverflowActions Size="Small" CollapseOnAction="True" IsExpanded="True">
+            <alder:AlderOverflowActions.PrimaryActions>
+              <alder:AlderOverflowAction Content="{DynamicResource GalleryText.Copy}" Icon="{StaticResource AlderIconCopy}"
+                                         Command="{CompiledBinding Run}" CommandParameter="Copy" />
+            </alder:AlderOverflowActions.PrimaryActions>
+            <alder:AlderOverflowActions.OverflowActions>
+              <alder:AlderOverflowAction Content="{DynamicResource GalleryText.ActionBarArchive}" Icon="{StaticResource AlderIconArchive}"
+                                         Command="{CompiledBinding Run}" CommandParameter="ActionBarArchive" />
+              <alder:AlderOverflowAction Content="{DynamicResource GalleryText.ActionBarExport}" Icon="{StaticResource AlderIconDownload}"
+                                         IsEnabled="False" />
+            </alder:AlderOverflowActions.OverflowActions>
+          </alder:AlderOverflowActions>
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.Feedback>
+        <alder:AlderTextBlock Text="{CompiledBinding Feedback}" Foreground="{DynamicResource AlderMuted}"
+                              HorizontalAlignment="Center" AutomationProperties.LiveSetting="Polite" />
+      </gallery:ExampleCard.Feedback>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var bar = new AlderOverflowActions { Size = AlderSize.Small, CollapseOnAction = true, IsExpanded = true, MaxWidth = 235 };
+        var copy = new AlderOverflowAction
+        {
+            Content = "Copy", Icon = (Geometry)this.FindResource("AlderIconCopy")!, CommandParameter = "Copy",
+        };
+        copy.Bind(AlderOverflowAction.CommandProperty, CompiledBinding.Create((OverflowActionsViewModel model) => model.Run));
+        bar.PrimaryActions.Add(copy);
+        var archive = new AlderOverflowAction
+        {
+            Content = "Archive", Icon = (Geometry)this.FindResource("AlderIconArchive")!, CommandParameter = "ActionBarArchive",
+        };
+        archive.Bind(AlderOverflowAction.CommandProperty, CompiledBinding.Create((OverflowActionsViewModel model) => model.Run));
+        bar.OverflowActions.Add(archive);
+        bar.OverflowActions.Add(new AlderOverflowAction
+        {
+            Content = "Export", Icon = (Geometry)this.FindResource("AlderIconDownload")!, IsEnabled = false,
+        });
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

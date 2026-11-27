@@ -1,6 +1,8 @@
 using Avalonia;
+using System.Collections.Specialized;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
+using Avalonia.Data;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 
@@ -15,6 +17,8 @@ internal sealed class DataGridColumnLayout
     private readonly double endWidth;
     private readonly double viewport;
     private readonly double extent;
+
+    public bool HasPinnedColumns => startWidth + endWidth > 0;
 
     private DataGridColumnLayout(Slot[] slots, double offset, double startWidth, double endWidth, double viewport, double extent)
     {
@@ -40,6 +44,7 @@ internal sealed class DataGridColumnLayout
         for (int i = 0; i < columns.Count; i++)
         {
             var column = columns[i];
+            if (column.IsVisible && !double.IsFinite(column.ActualWidth)) return null;
             double width = Width(column);
             var pin = width > 0 && column is AlderTableColumn model ? model.Pin : TableColumnPin.None;
             slots[i] = new Slot(0, width, pin, false);
@@ -57,8 +62,12 @@ internal sealed class DataGridColumnLayout
         }
 
         // Fall back to regular scrolling when the pinned groups cannot leave a usable viewport.
-        if (starts + ends <= 0 || starts + ends > viewport - (extent > starts + ends ? 32 : 0))
-            return null;
+        if (starts + ends > viewport - (extent > starts + ends ? 32 : 0))
+        {
+            starts = ends = 0;
+            for (int i = 0; i < slots.Length; i++)
+                slots[i] = slots[i] with { Pin = TableColumnPin.None };
+        }
 
         double start = 0;
         double center = starts;
@@ -85,20 +94,31 @@ internal sealed class DataGridColumnLayout
         return new(slots, offset, starts, ends, viewport, extent);
     }
 
+    public bool IsNearViewport(int index)
+    {
+        if ((uint)index >= (uint)slots.Length) return true;
+        var slot = slots[index];
+        const double overscan = 24;
+        return slot.Pin != TableColumnPin.None ||
+            slot.X + slot.Width > offset + startWidth - overscan &&
+            slot.X < offset + viewport - endWidth + overscan;
+    }
+
     public static bool Equals(DataGridColumnLayout? a, DataGridColumnLayout? b) =>
         ReferenceEquals(a, b) || a is not null && b is not null &&
         a.offset == b.offset && a.viewport == b.viewport && a.extent == b.extent &&
         a.startWidth == b.startWidth && a.endWidth == b.endWidth && a.slots.AsSpan().SequenceEqual(b.slots);
 
-    public void Arrange(global::Avalonia.Controls.Controls children, double height, bool header)
+    public bool Arrange(global::Avalonia.Controls.Controls children, double height, bool header)
     {
-        if (children.Count != slots.Length) return;
+        if (children.Count != slots.Length) return false;
         for (int i = 0; i < children.Count; i++)
         {
             var slot = slots[i];
             var child = children[i];
             if (slot.Width <= 0)
             {
+                if (child.IsVisible) child.Arrange(new Rect(0, 0, 0, height));
                 Reset(child);
                 continue;
             }
@@ -124,6 +144,7 @@ internal sealed class DataGridColumnLayout
                     child.Clip = new RectangleGeometry(clip);
             }
         }
+        return true;
     }
 
     private static void Reset(Control cell)
@@ -175,7 +196,7 @@ internal sealed class AlderDataGridHeadersPresenter : TableViewColumnHeadersPres
     {
         var arranged = base.ArrangeOverride(finalSize);
         if (grid is null) return arranged;
-        if (grid.ArrangeHeaders(finalSize.Width) is { } layout)
+        if (grid.ArrangeHeaders(finalSize.Width) is { HasPinnedColumns: true } layout)
             layout.Arrange(Children, finalSize.Height, header: true);
         else DataGridColumnLayout.Reset(Children, headers: true);
         return arranged;
@@ -185,38 +206,103 @@ internal sealed class AlderDataGridHeadersPresenter : TableViewColumnHeadersPres
 internal sealed class AlderDataGridCellsPresenter : TableViewCellsPresenter
 {
     private AlderDataGrid? grid;
+    private AlderTableView? table;
+    private readonly Dictionary<TableViewCell, IDisposable> suppressedCells = [];
+
+    public AlderDataGridCellsPresenter() => Children.CollectionChanged += (_, change) =>
+    {
+        if (change.Action == NotifyCollectionChangedAction.Reset)
+            RestoreCells();
+        else if (change.OldItems is { } previous && change.Action is not NotifyCollectionChangedAction.Move)
+            foreach (var cell in previous.OfType<TableViewCell>())
+                if (suppressedCells.Remove(cell, out var suppression)) suppression.Dispose();
+    };
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
-        grid = this.FindAncestorOfType<AlderDataGrid>();
+        table = this.FindAncestorOfType<AlderTableView>();
+        grid = table?.OwnerTable as AlderDataGrid;
+        if (table?.OwnerTable is { } owner) owner.RowsChanged += OnRowsChanged;
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
+        if (table?.OwnerTable is { } owner) owner.RowsChanged -= OnRowsChanged;
+        RestoreCells();
+        table = null;
         grid = null;
         base.OnDetachedFromVisualTree(e);
     }
 
+    private void OnRowsChanged(object? sender, EventArgs e)
+    {
+        foreach (var cell in Children.OfType<TableViewCell>())
+            cell.Classes.Set("tree-cell", table?.OwnerTable?.IsTreeColumn(cell.Column) == true);
+    }
+
+    private void RestoreCells()
+    {
+        foreach (var suppression in suppressedCells.Values) suppression.Dispose();
+        suppressedCells.Clear();
+    }
+
     protected override Size MeasureOverride(Size availableSize)
     {
-        if (grid is not null)
-            foreach (var cell in Children.OfType<TableViewCell>())
-            {
-                var column = cell.Column as AlderTableColumn;
-                cell.Classes.Set("data-grid-cell",
-                    column is not null && !column.Classes.Contains("selection") && !column.Classes.Contains("reorder-handle"));
-            }
+        var layout = grid?.GetColumnLayout();
+        UpdateCellVisibility(layout);
+        foreach (var cell in Children.OfType<TableViewCell>())
+        {
+            var column = cell.Column as AlderTableColumn;
+            cell.Classes.Set("tree-cell", table?.OwnerTable?.IsTreeColumn(column) == true);
+            cell.Classes.Set("data-grid-cell", grid is not null && column is not null &&
+                !column.Classes.Contains("selection") && !column.Classes.Contains("reorder-handle"));
+        }
         return base.MeasureOverride(availableSize);
     }
 
     protected override Size ArrangeOverride(Size finalSize)
     {
+        var layout = grid?.GetColumnLayout();
+        UpdateCellVisibility(layout);
+        // The header has already measured the shared widths. Arrange pinned cells at their final
+        // positions directly so scrolling doesn't arrange each realized cell at both positions.
+        if (layout is { HasPinnedColumns: true } && layout.Arrange(Children, finalSize.Height, header: false))
+            return finalSize;
         var arranged = base.ArrangeOverride(finalSize);
-        if (grid is null) return arranged;
-        if (grid.GetColumnLayout() is { } layout)
-            layout.Arrange(Children, finalSize.Height, header: false);
-        else DataGridColumnLayout.Reset(Children, headers: false);
+        if (grid is not null) DataGridColumnLayout.Reset(Children, headers: false);
         return arranged;
+    }
+
+    private void UpdateCellVisibility(DataGridColumnLayout? layout)
+    {
+        // Native TableView uses cell indexes for editing and automation. Keep
+        // those shells and defer the offscreen templates when row height is fixed.
+        bool fixedHeight = table?.OwnerTable is { } owner && double.IsFinite(owner.RowHeight);
+        var scroll = table?.Scroll as ScrollViewer;
+        double width = scroll?.Viewport.Width is > 0 and var viewport ? viewport : table?.MeasuredWidth ?? 0;
+        double offset = scroll?.Offset.X ?? 0;
+        bool canDefer = fixedHeight && (grid is null ? double.IsFinite(width) && width > 0 : grid.Virtualized && layout is not null);
+        if (!canDefer)
+        {
+            if (suppressedCells.Count != 0) RestoreCells();
+            return;
+        }
+        double x = 0;
+        for (int i = 0; i < Children.Count; i++)
+        {
+            if (Children[i] is not TableViewCell cell) continue;
+            double columnWidth = cell.Column is { IsVisible: true } column ? column.ActualWidth : 0;
+            bool outside = layout is not null ? !layout.IsNearViewport(i) : x + columnWidth < offset - 24 || x > offset + width + 24;
+            x += columnWidth;
+            bool suppress = outside && !cell.IsKeyboardFocusWithin;
+            if (suppress)
+            {
+                if (!suppressedCells.ContainsKey(cell) &&
+                    cell.SetValue(IsVisibleProperty, false, BindingPriority.Animation) is { } value)
+                    suppressedCells.Add(cell, value);
+            }
+            else if (suppressedCells.Remove(cell, out var previous)) previous.Dispose();
+        }
     }
 }

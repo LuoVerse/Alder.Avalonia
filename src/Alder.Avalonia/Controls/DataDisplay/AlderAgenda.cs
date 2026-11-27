@@ -292,8 +292,8 @@ public sealed partial class AlderAgenda : TemplatedControl
 
     private void EventsChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (Dispatcher.UIThread.CheckAccess()) RenderAgenda();
-        else Dispatcher.UIThread.Post(() => { if (ReferenceEquals(sender, observedEvents)) RenderAgenda(); });
+        if (Dispatcher.UIThread.CheckAccess()) UpdateAgendaEvents();
+        else Dispatcher.UIThread.Post(() => { if (ReferenceEquals(sender, observedEvents)) UpdateAgendaEvents(); });
     }
 
     private void Previous(object? sender, RoutedEventArgs e) => Navigate(-1);

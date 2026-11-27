@@ -1,6 +1,12 @@
 using Avalonia;
+using Avalonia.Automation;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.VisualTree;
+using Alder.NativeMarkdown.UI.Rendering;
 using System.Globalization;
 using System.Windows.Input;
 
@@ -9,6 +15,10 @@ namespace Alder.Avalonia.Controls;
 /// <summary>An attachment with optional preview, metadata and independent open and remove actions.</summary>
 public sealed partial class AlderChatAttachment : ContentControl
 {
+    private Button? openButton;
+    private ImageViewer? viewer;
+    private NavigationMethod previewNavigation;
+
     /// <summary>The file name shown to the reader.</summary>
     [GeneratedStyledProperty]
     public partial string? FileName { get; set; }
@@ -25,11 +35,11 @@ public sealed partial class AlderChatAttachment : ContentControl
     [GeneratedStyledProperty]
     public partial string? MimeType { get; set; }
 
-    /// <summary>Optional thumbnail supplied by the host. Content can supply a custom media preview.</summary>
+    /// <summary>Image shown as a thumbnail and opened in the preview overlay unless <see cref="OpenCommand"/> is supplied.</summary>
     [GeneratedStyledProperty]
     public partial IImage? Preview { get; set; }
 
-    /// <summary>Opens the represented attachment.</summary>
+    /// <summary>Opens the represented attachment, overriding the default image preview.</summary>
     [GeneratedStyledProperty]
     public partial ICommand? OpenCommand { get; set; }
 
@@ -58,6 +68,22 @@ public sealed partial class AlderChatAttachment : ContentControl
     private string? displayDescription;
 
     /// <inheritdoc/>
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    {
+        if (openButton is not null) openButton.Click -= OpenPreview;
+        base.OnApplyTemplate(e);
+        openButton = e.NameScope.Find<Button>("Open");
+        if (openButton is not null) openButton.Click += OpenPreview;
+    }
+
+    /// <inheritdoc/>
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        ClosePreview();
+        base.OnDetachedFromVisualTree(e);
+    }
+
+    /// <inheritdoc/>
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
@@ -67,8 +93,36 @@ public sealed partial class AlderChatAttachment : ContentControl
             SetAndRaise(DisplayDescriptionProperty, ref displayDescription, Description ?? FormatSize(FileSize));
         if (change.Property == PreviewProperty || change.Property == ContentProperty)
             PseudoClasses.Set(":media", Preview is not null || Content is not null);
-        if (change.Property == OpenCommandProperty)
-            PseudoClasses.Set(":openable", OpenCommand is not null);
+        if (change.Property == OpenCommandProperty || change.Property == PreviewProperty)
+        {
+            ClosePreview();
+            PseudoClasses.Set(":openable", OpenCommand is not null || Preview is not null);
+        }
+    }
+
+    private void OpenPreview(object? sender, RoutedEventArgs e)
+    {
+        if (OpenCommand is not null || Preview is not { } image || viewer is not null) return;
+        previewNavigation = openButton?.Classes.Contains(":focus-visible") == true
+            ? NavigationMethod.Tab : NavigationMethod.Pointer;
+        viewer = ImageViewer.Show(this, image, FileName);
+        if (viewer is null) return;
+        AutomationProperties.SetName(viewer, FileName);
+        viewer.Closed += OnPreviewClosed;
+    }
+
+    private void OnPreviewClosed(object? sender, EventArgs e)
+    {
+        ClosePreview();
+        openButton?.Focus(previewNavigation);
+    }
+
+    private void ClosePreview()
+    {
+        if (viewer is not { } preview) return;
+        viewer = null;
+        preview.Closed -= OnPreviewClosed;
+        preview.Close();
     }
 
     /// <summary>Resolves a file icon category from a MIME type or file extension.</summary>

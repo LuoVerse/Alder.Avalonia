@@ -26,7 +26,7 @@
                   CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
           <Border BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
             <Grid ColumnDefinitions="Auto,*" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
-              <ContentPresenter Name="LeadingIcon" Content="{TemplateBinding Icon}" VerticalAlignment="Center" Margin="0,0,16,0"
+              <alder:AlderIconPresenter Width="24" Height="24" Name="LeadingIcon" Content="{TemplateBinding Icon}" VerticalAlignment="Center" Margin="0,0,16,0"
                                 IsVisible="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
               <StackPanel Grid.Column="1">
                 <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
@@ -69,8 +69,6 @@
               </ContentPresenter.Transitions>
             </ContentPresenter>
           </Panel>
-          <Border Name="FocusRing" Margin="-4" IsVisible="False" IsHitTestVisible="False" BorderThickness="2"
-                  CornerRadius="{TemplateBinding CornerRadius}" BorderBrush="{DynamicResource AlderAccent}" />
         </Panel>
       </ControlTemplate>
     </Setter>
@@ -89,7 +87,8 @@
     </Style>
     <Style Selector="^:checked /template/ Border#SelectionRing"><Setter Property="IsVisible" Value="True" /></Style>
     <Style Selector="^:checked /template/ ContentPresenter#CustomIndicator"><Setter Property="Opacity" Value="1" /></Style>
-    <Style Selector="^:focus-visible /template/ Border#FocusRing"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^[Variant=Card]:focus-visible:not(:disabled) /template/ Border#CardFace"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
+    <Style Selector="^[Variant=Inline]:focus-visible:not(:disabled) /template/ Border#CardFace"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
     <Style Selector="^.alder-invalid /template/ Border#CardFace">
       <Setter Property="BorderBrush" Value="{DynamicResource AlderDanger}" />
     </Style>

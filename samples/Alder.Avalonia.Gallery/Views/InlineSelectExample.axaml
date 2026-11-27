@@ -19,7 +19,7 @@
       <g:ExampleCard.Preview>
         <Border MinHeight="320">
           <alder:AlderInlineSelect HorizontalAlignment="Center" ItemsSource="{CompiledBinding Languages}"
-                                   TextSelector="{CompiledBinding ChoiceText}" SelectedIndex="0" DropDownWidth="140" MaxDropDownHeight="148"
+                                   TextSelector="{CompiledBinding ChoiceText}" SelectedIndex="0" DropDownWidth="140"
                                    AutomationProperties.Name="{DynamicResource GalleryText.FormDisplayLanguage}" />
         </Border>
       </g:ExampleCard.Preview>
@@ -51,7 +51,7 @@
         <Border MinHeight="320">
           <alder:AlderInlineSelect HorizontalAlignment="Center" ItemsSource="{CompiledBinding Placements}"
                                    SelectedItem="{CompiledBinding SelectedPlacement, Mode=TwoWay}"
-                                   TextSelector="{CompiledBinding ChoiceText}" DropDownMinWidth="186" MaxDropDownHeight="148"
+                                   TextSelector="{CompiledBinding ChoiceText}" DropDownMinWidth="186" MaxDropDownHeight="140"
                                    DropDownPlacement="{CompiledBinding SelectedPlacement?.Mode}"
                                    AutomationProperties.Name="{DynamicResource GalleryText.FormPlacements}" />
         </Border>

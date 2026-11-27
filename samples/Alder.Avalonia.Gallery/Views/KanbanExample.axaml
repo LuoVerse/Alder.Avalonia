@@ -14,7 +14,7 @@
                      Foreground="{DynamicResource AlderMuted}" />
         </Grid>
         <alder:AlderAvatar Fallback="{CompiledBinding Initials}" Size="Small" Width="23" Height="23"
-                           MinWidth="0" MinHeight="0" FontSize="10" Variant="Soft" Color="{CompiledBinding Status}"
+                           MinWidth="0" MinHeight="0" FontSize="10" Variant="Soft" Color="{CompiledBinding AssigneeColor}"
                            HorizontalAlignment="Left" />
       </StackPanel>
     </DataTemplate>

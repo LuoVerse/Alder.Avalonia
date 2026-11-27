@@ -172,8 +172,6 @@ public sealed partial class AlderPressableFeedback : StyledElement
     public event EventHandler? ResetCompleted;
 
     private static readonly TimeSpan DefaultDuration = TimeSpan.FromSeconds(2);
-    private static readonly TimeSpan RippleFade = TimeSpan.FromMilliseconds(375);
-    private static readonly TimeSpan LegacyRippleDuration = TimeSpan.FromMilliseconds(420);
     private static readonly SplineEasing SweepReleaseEasing = new(0, 0, .58, 1);
     private DispatcherTimer? timer;
     private Control? target;
@@ -189,12 +187,11 @@ public sealed partial class AlderPressableFeedback : StyledElement
     private Border? sweepSurface;
     private ContentPresenter? overlay;
     private StackPanel? overlayLayout;
-    private PathIcon? overlayIcon;
+    private AlderIconPresenter? leadingIcon;
+    private AlderIconPresenter? overlayIcon;
+    private Border? overlayIconMirror;
     private Ink? ink;
     private Key? holdKey;
-    private Point rippleOrigin;
-    private long rippleStarted;
-    private long rippleReleased;
     private long stateStarted;
     private long resetAt;
     private double initialProgress;
@@ -329,7 +326,13 @@ public sealed partial class AlderPressableFeedback : StyledElement
         overlay = new ContentPresenter { HorizontalContentAlignment = HorizontalAlignment.Center,
             VerticalContentAlignment = VerticalAlignment.Center };
         AutomationProperties.SetAccessibilityView(overlay, AccessibilityView.Raw);
-        overlayIcon = new AlderPathIcon { Width = 16, Height = 16, Margin = new Thickness(-2, 0) };
+        leadingIcon = parts.OfType<AlderIconPresenter>().FirstOrDefault(part => part.Name == "LeadingIcon");
+        overlayIcon = new AlderIconPresenter { Width = 16, Height = 16, Margin = new Thickness(-2, 0) };
+        if (leadingIcon is not null)
+        {
+            // Use the live icon as a brush rather than parenting the same control in both layers.
+            overlayIconMirror = new Border { Background = new VisualBrush(leadingIcon) { Stretch = Stretch.Uniform } };
+        }
         AutomationProperties.SetAccessibilityView(overlayIcon, AccessibilityView.Raw);
         overlayLayout = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8,
             HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center,
@@ -343,6 +346,7 @@ public sealed partial class AlderPressableFeedback : StyledElement
     private void RemoveLayers()
     {
         ReleaseSpringVisual();
+        FallBackToDrawingRipple();
         if (rippleClip?.Child == ink && rippleClip is not null) rippleClip.Child = null;
         rippleClip?.ClearValue(Visual.ZIndexProperty);
         if (tint is not null) layerHost?.Children.Remove(tint);
@@ -359,7 +363,9 @@ public sealed partial class AlderPressableFeedback : StyledElement
         sweepSurface = null;
         overlay = null;
         overlayLayout = null;
+        leadingIcon = null;
         overlayIcon = null;
+        overlayIconMirror = null;
         ink = null;
     }
 
@@ -375,6 +381,9 @@ public sealed partial class AlderPressableFeedback : StyledElement
             if (target.IsAttachedToVisualTree()) SetupLayers();
         }
         if (change.Property == ScaleTargetProperty) ReleaseSpringVisual();
+        if (change.Property == FeedbackBrushProperty || change.Property == PressedOpacityProperty ||
+            change.Property == RippleDurationProperty || change.Property == MinimumPressDurationProperty)
+            FallBackToDrawingRipple();
         RefreshLayers();
     }
 
@@ -383,10 +392,9 @@ public sealed partial class AlderPressableFeedback : StyledElement
         if ((change.Property == InputElement.IsEffectivelyEnabledProperty || change.Property == AlderButton.IsPendingProperty) && !CanInteract)
             Clear();
         if (change.Property == AlderMotion.ReducedProperty && target is { } owner && AlderMotion.GetReduced(owner))
-        {
-            rippleStarted = rippleReleased = 0;
-            if (rippleClip?.Child == ink && rippleClip is not null) rippleClip.Child = null;
-        }
+            StopRipple();
+        if (change.Property == TemplatedControl.ForegroundProperty || change.Property == Visual.BoundsProperty)
+            FallBackToDrawingRipple();
         RefreshLayers();
     }
 
@@ -416,7 +424,7 @@ public sealed partial class AlderPressableFeedback : StyledElement
             if (rippleStarted != 0 && rippleClip.Child is null) rippleClip.Child = ink;
             if (rippleStarted == 0 && rippleClip.Child == ink) rippleClip.Child = null;
         }
-        ink?.InvalidateVisual();
+        if (ink is { Composition: null }) ink.InvalidateVisual();
         if (sweepClip is null || sweepSurface is null || overlay is null || overlayLayout is null || overlayIcon is null) return;
         sweepClip.CornerRadius = radius;
         sweepClip.IsVisible = Progress > 0;
@@ -426,9 +434,17 @@ public sealed partial class AlderPressableFeedback : StyledElement
         var foreground = OverlayForeground ?? ResolveBrush("AlderOnAccent") ?? Foreground;
         overlay.SetCurrentValue(TemplatedControl.ForegroundProperty, foreground);
         overlay.IsVisible = overlay.Content is not null;
-        overlayIcon.Data = owner is AlderButton button && OverlayContentTemplate is null &&
+        var icon = owner is AlderButton button && OverlayContentTemplate is null &&
             (OverlayContent is null or string) ? button.Icon : null;
-        overlayIcon.IsVisible = overlayIcon.Data is not null;
+        overlayIcon.Width = leadingIcon?.Width ?? 16;
+        overlayIcon.Height = leadingIcon?.Height ?? 16;
+        if (overlayIconMirror is not null)
+        {
+            overlayIconMirror.Width = overlayIcon.Width;
+            overlayIconMirror.Height = overlayIcon.Height;
+        }
+        overlayIcon.Content = icon is Control ? overlayIconMirror : icon;
+        overlayIcon.IsVisible = overlayIcon.Content is not null;
         overlayIcon.Foreground = foreground;
         if (owner is ContentControl content)
         {
@@ -697,92 +713,27 @@ public sealed partial class AlderPressableFeedback : StyledElement
         else if (resetAt != 0 && Stopwatch.GetElapsedTime(resetAt) >= (ResetDelay ?? TimeSpan.FromSeconds(1.5)))
             StartReset();
 
-        if (rippleStarted != 0 && RippleOpacity() <= 0) rippleStarted = 0;
+        if (DrawsRippleByFrame && RippleOpacity() <= 0) StopRipple();
         RefreshLayers();
-        if (rippleStarted == 0 && State is PressableFeedbackState.Idle or PressableFeedbackState.Complete && resetAt == 0)
+        if (!DrawsRippleByFrame && State is PressableFeedbackState.Idle or PressableFeedbackState.Complete && resetAt == 0)
             timer?.Stop();
     }
 
     private static double Fraction(TimeSpan elapsed, TimeSpan duration) =>
         duration == TimeSpan.Zero ? 1 : Math.Clamp(elapsed.TotalMilliseconds / duration.TotalMilliseconds, 0, 1);
 
-    private void BeginRipple(Point position)
-    {
-        if (!CanInteract || !Effects.HasFlag(PressableFeedbackEffects.Ripple) ||
-            target is { } motionTarget && AlderMotion.GetReduced(motionTarget)) return;
-        rippleOrigin = position;
-        rippleStarted = Stopwatch.GetTimestamp();
-        rippleReleased = 0;
-        StartTimer();
-        RefreshLayers();
-    }
-
-    private void EndRipple()
-    {
-        if (!usesLegacyRipple && rippleStarted != 0 && rippleReleased == 0) rippleReleased = Stopwatch.GetTimestamp();
-    }
-
-    private double RippleOpacity()
-    {
-        if (rippleStarted == 0 || !CanInteract || target is { } motionTarget && AlderMotion.GetReduced(motionTarget)) return 0;
-        double sinceStart = Stopwatch.GetElapsedTime(rippleStarted).TotalMilliseconds;
-        if (usesLegacyRipple) return PressedOpacity * Math.Pow(1 - Fraction(TimeSpan.FromMilliseconds(sinceStart), LegacyRippleDuration), 3);
-        double opacity = PressedOpacity * ButtonEase.Ease(Math.Clamp(sinceStart / 75, 0, 1));
-        if (rippleReleased == 0) return opacity;
-        double minimum = (MinimumPressDuration ?? TimeSpan.FromMilliseconds(225)).TotalMilliseconds;
-        double fadeElapsed = Math.Min(sinceStart - minimum, Stopwatch.GetElapsedTime(rippleReleased).TotalMilliseconds);
-        return opacity * (1 - ButtonEase.Ease(Math.Clamp(fadeElapsed / RippleFade.TotalMilliseconds, 0, 1)));
-    }
-
     private void Clear()
     {
+        StopRipple();
         ReleaseContact();
         holdKey = null;
         springPointer = null;
         springKey = null;
-        resetAt = rippleStarted = rippleReleased = 0;
+        resetAt = 0;
         timer?.Stop();
         State = PressableFeedbackState.Idle;
         Progress = 0;
         RefreshLayers();
     }
 
-    private sealed class Ink(AlderPressableFeedback owner) : Control
-    {
-        private static readonly RadialGradientBrush SoftEdge = new()
-        {
-            RadiusX = RelativeScalar.Middle, RadiusY = RelativeScalar.Middle,
-            GradientStops = [new(Colors.White, .65), new(Colors.Transparent, 1)]
-        };
-
-        public override void Render(DrawingContext context)
-        {
-            if (!owner.CanInteract || owner.FeedbackInk is not { } brush) return;
-            var area = new Rect(Bounds.Size);
-            var opacity = owner.RippleOpacity();
-            if (opacity <= 0) return;
-            var p = owner.rippleOrigin;
-            var elapsed = Stopwatch.GetElapsedTime(owner.rippleStarted);
-            using var alpha = context.PushOpacity(opacity);
-            if (owner.usesLegacyRipple)
-            {
-                var x = Math.Max(p.X, area.Width - p.X);
-                var y = Math.Max(p.Y, area.Height - p.Y);
-                var legacyFraction = Fraction(elapsed, LegacyRippleDuration);
-                var legacyRadius = Math.Sqrt(x * x + y * y) * (1 - .95 * Math.Pow(1 - legacyFraction, 3));
-                context.DrawEllipse(brush, null, p, legacyRadius, legacyRadius);
-                return;
-            }
-
-            var t = Fraction(elapsed, owner.RippleDuration ?? TimeSpan.FromMilliseconds(150));
-            var startRadius = Math.Max(.5, Math.Floor(Math.Max(area.Width, area.Height) * .2) / 2);
-            var endRadius = (Math.Sqrt(area.Width * area.Width + area.Height * area.Height) + 87) / 2;
-            var start = p + new Vector(startRadius, startRadius);
-            var center = start + (area.Center - start) * t;
-            var radius = startRadius + (endRadius - startRadius) * t;
-            var circle = new Rect(center.X - radius, center.Y - radius, radius * 2, radius * 2);
-            using var mask = context.PushOpacityMask(SoftEdge, circle);
-            context.FillRectangle(brush, circle);
-        }
-    }
 }

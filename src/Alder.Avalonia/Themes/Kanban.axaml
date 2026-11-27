@@ -18,7 +18,7 @@
     <Setter Property="Padding" Value="16,0" />
     <Setter Property="ClipToBounds" Value="False" />
     <Setter Property="Icon" Value="{StaticResource AlderIconPlus}" />
-    <Style Selector="^[Variant=Outline] /template/ PathIcon#LeadingIcon">
+    <Style Selector="^[Variant=Outline] /template/ alder|AlderIconPresenter#LeadingIcon">
       <Setter Property="Margin" Value="0" />
     </Style>
   </ControlTheme>

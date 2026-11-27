@@ -1,0 +1,206 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:gallery="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.TransitioningContentExample" x:DataType="vm:TransitioningContentViewModel">
+  <UserControl.Resources>
+    <gallery:IconResourceConverter x:Key="TransitionIcon" />
+    <DataTemplate x:Key="TransitionNavigation" x:DataType="vm:TransitioningContentSample">
+      <WrapPanel ItemSpacing="8" LineSpacing="8">
+        <alder:AlderSegment SelectedKey="{CompiledBinding SelectedPage, Mode=TwoWay}" Size="Small"
+                            AutomationProperties.Name="{DynamicResource GalleryText.TransitionNavigation}">
+          <alder:AlderSegmentItem Key="overview" Content="{DynamicResource GalleryText.TabOverview}" />
+          <alder:AlderSegmentItem Key="activity" Content="{DynamicResource GalleryText.TabActivity}" />
+          <alder:AlderSegmentItem Key="versions" Content="{DynamicResource GalleryText.TransitionVersions}" />
+        </alder:AlderSegment>
+        <alder:AlderToggleButton Variant="Ghost" Size="Small" Content="{DynamicResource GalleryText.TransitionSlowMotion}"
+                                 IsChecked="{CompiledBinding SlowMotion, Mode=TwoWay}" />
+        <alder:AlderToggleButton Variant="Ghost" Size="Small" Content="{DynamicResource GalleryText.TransitionReducedMotion}"
+                                 IsChecked="{CompiledBinding ReducedMotion, Mode=TwoWay}" />
+      </WrapPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="TransitionPage" x:DataType="vm:TransitioningContentPage">
+      <Grid ColumnDefinitions="*,*" ColumnSpacing="16" VerticalAlignment="Center">
+        <StackPanel Spacing="8" VerticalAlignment="Center">
+          <Border Width="36" Height="36" HorizontalAlignment="Left" CornerRadius="12"
+                  Background="{DynamicResource AlderSoft}">
+            <alder:AlderPathIcon Width="16" Height="16" Foreground="{DynamicResource AlderSoftInk}"
+                                 Data="{CompiledBinding IconKey, Converter={StaticResource TransitionIcon}}" />
+          </Border>
+          <alder:AlderTextBlock Text="{CompiledBinding Title}" FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap" />
+          <alder:AlderTextBlock Text="{CompiledBinding Detail}" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
+        </StackPanel>
+        <ItemsControl Grid.Column="1" ItemsSource="{CompiledBinding Rows}" VerticalAlignment="Center">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:TransitioningContentRow">
+              <Border Padding="0,8" BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="0,0,0,1">
+                <DockPanel>
+                  <alder:AlderTextBlock DockPanel.Dock="Right" Margin="8,0,0,0" Text="{CompiledBinding Value}"
+                                       Foreground="{DynamicResource AlderMuted}" />
+                  <alder:AlderTextBlock Text="{CompiledBinding Label}" TextTrimming="CharacterEllipsis" />
+                </DockPanel>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </Grid>
+    </DataTemplate>
+  </UserControl.Resources>
+
+  <StackPanel Spacing="20">
+    <gallery:ExampleCard x:Name="SampleCrossFade" Title="{DynamicResource GalleryText.TransitionCrossFade}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="480" Spacing="12" DataContext="{CompiledBinding CrossFade}" x:DataType="vm:TransitioningContentSample">
+          <ContentControl Content="{CompiledBinding}" ContentTemplate="{StaticResource TransitionNavigation}" />
+          <alder:AlderTransitioningContentControl Transition="CrossFade" MinHeight="184" Padding="18"
+                    Content="{CompiledBinding Page}" ContentTemplate="{StaticResource TransitionPage}"
+                    IsTransitionReversed="{CompiledBinding IsReversed}" Duration="{CompiledBinding Duration}"
+                    alder:AlderMotion.Reduced="{CompiledBinding ReducedMotion}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var control = new AlderTransitioningContentControl
+        {
+            Transition = AlderContentTransition.CrossFade,
+            MinHeight = 184,
+            Padding = new Thickness(18),
+            ContentTemplate = (IDataTemplate)this.FindResource("TransitionPage")!
+        };
+        control.Bind(ContentControl.ContentProperty, CompiledBinding.Create((TransitioningContentSample model) => model.Page));
+        control.Bind(TransitioningContentControl.IsTransitionReversedProperty,
+            CompiledBinding.Create((TransitioningContentSample model) => model.IsReversed));
+        control.Bind(AlderTransitioningContentControl.DurationProperty, CompiledBinding.Create((TransitioningContentSample model) => model.Duration));
+        control.Bind(AlderMotion.ReducedProperty, CompiledBinding.Create((TransitioningContentSample model) => model.ReducedMotion));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleSlide" Title="{DynamicResource GalleryText.TransitionSlide}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="480" Spacing="12" DataContext="{CompiledBinding Slide}" x:DataType="vm:TransitioningContentSample">
+          <ContentControl Content="{CompiledBinding}" ContentTemplate="{StaticResource TransitionNavigation}" />
+          <alder:AlderTransitioningContentControl Transition="Slide" MinHeight="184" Padding="18"
+                    Content="{CompiledBinding Page}" ContentTemplate="{StaticResource TransitionPage}"
+                    IsTransitionReversed="{CompiledBinding IsReversed}" Duration="{CompiledBinding Duration}"
+                    alder:AlderMotion.Reduced="{CompiledBinding ReducedMotion}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var control = new AlderTransitioningContentControl
+        {
+            Transition = AlderContentTransition.Slide,
+            MinHeight = 184,
+            Padding = new Thickness(18),
+            ContentTemplate = (IDataTemplate)this.FindResource("TransitionPage")!
+        };
+        control.Bind(ContentControl.ContentProperty, CompiledBinding.Create((TransitioningContentSample model) => model.Page));
+        control.Bind(TransitioningContentControl.IsTransitionReversedProperty,
+            CompiledBinding.Create((TransitioningContentSample model) => model.IsReversed));
+        control.Bind(AlderTransitioningContentControl.DurationProperty, CompiledBinding.Create((TransitioningContentSample model) => model.Duration));
+        control.Bind(AlderMotion.ReducedProperty, CompiledBinding.Create((TransitioningContentSample model) => model.ReducedMotion));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleRise" Title="{DynamicResource GalleryText.TransitionRise}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="480" Spacing="12" DataContext="{CompiledBinding Rise}" x:DataType="vm:TransitioningContentSample">
+          <ContentControl Content="{CompiledBinding}" ContentTemplate="{StaticResource TransitionNavigation}" />
+          <alder:AlderTransitioningContentControl Transition="Rise" MinHeight="184" Padding="18"
+                    Content="{CompiledBinding Page}" ContentTemplate="{StaticResource TransitionPage}"
+                    IsTransitionReversed="{CompiledBinding IsReversed}" Duration="{CompiledBinding Duration}"
+                    alder:AlderMotion.Reduced="{CompiledBinding ReducedMotion}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var control = new AlderTransitioningContentControl
+        {
+            Transition = AlderContentTransition.Rise,
+            MinHeight = 184,
+            Padding = new Thickness(18),
+            ContentTemplate = (IDataTemplate)this.FindResource("TransitionPage")!
+        };
+        control.Bind(ContentControl.ContentProperty, CompiledBinding.Create((TransitioningContentSample model) => model.Page));
+        control.Bind(TransitioningContentControl.IsTransitionReversedProperty,
+            CompiledBinding.Create((TransitioningContentSample model) => model.IsReversed));
+        control.Bind(AlderTransitioningContentControl.DurationProperty, CompiledBinding.Create((TransitioningContentSample model) => model.Duration));
+        control.Bind(AlderMotion.ReducedProperty, CompiledBinding.Create((TransitioningContentSample model) => model.ReducedMotion));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleScale" Title="{DynamicResource GalleryText.TransitionScale}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="480" Spacing="12" DataContext="{CompiledBinding Scale}" x:DataType="vm:TransitioningContentSample">
+          <ContentControl Content="{CompiledBinding}" ContentTemplate="{StaticResource TransitionNavigation}" />
+          <alder:AlderTransitioningContentControl Transition="Scale" MinHeight="184" Padding="18"
+                    Content="{CompiledBinding Page}" ContentTemplate="{StaticResource TransitionPage}"
+                    IsTransitionReversed="{CompiledBinding IsReversed}" Duration="{CompiledBinding Duration}"
+                    alder:AlderMotion.Reduced="{CompiledBinding ReducedMotion}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var control = new AlderTransitioningContentControl
+        {
+            Transition = AlderContentTransition.Scale,
+            MinHeight = 184,
+            Padding = new Thickness(18),
+            ContentTemplate = (IDataTemplate)this.FindResource("TransitionPage")!
+        };
+        control.Bind(ContentControl.ContentProperty, CompiledBinding.Create((TransitioningContentSample model) => model.Page));
+        control.Bind(TransitioningContentControl.IsTransitionReversedProperty,
+            CompiledBinding.Create((TransitioningContentSample model) => model.IsReversed));
+        control.Bind(AlderTransitioningContentControl.DurationProperty, CompiledBinding.Create((TransitioningContentSample model) => model.Duration));
+        control.Bind(AlderMotion.ReducedProperty, CompiledBinding.Create((TransitioningContentSample model) => model.ReducedMotion));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleBlur" Title="{DynamicResource GalleryText.TransitionBlur}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="480" Spacing="12" DataContext="{CompiledBinding Blur}" x:DataType="vm:TransitioningContentSample">
+          <ContentControl Content="{CompiledBinding}" ContentTemplate="{StaticResource TransitionNavigation}" />
+          <alder:AlderTransitioningContentControl Transition="Blur" MinHeight="184" Padding="18"
+                    Content="{CompiledBinding Page}" ContentTemplate="{StaticResource TransitionPage}"
+                    IsTransitionReversed="{CompiledBinding IsReversed}" Duration="{CompiledBinding Duration}"
+                    alder:AlderMotion.Reduced="{CompiledBinding ReducedMotion}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var control = new AlderTransitioningContentControl
+        {
+            Transition = AlderContentTransition.Blur,
+            MinHeight = 184,
+            Padding = new Thickness(18),
+            ContentTemplate = (IDataTemplate)this.FindResource("TransitionPage")!
+        };
+        control.Bind(ContentControl.ContentProperty, CompiledBinding.Create((TransitioningContentSample model) => model.Page));
+        control.Bind(TransitioningContentControl.IsTransitionReversedProperty,
+            CompiledBinding.Create((TransitioningContentSample model) => model.IsReversed));
+        control.Bind(AlderTransitioningContentControl.DurationProperty, CompiledBinding.Create((TransitioningContentSample model) => model.Duration));
+        control.Bind(AlderMotion.ReducedProperty, CompiledBinding.Create((TransitioningContentSample model) => model.ReducedMotion));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+
+    <gallery:ExampleCard x:Name="SampleReveal" Title="{DynamicResource GalleryText.TransitionReveal}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel MaxWidth="480" Spacing="12" DataContext="{CompiledBinding Reveal}" x:DataType="vm:TransitioningContentSample">
+          <ContentControl Content="{CompiledBinding}" ContentTemplate="{StaticResource TransitionNavigation}" />
+          <alder:AlderTransitioningContentControl Transition="Reveal" MinHeight="184" Padding="18"
+                    Content="{CompiledBinding Page}" ContentTemplate="{StaticResource TransitionPage}"
+                    IsTransitionReversed="{CompiledBinding IsReversed}" Duration="{CompiledBinding Duration}"
+                    alder:AlderMotion.Reduced="{CompiledBinding ReducedMotion}" />
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var control = new AlderTransitioningContentControl
+        {
+            Transition = AlderContentTransition.Reveal,
+            MinHeight = 184,
+            Padding = new Thickness(18),
+            ContentTemplate = (IDataTemplate)this.FindResource("TransitionPage")!
+        };
+        control.Bind(ContentControl.ContentProperty, CompiledBinding.Create((TransitioningContentSample model) => model.Page));
+        control.Bind(TransitioningContentControl.IsTransitionReversedProperty,
+            CompiledBinding.Create((TransitioningContentSample model) => model.IsReversed));
+        control.Bind(AlderTransitioningContentControl.DurationProperty, CompiledBinding.Create((TransitioningContentSample model) => model.Duration));
+        control.Bind(AlderMotion.ReducedProperty, CompiledBinding.Create((TransitioningContentSample model) => model.ReducedMotion));
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+  </StackPanel>
+</UserControl>

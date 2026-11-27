@@ -72,6 +72,31 @@ public sealed class CommandInteractions
     }
 
     [AvaloniaFact]
+    public void LargeCommandPagePreservesCultureSensitiveMatchesAndResultOrder()
+    {
+        var first = new AlderCommandItem { Label = "Open café report" };
+        var second = new AlderCommandItem { Label = "Open café review" };
+        var items = Enumerable.Range(0, 5000).Select(i => new AlderCommandItem { Label = $"Task {i}" })
+            .Append(first).Append(second).ToArray();
+        var palette = new AlderCommand { Groups = items.Chunk(1000).Select(group => new AlderCommandGroup { Items = group }).ToArray() };
+        var window = new Window { Width = 400, Height = 420, Content = palette };
+        window.Show();
+        try
+        {
+            palette.Query = "cafe rprt";
+            Refresh(window);
+            Assert.Same(first, palette.ActiveItem);
+            palette.Query = "cafe";
+            Refresh(window);
+            Assert.Same(first, palette.ActiveItem);
+            palette.Query = "unmatched";
+            Refresh(window);
+            Assert.Null(palette.ActiveItem);
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaFact]
     public void CommandUpdatesResultsAndInvokesOnlyEnabledRows()
     {
         var action = new TestCommand { Enabled = false };

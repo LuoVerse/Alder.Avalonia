@@ -76,7 +76,7 @@ public abstract class AlderPlotChart : TemplatedControl
 
     static AlderPlotChart() => AffectsRender<AlderPlotChart>(
         GridBrushProperty, CursorBrushProperty, ForegroundProperty, BackgroundProperty,
-        FontSizeProperty, FontFamilyProperty, FontStyleProperty, FontWeightProperty, FontStretchProperty, RevealProgressProperty);
+        FontSizeProperty, FontFamilyProperty, FontStyleProperty, FontWeightProperty, FontStretchProperty);
 
     /// <summary>Initializes a new instance of <see cref="AlderPlotChart"/>.</summary>
     protected AlderPlotChart() => ActualThemeVariantChanged += (_, _) => ResetLayout();
@@ -93,6 +93,8 @@ public abstract class AlderPlotChart : TemplatedControl
     private protected virtual Point GetKeyboardAnchor(int index) => TooltipBounds.Center;
     private protected virtual Point GetTooltipAnchor(int index, Point pointer) => pointer;
     private protected virtual bool UsesVerticalNavigation => false;
+    private protected virtual void InvalidateActiveIndex() => InvalidateVisual();
+    private protected virtual void InvalidateReveal() => InvalidateVisual();
 
     /// <inheritdoc />
     protected override Size MeasureOverride(Size availableSize)
@@ -198,6 +200,8 @@ public abstract class AlderPlotChart : TemplatedControl
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
+        if (change.Property == RevealProgressProperty)
+            InvalidateReveal();
         if ((change.Property == IsAnimationEnabledProperty && !IsAnimationEnabled) ||
             (change.Property == AlderMotion.ReducedProperty && AlderMotion.GetReduced(this)))
         {
@@ -312,7 +316,7 @@ public abstract class AlderPlotChart : TemplatedControl
         {
             activeIndex = index;
             SetAndRaise(ActiveDataProperty, ref activeData, GetTooltipData(index));
-            InvalidateVisual();
+            InvalidateActiveIndex();
         }
 
         if (!ShowTooltip || tooltip is not { } presenter)
@@ -401,7 +405,7 @@ public abstract class AlderPlotChart : TemplatedControl
             return;
         activeIndex = -1;
         SetAndRaise(ActiveDataProperty, ref activeData, null);
-        InvalidateVisual();
+        InvalidateActiveIndex();
     }
 
     private protected FormattedText Text(string label, double? fontSize = null) => new(label, CultureInfo.CurrentCulture, FlowDirection,

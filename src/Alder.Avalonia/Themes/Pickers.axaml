@@ -2,14 +2,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:alder="using:Alder.Avalonia.Controls"
                     xmlns:c="using:Avalonia.Data.Converters">
-  <ResourceDictionary.ThemeDictionaries>
-    <ResourceDictionary x:Key="Light">
-      <BoxShadows x:Key="AlderSelectFocusShadow">0 0 0 4 #0485F7, 0 0 0 2 #F5F5F5</BoxShadows>
-    </ResourceDictionary>
-    <ResourceDictionary x:Key="Dark">
-      <BoxShadows x:Key="AlderSelectFocusShadow">0 0 0 4 #0485F7, 0 0 0 2 #060607</BoxShadows>
-    </ResourceDictionary>
-  </ResourceDictionary.ThemeDictionaries>
   <x:String x:Key="AlderText.PickerPlaceholder">Select one</x:String>
   <x:String x:Key="AlderText.PickerSearch">Search...</x:String>
   <x:String x:Key="AlderText.PickerEmpty">No results found</x:String>
@@ -36,41 +28,9 @@
     </Setter>
   </ControlTheme>
 
-  <ControlTheme x:Key="AlderAutocompleteTriggerTheme" TargetType="Button" BasedOn="{StaticResource AlderPickerButtonTheme}">
-    <Style Selector="^ /template/ Border#PickerButtonSurface">
-      <Setter Property="BoxShadow" Value="0 0 0 0 #000485F7" />
-      <Setter Property="Transitions"><Transitions><BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions></Setter>
-    </Style>
-    <Style Selector="^:focus-visible /template/ Border#PickerButtonSurface">
-      <Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" />
-    </Style>
-    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ Border#PickerButtonSurface">
-      <Setter Property="Transitions" Value="{x:Null}" />
-    </Style>
-  </ControlTheme>
-
   <ControlTheme x:Key="AlderSelectTriggerTheme" TargetType="Button" BasedOn="{StaticResource AlderPickerButtonTheme}">
-    <Setter Property="Template">
-      <ControlTemplate>
-        <Panel ClipToBounds="False">
-          <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
-            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
-                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-          </Border>
-          <alder:InputFocusRing Name="SelectTriggerRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
-        </Panel>
-      </ControlTemplate>
-    </Setter>
-    <Style Selector="^ /template/ alder|InputFocusRing#SelectTriggerRing">
-      <Setter Property="BoxShadow" Value="0 0 0 4 #000485F7, 0 0 0 2 #000485F7" />
-      <Setter Property="Transitions"><Transitions><BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions></Setter>
-    </Style>
-    <Style Selector="^:focus-visible /template/ alder|InputFocusRing#SelectTriggerRing">
-      <Setter Property="BoxShadow" Value="{DynamicResource AlderSelectFocusShadow}" />
-    </Style>
-    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ alder|InputFocusRing#SelectTriggerRing">
-      <Setter Property="Transitions" Value="{x:Null}" />
+    <Style Selector="^:focus-visible:not(:disabled) /template/ Border#PickerButtonSurface">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
     </Style>
   </ControlTheme>
 
@@ -108,9 +68,6 @@
     <Style Selector="^:pointerover, ^:focus-visible">
       <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
     </Style>
-    <Style Selector="^:focus-visible /template/ Border#PickerButtonSurface">
-      <Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" />
-    </Style>
   </ControlTheme>
 
   <ControlTheme x:Key="AlderPickerRowTheme" TargetType="ListBoxItem">
@@ -133,15 +90,11 @@
                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                               VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
           </Border>
-          <Border Name="OptionFocus" IsVisible="False" IsHitTestVisible="False" BorderThickness="2"
-                  BorderBrush="{DynamicResource AlderAccent}" CornerRadius="{TemplateBinding CornerRadius}" />
-          <alder:InputFocusRing Name="SelectOptionRing" IsVisible="False" IsHitTestVisible="False" ClipToBounds="False"
-                            CornerRadius="{TemplateBinding CornerRadius}" BoxShadow="{DynamicResource AlderSelectFocusShadow}" />
         </Panel>
       </ControlTemplate>
     </Setter>
     <Style Selector="^:pointerover:not(:disabled)"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
-    <Style Selector="^:selected:not(.pointer-mode) /template/ Border#OptionFocus"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:selected:not(.pointer-mode):not(:disabled) /template/ Border#OptionSurface"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
     <Style Selector="^:disabled:not(.section):not(.separator)"><Setter Property="Opacity" Value="0.5" /></Style>
     <Style Selector="^.section">
       <Setter Property="MinHeight" Value="28" />
@@ -167,12 +120,6 @@
     <Style Selector="^.separator">
       <Setter Property="Padding" Value="7,0" />
       <Setter Property="Margin" Value="0,4" />
-    </Style>
-    <Style Selector="^:selected:not(.pointer-mode) /template/ Border#OptionFocus">
-      <Setter Property="IsVisible" Value="False" />
-    </Style>
-    <Style Selector="^:selected:not(.pointer-mode) /template/ alder|InputFocusRing#SelectOptionRing">
-      <Setter Property="IsVisible" Value="True" />
     </Style>
     <Style Selector="^ /template/ Border#OptionSurface">
       <Setter Property="RenderTransform" Value="scale(1)" />
@@ -264,6 +211,7 @@
   <ControlTheme x:Key="AlderInlineSelectListTheme" TargetType="ListBox" BasedOn="{StaticResource AlderSelectListTheme}">
     <Style Selector="^ /template/ alder|AlderScrollViewer#PART_PickerScroll">
       <Setter Property="Theme" Value="{DynamicResource AlderInlineSelectScrollViewerTheme}" />
+      <Setter Property="Margin" Value="0,8" />
     </Style>
   </ControlTheme>
 
@@ -387,12 +335,12 @@
       <Setter Property="RenderTransform" Value="rotate(180deg)" />
     </Style>
     <Style Selector="^ /template/ alder|InputFocusRing#PickerFocusRing">
-      <Setter Property="BoxShadow" Value="0 0 0 0 #000485F7" />
+      <Setter Property="BoxShadow" Value="0 0 0 0 #00000000" />
       <Setter Property="Transitions"><Transitions><BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions></Setter>
     </Style>
     <Style Selector="^:not(:autocomplete):not(:select):open /template/ alder|InputFocusRing#PickerFocusRing,
                      ^:not(:autocomplete):not(:select):focus-within /template/ alder|InputFocusRing#PickerFocusRing">
-      <Setter Property="BoxShadow" Value="{DynamicResource AlderFocusShadow}" />
+      <Setter Property="BoxShadow" Value="{DynamicResource AlderButtonFocusShadow}" />
     </Style>
     <Style Selector="^[IsInvalid=True] /template/ alder|InputFocusRing#PickerFocusRing">
       <Setter Property="BoxShadow" Value="{DynamicResource AlderFieldInvalidOutline}" />
@@ -410,11 +358,8 @@
       <Setter Property="Height" Value="NaN" />
       <Setter Property="MinHeight" Value="36" />
     </Style>
-    <Style Selector="^[IsInvalid=False]:select /template/ :is(Button)#PART_Trigger">
+    <Style Selector="^[IsInvalid=False]:select /template/ :is(Button)#PART_Trigger, ^[IsInvalid=False]:autocomplete /template/ :is(Button)#PART_Trigger">
       <Setter Property="Theme" Value="{StaticResource AlderSelectTriggerTheme}" />
-    </Style>
-    <Style Selector="^[IsInvalid=False]:autocomplete /template/ :is(Button)#PART_Trigger">
-      <Setter Property="Theme" Value="{StaticResource AlderAutocompleteTriggerTheme}" />
     </Style>
     <Style Selector="^:select /template/ TextBlock#SelectedText, ^:select /template/ TextBlock#Placeholder,
                      ^:autocomplete /template/ TextBlock#SelectedText, ^:autocomplete /template/ TextBlock#Placeholder">

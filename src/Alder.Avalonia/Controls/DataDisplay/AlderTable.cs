@@ -11,6 +11,7 @@ using Avalonia.Data;
 using Avalonia.LogicalTree;
 using Avalonia.Metadata;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using NativeSelectionMode = global::Avalonia.Controls.SelectionMode;
 
 namespace Alder.Avalonia.Controls;
@@ -102,6 +103,10 @@ public partial class AlderTable : TemplatedControl
     /// <summary>Identifies the <see cref="LoadMoreCommand"/> Avalonia property.</summary>
     public static readonly StyledProperty<ICommand?> LoadMoreCommandProperty =
         AvaloniaProperty.Register<AlderTable, ICommand?>(nameof(LoadMoreCommand));
+    /// <summary>Identifies the <see cref="RowHeight"/> Avalonia property.</summary>
+    public static readonly StyledProperty<double> RowHeightProperty =
+        AvaloniaProperty.Register<AlderTable, double>(nameof(RowHeight), double.NaN,
+            validate: height => double.IsNaN(height) || height > 0 && double.IsFinite(height));
     /// <summary>Identifies the <see cref="MinRowHeight"/> Avalonia property.</summary>
     public static readonly StyledProperty<double> MinRowHeightProperty =
         AvaloniaProperty.Register<AlderTable, double>(nameof(MinRowHeight), 45, validate: height => height >= 0 && double.IsFinite(height));
@@ -154,6 +159,9 @@ public partial class AlderTable : TemplatedControl
     public bool HasMoreItems { get => GetValue(HasMoreItemsProperty); set => SetValue(HasMoreItemsProperty, value); }
     /// <summary>The command that requests more rows when the table reaches its loading boundary.</summary>
     public ICommand? LoadMoreCommand { get => GetValue(LoadMoreCommandProperty); set => SetValue(LoadMoreCommandProperty, value); }
+    /// <summary>Fixed data-row height, or <see cref="double.NaN"/> to size rows to their cell content.</summary>
+    /// <remarks>A fixed height allows offscreen columns to defer their cell templates.</remarks>
+    public double RowHeight { get => GetValue(RowHeightProperty); set => SetValue(RowHeightProperty, value); }
     /// <summary>The minimum height of a data row in device-independent pixels.</summary>
     public double MinRowHeight { get => GetValue(MinRowHeightProperty); set => SetValue(MinRowHeightProperty, value); }
     /// <summary>The number of rows in the current flattened view.</summary>
@@ -181,7 +189,18 @@ public partial class AlderTable : TemplatedControl
     private protected virtual AlderTableColumn? CreateLeadingColumn() => null;
     private protected virtual void OnColumnsUpdated() { }
     private protected virtual void OnColumnUpdated(AvaloniaPropertyChangedEventArgs change) { }
-    private protected virtual void OnTableScrollChanged(ScrollChangedEventArgs e) { }
+    private protected virtual void OnTableScrollChanged(ScrollChangedEventArgs e)
+    {
+        if (double.IsFinite(RowHeight) && (e.OffsetDelta.X != 0 || e.ViewportDelta.X != 0 || e.ExtentDelta.X != 0))
+            InvalidateRowsArrange();
+    }
+
+    private protected void InvalidateRowsArrange()
+    {
+        if (view is null) return;
+        foreach (var row in view.GetRealizedContainers())
+            row.FindDescendantOfType<AlderDataGridCellsPresenter>()?.InvalidateArrange();
+    }
 
     internal bool HasSelectableRows => selectableRowCount > 0;
     private int selectableRowCount;
@@ -244,6 +263,10 @@ public partial class AlderTable : TemplatedControl
         {
             UpdateSortIndicators();
             RebuildRows();
+        }
+        else if (change.Property == RowHeightProperty && view is AlderTableView tableView)
+        {
+            tableView.RefreshRealizedRows(clearRowHeight: this is not AlderDataGrid && double.IsNaN(RowHeight));
         }
         else if (change.Property == SelectedKeysProperty)
         {
@@ -448,15 +471,17 @@ public partial class AlderTable : TemplatedControl
     }
 
     internal object? GetRowParentKey(object key) => rows.TryGetValue(key, out var row) ? row.ParentKey : null;
+    private protected int GetDisplayedRowIndex(object key) => rows.TryGetValue(key, out var row) ? row.Index : -1;
     internal object GetRowKey(object item) => RowKeySelector?.Invoke(item) ?? item;
     internal bool IsRowDisabled(object item) => disabledKeys.Contains(GetRowKey(item));
     internal bool IsRowSelected(object item) => selectedKeys.Contains(GetRowKey(item));
 
+    internal bool IsTreeColumn(TableViewColumn? column) => ChildrenSelector is not null && column is AlderTableColumn definition &&
+        (TreeColumnKey is null ? ReferenceEquals(column, Columns.FirstOrDefault(candidate => candidate.IsVisible)) : definition.Key == TreeColumnKey);
+
     internal (int Depth, bool HasChildren, bool IsExpanded) GetTreeState(object item, TableViewColumn? column)
     {
-        if (ChildrenSelector is null || column is not AlderTableColumn definition ||
-            (TreeColumnKey is null ? !ReferenceEquals(column, Columns.FirstOrDefault(candidate => candidate.IsVisible)) : definition.Key != TreeColumnKey))
-            return default;
+        if (!IsTreeColumn(column)) return default;
         object key = GetRowKey(item);
         return rows.TryGetValue(key, out var row) ? (row.Depth, row.HasChildren, expandedKeys.Contains(key)) : default;
     }

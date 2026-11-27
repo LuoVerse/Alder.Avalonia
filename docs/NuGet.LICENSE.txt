@@ -1,0 +1,6 @@
+Alder.Avalonia source code is licensed under the MIT License included in LICENSE.
+
+The bundled Alibaba PuHuiTi 3.0 font files are copyright Alibaba (China) Co., Ltd.
+The upstream terms are included in licenses/AlibabaPuHuiTi.LICENSE.txt.
+
+Additional third-party notices are included in the licenses/ directory.

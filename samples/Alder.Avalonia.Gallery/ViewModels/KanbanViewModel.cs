@@ -13,6 +13,14 @@ public sealed record KanbanTaskSample(string Title, string Description, double P
 {
     public bool HasDescription => Description.Length > 0;
     public string ProgressText => (Progress / 100).ToString("P0");
+    public AvatarColor AssigneeColor => Status switch
+    {
+        AlderStatusColor.Accent => AvatarColor.Accent,
+        AlderStatusColor.Success => AvatarColor.Success,
+        AlderStatusColor.Warning => AvatarColor.Warning,
+        AlderStatusColor.Danger => AvatarColor.Danger,
+        _ => AvatarColor.Default
+    };
 }
 
 public sealed class KanbanColumnSample
