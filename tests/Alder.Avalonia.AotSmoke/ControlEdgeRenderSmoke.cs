@@ -87,6 +87,8 @@ internal static class ControlEdgeRenderSmoke
         var preview = new Border { Child = menu, Height = 300, CornerRadius = new CornerRadius(14), ClipToBounds = true };
         var window = Show(new AlderScrollViewer { Content = preview }, theme, scale);
         window.Width = 280;
+        // Keep the shadow measurable against the same background in both themes.
+        window.Background = Brushes.Gray;
         try
         {
             using var before = Capture(window);
@@ -98,18 +100,13 @@ internal static class ControlEdgeRenderSmoke
             using var after = Capture(window);
             var chrome = surface.GetVisualDescendants().OfType<Border>().Single(part => part.Name == "PART_Chrome");
             var bounds = new Rect(chrome.TranslatePoint(default, window)!.Value, chrome.Bounds.Size);
-            var shadowSample = new Point(bounds.Center.X, bounds.Bottom + 5);
             var offset = new Vector(0, -28);
             var edge = Pixel(after, new Point(bounds.Left + .25, bounds.Center.Y) + offset, scale);
             var fill = Pixel(after, new Point(bounds.Left + 4, bounds.Center.Y) + offset, scale);
 
             if (Difference(edge, fill) < 6)
                 throw new InvalidOperationException($"Bloom Menu lost its panel edge in {theme} at {scale}×.");
-            var near = Difference(Pixel(after, shadowSample, scale), Pixel(before, shadowSample, scale));
-            var tail = shadowSample + new Vector(0, 17);
-            var far = Difference(Pixel(after, tail, scale), Pixel(before, tail, scale));
-            if (near < 4 || far >= near)
-                throw new InvalidOperationException($"Bloom Menu shadow was clipped in {theme} at {scale}× (near {near}, tail {far}).");
+            VerifyBackdropShadow("Bloom Menu", before, after, bounds, theme, scale);
 
             menu.IsOpen = false;
             VerifyBloomMenuHandoff(window, menu, scale);
