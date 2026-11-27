@@ -1,0 +1,67 @@
+name: NativeAOT smoke
+
+on:
+  push:
+    branches: [main, codex/nativeaot-smoke]
+    paths:
+      - '.github/workflows/nativeaot-smoke.yml'
+      - 'Directory.Build.props'
+      - 'src/Alder.Avalonia/**'
+      - 'tests/Alder.Avalonia.AotSmoke/**'
+      - 'tests/Alder.Avalonia.Tests/**'
+  pull_request:
+    paths:
+      - '.github/workflows/nativeaot-smoke.yml'
+      - 'Directory.Build.props'
+      - 'src/Alder.Avalonia/**'
+      - 'tests/Alder.Avalonia.AotSmoke/**'
+      - 'tests/Alder.Avalonia.Tests/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  nativeaot:
+    name: ${{ matrix.rid }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-2025
+            rid: win-x64
+            executable: Alder.Avalonia.AotSmoke.exe
+          - runner: ubuntu-24.04
+            rid: linux-x64
+            executable: Alder.Avalonia.AotSmoke
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '11.0.100'
+      - name: Install Linux NativeAOT and font dependencies
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang zlib1g-dev libfontconfig1 fonts-dejavu-core fonts-noto-color-emoji
+      - name: Verify coverage of public controls
+        run: dotnet test tests/Alder.Avalonia.Tests -c Release --filter FullyQualifiedName~PublicControlCoverage
+      - name: Publish NativeAOT smoke
+        run: >
+          dotnet publish tests/Alder.Avalonia.AotSmoke -c Release
+          -r ${{ matrix.rid }} -p:PublishAot=true
+          -o "$env:RUNNER_TEMP/alder-nativeaot"
+      - name: Render every public control in Light
+        run: '& "$env:RUNNER_TEMP/alder-nativeaot/${{ matrix.executable }}" --require-nativeaot --all-controls Light'
+      - name: Render every public control in Dark
+        run: '& "$env:RUNNER_TEMP/alder-nativeaot/${{ matrix.executable }}" --require-nativeaot --all-controls Dark'
+      - name: Run NativeAOT interaction and pixel smoke
+        run: '& "$env:RUNNER_TEMP/alder-nativeaot/${{ matrix.executable }}" --require-nativeaot'

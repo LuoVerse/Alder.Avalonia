@@ -91,6 +91,8 @@ dotnet publish tests/Alder.Avalonia.AotSmoke -c Release -r osx-arm64 -p:PublishA
 
 全库裁剪诊断使用同一条发布命令并追加 `-p:AuditWholeLibrary=true`。该选项将 `Alder.Avalonia` 程序集设为裁剪根，检查烟测未直接使用的代码。常规发布用于测试裁剪后实际保留的控件、主题和交互行为。
 
+[NativeAOT smoke](.github/workflows/nativeaot-smoke.yml) 在 Windows x64 和 Linux x64 上运行常规裁剪后的原生可执行文件。烟测只加载 `AlderTheme`，通过 `--all-controls Light` 和 `--all-controls Dark` 逐个实例化并渲染公开控件和弹层，随后运行交互、像素和绑定回归。
+
 构建、截图探针和本地压测结果可以通过 `--artifacts-path` 或工具自身的输出选项写到工作区外。
 
 ## 文档

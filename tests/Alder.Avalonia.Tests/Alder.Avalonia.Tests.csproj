@@ -10,6 +10,7 @@
     <Using Include="Alder.Avalonia.Testing" />
     <Compile Include="../Alder.Avalonia.AotSmoke/AlderTestWindow.cs" Link="AlderTestWindow.cs" />
     <Compile Include="../Alder.Avalonia.AotSmoke/EditorProtocolSmoke.cs" Link="EditorProtocolSmoke.cs" />
+    <Compile Include="../Alder.Avalonia.AotSmoke/PublicControlFactories.cs" Link="PublicControlFactories.cs" />
     <ProjectReference Include="../../src/Alder.Avalonia/Alder.Avalonia.csproj" />
     <PackageReference Include="Avalonia.Headless.XUnit" Version="12.2.0" />
     <PackageReference Include="Avalonia.Themes.Fluent2" Version="12.2.0" />

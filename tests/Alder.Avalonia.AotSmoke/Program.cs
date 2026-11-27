@@ -21,11 +21,26 @@ using Alder.Avalonia.Controls;
 using Alder.Avalonia.Themes;
 using SkiaSharp;
 
+if (args.Contains("--require-nativeaot", StringComparer.Ordinal) && RuntimeFeature.IsDynamicCodeSupported)
+    throw new InvalidOperationException("The smoke test must run as a NativeAOT executable.");
+
 var bindingLog = new BindingLog();
 Logger.Sink = bindingLog;
 AppBuilder.Configure<SmokeApp>().UseSkia()
     .UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false })
     .SetupWithoutStarting();
+
+if (Array.IndexOf(args, "--all-controls") is int option and >= 0)
+{
+    var theme = args.ElementAtOrDefault(option + 1) switch
+    {
+        "Light" => ThemeVariant.Light,
+        "Dark" => ThemeVariant.Dark,
+        _ => throw new ArgumentException("--all-controls requires Light or Dark.")
+    };
+    PublicControlSmoke.Run(theme, bindingLog);
+    return;
+}
 
 var model = new SmokeModel();
 var window = new SmokeWindow { DataContext = model };
