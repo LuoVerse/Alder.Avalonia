@@ -66,17 +66,20 @@
           </Canvas>
           <StackPanel Name="ControlStack" HorizontalAlignment="Right" VerticalAlignment="Bottom"
                       Margin="0,0,9,33" Spacing="6" IsVisible="{TemplateBinding ShowControls}">
-            <Border CornerRadius="16" Background="{DynamicResource AlderSurfaceSecondary}" IsVisible="{TemplateBinding ShowZoomControls}">
-              <StackPanel>
-                <alder:AlderButton Name="PART_ZoomIn" IsIconOnly="True" Icon="{StaticResource AlderIconPlus}"
-                                   Variant="Ghost" Size="Small" Width="32" Height="32"
-                                   AutomationProperties.Name="{DynamicResource AlderText.MapZoomIn}" />
-                <Border Background="{DynamicResource AlderSeparator}" Height="1" Width="14" />
-                <alder:AlderButton Name="PART_ZoomOut" IsIconOnly="True" Icon="{StaticResource AlderIconMinus}"
-                                   Variant="Ghost" Size="Small" Width="32" Height="32"
-                                   AutomationProperties.Name="{DynamicResource AlderText.MapZoomOut}" />
-              </StackPanel>
-            </Border>
+            <Panel Name="ZoomControls" IsVisible="{TemplateBinding ShowZoomControls}">
+              <alder:RoundedBackdropLayer Name="ZoomControlsBackdrop" CornerRadius="16" Radius="{TemplateBinding ZoomControlsBackdropBlurRadius}" />
+              <Border Name="ZoomControlsSurface" CornerRadius="16" Background="{DynamicResource AlderSurfaceSecondary}">
+                <StackPanel>
+                  <alder:AlderButton Name="PART_ZoomIn" IsIconOnly="True" Icon="{StaticResource AlderIconPlus}"
+                                     Variant="Ghost" Size="Small" Width="32" Height="32"
+                                     AutomationProperties.Name="{DynamicResource AlderText.MapZoomIn}" />
+                  <Border Background="{DynamicResource AlderSeparator}" Height="1" Width="14" />
+                  <alder:AlderButton Name="PART_ZoomOut" IsIconOnly="True" Icon="{StaticResource AlderIconMinus}"
+                                     Variant="Ghost" Size="Small" Width="32" Height="32"
+                                     AutomationProperties.Name="{DynamicResource AlderText.MapZoomOut}" />
+                </StackPanel>
+              </Border>
+            </Panel>
             <alder:AlderButton Name="PART_ResetBearing" IsIconOnly="True" Variant="Secondary" Size="Small"
                                Width="32" Height="32" IsVisible="{TemplateBinding ShowCompass}"
                                AutomationProperties.Name="{DynamicResource AlderText.MapResetBearing}">
@@ -104,6 +107,9 @@
         </Grid>
       </ControlTemplate>
     </Setter>
+    <Style Selector="^:zoom-backdrop /template/ Border#ZoomControlsSurface">
+      <Setter Property="Background" Value="{DynamicResource AlderToolbarBackdropTint}" />
+    </Style>
     <Style Selector="^:focus-visible /template/ Border#MapHighlight"><Setter Property="Background" Value="{DynamicResource AlderSoftHoverTint}" /></Style>
     <Style Selector="^[IsInteractive=False]"><Setter Property="Focusable" Value="False" /></Style>
     <Style Selector="^[IsInteractive=False] /template/ StackPanel#ControlStack"><Setter Property="IsVisible" Value="False" /></Style>

@@ -1,5 +1,9 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:alder="using:Alder.Avalonia.Controls" xmlns:conv="using:Avalonia.Data.Converters">
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light"><SolidColorBrush x:Key="AlderTocBackdropTint" Color="#E6FFFFFF" /></ResourceDictionary>
+    <ResourceDictionary x:Key="Dark"><SolidColorBrush x:Key="AlderTocBackdropTint" Color="#E618181B" /></ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
   <x:String x:Key="AlderText.FloatingTocNavigation">Table of contents</x:String>
 
   <ControlTheme x:Key="AlderTocTriggerTheme" TargetType="Button">
@@ -69,33 +73,47 @@
           </alder:AlderButton>
           <alder:AlderPopup Name="PART_Popup" PlacementTarget="{Binding #PART_Trigger}" ShouldUseOverlayLayer="True" TakesFocusFromNativeControl="False"
                  IsLightDismissEnabled="{TemplateBinding IsLightDismissEnabled}" OverlayDismissEventPassThrough="True" OverlayInputPassThroughElement="{Binding #PART_Trigger}">
-            <Border Name="PART_Surface" Margin="18,26" Padding="6" MinWidth="144" MaxWidth="260" CornerRadius="16" Background="{DynamicResource AlderSurface}"
-                    BorderBrush="{DynamicResource AlderBorder}" BorderThickness="1" BoxShadow="{DynamicResource AlderToolbarShadow}">
-              <Grid RowDefinitions="Auto,Auto">
-                <alder:AlderTextBlock Text="{TemplateBinding Header}" IsVisible="{TemplateBinding Header, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}"
-                           Margin="8,7,8,4" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource AlderMuted}" />
-                <alder:AlderListBox Name="PART_List" Grid.Row="1" MaxHeight="330" Background="Transparent" BorderThickness="0" Padding="0"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemContainerTheme="{StaticResource AlderTocRowTheme}"
-                         AutomationProperties.Name="{TemplateBinding (AutomationProperties.Name)}">
-                  <ListBox.ItemsPanel><ItemsPanelTemplate><VirtualizingStackPanel /></ItemsPanelTemplate></ListBox.ItemsPanel>
-                  <ListBox.ItemTemplate>
-                    <DataTemplate x:DataType="alder:TocRow">
-                      <alder:AlderTextBlock Text="{CompiledBinding Entry.Title}" Classes.active="{CompiledBinding IsActive}" Margin="{CompiledBinding Indent}"
-                                 FontSize="14" TextTrimming="CharacterEllipsis">
-                        <alder:AlderTextBlock.Styles>
-                          <Style Selector="TextBlock"><Setter Property="Foreground" Value="{DynamicResource AlderMuted}" /></Style>
-                          <Style Selector="TextBlock.active"><Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" /></Style>
-                        </alder:AlderTextBlock.Styles>
-                      </alder:AlderTextBlock>
-                    </DataTemplate>
-                  </ListBox.ItemTemplate>
-                </alder:AlderListBox>
-              </Grid>
-            </Border>
+            <Panel Name="PART_Surface" Margin="18,26" MinWidth="144" MaxWidth="260">
+              <alder:RoundedBackdropLayer Name="SurfaceBackdrop" CornerRadius="16" Radius="{TemplateBinding SurfaceBackdropBlurRadius}" />
+              <Border Name="SurfaceChrome" Padding="6" CornerRadius="16" Background="{DynamicResource AlderSurface}"
+                      alder:DataDisplaySurface.UsesBackdropTint="False"
+                      BorderBrush="{DynamicResource AlderBorder}" BorderThickness="1" BoxShadow="{DynamicResource AlderToolbarShadow}">
+                <Grid RowDefinitions="Auto,Auto">
+                  <alder:AlderTextBlock Name="ContentsHeading" Text="{TemplateBinding Header}" IsVisible="{TemplateBinding Header, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}"
+                             Margin="8,7,8,4" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource AlderMuted}" />
+                  <alder:AlderListBox Name="PART_List" Grid.Row="1" MaxHeight="330" Background="Transparent" BorderThickness="0" Padding="0"
+                           ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemContainerTheme="{StaticResource AlderTocRowTheme}"
+                           AutomationProperties.Name="{TemplateBinding (AutomationProperties.Name)}">
+                    <ListBox.ItemsPanel><ItemsPanelTemplate><VirtualizingStackPanel /></ItemsPanelTemplate></ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                      <DataTemplate x:DataType="alder:TocRow">
+                        <alder:AlderTextBlock Text="{CompiledBinding Entry.Title}" Classes.active="{CompiledBinding IsActive}" Margin="{CompiledBinding Indent}"
+                                   FontSize="14" TextTrimming="CharacterEllipsis">
+                          <alder:AlderTextBlock.Styles>
+                            <Style Selector="TextBlock"><Setter Property="Foreground" Value="{DynamicResource AlderMuted}" /></Style>
+                            <Style Selector="TextBlock[(alder|DataDisplaySurface.UsesBackdropTint)=True]:not(.active)">
+                              <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+                            </Style>
+                            <Style Selector="TextBlock.active"><Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" /></Style>
+                          </alder:AlderTextBlock.Styles>
+                        </alder:AlderTextBlock>
+                      </DataTemplate>
+                    </ListBox.ItemTemplate>
+                  </alder:AlderListBox>
+                </Grid>
+              </Border>
+            </Panel>
           </alder:AlderPopup>
         </Panel>
       </ControlTemplate>
     </Setter>
+    <Style Selector="^:backdrop-blur /template/ Border#SurfaceChrome">
+      <Setter Property="Background" Value="{DynamicResource AlderTocBackdropTint}" />
+      <Setter Property="alder:DataDisplaySurface.UsesBackdropTint" Value="True" />
+    </Style>
+    <Style Selector="^:backdrop-blur /template/ TextBlock#ContentsHeading">
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    </Style>
     <Style Selector="^[Placement=Left]"><Setter Property="HorizontalAlignment" Value="Left" /></Style>
     <Style Selector="^:empty /template/ :is(Button)#PART_Trigger"><Setter Property="IsEnabled" Value="False" /></Style>
   </ControlTheme>

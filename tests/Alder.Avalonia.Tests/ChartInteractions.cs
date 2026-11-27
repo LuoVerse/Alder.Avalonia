@@ -373,7 +373,7 @@ public sealed class ChartInteractions
 
     private static Window Show(Control child, bool reducedMotion = true)
     {
-        var window = new Window { Width = 520, Height = 300, Content = new Border { Padding = new Thickness(16), Child = child } };
+        var window = new AlderTestWindow { Width = 520, Height = 300, Content = new Border { Padding = new Thickness(16), Child = child } };
         AlderMotion.SetReduced(window, reducedMotion);
         window.Show();
         Pump(window);

@@ -6,7 +6,6 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Headless;
 using Avalonia.Input;
 using Avalonia.Layout;
-using Avalonia.Themes.Fluent;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Xunit;
@@ -48,7 +47,7 @@ public sealed class PopupCoordinateInteractions
                 Spacing = 42, HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center, Children = { trigger, menu, tooltip }
             };
-            var window = new Window { Width = 440, Height = 390, Content = content };
+            var window = new AlderTestWindow { Width = 440, Height = 390, Content = content };
             AlderMotion.SetReduced(window, true);
             window.Show();
             try
@@ -134,7 +133,7 @@ public sealed class PopupCoordinateInteractions
                 Content = "Options", Width = 120, HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             };
-            var window = new Window { Width = 380, Height = 360, Content = trigger };
+            var window = new AlderTestWindow { Width = 380, Height = 360, Content = trigger };
             AlderMotion.SetReduced(window, true);
             window.Show();
             try
@@ -196,7 +195,6 @@ public class PhysicalDesktopTestApp : Application
 
     public override void Initialize()
     {
-        Styles.Add(new FluentTheme());
         Styles.Add(new AlderTheme());
     }
 }

@@ -330,7 +330,7 @@ public sealed class AgendaInteractions
     {
         public AgendaWindow(AlderAgenda agenda, bool reduced = true)
         {
-            Window = new Window { Width = 900, Height = 700, Content = agenda };
+            Window = new AlderTestWindow { Width = 900, Height = 700, Content = agenda };
             AlderMotion.SetReduced(Window, reduced);
             Window.Show();
             Pump();

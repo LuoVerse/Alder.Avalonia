@@ -195,7 +195,7 @@ public sealed class ExpandableActionBarInteractions
     public void FirstTouchRevealsBeforeInvokingAndOutsideTouchDismisses()
     {
         var item = Item("Copy");
-        var outside = new Button { Content = "Outside", HorizontalAlignment = HorizontalAlignment.Left };
+        var outside = new AlderButton { Content = "Outside", HorizontalAlignment = HorizontalAlignment.Left };
         var bar = new AlderExpandableActionBar { CollapseDelay = TimeSpan.Zero, Items = { item } };
         int invoked = 0, outsideClicks = 0;
         item.Click += (_, _) => invoked++;
@@ -236,7 +236,7 @@ public sealed class ExpandableActionBarInteractions
 
     private static Window Show(Control content, bool reduced = false)
     {
-        var window = new Window { Width = 530, Height = 240, Content = content };
+        var window = new AlderTestWindow { Width = 530, Height = 240, Content = content };
         AlderMotion.SetReduced(window, reduced);
         window.Show();
         Pump(window);

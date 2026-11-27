@@ -71,7 +71,7 @@
   <ControlTheme x:Key="AlderCellPaletteItemTheme" TargetType="alder:AlderColorSwatchPickerItem"
                 BasedOn="{StaticResource {x:Type alder:AlderColorSwatchPickerItem}}">
     <Setter Property="BorderThickness" Value="1" />
-    <Style Selector="^ /template/ PathIcon#SelectedMark"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^ /template/ :is(PathIcon)#SelectedMark"><Setter Property="IsVisible" Value="False" /></Style>
   </ControlTheme>
 
   <DataTemplate x:Key="AlderCellPaletteTemplate" x:DataType="alder:AlderCellColorPicker">
@@ -227,10 +227,10 @@
         </Panel>
       </ControlTemplate>
     </Setter>
-    <Style Selector="^:pointerover:not(:disabled) /template/ Thumb"><Setter Property="Tag" Value="cell-hover" /></Style>
-    <Style Selector="^:focus-visible /template/ Thumb"><Setter Property="Tag" Value="cell-focus" /></Style>
-    <Style Selector="^:focus-visible:pointerover /template/ Thumb"><Setter Property="Tag" Value="cell-focus-hover" /></Style>
-    <Style Selector="^:dragging /template/ Thumb"><Setter Property="Tag" Value="cell-drag" /></Style>
+    <Style Selector="^:pointerover:not(:disabled) /template/ :is(Thumb)"><Setter Property="Tag" Value="cell-hover" /></Style>
+    <Style Selector="^:focus-visible /template/ :is(Thumb)"><Setter Property="Tag" Value="cell-focus" /></Style>
+    <Style Selector="^:focus-visible:pointerover /template/ :is(Thumb)"><Setter Property="Tag" Value="cell-focus-hover" /></Style>
+    <Style Selector="^:dragging /template/ :is(Thumb)"><Setter Property="Tag" Value="cell-drag" /></Style>
     <Style Selector="^:pointerover:not(:disabled) /template/ Border#CellSurface,
                      ^:focus-visible:not(:disabled) /template/ Border#CellSurface">
       <Setter Property="Background" Value="{DynamicResource AlderFieldHover}" />

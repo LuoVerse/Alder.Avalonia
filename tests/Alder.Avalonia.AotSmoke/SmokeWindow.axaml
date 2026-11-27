@@ -1,12 +1,12 @@
-<Window xmlns="https://github.com/avaloniaui"
+<alder:AlderWindow xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:alder="using:Alder.Avalonia.Controls" xmlns:smoke="using:Alder.Avalonia.AotSmoke"
-        x:Class="Alder.Avalonia.AotSmoke.SmokeWindow" x:DataType="smoke:SmokeModel" Width="1060" Height="840">
-  <Window.Resources>
+        x:Class="Alder.Avalonia.AotSmoke.SmokeWindow" x:DataType="smoke:SmokeModel" Width="1060" Height="840" ShowTitleBar="False" WindowDecorations="Full">
+  <alder:AlderWindow.Resources>
     <DataTemplate x:Key="DialogSmokeForm" x:DataType="smoke:SmokeModel">
       <alder:AlderInput x:Name="DialogInput" Text="{CompiledBinding Text, Mode=TwoWay}" />
     </DataTemplate>
-  </Window.Resources>
+  </alder:AlderWindow.Resources>
   <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12" Margin="12">
     <StackPanel Spacing="6">
       <alder:AlderButtonGroup>
@@ -201,4 +201,4 @@
       </alder:AlderDataGrid>
     </StackPanel>
   </Grid>
-</Window>
+</alder:AlderWindow>

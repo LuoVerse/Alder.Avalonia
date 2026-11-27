@@ -31,7 +31,7 @@ public sealed class TransitioningContentInteractions
             Content = first, Transition = mode, Duration = TimeSpan.FromMilliseconds(180), Height = 120,
             ContentTemplate = new FuncDataTemplate<string>((text, _) => new TextBlock { Text = text })
         };
-        var window = new Window { Width = 300, Height = 180, Content = control };
+        var window = new AlderTestWindow { Width = 300, Height = 180, Content = control };
         window.Show();
         try
         {
@@ -94,14 +94,14 @@ public sealed class TransitioningContentInteractions
     [AvaloniaFact]
     public async Task DirectionRetargetingAndInheritedReducedMotionKeepTheLatestContent()
     {
-        var first = new Button { Content = "First" };
-        var second = new Button { Content = "Second" };
-        var third = new Button { Content = "Third" };
+        var first = new AlderButton { Content = "First" };
+        var second = new AlderButton { Content = "Second" };
+        var third = new AlderButton { Content = "Third" };
         var control = new AlderTransitioningContentControl
         {
             Content = first, Transition = AlderContentTransition.Slide, Duration = TimeSpan.FromSeconds(1)
         };
-        var window = new Window { Width = 300, Height = 180, Content = control };
+        var window = new AlderTestWindow { Width = 300, Height = 180, Content = control };
         window.Show();
         try
         {

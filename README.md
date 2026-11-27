@@ -38,14 +38,13 @@ Gallery 默认打开 Home。侧栏可以搜索组件，窗口支持浅色和深�
 dotnet package add Alder.Avalonia --version 2.0.0
 ```
 
-在 `App.axaml` 中将 `AlderTheme` 加在宿主基础主题之后。下面使用 `Avalonia.Themes.Fluent` 包。
+在 `App.axaml` 中加载 `AlderTheme`，桌面窗口使用 `AlderWindow`。如果应用也使用原生 Avalonia 窗口或控件，可以为它们添加宿主主题，并在宿主主题之后加载 `AlderTheme`。
 
 ```xml
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:alderThemes="using:Alder.Avalonia.Themes">
   <Application.Styles>
-    <FluentTheme />
     <alderThemes:AlderTheme />
   </Application.Styles>
 </Application>
@@ -80,6 +79,8 @@ dotnet build Alder.Avalonia.slnx -c Release
 dotnet test tests/Alder.Avalonia.Tests -c Release
 dotnet run --project tests/Alder.Avalonia.AotSmoke -c Release
 ```
+
+交互回归和 Skia 烟测的默认宿主只加载 `AlderTheme`。Fluent2 共存由独立测试宿主验证。
 
 在 macOS arm64 上验证 NativeAOT 时，使用匹配宿主的 RID 并运行生成的可执行文件。
 

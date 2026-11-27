@@ -34,6 +34,10 @@ public sealed class AlderPopover : PopupFlyoutBase
     /// <summary>Identifies the <see cref="SurfaceBackground"/> Avalonia property.</summary>
     public static readonly StyledProperty<IBrush?> SurfaceBackgroundProperty =
         AvaloniaProperty.Register<AlderPopover, IBrush?>(nameof(SurfaceBackground));
+    /// <summary>Identifies the <see cref="SurfaceBackdropBlurRadius"/> Avalonia property.</summary>
+    public static readonly StyledProperty<double> SurfaceBackdropBlurRadiusProperty =
+        AvaloniaProperty.Register<AlderPopover, double>(nameof(SurfaceBackdropBlurRadius),
+            validate: value => double.IsFinite(value) && value >= 0);
     /// <summary>Identifies the <see cref="SurfaceCornerRadius"/> Avalonia property.</summary>
     public static readonly StyledProperty<CornerRadius> SurfaceCornerRadiusProperty =
         AvaloniaProperty.Register<AlderPopover, CornerRadius>(nameof(SurfaceCornerRadius), new CornerRadius(24));
@@ -105,6 +109,11 @@ public sealed class AlderPopover : PopupFlyoutBase
 
     /// <summary>The background brush of the anchored surface.</summary>
     public IBrush? SurfaceBackground { get => GetValue(SurfaceBackgroundProperty); set => SetValue(SurfaceBackgroundProperty, value); }
+    /// <summary>
+    /// The radius in DIPs of the blur behind an arrowless surface. Zero disables the effect.
+    /// A positive radius uses a translucent theme background unless <see cref="SurfaceBackground"/> is set.
+    /// </summary>
+    public double SurfaceBackdropBlurRadius { get => GetValue(SurfaceBackdropBlurRadiusProperty); set => SetValue(SurfaceBackdropBlurRadiusProperty, value); }
     /// <summary>The corner radius of the anchored surface.</summary>
     public CornerRadius SurfaceCornerRadius { get => GetValue(SurfaceCornerRadiusProperty); set => SetValue(SurfaceCornerRadiusProperty, value); }
     /// <summary>The space between the anchored surface and its content.</summary>
@@ -128,7 +137,6 @@ public sealed class AlderPopover : PopupFlyoutBase
         };
         body = new ContentPresenter { FontSize = 14, ContentTemplate = EffectiveContentTemplate };
         heading[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderInk");
-        body[!TemplatedControl.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
         heading.Bind(TextBlock.TextProperty, this.GetBindingObservable(HeadingProperty));
         body.Bind(ContentPresenter.ContentProperty, this.GetBindingObservable(ContentProperty));
         surface = new AnchoredSurface(tooltip: false)
@@ -176,6 +184,7 @@ public sealed class AlderPopover : PopupFlyoutBase
         if ((change.Property == ContentTemplateProperty || change.Property == ContentProperty) && body is not null)
             body.ContentTemplate = EffectiveContentTemplate;
         if (change.Property == SurfaceBackgroundProperty || change.Property == SurfaceCornerRadiusProperty ||
+            change.Property == SurfaceBackdropBlurRadiusProperty || change.Property == ShowArrowProperty ||
             change.Property == ContentPaddingProperty || change.Property == MaxContentWidthProperty ||
             change.Property == SurfaceBorderBrushProperty || change.Property == SurfaceBorderThicknessProperty ||
             change.Property == SurfaceShadowProperty)
@@ -191,9 +200,11 @@ public sealed class AlderPopover : PopupFlyoutBase
     private void ApplyAppearance()
     {
         if (surface is null) return;
+        double blurRadius = ShowArrow ? 0 : SurfaceBackdropBlurRadius;
         surface.MaxWidth = MaxContentWidth;
         surface.ModifyAppearance(SurfaceBackground, SurfaceCornerRadius, ContentPadding,
-            SurfaceBorderBrush, SurfaceBorderThickness, SurfaceShadow);
+            SurfaceBorderBrush, SurfaceBorderThickness, SurfaceShadow, blurRadius);
+        body![!TemplatedControl.ForegroundProperty] = new DynamicResourceExtension(blurRadius > 0 ? "AlderInk" : "AlderMuted");
     }
 
     /// <inheritdoc />

@@ -34,7 +34,7 @@
       </ControlTemplate>
     </Setter>
     <Style Selector="^ /template/ alder|AlderIconPresenter#LeadingIcon"><Setter Property="IsVisible" Value="False" /></Style>
-    <Style Selector="^ /template/ PathIcon#Spinner"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^ /template/ :is(PathIcon)#Spinner"><Setter Property="IsVisible" Value="False" /></Style>
     <Style Selector="^ /template/ alder|ButtonTint#Tint">
       <Setter Property="Background" Value="{DynamicResource AlderOnAccent}" />
       <Setter Property="Opacity" Value="0" />
@@ -193,7 +193,7 @@
     <Style Selector="^[IsPending=True][IsIconOnly=True] /template/ ContentPresenter#PART_ContentPresenter, ^.icon[IsPending=True] /template/ ContentPresenter#PART_ContentPresenter">
       <Setter Property="IsVisible" Value="False" />
     </Style>
-    <Style Selector="^[IsPending=True] /template/ PathIcon#Spinner"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^[IsPending=True] /template/ :is(PathIcon)#Spinner"><Setter Property="IsVisible" Value="True" /></Style>
     <Style Selector="^[IsPending=True]"><Setter Property="Opacity" Value="0.5" /></Style>
     <Style Selector="^[IsPending=True] /template/ alder|ButtonFeedback#Face, ^:spring-feedback /template/ alder|ButtonFeedback#Face">
       <Setter Property="PressScale" Value="1" />

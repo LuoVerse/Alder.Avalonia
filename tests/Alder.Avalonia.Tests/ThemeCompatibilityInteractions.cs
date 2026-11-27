@@ -2,7 +2,10 @@ using Alder.Avalonia.Controls;
 using Alder.Avalonia.Themes;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Primitives;
 using Avalonia.Headless;
+using Avalonia.Input;
 using Avalonia.Styling;
 using Avalonia.Themes.Fluent2;
 using Avalonia.Threading;
@@ -14,6 +17,111 @@ namespace Alder.Avalonia.Tests;
 [Collection(HeadlessSessionCollection.Name)]
 public sealed class ThemeCompatibilityInteractions
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task AdvancedControlsScrollToTheirLastItemWithOnlyAlderTheme(bool dark)
+    {
+        await using var session = HeadlessUnitTestSession.StartNew(typeof(AlderOnlyTestApp));
+        await session.Dispatch(() =>
+        {
+            var variant = dark ? ThemeVariant.Dark : ThemeVariant.Light;
+            var firstAction = new AlderExpandableActionBarItem { Content = "First document" };
+            var lastAction = new AlderExpandableActionBarItem { Content = "Download selected document" };
+            var bar = new AlderExpandableActionBar
+            {
+                Size = AlderExpandableActionBarSize.Small,
+                MaxWidth = 174,
+                Items = { firstAction, lastAction }
+            };
+            WithWindow(bar, variant, window =>
+            {
+                var scroll = FindViewport(bar, "PART_ScrollViewer");
+                Assert.True(firstAction.Focus(NavigationMethod.Tab));
+                Key(window, PhysicalKey.ArrowRight);
+                Assert.True(lastAction.IsFocused);
+                Assert.True(scroll.Offset.X > 0);
+            });
+
+            var menu = new AlderBloomMenu
+            {
+                IsOpen = true,
+                ItemsSource = Enumerable.Range(1, 12).Select(i => $"Action {i}").ToArray()
+            };
+            WithWindow(menu, variant, window =>
+            {
+                var scroll = FindViewport(window, "PART_GridViewport");
+                Key(window, PhysicalKey.End);
+                Assert.True(Assert.IsType<AlderBloomMenuItem>(menu.ContainerFromIndex(11)).IsFocused);
+                Assert.True(scroll.Offset.Y > 0);
+            });
+
+            var images = new AlderImageView
+            {
+                ViewportHeight = 100,
+                ItemsSource = Enumerable.Range(1, 24).Select(i => new AlderImageViewItem { Title = $"Photo {i}" }).ToArray()
+            };
+            WithWindow(images, variant, window =>
+            {
+                var scroll = FindViewport(images, "PART_ThumbnailScroll");
+                images.SelectedIndex = 23;
+                Pump(window);
+                var strip = Assert.Single(scroll.GetVisualDescendants().OfType<AlderFilmstrip>());
+                Assert.IsType<AlderButton>(strip.ContainerFromIndex(23));
+                Assert.True(scroll.Offset.X > 0);
+            });
+        }, TestContext.Current.CancellationToken);
+    }
+
+    [Fact]
+    public async Task AdvancedControlsRealizeItemsAndIconsWithOnlyAlderTheme()
+    {
+        await using var session = HeadlessUnitTestSession.StartNew(typeof(AlderOnlyTestApp));
+        await session.Dispatch(() =>
+        {
+            var action = new AlderOverflowAction { Content = "Archive" };
+            var bar = new AlderOverflowActions
+            {
+                IsExpanded = true,
+                OverflowActions = { action }
+            };
+            WithWindow(bar, ThemeVariant.Light, _ =>
+            {
+                Assert.Contains(action, bar.GetVisualDescendants());
+                var toggle = Assert.Single(bar.GetVisualDescendants().OfType<AlderOverflowActionsToggle>());
+                var icon = Assert.Single(toggle.GetVisualDescendants().OfType<AlderPathIcon>(), item => item.Name == "CloseIcon");
+                Assert.NotEmpty(icon.GetVisualChildren());
+            });
+        }, TestContext.Current.CancellationToken);
+    }
+
+    [Fact]
+    public async Task SeparateDialogProvidesItsOwnOverlayWithOnlyAlderTheme()
+    {
+        await using var session = HeadlessUnitTestSession.StartNew(typeof(AlderOnlyTestApp));
+        await session.Dispatch(() =>
+        {
+            WithWindow(new AlderButton { Content = "Open dialog" }, ThemeVariant.Light, owner =>
+            {
+                var content = new AlderSelect { ItemsSource = new[] { "One", "Two" } };
+                var result = Dialog.ShowWindowAsync(owner, content);
+                Pump(owner);
+                var dialog = Assert.IsAssignableFrom<Window>(TopLevel.GetTopLevel(content));
+                try
+                {
+                    Assert.NotSame(owner, dialog);
+                    Assert.NotNull(OverlayLayer.GetOverlayLayer(content));
+                }
+                finally
+                {
+                    dialog.Close();
+                    Pump(owner);
+                }
+                Assert.True(result.IsCompleted);
+            });
+        }, TestContext.Current.CancellationToken);
+    }
+
     [Theory]
     [InlineData(false, 650)]
     [InlineData(false, 305)]
@@ -79,6 +187,53 @@ public sealed class ThemeCompatibilityInteractions
             finally { window.Close(); }
         }, TestContext.Current.CancellationToken);
     }
+
+    private static AlderScrollViewer FindViewport(Control root, string name)
+    {
+        var scroll = Assert.Single(root.GetVisualDescendants().OfType<AlderScrollViewer>(), item => item.Name == name);
+        Assert.Single(scroll.GetVisualDescendants().OfType<ScrollContentPresenter>());
+        return scroll;
+    }
+
+    private static void WithWindow(Control content, ThemeVariant variant, Action<Window> check)
+    {
+        var window = new AlderWindow
+        {
+            Width = 360, Height = 250, ShowTitleBar = false, RequestedThemeVariant = variant, Content = content
+        };
+        AlderMotion.SetReduced(window, true);
+        window.Show();
+        try
+        {
+            Pump(window);
+            check(window);
+        }
+        finally { window.Close(); }
+    }
+
+    private static void Key(Window window, PhysicalKey key)
+    {
+        window.KeyPressQwerty(key, RawInputModifiers.None);
+        window.KeyReleaseQwerty(key, RawInputModifiers.None);
+        Pump(window);
+    }
+
+    private static void Pump(Window window)
+    {
+        Dispatcher.UIThread.RunJobs();
+        window.UpdateLayout();
+        AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+        Dispatcher.UIThread.RunJobs();
+        window.UpdateLayout();
+    }
+}
+
+public sealed class AlderOnlyTestApp : Application
+{
+    public static AppBuilder BuildAvaloniaApp() =>
+        AppBuilder.Configure<AlderOnlyTestApp>().UseHeadless(new AvaloniaHeadlessPlatformOptions());
+
+    public override void Initialize() => Styles.Add(new AlderTheme());
 }
 
 public sealed class Fluent2AlderTestApp : Application

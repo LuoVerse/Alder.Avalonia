@@ -20,7 +20,6 @@ using Alder.Avalonia.Themes;
 using Avalonia.Media;
 using Avalonia.Controls.Presenters;
 using Avalonia.Styling;
-using Avalonia.Themes.Fluent;
 using Avalonia.VisualTree;
 using Alder.Avalonia.Controls;
 using Xunit;
@@ -36,7 +35,6 @@ public sealed class TestApp : Application
 
     public override void Initialize()
     {
-        Styles.Add(new FluentTheme());
         Styles.Add(new AlderTheme());
     }
 }
@@ -383,7 +381,7 @@ public class Interactions
     public void ProseCodeScrollsFromTheStartInRightToLeftLayouts()
     {
         var code = new SelectableTextBlock { Text = "dotnet add package Alder.Avalonia\ndotnet build" };
-        var scroll = new ScrollViewer
+        var scroll = new AlderScrollViewer
         {
             Content = code,
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
@@ -572,7 +570,7 @@ public class Interactions
             return query == "even" && ((AlderPickerOption)item!).Text[^1] is '0' or '2' or '4' or '6' or '8';
         };
 
-        var window = new Window { Width = 600, Height = 500, Content = picker };
+        var window = new AlderTestWindow { Width = 600, Height = 500, Content = picker };
         window.Show();
         try
         {
@@ -675,7 +673,7 @@ public class Interactions
             Margin = new Thickness(0, 0, 0, 6)
         };
         AlderMotion.SetReduced(select, true);
-        var window = new Window { Width = 420, Height = 260, Content = new Panel { Children = { select } } };
+        var window = new AlderTestWindow { Width = 420, Height = 260, Content = new Panel { Children = { select } } };
         window.Show();
         select.IsDropDownOpen = true;
         await Task.Delay(50);
@@ -770,7 +768,7 @@ public class Interactions
             VerticalAlignment = VerticalAlignment.Top
         };
         AlderMotion.SetReduced(combo, true);
-        var window = new Window { Width = 420, Height = 400, Content = combo };
+        var window = new AlderTestWindow { Width = 420, Height = 400, Content = combo };
         window.Show();
         var editor = combo.GetVisualDescendants().OfType<AlderInput>().Single(x => x.Name == "PART_Editor");
         var placeholder = combo.GetVisualDescendants().OfType<TextBlock>().Single(x => x.Name == "MultiplePlaceholder");
@@ -969,7 +967,7 @@ public class Interactions
     [AvaloniaFact]
     public void DisclosureCollapsesToItsTriggerAndRetainsInteractiveContent()
     {
-        var editor = new TextBox { Text = "Keep this value" };
+        var editor = new AlderInput { Text = "Keep this value" };
         var disclosure = new AlderDisclosure { Header = "Details", Content = editor, IsExpanded = true };
         AlderMotion.SetReduced(disclosure, true);
         var window = Show(disclosure);
@@ -1037,7 +1035,7 @@ public class Interactions
     [AvaloniaFact]
     public void AccordionSynchronizesKeyboardSelectionAndPanelVisibility()
     {
-        var first = new AlderAccordionItem { Key = "first", Header = "First", Content = new Button { Content = "Body" } };
+        var first = new AlderAccordionItem { Key = "first", Header = "First", Content = new AlderButton { Content = "Body" } };
         var blocked = new AlderAccordionItem { Key = "blocked", Header = "Blocked", IsEnabled = false };
         var last = new AlderAccordionItem { Key = "last", Header = "Last", Content = "Last body" };
         var accordion = new AlderAccordion { Items = { first, blocked, last }, ExpandedKeys = ["first"] };
@@ -1064,7 +1062,7 @@ public class Interactions
         accordion.ExpandedKeys = ["first", "last"];
         Assert.True(first.IsExpanded);
         Assert.True(last.IsExpanded);
-        var focusableBody = Assert.IsType<Button>(first.Content);
+        var focusableBody = Assert.IsType<AlderButton>(first.Content);
         Assert.True(focusableBody.Focus());
         first.IsExpanded = false;
         Assert.True(firstHeader.IsFocused);
@@ -1115,7 +1113,7 @@ public class Interactions
 
     private static Window Show(Control control)
     {
-        var window = new Window { Content = control, Width = 420, Height = 140 };
+        var window = new AlderTestWindow { Content = control, Width = 420, Height = 140 };
         window.Show();
         return window;
     }
@@ -1132,7 +1130,7 @@ public class Interactions
         Assert.True(Application.Current!.TryFindResource("AlderLabelTheme", out var resource));
         var input = new AlderInput { IsRequired = true };
         var label = new Label { Content = "_Email", Theme = Assert.IsType<ControlTheme>(resource), Target = input };
-        var other = new Button { Content = "Other" };
+        var other = new AlderButton { Content = "Other" };
         AutomationProperties.SetLabeledBy(input, label);
         var window = Show(new StackPanel { Margin = new Thickness(8), Spacing = 4, Children = { label, input, other } });
         window.RequestedThemeVariant = ThemeVariant.Light;
@@ -1444,7 +1442,7 @@ public class Interactions
         var selectedDate = new DateOnly(2026, 11, 25);
         var picker = new AlderDatePicker { Value = selectedDate };
         AlderMotion.SetReduced(picker, true);
-        var window = new Window { Content = new StackPanel { Margin = new Thickness(16), Children = { picker } }, Width = 460, Height = 460 };
+        var window = new AlderTestWindow { Content = new StackPanel { Margin = new Thickness(16), Children = { picker } }, Width = 460, Height = 460 };
         window.Show();
         try
         {
@@ -1527,7 +1525,7 @@ public class Interactions
             Maximum = new DateOnly(2030, 12, 31)
         };
         AlderMotion.SetReduced(calendar, true);
-        var window = new Window { Content = calendar, Width = 420, Height = 420 };
+        var window = new AlderTestWindow { Content = calendar, Width = 420, Height = 420 };
         window.Show();
         try
         {
@@ -2363,8 +2361,8 @@ public class Interactions
     [AvaloniaFact]
     public void ToolbarSkipsDisabledButtonsAndLeavesTextCaretKeysAlone()
     {
-        var a = new Button(); var b = new Button(); var edit = new TextBox { Text = "abc" };
-        var toolbar = new AlderToolbar { Children = { a, new Button { IsEnabled = false }, b, edit } };
+        var a = new AlderButton(); var b = new AlderButton(); var edit = new AlderInput { Text = "abc" };
+        var toolbar = new AlderToolbar { Children = { a, new AlderButton { IsEnabled = false }, b, edit } };
         var w = Show(toolbar);
         a.Focus();
         Press(w, PhysicalKey.ArrowRight);

@@ -1,12 +1,11 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Rendering.Composition;
 
 namespace Alder.Avalonia.Controls;
 
 /// <summary>Rotates the pending icon on the compositor.</summary>
-public sealed class ButtonSpinner : PathIcon
+public sealed class ButtonSpinner : AlderPathIcon
 {
     /// <summary>Identifies the <see cref="SpinDuration"/> Avalonia property.</summary>
     public static readonly StyledProperty<TimeSpan> SpinDurationProperty =
@@ -21,7 +20,7 @@ public sealed class ButtonSpinner : PathIcon
     private bool withinViewport = true;
 
     /// <inheritdoc />
-    protected override Type StyleKeyOverride => typeof(PathIcon);
+    protected override Type StyleKeyOverride => typeof(AlderPathIcon);
 
     /// <inheritdoc />
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)

@@ -38,7 +38,7 @@ public sealed class AiInteractions
         document.Append("```text\nCompleted line\nGrowing");
         await document.WhenIdle();
         var markdown = new AlderMarkdown { Document = document };
-        var window = Show(new ScrollViewer { Content = markdown });
+        var window = Show(new AlderScrollViewer { Content = markdown });
         try
         {
             markdown.ApplyLatest();
@@ -1648,7 +1648,7 @@ public sealed class AiInteractions
 
     private static Window Show(Control control)
     {
-        var window = new Window { Width = 500, Height = 430, Content = control };
+        var window = new AlderTestWindow { Width = 500, Height = 430, Content = control };
         AlderMotion.SetReduced(window, true);
         window.Show();
         Pump(window);

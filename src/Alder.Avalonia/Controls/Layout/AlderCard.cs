@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Layout;
 
@@ -25,6 +26,10 @@ public sealed class AlderCard : AlderSurface
     /// <summary>Identifies the <see cref="Spacing"/> Avalonia property.</summary>
     public static readonly StyledProperty<double> SpacingProperty =
         AvaloniaProperty.Register<AlderCard, double>(nameof(Spacing), 12, validate: value => double.IsFinite(value) && value >= 0);
+    /// <summary>Identifies the <see cref="SurfaceBackdropBlurRadius"/> Avalonia property.</summary>
+    public static readonly StyledProperty<double> SurfaceBackdropBlurRadiusProperty =
+        AvaloniaProperty.Register<AlderCard, double>(nameof(SurfaceBackdropBlurRadius),
+            validate: radius => double.IsFinite(radius) && radius >= 0);
     /// <summary>Identifies the <see cref="HasHeader"/> Avalonia property.</summary>
     public static readonly DirectProperty<AlderCard, bool> HasHeaderProperty =
         AvaloniaProperty.RegisterDirect<AlderCard, bool>(nameof(HasHeader), card => card.HasHeader);
@@ -45,6 +50,8 @@ public sealed class AlderCard : AlderSurface
     public Orientation Orientation { get => GetValue(OrientationProperty); set => SetValue(OrientationProperty, value); }
     /// <summary>The space between items in device-independent pixels.</summary>
     public double Spacing { get => GetValue(SpacingProperty); set => SetValue(SpacingProperty, value); }
+    /// <summary>The blur radius in DIPs behind the card surface. Zero disables the effect.</summary>
+    public double SurfaceBackdropBlurRadius { get => GetValue(SurfaceBackdropBlurRadiusProperty); set => SetValue(SurfaceBackdropBlurRadiusProperty, value); }
 
     /// <summary>Whether the card has content for the header region.</summary>
     public bool HasHeader
@@ -59,5 +66,7 @@ public sealed class AlderCard : AlderSurface
         base.OnPropertyChanged(change);
         if (change.Property == HeaderProperty || change.Property == TitleProperty || change.Property == DescriptionProperty)
             HasHeader = Header is not null || !string.IsNullOrEmpty(Title) || !string.IsNullOrEmpty(Description);
+        else if (change.Property == SurfaceBackdropBlurRadiusProperty)
+            PseudoClasses.Set(":backdrop-blur", SurfaceBackdropBlurRadius > 0);
     }
 }

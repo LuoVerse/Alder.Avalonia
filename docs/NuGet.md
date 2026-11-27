@@ -8,13 +8,12 @@ Alder.Avalonia is a native Avalonia control library for desktop applications. It
 dotnet package add Alder.Avalonia --version 2.0.0
 ```
 
-Load `AlderTheme` after your application's base theme. This example uses the `Avalonia.Themes.Fluent` package.
+Load `AlderTheme` and use `AlderWindow` on desktop. If your application also uses built-in Avalonia windows or controls, load a host theme for them before `AlderTheme`.
 
 ```xml
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:alderThemes="using:Alder.Avalonia.Themes">
   <Application.Styles>
-    <FluentTheme />
     <alderThemes:AlderTheme />
   </Application.Styles>
 </Application>

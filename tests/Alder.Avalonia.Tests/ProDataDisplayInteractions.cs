@@ -31,7 +31,7 @@ public sealed class ProDataDisplayInteractions
             Workflow = new AlderWorkflowDefinition(Guid.NewGuid(), "Example", [start, copy, end],
                 [new(start.Id, WorkflowRoute.Next, copy.Id), new(copy.Id, WorkflowRoute.Next, end.Id)])
         };
-        var window = new Window { Width = 960, Height = 540, Content = editor };
+        var window = new AlderTestWindow { Width = 960, Height = 540, Content = editor };
         AlderMotion.SetReduced(window, true);
         window.Show();
         Pump(window);
@@ -159,7 +159,7 @@ public sealed class ProDataDisplayInteractions
     {
         int rowInvocations = 0;
         int actionInvocations = 0;
-        var action = new Button { Content = "Settings", Command = new TestCommand(_ => actionInvocations++) };
+        var action = new AlderButton { Content = "Settings", Command = new TestCommand(_ => actionInvocations++) };
         var card = new AlderItemCard
         {
             Title = "Workspace", Description = "Edit preferences", Action = action,
@@ -253,7 +253,7 @@ public sealed class ProDataDisplayInteractions
     public void ListViewLeavesDisabledAndEmbeddedActionsOutsideSelection()
     {
         int invoked = 0;
-        var action = new Button { Content = "Open", Command = new TestCommand(_ => invoked++) };
+        var action = new AlderButton { Content = "Open", Command = new TestCommand(_ => invoked++) };
         var first = new AlderListViewItem { Title = "First", Action = action };
         var unavailable = new AlderListViewItem { Title = "Unavailable", IsEnabled = false };
         var list = new AlderListView { Items = { first, unavailable } };
@@ -342,7 +342,7 @@ public sealed class ProDataDisplayInteractions
     public void LongTimelineRealizesTheVisibleEntriesAndKeepsTheRailAtTheEnd()
     {
         var timeline = new AlderTimeline { ItemsSource = Enumerable.Range(0, 200).Select(i => $"Event {i}").ToArray() };
-        var scroll = new ScrollViewer { Content = timeline, Height = 250 };
+        var scroll = new AlderScrollViewer { Content = timeline, Height = 250 };
         var window = Show(scroll);
         try
         {
@@ -567,7 +567,7 @@ public sealed class ProDataDisplayInteractions
             Items = { first, second },
             ReorderCommand = new TestCommand(value => requests.Add(Assert.IsType<KanbanMoveRequest>(value)))
         };
-        var page = new ScrollViewer { Content = new StackPanel { Children = { board, new Border { Height = 150 } } } };
+        var page = new AlderScrollViewer { Content = new StackPanel { Children = { board, new Border { Height = 150 } } } };
         var window = Show(page, 670);
         try
         {
@@ -693,7 +693,7 @@ public sealed class ProDataDisplayInteractions
 
     private static Window Show(Control control, int width = 490)
     {
-        var window = new Window { Width = width, Height = 300, Content = control };
+        var window = new AlderTestWindow { Width = width, Height = 300, Content = control };
         AlderMotion.SetReduced(window, true);
         window.Show();
         Pump(window);

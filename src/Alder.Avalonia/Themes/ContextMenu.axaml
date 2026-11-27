@@ -83,10 +83,10 @@
         </Panel>
       </ControlTemplate>
     </Setter>
-    <Style Selector="^:not(:icon) /template/ alder|AlderIconPresenter#PART_IconPresenter, ^:empty /template/ PathIcon#Chevron">
+    <Style Selector="^:not(:icon) /template/ alder|AlderIconPresenter#PART_IconPresenter, ^:empty /template/ :is(PathIcon)#Chevron">
       <Setter Property="IsVisible" Value="False" />
     </Style>
-    <Style Selector="^:checked:toggle /template/ PathIcon#Check, ^:checked:radio /template/ PathIcon#Check">
+    <Style Selector="^:checked:toggle /template/ :is(PathIcon)#Check, ^:checked:radio /template/ :is(PathIcon)#Check">
       <Setter Property="IsVisible" Value="True" />
     </Style>
     <Style Selector="^:selected /template/ Border#PART_LayoutRoot, ^:open /template/ Border#PART_LayoutRoot">

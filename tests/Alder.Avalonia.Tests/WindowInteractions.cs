@@ -143,7 +143,7 @@ public class WindowInteractions
     [AvaloniaFact]
     public async Task WindowProvidesHostsBeforeOpenedAndKeepsNamedHostsIndependent()
     {
-        var owner = new Button { Content = "Page" };
+        var owner = new AlderButton { Content = "Page" };
         var named = new DialogHost { HostId = "local", Content = new TextBlock { Text = "Nested region" } };
         var window = new AlderWindow { Width = 560, Height = 440, Content = new StackPanel { Children = { owner, named } } };
         AlderMotion.SetReduced(window, true);
@@ -161,21 +161,21 @@ public class WindowInteractions
             Assert.Equal(window.ToastSafePadding, defaultToast.SafePadding);
             Assert.NotEqual(window.ToastSafePadding, namedToast.SafePadding);
 
-            var dialog = new Button { Content = "Dialog" };
+            var dialog = new AlderButton { Content = "Dialog" };
             var dialogResult = Dialog.ShowModalAsync(dialog, owner: owner);
             Pump();
             Assert.Same(defaultDialog, dialog.FindAncestorOfType<DialogHost>());
             Assert.True(Dialog.Close(dialog, DialogResult.OK));
             Assert.Equal(DialogResult.OK, await dialogResult);
 
-            var drawer = new Button { Content = "Drawer" };
+            var drawer = new AlderButton { Content = "Drawer" };
             var drawerResult = Drawer.ShowAsync(drawer, owner: window, hostId: "local");
             Pump();
             Assert.Same(named, drawer.FindAncestorOfType<DialogHost>());
             Assert.True(Dialog.Close(drawer));
             Assert.Equal(DialogResult.Cancel, await drawerResult);
 
-            var sheet = new Button { Content = "Sheet" };
+            var sheet = new AlderButton { Content = "Sheet" };
             var sheetResult = Sheet.ShowAsync(sheet, owner: window);
             Pump();
             Assert.Same(defaultDialog, sheet.FindAncestorOfType<DialogHost>());

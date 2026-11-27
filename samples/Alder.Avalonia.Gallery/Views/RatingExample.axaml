@@ -30,7 +30,7 @@
       <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
       <Style Selector="^ /template/ StackPanel"><Setter Property="HorizontalAlignment" Value="Right" /></Style>
     </Style>
-    <Style Selector="PathIcon.rating-render">
+    <Style Selector=":is(PathIcon).rating-render">
       <Setter Property="Data" Value="{DynamicResource AlderIconStarOutline}" />
       <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
       <Setter Property="Transitions">
@@ -39,11 +39,11 @@
         </Transitions>
       </Setter>
     </Style>
-    <Style Selector="PathIcon.rating-render.active">
+    <Style Selector=":is(PathIcon).rating-render.active">
       <Setter Property="Data" Value="{DynamicResource AlderRatingStar}" />
       <Setter Property="Foreground" Value="{DynamicResource AlderRatingActive}" />
     </Style>
-    <Style Selector="PathIcon.rating-render[(alder|AlderMotion.Reduced)=True]">
+    <Style Selector=":is(PathIcon).rating-render[(alder|AlderMotion.Reduced)=True]">
       <Setter Property="Transitions" Value="{x:Null}" />
     </Style>
   </UserControl.Styles>

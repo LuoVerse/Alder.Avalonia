@@ -42,6 +42,9 @@ public sealed class AlderHoverCard : TemplatedControl
         validate: value => double.IsFinite(value) && value >= 0);
     /// <summary>Identifies the <see cref="ShowArrow"/> Avalonia property.</summary>
     public static readonly StyledProperty<bool> ShowArrowProperty = AvaloniaProperty.Register<AlderHoverCard, bool>(nameof(ShowArrow));
+    /// <summary>Identifies the <see cref="SurfaceBackdropBlurRadius"/> Avalonia property.</summary>
+    public static readonly StyledProperty<double> SurfaceBackdropBlurRadiusProperty =
+        AlderPopover.SurfaceBackdropBlurRadiusProperty.AddOwner<AlderHoverCard>();
     /// <summary>Identifies the <see cref="MaxContentWidth"/> Avalonia property.</summary>
     public static readonly StyledProperty<double> MaxContentWidthProperty = AvaloniaProperty.Register<AlderHoverCard, double>(nameof(MaxContentWidth), 320,
         validate: value => value > 0);
@@ -70,6 +73,8 @@ public sealed class AlderHoverCard : TemplatedControl
     public double Offset { get => GetValue(OffsetProperty); set => SetValue(OffsetProperty, value); }
     /// <summary>Whether the surface includes an arrow pointing to its anchor.</summary>
     public bool ShowArrow { get => GetValue(ShowArrowProperty); set => SetValue(ShowArrowProperty, value); }
+    /// <summary>The blur radius in DIPs behind an arrowless preview. Zero disables the effect.</summary>
+    public double SurfaceBackdropBlurRadius { get => GetValue(SurfaceBackdropBlurRadiusProperty); set => SetValue(SurfaceBackdropBlurRadiusProperty, value); }
     /// <summary>The maximum width of the content in device-independent pixels.</summary>
     public double MaxContentWidth { get => GetValue(MaxContentWidthProperty); set => SetValue(MaxContentWidthProperty, value); }
     /// <summary>An accessible name identifying the preview surface.</summary>
@@ -152,7 +157,7 @@ public sealed class AlderHoverCard : TemplatedControl
         }
         else if (change.Property == PlacementProperty || change.Property == OffsetProperty || change.Property == ShowArrowProperty ||
                  change.Property == MaxContentWidthProperty || change.Property == PreviewNameProperty || change.Property == KeepShadowInsideViewportProperty ||
-                 change.Property == BackgroundProperty || change.Property == BorderBrushProperty ||
+                 change.Property == SurfaceBackdropBlurRadiusProperty || change.Property == BackgroundProperty || change.Property == BorderBrushProperty ||
                  change.Property == BorderThicknessProperty || change.Property == CornerRadiusProperty || change.Property == PaddingProperty)
             ApplyAppearance();
     }
@@ -325,7 +330,8 @@ public sealed class AlderHoverCard : TemplatedControl
         if (surface is not { } frame || popup is not { } current) return;
         frame.MaxWidth = MaxContentWidth;
         frame.ShowArrow = ShowArrow;
-        frame.ModifyAppearance(Background, CornerRadius, Padding, BorderBrush, BorderThickness, null);
+        frame.ModifyAppearance(Background, CornerRadius, Padding, BorderBrush, BorderThickness, null,
+            ShowArrow ? 0 : SurfaceBackdropBlurRadius);
         if (PreviewName is null) frame.ClearValue(AutomationProperties.NameProperty);
         else AutomationProperties.SetName(frame, PreviewName);
         current.Placement = Placement;

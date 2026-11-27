@@ -12,6 +12,18 @@
       <SolidColorBrush x:Key="AlderSidebarGuide" Color="#1AFCFCFC" />
     </ResourceDictionary>
   </ResourceDictionary.ThemeDictionaries>
+
+  <ControlTheme x:Key="{x:Type alder:AlderSidebarPages}" TargetType="alder:AlderSidebarPages">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <alder:AlderScrollViewer Name="PART_ScrollViewer" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"
+                                 BringIntoViewOnFocusChange="False" Background="{TemplateBinding Background}"
+                                 BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+          <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" Margin="{TemplateBinding Padding}" />
+        </alder:AlderScrollViewer>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
   <x:String x:Key="AlderText.SidebarToggle">Toggle sidebar</x:String>
   <x:String x:Key="AlderText.SidebarSearchNavigation">Search navigation…</x:String>
   <x:String x:Key="AlderText.SidebarSearchEmpty">No matching navigation items</x:String>
@@ -276,8 +288,8 @@
     </Style>
     <Style Selector="^:focus-visible:not(:disabled) /template/ Border#RowSurface"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
     <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
-    <Style Selector="^:not(:empty) /template/ PathIcon#Chevron"><Setter Property="IsVisible" Value="True" /></Style>
-    <Style Selector="^[IsExpanded=True] /template/ PathIcon#Chevron"><Setter Property="RenderTransform" Value="rotate(90deg)" /></Style>
+    <Style Selector="^:not(:empty) /template/ :is(PathIcon)#Chevron"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^[IsExpanded=True] /template/ :is(PathIcon)#Chevron"><Setter Property="RenderTransform" Value="rotate(90deg)" /></Style>
     <Style Selector="^[IsExpanded=True][(alder|AlderSidebar.Rail)=False] /template/ alder|AlderAccordionPanel#Submenu">
       <Setter Property="Progress" Value="1" /><Setter Property="IsEnabled" Value="True" /><Setter Property="IsHitTestVisible" Value="True" />
     </Style>
@@ -286,7 +298,7 @@
         <Transitions><DoubleTransition Property="Progress" Duration="0:0:0.2" Easing="0.25,0.1,0.25,1" /></Transitions>
       </Setter>
     </Style>
-    <Style Selector="^[(alder|AlderMotion.Reduced)=False] /template/ PathIcon#Chevron">
+    <Style Selector="^[(alder|AlderMotion.Reduced)=False] /template/ :is(PathIcon)#Chevron">
       <Setter Property="Transitions">
         <Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" /></Transitions>
       </Setter>
@@ -308,7 +320,7 @@
         <Setter Property="HorizontalAlignment" Value="Center" />
       </Style>
       <Style Selector="^ /template/ Grid#RowContent"><Setter Property="ColumnSpacing" Value="0" /></Style>
-      <Style Selector="^ /template/ PathIcon#Chevron, ^ /template/ ContentPresenter#Badge, ^ /template/ ContentPresenter#Actions">
+      <Style Selector="^ /template/ :is(PathIcon)#Chevron, ^ /template/ ContentPresenter#Badge, ^ /template/ ContentPresenter#Actions">
         <Setter Property="IsVisible" Value="False" />
       </Style>
       <Style Selector="^:has-icon /template/ ContentPresenter#Label"><Setter Property="IsVisible" Value="False" /></Style>

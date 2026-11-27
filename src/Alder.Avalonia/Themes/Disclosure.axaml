@@ -65,7 +65,7 @@
       </ControlTemplate>
     </Setter>
     <Style Selector="^ /template/ Panel#IndicatorSlot"><Setter Property="Margin" Value="8,0,0,0" /></Style>
-    <Style Selector="^ /template/ PathIcon#PART_Indicator">
+    <Style Selector="^ /template/ :is(PathIcon)#PART_Indicator">
       <Setter Property="Transitions">
         <Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25" Easing="0,0,0.2,1" /></Transitions>
       </Setter>
@@ -91,7 +91,7 @@
       <Setter Property="IsVisible" Value="False" />
     </Style>
     <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ alder|AlderAccordionPanel#PART_Panel,
-                     ^[(alder|AlderMotion.Reduced)=True] /template/ PathIcon#PART_Indicator">
+                     ^[(alder|AlderMotion.Reduced)=True] /template/ :is(PathIcon)#PART_Indicator">
       <Setter Property="Transitions" Value="{x:Null}" />
     </Style>
   </ControlTheme>

@@ -155,7 +155,7 @@ public sealed class EmojiInteractions
             VerticalAlignment = VerticalAlignment.Bottom,
             Margin = new Thickness(0, 0, 100, 36)
         };
-        var window = new Window { Width = 320, Height = 620, Content = picker };
+        var window = new AlderTestWindow { Width = 320, Height = 620, Content = picker };
         AlderMotion.SetReduced(window, true);
         window.Show();
         window.SetRenderScaling(2);
@@ -190,7 +190,7 @@ public sealed class EmojiInteractions
     {
         control.HorizontalAlignment = HorizontalAlignment.Center;
         control.VerticalAlignment = VerticalAlignment.Center;
-        var window = new Window { Width = 540, Height = 620, Content = control, RequestedThemeVariant = ThemeVariant.Light };
+        var window = new AlderTestWindow { Width = 540, Height = 620, Content = control, RequestedThemeVariant = ThemeVariant.Light };
         AlderMotion.SetReduced(window, true);
         window.Show();
         Pump(window);

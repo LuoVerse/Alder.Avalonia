@@ -173,7 +173,7 @@ public sealed class DataGridInteractions
             ItemsSource = Enumerable.Range(1, 40).ToArray(),
             Columns = { Column("Name", 240) },
         };
-        var window = new Window { Width = 490, Height = 272, Content = table };
+        var window = new AlderTestWindow { Width = 490, Height = 272, Content = table };
         window.Show();
         try
         {
@@ -206,7 +206,7 @@ public sealed class DataGridInteractions
         grid.ShowSelectionCheckboxes = true;
         var footer = new AlderPagination { PageCount = 10, Summary = "1 to 10 of 100" };
         grid.Footer = footer;
-        var window = new Window { Width = 936, Height = 700, Content = grid };
+        var window = new AlderTestWindow { Width = 936, Height = 700, Content = grid };
         AlderMotion.SetReduced(window, true);
         window.Show();
         window.SetRenderScaling(2);
@@ -238,7 +238,7 @@ public sealed class DataGridInteractions
     {
         var grid = CreateGrid(50, Column("Wide", 800));
         grid.Margin = new Thickness(16);
-        var window = new Window { Width = 490, Height = 272, Content = grid };
+        var window = new AlderTestWindow { Width = 490, Height = 272, Content = grid };
         AlderMotion.SetReduced(window, true);
         window.Show();
         try
@@ -508,7 +508,7 @@ public sealed class DataGridInteractions
         var actions = Column("Action", 120);
         actions.CellTemplate = new FuncDataTemplate<int>((_, _) =>
         {
-            var button = new Button { Content = "Action" };
+            var button = new AlderButton { Content = "Action" };
             button.Click += (_, _) => clicks++;
             return button;
         });
@@ -702,14 +702,14 @@ public sealed class DataGridInteractions
         grid.HasMoreItems = true;
         int calls = 0;
         grid.LoadMoreCommand = new CallbackCommand(_ => calls++);
-        var outer = new ScrollViewer
+        var outer = new AlderScrollViewer
         {
             Content = new StackPanel
             {
                 Children = { new Border { Height = 600 }, grid }
             }
         };
-        var window = new Window { Width = 490, Height = 272, Content = outer };
+        var window = new AlderTestWindow { Width = 490, Height = 272, Content = outer };
         window.Show();
         try
         {
@@ -760,7 +760,7 @@ public sealed class DataGridInteractions
 
     private static Window Show(AlderTable grid)
     {
-        var window = new Window { Width = 490, Height = 272, Content = grid };
+        var window = new AlderTestWindow { Width = 490, Height = 272, Content = grid };
         window.Show();
         Pump(window);
         return window;

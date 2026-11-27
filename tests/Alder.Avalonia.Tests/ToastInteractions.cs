@@ -14,7 +14,7 @@ public sealed class ToastInteractions
     [InlineData(ToastPlacement.Bottom)]
     public async Task AFullStackShowsNewToastWhileTheOldestIsStillExiting(ToastPlacement placement)
     {
-        var window = new Window { Width = 520, Height = 450 };
+        var window = new AlderTestWindow { Width = 520, Height = 450 };
         window.Show();
         try
         {

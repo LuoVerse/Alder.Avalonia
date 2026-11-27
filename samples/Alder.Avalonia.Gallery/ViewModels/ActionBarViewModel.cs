@@ -64,6 +64,19 @@ public sealed class ActionBarSelectionDemo : GalleryViewModel
     public ICommand Delete { get; }
     public ICommand Reset { get; }
 
+    public bool BlurSurface
+    {
+        get => field;
+        set
+        {
+            if (field == value) return;
+            this.RaiseAndSetIfChanged(ref field, value);
+            this.RaisePropertyChanged(nameof(SurfaceBackdropBlurRadius));
+        }
+    }
+
+    public double SurfaceBackdropBlurRadius => BlurSurface ? 16 : 0;
+
     public IReadOnlyCollection<object> SelectedKeys
     {
         get => selectedKeys;

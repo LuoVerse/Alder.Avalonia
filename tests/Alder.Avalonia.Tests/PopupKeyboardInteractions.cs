@@ -148,7 +148,7 @@ public class PopupKeyboardInteractions
     {
         var stack = new StackPanel { Margin = new Thickness(24), Spacing = 10 };
         stack.Children.AddRange(controls);
-        var window = new Window { Content = stack, Width = 500, Height = 540 };
+        var window = new AlderTestWindow { Content = stack, Width = 500, Height = 540 };
         AlderMotion.SetReduced(window, true);
         window.Show();
         window.UpdateLayout();

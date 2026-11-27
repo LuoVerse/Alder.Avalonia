@@ -426,7 +426,7 @@ public sealed class ContextMenuInteractions
 
     private static Window Show(Control target)
     {
-        var window = new Window { Width = 600, Height = 480, Content = target };
+        var window = new AlderTestWindow { Width = 600, Height = 480, Content = target };
         AlderMotion.SetReduced(window, true);
         window.Show();
         Refresh(window);

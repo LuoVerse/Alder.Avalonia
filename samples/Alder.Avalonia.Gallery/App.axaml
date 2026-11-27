@@ -69,16 +69,13 @@
     </ResourceDictionary>
   </Application.Resources>
   <Application.Styles>
-    <FluentTheme>
-      <FluentTheme.Palettes><ColorPaletteResources x:Key="Light" Accent="#0485F7" /></FluentTheme.Palettes>
-    </FluentTheme>
     <alderTheme:AlderTheme />
     <mi:MaterialIconStyles />
     <Style Selector=":is(NumericUpDown)">
       <Setter Property="NumberFormat" Value="{DynamicResource GalleryNumberFormat}" />
     </Style>
-    <Style Selector="alder|AlderButton /template/ :is(TemplatedControl)#LeadingIcon PathIcon.alder-icon-vector, alder|AlderButtonGroup PathIcon,
-                     alder|AlderToggleButton PathIcon, alder|AlderToolbar PathIcon">
+    <Style Selector="alder|AlderButton /template/ :is(TemplatedControl)#LeadingIcon :is(PathIcon).alder-icon-vector, alder|AlderButtonGroup :is(PathIcon),
+                     alder|AlderToggleButton :is(PathIcon), alder|AlderToolbar :is(PathIcon)">
       <Setter Property="Theme" Value="{StaticResource AlderIcon16Theme}" />
     </Style>
     <Style Selector="StackPanel.showcase">

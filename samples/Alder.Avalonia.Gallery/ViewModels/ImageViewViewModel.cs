@@ -43,6 +43,19 @@ public sealed class ImageViewViewModel : GalleryViewModel
         set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
+    public bool BlurToolbar
+    {
+        get => field;
+        set
+        {
+            if (field == value) return;
+            this.RaiseAndSetIfChanged(ref field, value);
+            this.RaisePropertyChanged(nameof(ToolbarBackdropBlurRadius));
+        }
+    } = true;
+
+    public double ToolbarBackdropBlurRadius => BlurToolbar ? 16 : 0;
+
     private void LocalizePhotos()
     {
         Describe(Photos[0], "ImageViewAvocado", "ImageViewAvocadoDescription");

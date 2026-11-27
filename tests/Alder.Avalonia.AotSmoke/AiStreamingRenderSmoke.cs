@@ -50,7 +50,7 @@ internal static class AiStreamingRenderSmoke
         const string line = "const answer = 42;";
         var shortCode = string.Join('\n', Enumerable.Repeat(line, 16));
         var view = new AlderCodeBlock { Code = shortCode, Language = "text" };
-        var window = new Window { Width = 390, Height = 240, Content = view, RequestedThemeVariant = theme };
+        var window = new AlderTestWindow { Width = 390, Height = 240, Content = view, RequestedThemeVariant = theme };
         AlderMotion.SetReduced(window, true);
         window.Show();
         window.SetRenderScaling(scale);
@@ -100,7 +100,7 @@ internal static class AiStreamingRenderSmoke
         var lexer = new GatedHighlighter { Hold = true };
         var view = new AlderCodeBlock { Code = source, Language = "ts" };
         MarkdownServices.SetServices(view, new MarkdownServices { Highlighter = lexer });
-        var window = new Window { Width = 240, Height = 120, Content = view, RequestedThemeVariant = theme };
+        var window = new AlderTestWindow { Width = 240, Height = 120, Content = view, RequestedThemeVariant = theme };
         AlderMotion.SetReduced(window, true);
         window.Show();
         window.SetRenderScaling(2);
@@ -159,7 +159,7 @@ internal static class AiStreamingRenderSmoke
         MarkdownServices.SetServices(view, new MarkdownServices { Highlighter = lexer });
         document.Append("# Stable heading\n\nCompleted paragraph.\n\n```ts\n" + first);
         document.WhenIdle().GetAwaiter().GetResult();
-        var window = new Window { Width = 500, Height = 300, Content = view, RequestedThemeVariant = theme };
+        var window = new AlderTestWindow { Width = 500, Height = 300, Content = view, RequestedThemeVariant = theme };
         AlderMotion.SetReduced(window, true);
         window.Show();
         try
@@ -231,7 +231,7 @@ internal static class AiStreamingRenderSmoke
         markdown.Resources[MarkdownResourceKeys.Typography] = MarkdownTypography.Chat;
         // The separate highlighting check covers asynchronous colour updates.
         MarkdownServices.SetServices(markdown, new MarkdownServices());
-        var window = new Window { Width = 218, Height = 420, Content = markdown, RequestedThemeVariant = theme };
+        var window = new AlderTestWindow { Width = 218, Height = 420, Content = markdown, RequestedThemeVariant = theme };
         AlderMotion.SetReduced(window, true);
         window.Show();
         window.SetRenderScaling(scale);
@@ -273,7 +273,7 @@ internal static class AiStreamingRenderSmoke
     {
         var loader = new AlderLoader { Variant = AiLoaderVariant.Dots, Width = 44, Height = 28 };
         var shimmer = new AlderTextShimmer { Text = "Generating response…", FontSize = 20 };
-        var window = new Window { Width = 260, Height = 100, Content = new StackPanel { Children = { loader, shimmer } } };
+        var window = new AlderTestWindow { Width = 260, Height = 100, Content = new StackPanel { Children = { loader, shimmer } } };
         window.Show();
         try
         {
@@ -315,7 +315,7 @@ internal static class AiStreamingRenderSmoke
         var pulse = new AlderChatLoader { Variant = AiLoaderVariant.Pulse, HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Left };
         var ring = new AlderChatLoader { Variant = AiLoaderVariant.Ring, HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Left };
         var skeleton = new AlderChatSkeleton();
-        var window = new Window { Width = 300, Height = 180, Content = new StackPanel { Margin = new Thickness(12), Spacing = 12,
+        var window = new AlderTestWindow { Width = 300, Height = 180, Content = new StackPanel { Margin = new Thickness(12), Spacing = 12,
             Children = { dots, pulse, ring, skeleton } } };
         window.Show();
         try
@@ -365,7 +365,7 @@ internal static class AiStreamingRenderSmoke
             Content = new Border { Width = 288, Height = 46 },
             HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Right
         };
-        var window = new Window { Width = 390, Height = 220, Content = new Border { Padding = new Thickness(26), Child = hover },
+        var window = new AlderTestWindow { Width = 390, Height = 220, Content = new Border { Padding = new Thickness(26), Child = hover },
             Background = theme == ThemeVariant.Light ? Brushes.WhiteSmoke : Brushes.Black, RequestedThemeVariant = theme };
         AlderMotion.SetReduced(window, true);
         window.Show();
@@ -396,7 +396,7 @@ internal static class AiStreamingRenderSmoke
         var first = new AlderListViewItem { Title = "First thread", Description = "Latest reply", Action = "2h" };
         var last = new AlderListViewItem { Title = "Last thread", Description = "Another reply", Action = "Yesterday" };
         var chat = new AlderChatListView { SelectionEnabled = false, Items = { first, last } };
-        var window = new Window { Width = 390, Height = 170, RequestedThemeVariant = theme,
+        var window = new AlderTestWindow { Width = 390, Height = 170, RequestedThemeVariant = theme,
             Background = theme == ThemeVariant.Light ? Brushes.WhiteSmoke : Brushes.Black,
             Content = new Border { Padding = new Thickness(11), Child = chat } };
         window.Show();
@@ -430,7 +430,7 @@ internal static class AiStreamingRenderSmoke
         var approval = new AlderApprovalCard { Header = "Question?", Content = "Answer" };
         var message = new AlderChatMessage { IsCard = true, Content = "Assistant response" };
         var stack = new StackPanel { Spacing = 22, Margin = new Thickness(20), Children = { approval, message } };
-        var window = new Window { Width = scale == 1 ? 540 : 390, Height = 330, Content = stack, RequestedThemeVariant = theme,
+        var window = new AlderTestWindow { Width = scale == 1 ? 540 : 390, Height = 330, Content = stack, RequestedThemeVariant = theme,
             Background = theme == ThemeVariant.Light ? global::Avalonia.Media.Brushes.WhiteSmoke : global::Avalonia.Media.Brushes.Black };
         AlderMotion.SetReduced(window, true);
         window.Show();
@@ -468,8 +468,8 @@ internal static class AiStreamingRenderSmoke
         var view = fenced ? (Alder.NativeMarkdown.UI.MarkdownView)markdown : literal;
         if (fenced) document.Append("# Heading\n\n```ts\n" + source);
         document.WhenIdle().GetAwaiter().GetResult();
-        var scroll = new ScrollViewer { Content = view };
-        var window = new Window { Width = 600, Height = 360, Content = scroll };
+        var scroll = new AlderScrollViewer { Content = view };
+        var window = new AlderTestWindow { Width = 600, Height = 360, Content = scroll };
         AlderMotion.SetReduced(window, true);
         window.Show();
         try

@@ -3,6 +3,8 @@ using System.Windows.Input;
 using Alder.Avalonia.Controls;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Templates;
 using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
@@ -320,7 +322,16 @@ public sealed class FeedbackExtrasInteractions
     public void PressableFeedbackBelongsToAlderControls()
     {
         int clicks = 0;
-        var button = new Button { Content = "Apply", Command = new ActionCommand(() => clicks++) };
+        var button = new Button
+        {
+            Content = "Apply",
+            Command = new ActionCommand(() => clicks++),
+            Template = new FuncControlTemplate<Button>((control, _) => new ContentPresenter
+            {
+                Background = Brushes.Transparent,
+                Content = control.Content
+            })
+        };
         Assert.False(AvaloniaPropertyRegistry.Instance.IsRegistered(button, AlderButton.FeedbackProperty));
         var window = Show(button);
         try
@@ -474,7 +485,7 @@ public sealed class FeedbackExtrasInteractions
 
     private static Window Show(Control content)
     {
-        var window = new Window { Width = 420, Height = 240, Content = content };
+        var window = new AlderTestWindow { Width = 420, Height = 240, Content = content };
         AlderMotion.SetReduced(window, true);
         window.Show();
         Pump(window);

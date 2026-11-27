@@ -136,7 +136,7 @@
       <Setter Property="Width" Value="20" />
       <Setter Property="Height" Value="13" />
     </Style>
-    <Style Selector="^[Orientation=Vertical] /template/ PathIcon#GripIcon">
+    <Style Selector="^[Orientation=Vertical] /template/ :is(PathIcon)#GripIcon">
       <Setter Property="RenderTransform" Value="rotate(90deg)" />
     </Style>
     <Style Selector="^ /template/ Border#Pill, ^ /template/ Border#Dots">

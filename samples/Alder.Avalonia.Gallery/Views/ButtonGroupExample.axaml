@@ -35,7 +35,7 @@
           </ControlTemplate>
         </Setter>
       </ControlTheme>
-      <ControlTheme x:Key="MergeMenuItemTheme" TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+      <ControlTheme x:Key="MergeMenuItemTheme" TargetType="alder:AlderMenuItem" BasedOn="{StaticResource {x:Type alder:AlderMenuItem}}">
         <Setter Property="FontFamily" Value="fonts:Inter#Inter" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Padding" Value="10,6" />

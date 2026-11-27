@@ -23,6 +23,10 @@ public sealed partial class AlderImageView : SelectingItemsControl
     [GeneratedStyledProperty(DefaultValue = 320d, ValidateMethodName = nameof(IsValidViewportHeight))]
     public partial double ViewportHeight { get; set; }
 
+    /// <summary>The blur radius in DIPs behind the floating toolbar. Zero keeps the toolbar below the image.</summary>
+    [GeneratedStyledProperty(ValidateMethodName = nameof(IsValidBlurRadius))]
+    public partial double ToolbarBackdropBlurRadius { get; set; }
+
     /// <summary>The transition played when the displayed image changes. Reduced motion skips this transition.</summary>
     [GeneratedStyledProperty(DefaultValue = AlderImageViewTransition.CrossFade)]
     public partial AlderImageViewTransition ImageTransition { get; set; }
@@ -80,6 +84,7 @@ public sealed partial class AlderImageView : SelectingItemsControl
     }
 
     private static bool IsValidViewportHeight(double height) => double.IsFinite(height) && height > 0;
+    private static bool IsValidBlurRadius(double radius) => double.IsFinite(radius) && radius >= 0;
 
     /// <summary>Fits the current image within the viewport and centers it.</summary>
     public void Fit() => viewport?.Fit();
@@ -118,7 +123,7 @@ public sealed partial class AlderImageView : SelectingItemsControl
         canvasClip = scope.Find<Border>("PART_CanvasClip");
         viewport = scope.Find<AlderImageViewport>("PART_Viewport");
         header = scope.Find<Control>("PART_Header");
-        tools = scope.Find<Control>("PART_Tools");
+        tools = scope.Find<Control>("ToolsLayout") ?? scope.Find<Control>("PART_Tools");
         strip = scope.Find<Control>("PART_Strip");
         empty = scope.Find<Control>("PART_Empty");
         title = scope.Find<TextBlock>("PART_Title");
@@ -191,6 +196,7 @@ public sealed partial class AlderImageView : SelectingItemsControl
         }
         else if (change.Property == ViewportHeightProperty || change.Property == ShowDetailsProperty ||
                  change.Property == ShowThumbnailsProperty || change.Property == AllowImmersivePreviewProperty ||
+                 change.Property == ToolbarBackdropBlurRadiusProperty ||
                  change.Property == CornerRadiusProperty || change.Property == BorderThicknessProperty ||
                  change.Property == PaddingProperty)
         {
@@ -267,6 +273,8 @@ public sealed partial class AlderImageView : SelectingItemsControl
 
     private void RefreshLayout()
     {
+        bool floatingTools = ToolbarBackdropBlurRadius > 0;
+        PseudoClasses.Set(":toolbar-backdrop", floatingTools);
         if (viewport is not null) viewport.Height = IsImmersive ? double.NaN : ViewportHeight;
         if (empty is not null) empty.IsVisible = shownSource is null;
         if (tools is not null) tools.IsVisible = shownSource is not null || IsImmersive;
@@ -275,7 +283,8 @@ public sealed partial class AlderImageView : SelectingItemsControl
         if (open is not null) open.IsVisible = !IsImmersive && AllowImmersivePreview;
         if (close is not null) close.IsVisible = IsImmersive;
         if (stage is not null) stage.CornerRadius = IsImmersive ? default : new CornerRadius(14);
-        if (canvasClip is not null) canvasClip.CornerRadius = IsImmersive ? default : new CornerRadius(14, 14, 0, 0);
+        if (canvasClip is not null)
+            canvasClip.CornerRadius = IsImmersive ? default : floatingTools ? new CornerRadius(14) : new CornerRadius(14, 14, 0, 0);
         if (surface is not null)
         {
             surface.SetCurrentValue(Border.CornerRadiusProperty, IsImmersive ? default : CornerRadius);
@@ -358,8 +367,8 @@ public sealed partial class AlderImageView : SelectingItemsControl
     {
         this.TryFindResource("AlderCarouselThumbnailTheme", out var theme);
         var photo = ItemsView[index] as AlderImageViewItem;
-        var image = new Image { Stretch = Stretch.UniformToFill };
-        var button = new Button { Theme = theme as ControlTheme, Width = 68, Height = 48, Content = image };
+        var image = new AlderImage { Stretch = Stretch.UniformToFill };
+        var button = new AlderButton { Theme = theme as ControlTheme, Width = 68, Height = 48, Content = image };
         button.Classes.Set("selected", index == SelectedIndex);
         UpdateThumbnail();
         if (photo is not null)

@@ -88,6 +88,10 @@ public sealed class AlderFloatingToc : TemplatedControl
     /// <summary>Identifies the <see cref="Header"/> Avalonia property.</summary>
     public static readonly StyledProperty<string?> HeaderProperty =
         AvaloniaProperty.Register<AlderFloatingToc, string?>(nameof(Header));
+    /// <summary>Identifies the <see cref="SurfaceBackdropBlurRadius"/> Avalonia property.</summary>
+    public static readonly StyledProperty<double> SurfaceBackdropBlurRadiusProperty =
+        AvaloniaProperty.Register<AlderFloatingToc, double>(nameof(SurfaceBackdropBlurRadius),
+            validate: radius => double.IsFinite(radius) && radius >= 0);
     /// <summary>Identifies the <see cref="ScrollHost"/> Avalonia property.</summary>
     public static readonly StyledProperty<ScrollViewer?> ScrollHostProperty =
         AvaloniaProperty.Register<AlderFloatingToc, ScrollViewer?>(nameof(ScrollHost));
@@ -118,6 +122,8 @@ public sealed class AlderFloatingToc : TemplatedControl
     public bool AlignBarsLeft { get => GetValue(AlignBarsLeftProperty); set => SetValue(AlignBarsLeftProperty, value); }
     /// <summary>The optional content displayed in the header.</summary>
     public string? Header { get => GetValue(HeaderProperty); set => SetValue(HeaderProperty, value); }
+    /// <summary>The blur radius in DIPs behind the expanded panel. Zero disables the effect.</summary>
+    public double SurfaceBackdropBlurRadius { get => GetValue(SurfaceBackdropBlurRadiusProperty); set => SetValue(SurfaceBackdropBlurRadiusProperty, value); }
     /// <summary>The scroll viewer that contains the tracked anchors.</summary>
     public ScrollViewer? ScrollHost { get => GetValue(ScrollHostProperty); set => SetValue(ScrollHostProperty, value); }
     /// <summary>The optional command used to navigate to a heading.</summary>
@@ -243,6 +249,8 @@ public sealed class AlderFloatingToc : TemplatedControl
         else if (change.Property == IsOpenProperty) UpdatePopup();
         else if (change.Property == PlacementProperty || change.Property == AlignBarsLeftProperty) UpdatePlacement();
         else if (change.Property == TriggerModeProperty) StopDelay();
+        else if (change.Property == SurfaceBackdropBlurRadiusProperty)
+            PseudoClasses.Set(":backdrop-blur", SurfaceBackdropBlurRadius > 0);
         else if (change.Property == ScrollHostProperty && this.IsAttachedToVisualTree())
         {
             ObserveHost(ScrollHost);

@@ -26,7 +26,7 @@ public class MapProjectionInteractions
             Markers = markers,
             ShowControls = false
         };
-        var window = new Window { Width = 400, Height = 300, Content = map };
+        var window = new AlderTestWindow { Width = 400, Height = 300, Content = map };
         AlderMotion.SetReduced(window, true);
         window.Show();
         try
@@ -76,7 +76,7 @@ public class MapProjectionInteractions
             Markers = [marker],
             Paths = [new AlderMapPath([new(0, 179), marker.Location])]
         };
-        var window = new Window { Width = 400, Height = 300, Content = map };
+        var window = new AlderTestWindow { Width = 400, Height = 300, Content = map };
         window.Show();
         try
         {

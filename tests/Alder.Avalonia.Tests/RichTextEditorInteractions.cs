@@ -70,7 +70,7 @@ public sealed class RichTextEditorInteractions
     {
         var editor = new AlderRichTextEditor { ShowSlashMenu = true, ShowFloatingMenu = true,
             Suggestions = [new("Timestamp", target => target.InsertText("today"))] };
-        var host = new Window { Width = 480, Height = 240, Content = editor };
+        var host = new AlderTestWindow { Width = 480, Height = 240, Content = editor };
         host.Show();
         try
         {
@@ -105,7 +105,7 @@ public sealed class RichTextEditorInteractions
     {
         var editor = new AlderRichTextEditor { ShowBubbleMenu = false, ToolbarCommands = [RichTextCommand.Link] };
         var outside = new AlderButton { Content = "Outside" };
-        var host = new Window { Width = 500, Height = 450, Content = new StackPanel
+        var host = new AlderTestWindow { Width = 500, Height = 450, Content = new StackPanel
             { Margin = new Thickness(24, 60), Spacing = 24, Children = { editor, outside } } };
         host.Show();
         try
@@ -171,7 +171,7 @@ public sealed class RichTextEditorInteractions
     public void StructuredCommandsReplaceTheSelectionAndUndoAsOneEdit()
     {
         var editor = new AlderRichTextEditor();
-        var host = new Window { Width = 500, Height = 360, Content = editor };
+        var host = new AlderTestWindow { Width = 500, Height = 360, Content = editor };
         host.Show();
         try
         {
@@ -209,7 +209,7 @@ public sealed class RichTextEditorInteractions
         const string divider = """{"type":"doc","content":[{"type":"horizontalRule"}]}""";
         var editor = new AlderRichTextEditor { ShowSlashMenu = true,
             Suggestions = [new("Divider", target => target.InsertBlocks(divider)) { Keywords = "separator hr" }] };
-        var host = new Window { Width = 500, Height = 320, Content = editor };
+        var host = new AlderTestWindow { Width = 500, Height = 320, Content = editor };
         host.Show();
         try
         {
@@ -230,7 +230,7 @@ public sealed class RichTextEditorInteractions
     public void LongWrappedTextKeepsLineMetricsAfterAnEditShiftsLaterParagraphs()
     {
         var editor = new AlderRichTextEditor();
-        var host = new Window { Width = 420, Height = 300, Content = editor };
+        var host = new AlderTestWindow { Width = 420, Height = 300, Content = editor };
         host.Show();
         try
         {
@@ -263,7 +263,7 @@ public sealed class RichTextEditorInteractions
     public void ActualInputFormatsRangesAndSupportsUndoLimitAndReadonly()
     {
         var editor = new AlderRichTextEditor();
-        var host = new Window { Width = 590, Height = 280, Content = editor };
+        var host = new AlderTestWindow { Width = 590, Height = 280, Content = editor };
         host.Show();
         try
         {

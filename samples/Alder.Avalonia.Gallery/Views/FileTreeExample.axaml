@@ -7,7 +7,7 @@
     <ControlTheme x:Key="ReviewFilterItemTheme" TargetType="MenuItem" BasedOn="{StaticResource AlderContextMenuItemTheme}">
       <Setter Property="MinHeight" Value="34" />
       <Setter Property="CornerRadius" Value="12" />
-      <Style Selector="^:toggle /template/ PathIcon#Check">
+      <Style Selector="^:toggle /template/ :is(PathIcon)#Check">
         <Setter Property="Grid.Column" Value="0" />
         <Setter Property="Width" Value="10" />
         <Setter Property="Height" Value="10" />
@@ -15,7 +15,7 @@
         <Setter Property="IsVisible" Value="True" />
         <Setter Property="Opacity" Value="0" />
       </Style>
-      <Style Selector="^:checked:toggle /template/ PathIcon#Check">
+      <Style Selector="^:checked:toggle /template/ :is(PathIcon)#Check">
         <Setter Property="Opacity" Value="1" />
       </Style>
     </ControlTheme>

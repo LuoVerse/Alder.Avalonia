@@ -181,8 +181,8 @@
     </Style>
     <Style Selector="^ /template/ :is(Button)#PART_MacMaximizeButton"><Setter Property="Content" Value="+" /></Style>
     <Style Selector="^:restore /template/ :is(Button)#PART_MacMaximizeButton"><Setter Property="Content" Value="−" /></Style>
-    <Style Selector="^ /template/ PathIcon#PART_MaximizeIcon"><Setter Property="Data" Value="{StaticResource AlderWindowMaximizeIcon}" /></Style>
-    <Style Selector="^:restore /template/ PathIcon#PART_MaximizeIcon"><Setter Property="Data" Value="{StaticResource AlderWindowRestoreIcon}" /></Style>
+    <Style Selector="^ /template/ :is(PathIcon)#PART_MaximizeIcon"><Setter Property="Data" Value="{StaticResource AlderWindowMaximizeIcon}" /></Style>
+    <Style Selector="^:restore /template/ :is(PathIcon)#PART_MaximizeIcon"><Setter Property="Data" Value="{StaticResource AlderWindowRestoreIcon}" /></Style>
   </ControlTheme>
   <ControlTheme x:Key="{x:Type alder:AlderSalashWindow}" TargetType="alder:AlderSalashWindow"
                 BasedOn="{StaticResource {x:Type alder:AlderWindow}}">

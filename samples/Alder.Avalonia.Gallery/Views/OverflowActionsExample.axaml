@@ -51,6 +51,104 @@
       ]]></gallery:ExampleCard.CSharpSource>
     </gallery:ExampleCard>
 
+    <gallery:ExampleCard x:Name="SampleBackdrop" Title="{DynamicResource GalleryText.OverflowActionsBackdrop}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="10">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.OverflowActionsBlurSurface}" VerticalAlignment="Center" />
+            <alder:AlderSwitch x:Name="BackdropSwitch" Size="Small" IsChecked="{CompiledBinding BlurSurface, Mode=TwoWay}"
+                               AutomationProperties.Name="{DynamicResource GalleryText.OverflowActionsBlurSurface}" />
+          </StackPanel>
+          <Border CornerRadius="14" ClipToBounds="True">
+            <Grid Height="236">
+              <alder:AlderScrollViewer x:Name="BackdropScroll" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+                  <alder:AlderImage Height="176" Stretch="UniformToFill" AutomationProperties.AccessibilityView="Raw"
+                                    Source="avares://Alder.Avalonia.Gallery/Assets/Card/cherries.jpeg" />
+                  <alder:AlderImage Height="176" Stretch="UniformToFill" AutomationProperties.AccessibilityView="Raw"
+                                    Source="avares://Alder.Avalonia.Gallery/Assets/Card/oranges.jpeg" />
+                </StackPanel>
+              </alder:AlderScrollViewer>
+              <alder:AlderOverflowActions x:Name="BackdropBar" Size="Small" VerticalAlignment="Bottom" Margin="16,0,16,22"
+                                          SurfaceBackdropBlurRadius="{CompiledBinding SurfaceBackdropBlurRadius}">
+                <alder:AlderOverflowActions.PrimaryActions>
+                  <alder:AlderOverflowAction Content="{DynamicResource GalleryText.Preview}" Icon="{StaticResource AlderIconEye}"
+                                             Command="{CompiledBinding Run}" CommandParameter="Preview" />
+                </alder:AlderOverflowActions.PrimaryActions>
+                <alder:AlderOverflowActions.OverflowActions>
+                  <alder:AlderOverflowAction Content="{DynamicResource GalleryText.AgendaTimeGrid}" Icon="{StaticResource AlderIconCalendar}"
+                                             Command="{CompiledBinding Run}" CommandParameter="AgendaTimeGrid" />
+                </alder:AlderOverflowActions.OverflowActions>
+              </alder:AlderOverflowActions>
+            </Grid>
+          </Border>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.Feedback>
+        <alder:AlderTextBlock Text="{CompiledBinding Feedback}" Foreground="{DynamicResource AlderMuted}"
+                              HorizontalAlignment="Center" AutomationProperties.LiveSetting="Polite" />
+      </gallery:ExampleCard.Feedback>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var model = new OverflowActionsViewModel();
+        var blur = new AlderSwitch { Size = AlderSize.Small };
+        blur.Bind(AlderSwitch.IsCheckedProperty,
+            CompiledBinding.Create((OverflowActionsViewModel vm) => vm.BlurSurface, source: model, mode: BindingMode.TwoWay));
+        AutomationProperties.SetName(blur, "Blur the toolbar background");
+        var controls = new StackPanel
+        {
+            Orientation = Orientation.Horizontal, Spacing = 8,
+            Children = { new AlderTextBlock { Text = "Blur the toolbar background", VerticalAlignment = VerticalAlignment.Center }, blur }
+        };
+        var photos = new StackPanel();
+        foreach (var file in new[] { "cherries.jpeg", "oranges.jpeg" })
+        {
+            using var stream = AssetLoader.Open(new Uri($"avares://Alder.Avalonia.Gallery/Assets/Card/{file}"));
+            var photo = new AlderImage { Height = 176, Stretch = Stretch.UniformToFill, Source = new Bitmap(stream) };
+            AutomationProperties.SetAccessibilityView(photo, AccessibilityView.Raw);
+            photos.Children.Add(photo);
+        }
+        var scroll = new AlderScrollViewer { Content = photos, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
+        var bar = new AlderOverflowActions
+        {
+            Size = AlderSize.Small, VerticalAlignment = VerticalAlignment.Bottom, Margin = new Thickness(16, 0, 16, 22)
+        };
+        bar.Bind(AlderOverflowActions.SurfaceBackdropBlurRadiusProperty,
+            CompiledBinding.Create((OverflowActionsViewModel vm) => vm.SurfaceBackdropBlurRadius, source: model));
+        foreach (var (label, icon, actionKey, isOverflow) in new[]
+        {
+            ("Preview", "AlderIconEye", "Preview", false),
+            ("Schedule", "AlderIconCalendar", "AgendaTimeGrid", true),
+        })
+        {
+            var action = new AlderOverflowAction
+            {
+                Content = label, Icon = (Geometry)this.FindResource(icon)!, Command = model.Run, CommandParameter = actionKey
+            };
+            (isOverflow ? bar.OverflowActions : bar.PrimaryActions).Add(action);
+        }
+        var preview = new StackPanel
+        {
+            Spacing = 10,
+            Children =
+            {
+                controls,
+                new Border
+                {
+                    CornerRadius = new CornerRadius(14), ClipToBounds = true,
+                    Child = new Grid { Height = 236, Children = { scroll, bar } }
+                }
+            }
+        };
+        var feedback = new AlderTextBlock
+        {
+            HorizontalAlignment = HorizontalAlignment.Center,
+            [!AlderTextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted")
+        };
+        feedback.Bind(AlderTextBlock.TextProperty,
+            CompiledBinding.Create((OverflowActionsViewModel vm) => vm.Feedback, source: model));
+        AutomationProperties.SetLiveSetting(feedback, AutomationLiveSetting.Polite);
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
     <gallery:ExampleCard x:Name="SampleCompactOverflowActions" Title="{DynamicResource GalleryText.OverflowActionsCompact}">
       <gallery:ExampleCard.Preview>
         <Grid MinHeight="84" MaxWidth="235">

@@ -6,8 +6,14 @@
   <x:String x:Key="AlderText.NavbarOpenMenu">Open navigation menu</x:String>
   <x:String x:Key="AlderText.NavbarCloseMenu">Close navigation menu</x:String>
   <ResourceDictionary.ThemeDictionaries>
-    <ResourceDictionary x:Key="Light"><SolidColorBrush x:Key="AlderNavbarBackground" Color="#F5F5F5" /></ResourceDictionary>
-    <ResourceDictionary x:Key="Dark"><SolidColorBrush x:Key="AlderNavbarBackground" Color="#060607" /></ResourceDictionary>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="AlderNavbarBackground" Color="#F5F5F5" />
+      <SolidColorBrush x:Key="AlderNavbarBackdropItemInk" Color="#45454F" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="AlderNavbarBackground" Color="#060607" />
+      <SolidColorBrush x:Key="AlderNavbarBackdropItemInk" Color="#B7B7BE" />
+    </ResourceDictionary>
   </ResourceDictionary.ThemeDictionaries>
   <ControlTheme x:Key="AlderNavbarToggleTheme" TargetType="alder:AlderButton" BasedOn="{StaticResource {x:Type alder:AlderButton}}">
     <Setter Property="CornerRadius" Value="8" />
@@ -67,6 +73,12 @@
     <Setter Property="Template">
       <ControlTemplate>
         <Panel>
+          <!-- Match header motion and geometry. Only the sampling layer is clipped. -->
+          <Panel Name="HeaderBackdrop" IsHitTestVisible="False" IsVisible="False"
+                 Opacity="{CompiledBinding #PART_Header.Opacity}" RenderTransform="{CompiledBinding #PART_Header.RenderTransform}">
+            <Border Name="PART_HeaderBackdrop" CornerRadius="{TemplateBinding CornerRadius}" ClipToBounds="True" />
+            <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" Opacity="0.82" />
+          </Panel>
           <Border Name="PART_Header" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
                   BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}">
             <Border.RenderTransform><TranslateTransform /></Border.RenderTransform>
@@ -112,10 +124,13 @@
       <Style Selector="^ /template/ Grid#HeaderLayout"><Setter Property="ColumnSpacing" Value="10" /></Style>
     </Style>
     <Style Selector="^[Size=Large]"><Setter Property="HeaderHeight" Value="80" /></Style>
+    <Style Selector="^:backdrop-blur /template/ Panel#HeaderBackdrop"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:backdrop-blur /template/ Border#PART_Header"><Setter Property="Background" Value="Transparent" /></Style>
     <Style Selector="^[Position=Static]"><Setter Property="ZIndex" Value="0" /></Style>
     <Style Selector="^[Position=Floating]">
       <Setter Property="Margin" Value="8,6" /><Setter Property="CornerRadius" Value="16" /><Setter Property="BorderThickness" Value="1" />
       <Style Selector="^ /template/ Border#PART_Header"><Setter Property="BoxShadow" Value="{DynamicResource AlderFieldShadow}" /></Style>
+      <Style Selector="^:backdrop-blur"><Setter Property="ClipToBounds" Value="False" /></Style>
     </Style>
     <Style Selector="^:compact /template/ Grid#HeaderLayout">
       <Setter Property="ColumnSpacing" Value="8" />

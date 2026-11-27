@@ -707,12 +707,12 @@
         </a:ButtonFeedback>
       </ControlTemplate>
     </Setter>
-    <Style Selector="^ /template/ PathIcon#EndArrow">
+    <Style Selector="^ /template/ :is(PathIcon)#EndArrow">
       <Setter Property="Opacity" Value="0" />
       <Setter Property="Transitions"><Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.15" Easing="0.4,0,0.2,1" /></Transitions></Setter>
     </Style>
-    <Style Selector="^[(a|AlderMotion.Reduced)=True] /template/ PathIcon#EndArrow"><Setter Property="Transitions" Value="{x:Null}" /></Style>
-    <Style Selector="^:pointerover:not(:disabled) /template/ PathIcon#EndArrow, ^:focus-visible:not(:disabled) /template/ PathIcon#EndArrow">
+    <Style Selector="^[(a|AlderMotion.Reduced)=True] /template/ :is(PathIcon)#EndArrow"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^:pointerover:not(:disabled) /template/ :is(PathIcon)#EndArrow, ^:focus-visible:not(:disabled) /template/ :is(PathIcon)#EndArrow">
       <Setter Property="Opacity" Value="1" />
     </Style>
     <Style Selector="^[Variant=Outline] /template/ a|ButtonTint#Tint"><Setter Property="Background" Value="{DynamicResource AlderPromptSuggestionHover}" /></Style>
@@ -1087,7 +1087,7 @@
               <a:AlderIconPresenter Grid.Column="1" Content="{TemplateBinding Icon}" Width="14" Height="14" Margin="0,0,8,0"
                         IsVisible="{CompiledBinding Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static c:ObjectConverters.IsNotNull}}" />
               <Panel Grid.Column="2" VerticalAlignment="Center">
-                <TextBlock Name="ReasoningStatusLabel" FontSize="14" LineHeight="20" FontWeight="Medium" TextWrapping="Wrap" />
+                <a:AlderTextBlock Name="ReasoningStatusLabel" FontSize="14" LineHeight="20" FontWeight="Medium" TextWrapping="Wrap" />
                 <a:AlderTextShimmer Name="ReasoningStreamingLabel" Text="{TemplateBinding ResolvedHeader}"
                                     FontSize="14" LineHeight="20" FontWeight="Medium" TextWrapping="Wrap" IsVisible="False" />
                 <ContentPresenter Name="ReasoningCustomHeader" Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}"
@@ -1183,7 +1183,7 @@
     <Style Selector="^:plain-header[Status=Running] /template/ ContentPresenter#ActivityHeader">
       <Setter Property="ContentTemplate" Value="{StaticResource AlderAiTimelineRunningHeader}" />
     </Style>
-    <Style Selector="^ /template/ PathIcon#PART_Indicator">
+    <Style Selector="^ /template/ :is(PathIcon)#PART_Indicator">
       <Setter Property="Transitions">
         <Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25" Easing="0.4,0,0.2,1" /></Transitions>
       </Setter>
@@ -1202,7 +1202,7 @@
     </Style>
     <Style Selector="^[Status=Running] /template/ Border#TimelineLoaderSlot"><Setter Property="Width" Value="24" /></Style>
     <Style Selector="^[Status=Running] /template/ a|AlderLoader#RunLoader"><Setter Property="Opacity" Value="1" /></Style>
-    <Style Selector="^[(a|AlderMotion.Reduced)=True] /template/ PathIcon#PART_Indicator,
+    <Style Selector="^[(a|AlderMotion.Reduced)=True] /template/ :is(PathIcon)#PART_Indicator,
                      ^[(a|AlderMotion.Reduced)=True] /template/ Border#TimelineLoaderSlot,
                      ^[(a|AlderMotion.Reduced)=True] /template/ a|AlderLoader#RunLoader">
       <Setter Property="Transitions" Value="{x:Null}" />
@@ -1261,8 +1261,8 @@
       <Setter Property="IsVisible" Value="True" />
     </Style>
     <Style Selector="^ /template/ Border#SettledDisc,
-                     ^ /template/ PathIcon#CompletedMark,
-                     ^ /template/ PathIcon#ErrorMark,
+                     ^ /template/ :is(PathIcon)#CompletedMark,
+                     ^ /template/ :is(PathIcon)#ErrorMark,
                      ^ /template/ Border#InterruptedMark,
                      ^ /template/ Border#NeutralMark,
                      ^ /template/ Ellipse#PendingMark,
@@ -1272,8 +1272,8 @@
       <Setter Property="Opacity" Value="0" />
     </Style>
     <Style Selector="^ /template/ Border#SettledDisc,
-                     ^ /template/ PathIcon#CompletedMark,
-                     ^ /template/ PathIcon#ErrorMark,
+                     ^ /template/ :is(PathIcon)#CompletedMark,
+                     ^ /template/ :is(PathIcon)#ErrorMark,
                      ^ /template/ Border#InterruptedMark,
                      ^ /template/ Border#NeutralMark,
                      ^ /template/ Ellipse#PendingMark,
@@ -1286,8 +1286,8 @@
       </Transitions></Setter>
     </Style>
     <Style Selector="^[(a|AlderMotion.Reduced)=True] /template/ Border#SettledDisc,
-                     ^[(a|AlderMotion.Reduced)=True] /template/ PathIcon#CompletedMark,
-                     ^[(a|AlderMotion.Reduced)=True] /template/ PathIcon#ErrorMark,
+                     ^[(a|AlderMotion.Reduced)=True] /template/ :is(PathIcon)#CompletedMark,
+                     ^[(a|AlderMotion.Reduced)=True] /template/ :is(PathIcon)#ErrorMark,
                      ^[(a|AlderMotion.Reduced)=True] /template/ Border#InterruptedMark,
                      ^[(a|AlderMotion.Reduced)=True] /template/ Border#NeutralMark,
                      ^[(a|AlderMotion.Reduced)=True] /template/ Ellipse#PendingMark,
@@ -1301,7 +1301,7 @@
     <Style Selector="^:active /template/ Border#SettledLine, ^:pending /template/ Border#SettledLine"><Setter Property="Opacity" Value="0" /></Style>
     <Style Selector="^:active /template/ Line#DottedLine, ^:pending /template/ Line#DottedLine"><Setter Property="Opacity" Value=".45" /></Style>
     <Style Selector="^:complete /template/ Border#SettledDisc, ^:error /template/ Border#SettledDisc, ^:interrupted /template/ Border#SettledDisc,
-                     ^:complete /template/ PathIcon#CompletedMark, ^:error /template/ PathIcon#ErrorMark, ^:interrupted /template/ Border#InterruptedMark,
+                     ^:complete /template/ :is(PathIcon)#CompletedMark, ^:error /template/ :is(PathIcon)#ErrorMark, ^:interrupted /template/ Border#InterruptedMark,
                      ^:neutral /template/ Border#NeutralMark, ^:pending /template/ Ellipse#PendingMark">
       <Setter Property="Opacity" Value="1" />
     </Style>
@@ -1420,7 +1420,7 @@
     <Style Selector="^ /template/ a|AlderAccordionPanel[Progress=0] > StackPanel#ToolBody, ^:not(:has-details) /template/ StackPanel#ToolBody"><Setter Property="IsVisible" Value="False" /></Style>
     <Style Selector="^ /template/ ContentPresenter#TraceHeader"><Setter Property="ContentTemplate" Value="{TemplateBinding HeaderTemplate}" /></Style>
     <Style Selector="^:not(:has-details) /template/ :is(ToggleButton)#PART_Trigger"><Setter Property="IsEnabled" Value="False" /></Style>
-    <Style Selector="^:not(:has-details) /template/ Panel#ToolIndicatorSlot, ^:not(:has-details) /template/ PathIcon#PART_Indicator"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^:not(:has-details) /template/ Panel#ToolIndicatorSlot, ^:not(:has-details) /template/ :is(PathIcon)#PART_Indicator"><Setter Property="IsVisible" Value="False" /></Style>
     <Style Selector="^:not(:has-arguments) /template/ StackPanel#ToolArguments">
       <Setter Property="IsVisible" Value="False" />
     </Style>

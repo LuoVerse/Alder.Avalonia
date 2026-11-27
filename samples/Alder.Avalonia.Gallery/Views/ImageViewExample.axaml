@@ -22,9 +22,16 @@
               <alder:AlderSwitch Size="Small" IsChecked="{CompiledBinding ReduceMotion}"
                                  AutomationProperties.Name="{DynamicResource GalleryText.ImageViewReduceMotion}" />
             </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.ImageViewBlurToolbar}" VerticalAlignment="Center"
+                                    FontSize="13" Foreground="{DynamicResource AlderMuted}" />
+              <alder:AlderSwitch Size="Small" IsChecked="{CompiledBinding BlurToolbar, Mode=TwoWay}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.ImageViewBlurToolbar}" />
+            </StackPanel>
           </WrapPanel>
           <alder:AlderImageView x:Name="CollectionViewer" ItemsSource="{CompiledBinding Photos}" ViewportHeight="320"
                                 ImageTransition="{CompiledBinding ImageTransition}"
+                                ToolbarBackdropBlurRadius="{CompiledBinding ToolbarBackdropBlurRadius}"
                                 alder:AlderMotion.Reduced="{CompiledBinding ReduceMotion}"
                                 AutomationProperties.Name="{DynamicResource GalleryText.ImageViewCollection}" />
           <TextBlock Text="{DynamicResource GalleryText.ImageViewHint}" HorizontalAlignment="Center" TextAlignment="Center"

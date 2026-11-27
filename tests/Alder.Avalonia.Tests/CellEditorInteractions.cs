@@ -150,7 +150,7 @@ public sealed class CellEditorInteractions
     private static Window Show(Control control)
     {
         var panel = new StackPanel { Margin = new Thickness(24), Children = { control } };
-        var window = new Window { Width = 460, Height = 620, Content = panel };
+        var window = new AlderTestWindow { Width = 460, Height = 620, Content = panel };
         AlderMotion.SetReduced(window, true);
         window.Show();
         Pump(window);

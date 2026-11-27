@@ -327,11 +327,11 @@
     </Style>
     <Style Selector="^:clearable /template/ alder|AlderInput#PART_Editor"><Setter Property="Padding" Value="12,8,52,8" /></Style>
     <Style Selector="^ /template/ :is(Button)#PART_Clear:pointerover"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
-    <Style Selector="^ /template/ PathIcon#SelectArrow, ^ /template/ PathIcon#ComboArrow">
+    <Style Selector="^ /template/ :is(PathIcon)#SelectArrow, ^ /template/ :is(PathIcon)#ComboArrow">
       <Setter Property="RenderTransform" Value="rotate(0deg)" />
       <Setter Property="Transitions"><Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" Easing="CubicEaseOut" /></Transitions></Setter>
     </Style>
-    <Style Selector="^:open /template/ PathIcon#SelectArrow, ^:open /template/ PathIcon#ComboArrow">
+    <Style Selector="^:open /template/ :is(PathIcon)#SelectArrow, ^:open /template/ :is(PathIcon)#ComboArrow">
       <Setter Property="RenderTransform" Value="rotate(180deg)" />
     </Style>
     <Style Selector="^ /template/ alder|InputFocusRing#PickerFocusRing">
@@ -350,7 +350,7 @@
     <Style Selector="^:field-error /template/ TextBlock#PickerError, ^:has-description /template/ TextBlock#PickerDescription">
       <Setter Property="IsVisible" Value="True" />
     </Style>
-    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ PathIcon#SelectArrow, ^[(alder|AlderMotion.Reduced)=True] /template/ PathIcon#ComboArrow,
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ :is(PathIcon)#SelectArrow, ^[(alder|AlderMotion.Reduced)=True] /template/ :is(PathIcon)#ComboArrow,
                      ^[(alder|AlderMotion.Reduced)=True] /template/ Border#FieldFill, ^[(alder|AlderMotion.Reduced)=True] /template/ alder|InputFocusRing#PickerFocusRing">
       <Setter Property="Transitions" Value="{x:Null}" />
     </Style>
@@ -365,11 +365,11 @@
                      ^:autocomplete /template/ TextBlock#SelectedText, ^:autocomplete /template/ TextBlock#Placeholder">
       <Setter Property="TextWrapping" Value="Wrap" /><Setter Property="TextTrimming" Value="None" />
     </Style>
-    <Style Selector="^:select /template/ PathIcon#SelectArrow, ^:autocomplete /template/ PathIcon#SelectArrow">
+    <Style Selector="^:select /template/ :is(PathIcon)#SelectArrow, ^:autocomplete /template/ :is(PathIcon)#SelectArrow">
       <Setter Property="Width" Value="10.5" /><Setter Property="Height" Value="6" />
       <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
-    <Style Selector="^:select.custom-indicator /template/ PathIcon#SelectArrow, ^:autocomplete.custom-indicator /template/ PathIcon#SelectArrow">
+    <Style Selector="^:select.custom-indicator /template/ :is(PathIcon)#SelectArrow, ^:autocomplete.custom-indicator /template/ :is(PathIcon)#SelectArrow">
       <Setter Property="Width" Value="12" /><Setter Property="Height" Value="12" />
     </Style>
   </ControlTheme>
@@ -392,11 +392,11 @@
     <Setter Property="DropDownGap" Value="4" />
     <Setter Property="DropDownHorizontalAlignment" Value="Center" />
     <Setter Property="Indicator" Value="{DynamicResource AlderIconChevronsExpandVertical}" />
-    <Style Selector="^:select /template/ PathIcon#SelectArrow">
+    <Style Selector="^:select /template/ :is(PathIcon)#SelectArrow">
       <Setter Property="Width" Value="12" />
       <Setter Property="Height" Value="12" />
     </Style>
-    <Style Selector="^:select:open /template/ PathIcon#SelectArrow">
+    <Style Selector="^:select:open /template/ :is(PathIcon)#SelectArrow">
       <Setter Property="RenderTransform" Value="rotate(0deg)" />
     </Style>
     <Style Selector="^:select /template/ Border#FieldFill">
@@ -442,7 +442,7 @@
       <Setter Property="ClickMode" Value="Press" />
     </Style>
     <Style Selector="^:select /template/ Grid#TriggerContent"><Setter Property="Margin" Value="4,2" /></Style>
-    <Style Selector="^:select /template/ PathIcon#SelectArrow">
+    <Style Selector="^:select /template/ :is(PathIcon)#SelectArrow">
       <Setter Property="Width" Value="12" /><Setter Property="Height" Value="12" />
       <Setter Property="HorizontalAlignment" Value="Right" />
       <Setter Property="Transitions" Value="{x:Null}" />
@@ -451,7 +451,7 @@
     <Style Selector="^:select /template/ TextBlock#Placeholder">
       <Setter Property="Foreground" Value="{CompiledBinding Foreground, RelativeSource={RelativeSource AncestorType=alder:AlderInlineSelect}}" />
     </Style>
-    <Style Selector="^:select:open /template/ PathIcon#SelectArrow"><Setter Property="RenderTransform" Value="rotate(0deg)" /></Style>
+    <Style Selector="^:select:open /template/ :is(PathIcon)#SelectArrow"><Setter Property="RenderTransform" Value="rotate(0deg)" /></Style>
     <Style Selector="^:select /template/ Border#FieldFill">
       <Setter Property="BoxShadow" Value="none" />
       <Setter Property="Transitions" Value="{x:Null}" />
@@ -484,7 +484,7 @@
       <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
     </Style>
     <Style Selector="^[(alder|AlderMotion.Reduced)=True]"><Setter Property="Transitions" Value="{x:Null}" /></Style>
-    <Style Selector="^:select:open /template/ PathIcon#SelectArrow"><Setter Property="RenderTransform" Value="rotate(0deg)" /></Style>
+    <Style Selector="^:select:open /template/ :is(PathIcon)#SelectArrow"><Setter Property="RenderTransform" Value="rotate(0deg)" /></Style>
   </ControlTheme>
 
   <ControlTheme x:Key="{x:Type alder:AlderAutocomplete}" TargetType="alder:AlderAutocomplete" BasedOn="{StaticResource {x:Type alder:AlderPicker}}">
@@ -496,11 +496,11 @@
   </ControlTheme>
   <ControlTheme x:Key="{x:Type alder:AlderComboBox}" TargetType="alder:AlderComboBox" BasedOn="{StaticResource {x:Type alder:AlderPicker}}">
     <Style Selector="^:disabled /template/ :is(Label)#PickerLabel"><Setter Property="Opacity" Value="0.5" /></Style>
-    <Style Selector="^ /template/ PathIcon#ComboArrow">
+    <Style Selector="^ /template/ :is(PathIcon)#ComboArrow">
       <Setter Property="Transitions"><Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" Easing="0.4,0,0.2,1" /></Transitions></Setter>
     </Style>
-    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ PathIcon#ComboArrow"><Setter Property="Transitions" Value="{x:Null}" /></Style>
-    <Style Selector="^.custom-indicator /template/ PathIcon#ComboArrow">
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ :is(PathIcon)#ComboArrow"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^.custom-indicator /template/ :is(PathIcon)#ComboArrow">
       <Setter Property="Width" Value="12" /><Setter Property="Height" Value="12" />
     </Style>
   </ControlTheme>

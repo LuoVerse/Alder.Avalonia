@@ -12,25 +12,34 @@
     <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
     <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
     <Setter Property="HighlightBrush" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="alder:DataDisplaySurface.UsesBackdropTint" Value="False" />
     <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.ActionBarActions}" />
     <Setter Property="ItemsPanel">
       <ItemsPanelTemplate><alder:AlderExpandableActionRail Spacing="6" /></ItemsPanelTemplate>
     </Setter>
     <Setter Property="Template">
       <ControlTemplate>
-        <Border Name="PART_Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}"
-                Padding="{TemplateBinding Padding}" BoxShadow="{DynamicResource AlderToolbarShadow}" ClipToBounds="False">
-          <ScrollViewer Name="PART_ScrollViewer" HorizontalScrollBarVisibility="Hidden"
-                        VerticalScrollBarVisibility="Disabled" Focusable="False">
-            <Grid>
-              <alder:AlderExpandableActionHighlight Name="PART_Highlight" IsHitTestVisible="False" />
-              <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
-            </Grid>
-          </ScrollViewer>
-        </Border>
+        <Panel>
+          <alder:RoundedBackdropLayer Name="SurfaceBackdrop" CornerRadius="{TemplateBinding CornerRadius}"
+                                      Radius="{TemplateBinding SurfaceBackdropBlurRadius}" />
+          <Border Name="PART_Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}"
+                  Padding="{TemplateBinding Padding}" BoxShadow="{DynamicResource AlderToolbarShadow}" ClipToBounds="False">
+            <alder:AlderScrollViewer Name="PART_ScrollViewer" HorizontalScrollBarVisibility="Hidden"
+                          VerticalScrollBarVisibility="Disabled" Focusable="False">
+              <Grid>
+                <alder:AlderExpandableActionHighlight Name="PART_Highlight" IsHitTestVisible="False" />
+                <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+              </Grid>
+            </alder:AlderScrollViewer>
+          </Border>
+        </Panel>
       </ControlTemplate>
     </Setter>
+    <Style Selector="^:backdrop-blur">
+      <Setter Property="alder:DataDisplaySurface.UsesBackdropTint" Value="True" />
+      <Setter Property="Background" Value="{DynamicResource AlderToolbarBackdropTint}" />
+    </Style>
     <Style Selector="^[Size=Small]">
       <Setter Property="Padding" Value="4" />
       <Setter Property="CornerRadius" Value="20" />
@@ -60,7 +69,7 @@
               <Decorator>
                 <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
               </Decorator>
-              <TextBlock Text="{TemplateBinding Shortcut}" FontSize="10" Foreground="{DynamicResource AlderMuted}" TextWrapping="NoWrap" />
+              <alder:AlderTextBlock Name="ShortcutLabel" Text="{TemplateBinding Shortcut}" FontSize="10" Foreground="{DynamicResource AlderMuted}" TextWrapping="NoWrap" />
               <alder:AlderBadge Content="{TemplateBinding Badge}" Size="Small" Color="Danger" Variant="Soft"
                                 IsVisible="{CompiledBinding Badge, RelativeSource={RelativeSource TemplatedParent},
                                                     Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
@@ -82,6 +91,12 @@
     </Style>
     <Style Selector="^:highlighted, ^:focus-visible">
       <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    </Style>
+    <Style Selector="^[(alder|DataDisplaySurface.UsesBackdropTint)=True]">
+      <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+      <Style Selector="^ /template/ TextBlock#ShortcutLabel">
+        <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+      </Style>
     </Style>
     <Style Selector="^:focus-visible:not(:highlighted):not(:disabled)">
       <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />

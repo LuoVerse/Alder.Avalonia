@@ -47,7 +47,7 @@ internal static class CompositionUpgradeSmoke
             Title = "Account", Width = 168, HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center, Items = { new MenuItem { Header = "Profile" } }
         };
-        var window = new Window { Width = 380, Height = 300, Content = menu, RequestedThemeVariant = ThemeVariant.Dark };
+        var window = new AlderTestWindow { Width = 380, Height = 300, Content = menu, RequestedThemeVariant = ThemeVariant.Dark };
         window.Show();
         try
         {
@@ -129,7 +129,7 @@ internal static class CompositionUpgradeSmoke
             Items = { ImageViewPhoto(Brushes.Red), ImageViewPhoto(Brushes.Blue), ImageViewPhoto(Brushes.Lime) },
             ViewportHeight = 200
         };
-        var window = new Window { Width = 420, Height = 380, Content = view, RequestedThemeVariant = theme };
+        var window = new AlderTestWindow { Width = 420, Height = 380, Content = view, RequestedThemeVariant = theme };
         window.Show();
         try
         {
@@ -183,7 +183,7 @@ internal static class CompositionUpgradeSmoke
             Items = { ImageViewPhoto(Brushes.Red), ImageViewPhoto(Brushes.Blue) },
             ImageTransition = AlderImageViewTransition.None, ViewportHeight = 200
         };
-        var window = new Window { Width = 420, Height = 380, Content = view, RequestedThemeVariant = ThemeVariant.Dark };
+        var window = new AlderTestWindow { Width = 420, Height = 380, Content = view, RequestedThemeVariant = ThemeVariant.Dark };
         window.Show();
         try
         {
@@ -277,7 +277,7 @@ internal static class CompositionUpgradeSmoke
                 Width = 24, Height = 12, HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center, Background = value == 1 ? Brushes.Magenta : Brushes.Gray
             }) });
-        var window = new Window { Width = 420, Height = 270, Content = grid, RequestedThemeVariant = theme };
+        var window = new AlderTestWindow { Width = 420, Height = 270, Content = grid, RequestedThemeVariant = theme };
         window.Show();
         try
         {
@@ -346,7 +346,7 @@ internal static class CompositionUpgradeSmoke
             VerticalAlignment = VerticalAlignment.Center, CornerRadius = new CornerRadius(22), Background = Brushes.Gray,
             Feedback = new AlderPressableFeedback { FeedbackBrush = Brushes.Magenta, HoverOpacity = 0, PressedOpacity = .3 }
         };
-        var window = new Window
+        var window = new AlderTestWindow
         {
             Width = 214, Height = 124, Content = button, RequestedThemeVariant = theme,
             Background = theme == ThemeVariant.Dark ? Brushes.Black : Brushes.White
@@ -409,7 +409,7 @@ internal static class CompositionUpgradeSmoke
     {
         var loader = new CountedLoader { Variant = AiLoaderVariant.Ring, Width = 34, Height = 34 };
         var scope = new Border { Child = loader };
-        var window = new Window { Width = 120, Height = 80, Content = scope, RequestedThemeVariant = theme };
+        var window = new AlderTestWindow { Width = 120, Height = 80, Content = scope, RequestedThemeVariant = theme };
         window.Show();
         try
         {
@@ -477,7 +477,7 @@ internal static class CompositionUpgradeSmoke
             IsSubmitting = true
         };
         var compact = new AlderLoader { Width = 12, Height = 16, Variant = AiLoaderVariant.Ring };
-        var window = new Window
+        var window = new AlderTestWindow
         {
             Width = 350, Height = 360, RequestedThemeVariant = theme,
             Content = new StackPanel { Margin = new Thickness(16), Spacing = 12, Children = { step, prompt, composer, compact } }
@@ -535,7 +535,7 @@ internal static class CompositionUpgradeSmoke
     {
         var marker = new Border { Width = 44, Height = 12, Background = Brushes.Magenta };
         var bar = new AlderActionBar { Content = marker, IsOpen = true };
-        var window = new Window
+        var window = new AlderTestWindow
         {
             Width = width, Height = 150, Content = new Grid { Children = { bar } }, RequestedThemeVariant = theme,
             Background = theme == ThemeVariant.Dark ? Brushes.Black : Brushes.White

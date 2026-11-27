@@ -100,7 +100,7 @@
       <ControlTemplate>
         <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="*,*">
           <Grid.Styles>
-            <Style Selector="alder|AlderInputSpinner.vertical PathIcon">
+            <Style Selector="alder|AlderInputSpinner.vertical :is(PathIcon)">
               <Setter Property="MaxWidth" Value="11" /><Setter Property="MaxHeight" Value="11" />
             </Style>
           </Grid.Styles>

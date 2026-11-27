@@ -48,6 +48,10 @@ public sealed class AlderNavbar : TemplatedControl
     /// <summary>Identifies the <see cref="HeaderMaxWidth"/> Avalonia property.</summary>
     public static readonly StyledProperty<double> HeaderMaxWidthProperty =
         AvaloniaProperty.Register<AlderNavbar, double>(nameof(HeaderMaxWidth), 1024, validate: Positive);
+    /// <summary>Identifies the <see cref="HeaderBackdropBlurRadius"/> Avalonia property.</summary>
+    public static readonly StyledProperty<double> HeaderBackdropBlurRadiusProperty =
+        AvaloniaProperty.Register<AlderNavbar, double>(nameof(HeaderBackdropBlurRadius),
+            validate: value => double.IsFinite(value) && value >= 0);
     /// <summary>Identifies the <see cref="CollapseWidth"/> Avalonia property.</summary>
     public static readonly StyledProperty<double> CollapseWidthProperty =
         AvaloniaProperty.Register<AlderNavbar, double>(nameof(CollapseWidth), 768,
@@ -86,6 +90,7 @@ public sealed class AlderNavbar : TemplatedControl
         AvaloniaProperty.RegisterDirect<AlderNavbar, bool>(nameof(IsNavigationVisible), bar => bar.IsNavigationVisible);
 
     private Border? header;
+    private Border? headerBackdrop;
     private Button? toggle;
     private Popup? popup;
     private ScrollViewer? menuScroll;
@@ -110,6 +115,8 @@ public sealed class AlderNavbar : TemplatedControl
     public double HeaderHeight { get => GetValue(HeaderHeightProperty); set => SetValue(HeaderHeightProperty, value); }
     /// <summary>The maximum width of the inner header region.</summary>
     public double HeaderMaxWidth { get => GetValue(HeaderMaxWidthProperty); set => SetValue(HeaderMaxWidthProperty, value); }
+    /// <summary>The blur radius in DIPs behind the header. Zero disables the effect.</summary>
+    public double HeaderBackdropBlurRadius { get => GetValue(HeaderBackdropBlurRadiusProperty); set => SetValue(HeaderBackdropBlurRadiusProperty, value); }
     /// <summary>The width threshold below which compact navigation is used.</summary>
     public double CollapseWidth { get => GetValue(CollapseWidthProperty); set => SetValue(CollapseWidthProperty, value); }
     /// <summary>Whether to keep the menu toggle available at full width.</summary>
@@ -157,6 +164,7 @@ public sealed class AlderNavbar : TemplatedControl
         }
         base.OnApplyTemplate(e);
         header = e.NameScope.Find<Border>("PART_Header");
+        headerBackdrop = e.NameScope.Find<Border>("PART_HeaderBackdrop");
         toggle = e.NameScope.Find<Button>("PART_Toggle");
         popup = e.NameScope.Find<Popup>("PART_Menu");
         menuScroll = e.NameScope.Find<ScrollViewer>("PART_MenuScroll");
@@ -168,6 +176,7 @@ public sealed class AlderNavbar : TemplatedControl
             popup.Closed += OnPopupClosed;
         }
         RefreshHeader();
+        UpdateHeaderBackdrop();
     }
 
     /// <inheritdoc />
@@ -222,6 +231,21 @@ public sealed class AlderNavbar : TemplatedControl
         }
         if (change.Property == HeaderHeightProperty || change.Property == PositionProperty)
             RefreshHeader();
+        if (change.Property == HeaderBackdropBlurRadiusProperty)
+            UpdateHeaderBackdrop();
+    }
+
+    private void UpdateHeaderBackdrop()
+    {
+        var radius = HeaderBackdropBlurRadius;
+        PseudoClasses.Set(":backdrop-blur", radius > 0);
+        if (headerBackdrop is null) return;
+        if (radius == 0)
+            headerBackdrop.BackdropEffect = null;
+        else if (headerBackdrop.BackdropEffect is BlurEffect blur)
+            blur.Radius = radius;
+        else
+            headerBackdrop.BackdropEffect = new BlurEffect { Radius = radius };
     }
 
     /// <inheritdoc />

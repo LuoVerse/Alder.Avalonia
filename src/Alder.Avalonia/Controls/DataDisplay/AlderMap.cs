@@ -168,6 +168,9 @@ public sealed partial class AlderMap : TemplatedControl
     /// <summary>Shows the pair of zoom buttons.</summary>
     [GeneratedStyledProperty(DefaultValue = true)]
     public partial bool ShowZoomControls { get; set; }
+    /// <summary>The blur radius in DIPs behind the zoom button group. Zero disables the effect.</summary>
+    [GeneratedStyledProperty(ValidateMethodName = nameof(IsValidZoomControlsBackdropBlurRadius))]
+    public partial double ZoomControlsBackdropBlurRadius { get; set; }
     /// <summary>Changes the fullscreen control's icon and label to indicate exit.</summary>
     [GeneratedStyledProperty]
     public partial bool IsFullscreen { get; set; }
@@ -186,6 +189,8 @@ public sealed partial class AlderMap : TemplatedControl
     /// <summary>Themed surface behind a marker badge.</summary>
     [GeneratedStyledProperty]
     public partial IBrush? MarkerBadgeBrush { get; set; }
+
+    private static bool IsValidZoomControlsBackdropBlurRadius(double radius) => double.IsFinite(radius) && radius >= 0;
 
     private sealed record Hit(Point Position, Rect Bounds, IReadOnlyList<AlderMapMarker> Markers);
     private sealed record Flight(Point Start, Point End, double StartZoom, double EndZoom)
@@ -283,6 +288,8 @@ public sealed partial class AlderMap : TemplatedControl
         if (change.Property == MarkersProperty || change.Property == ClusterMarkersProperty || change.Property == ShowHeatmapProperty)
             ResetClusters();
         if (change.Property == BearingProperty) compassRotation.Angle = Bearing;
+        if (change.Property == ZoomControlsBackdropBlurRadiusProperty)
+            PseudoClasses.Set(":zoom-backdrop", ZoomControlsBackdropBlurRadius > 0);
         if (change.Property == SelectedMarkerProperty || change.Property == MarkerPopupTemplateProperty) RefreshPopupContent();
         if (change.Property == CenterProperty || change.Property == ZoomProperty || change.Property == BearingProperty)
             PositionPopup();

@@ -853,9 +853,6 @@ public sealed class AlderSidebarPage : ContentControl;
 /// <summary>Switches between pages within a sidebar using carousel selection.</summary>
 public sealed class AlderSidebarPages : Carousel
 {
-    /// <inheritdoc />
-    protected override Type StyleKeyOverride => typeof(Carousel);
-
     private static readonly TimeSpan PageDuration = TimeSpan.FromMilliseconds(300);
     private static readonly SplineEasing PageEasing = new(.22, .8, .28, 1);
     private readonly CompositePageTransition slide = new()

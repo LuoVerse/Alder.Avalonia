@@ -18,12 +18,15 @@ namespace Alder.Avalonia.Tests;
 
 public sealed class OverflowActionsInteractions
 {
-    [AvaloniaFact]
-    public async Task ToggleSpringsOpenAndCanReverseWhileClosing()
+    [AvaloniaTheory]
+    [InlineData(0d)]
+    [InlineData(16d)]
+    public async Task ToggleSpringsOpenAndCanReverseWhileClosing(double backdropRadius)
     {
         var overflow = new AlderOverflowAction { Content = "Schedule publication" };
         var bar = new AlderOverflowActions
         {
+            SurfaceBackdropBlurRadius = backdropRadius,
             PrimaryActions = { new AlderOverflowAction { Content = "Preview" } },
             OverflowActions = { overflow }
         };
@@ -32,6 +35,8 @@ public sealed class OverflowActionsInteractions
         {
             var toggle = Find<AlderOverflowActionsToggle>(bar, "PART_Toggle");
             var extra = Find<ItemsControl>(bar, "PART_Overflow");
+            var frame = Find<Border>(bar, "PART_Surface");
+            var backdrop = Find<Border>(bar, "SurfaceBackdrop");
             var peer = Assert.IsAssignableFrom<IExpandCollapseProvider>(ControlAutomationPeer.CreatePeerForElement(toggle));
             var collapsedWidth = bar.Bounds.Width;
             Assert.Equal(ExpandCollapseState.Collapsed, peer.ExpandCollapseState);
@@ -42,6 +47,7 @@ public sealed class OverflowActionsInteractions
             Assert.Equal(ExpandCollapseState.Expanded, peer.ExpandCollapseState);
             await WaitFor(window, () => bar.Bounds.Width > collapsedWidth + 10);
             Assert.InRange(extra.Opacity, .01, .99);
+            VerifyBackdropBounds();
 
             double peakWidth = bar.Bounds.Width;
             await WaitFor(window, () =>
@@ -57,6 +63,7 @@ public sealed class OverflowActionsInteractions
             peer.Collapse();
             Assert.False(extra.IsHitTestVisible);
             await WaitFor(window, () => bar.Bounds.Width < expandedWidth - 12);
+            VerifyBackdropBounds();
             peer.Expand();
             await Settle(window);
             Assert.Equal(expandedWidth, bar.Bounds.Width);
@@ -66,6 +73,15 @@ public sealed class OverflowActionsInteractions
             peer.Collapse();
             await WaitFor(window, () => !extra.IsVisible);
             Assert.Equal(collapsedWidth, bar.Bounds.Width);
+            VerifyBackdropBounds();
+
+            void VerifyBackdropBounds()
+            {
+                Assert.Equal(backdropRadius > 0, backdrop.IsEffectivelyVisible);
+                if (backdropRadius == 0) return;
+                Assert.Equal(new Rect(frame.Bounds.Size).Deflate(bar.BorderThickness), backdrop.Bounds);
+                Assert.Equal(frame.CornerRadius, backdrop.CornerRadius);
+            }
         }
         finally { window.Close(); }
     }
@@ -201,7 +217,7 @@ public sealed class OverflowActionsInteractions
 
     private static Window Show(Control content, bool reduced = false)
     {
-        var window = new Window { Width = 650, Height = 220, Content = content };
+        var window = new AlderTestWindow { Width = 650, Height = 220, Content = content };
         AlderMotion.SetReduced(window, reduced);
         window.Show();
         Pump(window);

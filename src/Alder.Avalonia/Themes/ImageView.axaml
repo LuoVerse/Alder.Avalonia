@@ -50,10 +50,10 @@
             <Grid RowDefinitions="Auto,*,Auto" RowSpacing="10">
               <Grid Name="PART_Header" ColumnDefinitions="*,Auto" ColumnSpacing="12" Margin="8,3,8,2">
                 <StackPanel Spacing="2">
-                  <TextBlock Name="PART_Title" FontSize="16" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
-                  <TextBlock Name="PART_Dimensions" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextTrimming="CharacterEllipsis" />
+                  <alder:AlderTextBlock Name="PART_Title" FontSize="16" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                  <alder:AlderTextBlock Name="PART_Dimensions" FontSize="12" Foreground="{DynamicResource AlderMuted}" TextTrimming="CharacterEllipsis" />
                 </StackPanel>
-                <TextBlock Name="PART_Position" Grid.Column="1" FontSize="13" VerticalAlignment="Center"
+                <alder:AlderTextBlock Name="PART_Position" Grid.Column="1" FontSize="13" VerticalAlignment="Center"
                            Foreground="{DynamicResource AlderMuted}" />
               </Grid>
 
@@ -62,55 +62,58 @@
                   <Border Name="PART_CanvasClip" ClipToBounds="True" CornerRadius="14,14,0,0">
                     <Grid>
                       <alder:AlderImageViewport Name="PART_Viewport" Background="Transparent" FlowDirection="LeftToRight" />
-                      <TextBlock Name="PART_Empty" Foreground="{DynamicResource AlderMuted}"
+                      <alder:AlderTextBlock Name="PART_Empty" Foreground="{DynamicResource AlderMuted}"
                                  Text="{DynamicResource AlderText.ImageViewEmpty}" HorizontalAlignment="Center"
                                  VerticalAlignment="Center" IsHitTestVisible="False" Margin="8" TextWrapping="Wrap" />
                     </Grid>
                   </Border>
-                  <Border Name="PART_Tools" Grid.Row="1" CornerRadius="24" Padding="5" Margin="8,0,8,16" HorizontalAlignment="Center"
-                          Background="{DynamicResource AlderSurface}" BorderBrush="{DynamicResource AlderBorder}"
-                          BorderThickness="1" BoxShadow="{DynamicResource AlderToolbarShadow}">
-                    <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                      <StackPanel Orientation="Horizontal" Spacing="2">
-                        <alder:AlderButton Name="PART_ZoomOut" Theme="{StaticResource AlderImageViewToolTheme}"
-                                           Icon="{StaticResource AlderIconMinus}" ToolTip.Tip="{DynamicResource AlderText.ImageViewZoomOut}"
-                                           AutomationProperties.Name="{DynamicResource AlderText.ImageViewZoomOut}" />
-                        <TextBlock Name="PART_Zoom" MinWidth="45" TextAlignment="Center" VerticalAlignment="Center"
-                                   FontSize="13" FontWeight="SemiBold" />
-                        <alder:AlderButton Name="PART_ZoomIn" Theme="{StaticResource AlderImageViewToolTheme}"
-                                           Icon="{StaticResource AlderIconPlus}" ToolTip.Tip="{DynamicResource AlderText.ImageViewZoomIn}"
-                                           AutomationProperties.Name="{DynamicResource AlderText.ImageViewZoomIn}" />
-                      </StackPanel>
-                      <StackPanel Orientation="Horizontal" Spacing="2" Margin="6,0,0,0" VerticalAlignment="Center">
-                        <alder:AlderButton Name="PART_Fit" Theme="{StaticResource AlderImageViewModeTheme}"
-                                           Content="{DynamicResource AlderText.ImageViewFit}" ToolTip.Tip="{DynamicResource AlderText.ImageViewFitImage}"
-                                           AutomationProperties.Name="{DynamicResource AlderText.ImageViewFitImage}" />
-                        <alder:AlderButton Name="PART_Actual" Theme="{StaticResource AlderImageViewModeTheme}"
-                                           Content="1:1" ToolTip.Tip="{DynamicResource AlderText.ImageViewActual}"
-                                           AutomationProperties.Name="{DynamicResource AlderText.ImageViewActual}" />
-                      </StackPanel>
-                      <Grid Margin="3,0,0,0">
-                        <alder:AlderButton Name="PART_Open" Theme="{StaticResource AlderImageViewToolTheme}"
-                                           Icon="{StaticResource AlderImageViewExpandIcon}" ToolTip.Tip="{DynamicResource AlderText.ImageViewOpen}"
-                                           AutomationProperties.Name="{DynamicResource AlderText.ImageViewOpen}" />
-                        <alder:AlderButton Name="PART_Close" Theme="{StaticResource AlderImageViewToolTheme}" IsVisible="False"
-                                           Icon="{StaticResource AlderImageViewRestoreIcon}" ToolTip.Tip="{DynamicResource AlderText.ImageViewClose}"
-                                           AutomationProperties.Name="{DynamicResource AlderText.ImageViewClose}" />
-                      </Grid>
-                    </WrapPanel>
-                  </Border>
+                  <Panel Name="ToolsLayout" Grid.Row="1" Margin="8,0,8,16" HorizontalAlignment="Center">
+                    <alder:RoundedBackdropLayer Name="ToolsBackdrop" CornerRadius="24" Radius="{TemplateBinding ToolbarBackdropBlurRadius}" />
+                    <Border Name="PART_Tools" CornerRadius="24" Padding="5"
+                            Background="{DynamicResource AlderSurface}" BorderBrush="{DynamicResource AlderBorder}"
+                            BorderThickness="1" BoxShadow="{DynamicResource AlderToolbarShadow}">
+                      <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="2">
+                          <alder:AlderButton Name="PART_ZoomOut" Theme="{StaticResource AlderImageViewToolTheme}"
+                                             Icon="{StaticResource AlderIconMinus}" alder:AlderToolTip.Tip="{DynamicResource AlderText.ImageViewZoomOut}"
+                                             AutomationProperties.Name="{DynamicResource AlderText.ImageViewZoomOut}" />
+                          <alder:AlderTextBlock Name="PART_Zoom" MinWidth="45" TextAlignment="Center" VerticalAlignment="Center"
+                                     FontSize="13" FontWeight="SemiBold" />
+                          <alder:AlderButton Name="PART_ZoomIn" Theme="{StaticResource AlderImageViewToolTheme}"
+                                             Icon="{StaticResource AlderIconPlus}" alder:AlderToolTip.Tip="{DynamicResource AlderText.ImageViewZoomIn}"
+                                             AutomationProperties.Name="{DynamicResource AlderText.ImageViewZoomIn}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="2" Margin="6,0,0,0" VerticalAlignment="Center">
+                          <alder:AlderButton Name="PART_Fit" Theme="{StaticResource AlderImageViewModeTheme}"
+                                             Content="{DynamicResource AlderText.ImageViewFit}" alder:AlderToolTip.Tip="{DynamicResource AlderText.ImageViewFitImage}"
+                                             AutomationProperties.Name="{DynamicResource AlderText.ImageViewFitImage}" />
+                          <alder:AlderButton Name="PART_Actual" Theme="{StaticResource AlderImageViewModeTheme}"
+                                             Content="1:1" alder:AlderToolTip.Tip="{DynamicResource AlderText.ImageViewActual}"
+                                             AutomationProperties.Name="{DynamicResource AlderText.ImageViewActual}" />
+                        </StackPanel>
+                        <Grid Margin="3,0,0,0">
+                          <alder:AlderButton Name="PART_Open" Theme="{StaticResource AlderImageViewToolTheme}"
+                                             Icon="{StaticResource AlderImageViewExpandIcon}" alder:AlderToolTip.Tip="{DynamicResource AlderText.ImageViewOpen}"
+                                             AutomationProperties.Name="{DynamicResource AlderText.ImageViewOpen}" />
+                          <alder:AlderButton Name="PART_Close" Theme="{StaticResource AlderImageViewToolTheme}" IsVisible="False"
+                                             Icon="{StaticResource AlderImageViewRestoreIcon}" alder:AlderToolTip.Tip="{DynamicResource AlderText.ImageViewClose}"
+                                             AutomationProperties.Name="{DynamicResource AlderText.ImageViewClose}" />
+                        </Grid>
+                      </WrapPanel>
+                    </Border>
+                  </Panel>
                 </Grid>
               </Border>
 
               <Grid Name="PART_Strip" Grid.Row="2" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="6" HorizontalAlignment="Center">
                 <alder:AlderButton Name="PART_Previous" Theme="{StaticResource AlderImageViewToolTheme}" VerticalAlignment="Center"
-                                   Icon="{StaticResource AlderIconChevronLeft}" ToolTip.Tip="{DynamicResource AlderText.ImageViewPrevious}"
+                                   Icon="{StaticResource AlderIconChevronLeft}" alder:AlderToolTip.Tip="{DynamicResource AlderText.ImageViewPrevious}"
                                    AutomationProperties.Name="{DynamicResource AlderText.ImageViewPrevious}" />
-                <ScrollViewer Name="PART_ThumbnailScroll" Grid.Column="1" MaxWidth="360" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
+                <alder:AlderScrollViewer Name="PART_ThumbnailScroll" Grid.Column="1" MaxWidth="360" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
                   <alder:AlderFilmstrip Name="PART_Thumbnails" ItemWidth="68" Spacing="4" Margin="2" />
-                </ScrollViewer>
+                </alder:AlderScrollViewer>
                 <alder:AlderButton Name="PART_Next" Grid.Column="2" Theme="{StaticResource AlderImageViewToolTheme}" VerticalAlignment="Center"
-                                   Icon="{StaticResource AlderIconChevronRight}" ToolTip.Tip="{DynamicResource AlderText.ImageViewNext}"
+                                   Icon="{StaticResource AlderIconChevronRight}" alder:AlderToolTip.Tip="{DynamicResource AlderText.ImageViewNext}"
                                    AutomationProperties.Name="{DynamicResource AlderText.ImageViewNext}" />
               </Grid>
             </Grid>
@@ -120,6 +123,18 @@
     </Setter>
     <Style Selector="^:viewport-focus-visible /template/ Border#PART_Tools">
       <Setter Property="Background" Value="{DynamicResource AlderSurfaceSecondary}" />
+    </Style>
+    <Style Selector="^:toolbar-backdrop /template/ Border#PART_CanvasClip">
+      <Setter Property="Grid.RowSpan" Value="2" />
+    </Style>
+    <Style Selector="^:toolbar-backdrop[IsImmersive=False] /template/ Border#PART_Stage">
+      <Setter Property="Height" Value="{CompiledBinding ViewportHeight, RelativeSource={RelativeSource TemplatedParent}}" />
+    </Style>
+    <Style Selector="^:toolbar-backdrop /template/ Border#PART_Tools">
+      <Setter Property="Background" Value="{DynamicResource AlderToolbarBackdropTint}" />
+    </Style>
+    <Style Selector="^:toolbar-backdrop:viewport-focus-visible /template/ Border#PART_Tools">
+      <Setter Property="Background" Value="{DynamicResource AlderToolbarBackdropFocusTint}" />
     </Style>
     <Style Selector="^:viewport-focus-visible /template/ TextBlock#PART_Zoom">
       <Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" />

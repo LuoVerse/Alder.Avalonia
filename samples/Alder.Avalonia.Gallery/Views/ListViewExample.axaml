@@ -25,8 +25,8 @@
       <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
         <alder:AlderPathIcon Classes.folder="{CompiledBinding IsFolder}" Width="16" Height="16" Foreground="{DynamicResource AlderMuted}">
           <alder:AlderPathIcon.Styles>
-            <Style Selector="PathIcon"><Setter Property="Data" Value="{StaticResource AlderFileTreeFileIcon}" /></Style>
-            <Style Selector="PathIcon.folder"><Setter Property="Data" Value="{StaticResource AlderFileTreeFolderIcon}" /></Style>
+            <Style Selector=":is(PathIcon)"><Setter Property="Data" Value="{StaticResource AlderFileTreeFileIcon}" /></Style>
+            <Style Selector=":is(PathIcon).folder"><Setter Property="Data" Value="{StaticResource AlderFileTreeFolderIcon}" /></Style>
           </alder:AlderPathIcon.Styles>
         </alder:AlderPathIcon>
         <StackPanel Grid.Column="1" VerticalAlignment="Center">

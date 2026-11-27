@@ -30,8 +30,8 @@ internal static class AiTraceButtonRenderSmoke
     private static void Verify(ThemeVariant theme, double scale)
     {
         var trace = new AlderChainOfThought { Header = "Checks finished", Content = "No errors", IsExpanded = true, Status = AiRunStatus.Completed };
-        var viewport = new ScrollViewer { Content = new StackPanel { Margin = new Thickness(12), Children = { trace } } };
-        var window = new Window { Width = scale == 1 ? 480 : 390, Height = 120, Content = viewport, RequestedThemeVariant = theme };
+        var viewport = new AlderScrollViewer { Content = new StackPanel { Margin = new Thickness(12), Children = { trace } } };
+        var window = new AlderTestWindow { Width = scale == 1 ? 480 : 390, Height = 120, Content = viewport, RequestedThemeVariant = theme };
         AlderMotion.SetReduced(window, true);
         window.Show();
         try
@@ -85,7 +85,7 @@ internal static class AiTraceButtonRenderSmoke
     private static void VerifyPromptEditor(ThemeVariant theme, double scale)
     {
         var prompt = new AlderPromptInput { Width = 320, Placeholder = "Ask about your files" };
-        var window = new Window { Width = 390, Height = 150, Content = prompt, RequestedThemeVariant = theme };
+        var window = new AlderTestWindow { Width = 390, Height = 150, Content = prompt, RequestedThemeVariant = theme };
         AlderMotion.SetReduced(window, true);
         window.Show();
         try
@@ -126,7 +126,7 @@ internal static class AiTraceButtonRenderSmoke
             ItemsSource = new[] { fast, reasoning }, SelectedModel = fast,
             Efforts = new[] { "Low", "High" }, SelectedEffort = "High"
         };
-        var window = new Window
+        var window = new AlderTestWindow
         {
             Width = 390, Height = 600, RequestedThemeVariant = theme,
             Content = new Border { Padding = new Thickness(8, 96, 8, 0), Child = model },

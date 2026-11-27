@@ -195,7 +195,7 @@ public sealed class ResizableInteractions
         {
             Height = 500, Orientation = Orientation.Vertical, Children = { before, handle, new AlderResizablePanel() }
         };
-        var scroll = new ScrollViewer { Content = group };
+        var scroll = new AlderScrollViewer { Content = group };
         var window = Show(scroll, 450);
         try
         {
@@ -246,7 +246,7 @@ public sealed class ResizableInteractions
 
     private static Window Show(Control content, int width, bool reducedMotion = true)
     {
-        var window = new Window { Width = width, Height = 400, Content = content, RequestedThemeVariant = ThemeVariant.Light };
+        var window = new AlderTestWindow { Width = width, Height = 400, Content = content, RequestedThemeVariant = ThemeVariant.Light };
         AlderMotion.SetReduced(window, reducedMotion);
         window.Show();
         Pump(window);

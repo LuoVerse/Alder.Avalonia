@@ -136,7 +136,7 @@
         <Transitions><BrushTransition Property="Stroke" Duration="0:0:0.15" Easing="0.25,0.1,0.25,1" /></Transitions>
       </Setter>
     </Style>
-    <Style Selector="^:has-files[ShowFileList=True] /template/ ItemsControl#FileList"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:has-files[ShowFileList=True] /template/ alder|AlderItemsControl#FileList"><Setter Property="IsVisible" Value="True" /></Style>
     <Style Selector="^:drop-target /template/ Border#PART_DropArea"><Setter Property="Background" Value="{DynamicResource AlderDropHighlightBrush}" /></Style>
     <Style Selector="^:drop-target /template/ Rectangle#Outline">
       <Setter Property="Stroke" Value="{DynamicResource AlderAccent}" />

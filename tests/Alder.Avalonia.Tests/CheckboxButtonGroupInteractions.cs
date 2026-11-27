@@ -21,7 +21,7 @@ public class CheckboxButtonGroupInteractions
         var security = Option("security");
         var storage = Option("storage");
         var group = new AlderCheckboxButtonGroup { SelectedKeys = ["security"], Children = { security, storage } };
-        var window = new Window { Width = 420, Height = 280, Content = group };
+        var window = new AlderTestWindow { Width = 420, Height = 280, Content = group };
         AlderMotion.SetReduced(window, true);
         window.Show();
 
@@ -81,7 +81,7 @@ public class CheckboxButtonGroupInteractions
             Layout = CheckboxButtonGroupLayout.Grid,
             Children = { first, second, third }
         };
-        var window = new Window { Width = 600, Height = 350, Content = group };
+        var window = new AlderTestWindow { Width = 600, Height = 350, Content = group };
         AlderMotion.SetReduced(window, true);
         window.Show();
 

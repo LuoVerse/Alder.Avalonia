@@ -25,7 +25,7 @@ public sealed class DataGridMenuInteractions
         var branch = new AlderMenuItem { Header = "More", Items = { "Child action" } };
         var flyout = new AlderMenuFlyout { Items = { "First action", branch }, VerticalOffset = 8 };
         var button = new AlderButton { Content = "Actions", Flyout = flyout };
-        var window = new Window { Width = 500, Height = 380, Content = new Border { Child = button } };
+        var window = new AlderTestWindow { Width = 500, Height = 380, Content = new Border { Child = button } };
         AlderMotion.SetReduced(window, true);
         window.Show();
         try
@@ -63,7 +63,7 @@ public sealed class DataGridMenuInteractions
     {
         var flyout = new AlderMenuFlyout();
         var button = new AlderButton { Content = "Actions", Flyout = flyout };
-        var window = new Window { Width = 500, Height = 380, Content = button };
+        var window = new AlderTestWindow { Width = 500, Height = 380, Content = button };
         AlderMotion.SetReduced(window, true);
         EventHandler populate = (_, _) => flyout.Items.Add("Added on opening");
         flyout.Opening += populate;
@@ -100,7 +100,7 @@ public sealed class DataGridMenuInteractions
     public async Task FirstMouseClickOpensPreparedMenuAtTheWindowEdge(bool dark, int menuWidth)
     {
         var grid = CreateGrid([new Row(1), new Row(2)], menuWidth, new RowCommand(_ => { }));
-        var window = new Window { Width = 540, Height = 340, Content = grid, RequestedThemeVariant = dark ? ThemeVariant.Dark : ThemeVariant.Light };
+        var window = new AlderTestWindow { Width = 540, Height = 340, Content = grid, RequestedThemeVariant = dark ? ThemeVariant.Dark : ThemeVariant.Light };
         window.Show();
         try
         {
@@ -147,7 +147,7 @@ public sealed class DataGridMenuInteractions
     {
         var executed = new List<int>();
         var grid = CreateGrid(Enumerable.Range(1, 60).Select(i => new Row(i)).ToArray(), 180, new RowCommand(executed.Add));
-        var window = new Window { Width = 720, Height = 320, Content = grid };
+        var window = new AlderTestWindow { Width = 720, Height = 320, Content = grid };
         AlderMotion.SetReduced(window, true);
         window.Show();
         try
@@ -182,7 +182,7 @@ public sealed class DataGridMenuInteractions
     {
         var grid = CreateGrid([new Row(1)], 160, new RowCommand(_ => { }));
         grid.Columns[1].Pin = pin;
-        var window = new Window { Width = 540, Height = 340, Content = grid };
+        var window = new AlderTestWindow { Width = 540, Height = 340, Content = grid };
         AlderMotion.SetReduced(window, true);
         window.Show();
         try
@@ -222,7 +222,7 @@ public sealed class DataGridMenuInteractions
             CellTheme = (ControlTheme)Application.Current!.FindResource("AlderDataGridActionsCellTheme")!,
             CellTemplate = new FuncDataTemplate<Row>((_, _) =>
             {
-                var view = new MenuItem { Header = "View", Command = action, Icon = new PathIcon { Width = 16, Height = 16 } };
+                var view = new MenuItem { Header = "View", Command = action, Icon = new AlderPathIcon { Width = 16, Height = 16 } };
                 view.Bind(MenuItem.CommandParameterProperty, new Binding(nameof(Row.Id)));
                 return new AlderButton
                 {

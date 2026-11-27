@@ -42,6 +42,94 @@
         };
       ]]></gallery:ExampleCard.CSharpSource>
     </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SamplePopoverBackdrop" Title="{DynamicResource GalleryText.PopoverBackdrop}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="12">
+          <alder:AlderTextBlock Text="{DynamicResource GalleryText.PopoverBackdropScrollHint}" TextWrapping="Wrap"
+                                Foreground="{DynamicResource AlderMuted}" />
+          <WrapPanel HorizontalAlignment="Center" ItemSpacing="8" LineSpacing="8">
+            <alder:AlderButton x:Name="BackdropPlainTrigger" Variant="Secondary" Content="{DynamicResource GalleryText.PopoverBackdropPlain}">
+              <alder:AlderButton.Flyout>
+                <alder:AlderPopover Heading="{DynamicResource GalleryText.PopoverBackdropPhoto}" MaxContentWidth="240"
+                                    Content="{DynamicResource GalleryText.PopoverBackdropPhotoBody}" OverlayDismissEventPassThrough="True"
+                                    OverlayInputPassThroughElement="{CompiledBinding #BackdropScroll}" />
+              </alder:AlderButton.Flyout>
+            </alder:AlderButton>
+            <alder:AlderButton x:Name="BackdropBlurredTrigger" Variant="Secondary" Content="{DynamicResource GalleryText.PopoverBackdropBlurred}">
+              <alder:AlderButton.Flyout>
+                <alder:AlderPopover Heading="{DynamicResource GalleryText.PopoverBackdropPhoto}" MaxContentWidth="240"
+                                    Content="{DynamicResource GalleryText.PopoverBackdropPhotoBody}" SurfaceBackdropBlurRadius="16"
+                                    OverlayDismissEventPassThrough="True" OverlayInputPassThroughElement="{CompiledBinding #BackdropScroll}" />
+              </alder:AlderButton.Flyout>
+            </alder:AlderButton>
+          </WrapPanel>
+          <Border CornerRadius="14" ClipToBounds="True">
+            <alder:AlderScrollViewer x:Name="BackdropScroll" Height="264" VerticalScrollBarVisibility="Auto"
+                                     HorizontalScrollBarVisibility="Disabled">
+              <StackPanel>
+                <alder:AlderImage Height="216" Stretch="UniformToFill" AutomationProperties.AccessibilityView="Raw"
+                                  Source="avares://Alder.Avalonia.Gallery/Assets/Card/cherries.jpeg" />
+                <alder:AlderImage Height="216" Stretch="UniformToFill" AutomationProperties.AccessibilityView="Raw"
+                                  Source="avares://Alder.Avalonia.Gallery/Assets/Card/oranges.jpeg" />
+              </StackPanel>
+            </alder:AlderScrollViewer>
+          </Border>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var photos = new StackPanel();
+        foreach (var file in new[] { "cherries.jpeg", "oranges.jpeg" })
+        {
+            using var stream = AssetLoader.Open(new Uri($"avares://Alder.Avalonia.Gallery/Assets/Card/{file}"));
+            var photo = new AlderImage
+            {
+                Source = new Bitmap(stream), Height = 216, Stretch = Stretch.UniformToFill
+            };
+            AutomationProperties.SetAccessibilityView(photo, AccessibilityView.Raw);
+            photos.Children.Add(photo);
+        }
+
+        var scroll = new AlderScrollViewer
+        {
+            Content = photos, Height = 264,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled
+        };
+        var triggers = new WrapPanel
+        {
+            HorizontalAlignment = HorizontalAlignment.Center, ItemSpacing = 8, LineSpacing = 8
+        };
+        foreach (var (label, radius) in new[] { ("Standard", 0d), ("Blurred", 16d) })
+        {
+            triggers.Children.Add(new AlderButton
+            {
+                Content = label, Variant = ButtonVariant.Secondary,
+                Flyout = new AlderPopover
+                {
+                    Heading = "Photo preview", Content = "Cherries and oranges", MaxContentWidth = 240,
+                    SurfaceBackdropBlurRadius = radius, OverlayInputPassThroughElement = scroll,
+                    OverlayDismissEventPassThrough = true
+                }
+            });
+        }
+
+        var hint = new AlderTextBlock
+        {
+            Text = "Open a popover, then scroll the photos beside it.", TextWrapping = TextWrapping.Wrap
+        };
+        hint[!AlderTextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
+        var preview = new StackPanel
+        {
+            Spacing = 12,
+            Children =
+            {
+                hint,
+                triggers,
+                new Border { CornerRadius = new CornerRadius(14), ClipToBounds = true, Child = scroll }
+            }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
     <gallery:ExampleCard x:Name="SamplePopover" Title="{DynamicResource GalleryText.PopoverInteractive}">
       <gallery:ExampleCard.Preview>
         <alder:AlderButton Content="{DynamicResource GalleryText.PopoverOpen}" HorizontalAlignment="Center">

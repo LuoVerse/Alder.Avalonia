@@ -249,7 +249,7 @@ public sealed class UserMenuInteractions
     public void KeyboardUserMenuSnapsToCompactScaleWithReducedMotion()
     {
         var menu = new AlderUserMenu { Title = "Account", Items = { new MenuItem { Header = "Profile" } } };
-        var outside = new Button { Content = "Outside" };
+        var outside = new AlderButton { Content = "Outside" };
         var window = Show(new StackPanel { Children = { menu, outside } });
         try
         {
@@ -382,7 +382,7 @@ public sealed class UserMenuInteractions
 
     private static Window Show(Control content)
     {
-        var window = new Window { Width = 700, Height = 460, Content = new Border { Padding = new Thickness(30), Child = content } };
+        var window = new AlderTestWindow { Width = 700, Height = 460, Content = new Border { Padding = new Thickness(30), Child = content } };
         AlderMotion.SetReduced(window, true);
         window.Show();
         Refresh(window);

@@ -177,7 +177,6 @@ internal sealed class GalleryHomeView : UserControl
             <Application xmlns="https://github.com/avaloniaui"
                          xmlns:alderThemes="using:Alder.Avalonia.Themes">
               <Application.Styles>
-                <FluentTheme />
                 <alderThemes:AlderTheme />
               </Application.Styles>
             </Application>

@@ -146,7 +146,7 @@
         <Border Padding="18,23" MinHeight="120">
           <WrapPanel HorizontalAlignment="Center" ItemSpacing="14" LineSpacing="12">
             <WrapPanel.Styles>
-              <Style Selector="alder|AlderNumberStepper.custom /template/ ButtonSpinner /template/ RepeatButton">
+              <Style Selector="alder|AlderNumberStepper.custom /template/ alder|AlderInputSpinner /template/ :is(RepeatButton)">
                 <Setter Property="Background" Value="{DynamicResource AlderSurfaceSecondary}" />
                 <Setter Property="Foreground" Value="{DynamicResource AlderAccent}" />
               </Style>

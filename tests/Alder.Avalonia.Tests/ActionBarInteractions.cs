@@ -17,11 +17,13 @@ namespace Alder.Avalonia.Tests;
 
 public sealed class ActionBarInteractions
 {
-    [AvaloniaFact]
-    public void ActionBarRestoresFocusAndLeavesInputOutsideTheSurfaceAvailable()
+    [AvaloniaTheory]
+    [InlineData(0d)]
+    [InlineData(16d)]
+    public void ActionBarRestoresFocusAndLeavesInputOutsideTheSurfaceAvailable(double blurRadius)
     {
         int outsideClicks = 0;
-        var underlying = new Button { Content = "Select", HorizontalAlignment = HorizontalAlignment.Left,
+        var underlying = new AlderButton { Content = "Select", HorizontalAlignment = HorizontalAlignment.Left,
             VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(12) };
         underlying.Click += (_, _) => outsideClicks++;
         var first = new AlderButton { Content = "Edit" };
@@ -30,7 +32,7 @@ public sealed class ActionBarInteractions
         var bar = new AlderActionBar
         {
             Prefix = new TextBlock { Text = "2" }, Content = new StackPanel { Orientation = Orientation.Horizontal, Children = { first, second } },
-            Suffix = close
+            Suffix = close, SurfaceBackdropBlurRadius = blurRadius
         };
         using var preview = new ActionBarWindow(new Grid { Children = { underlying, bar } });
         var surface = Part<Border>(bar, "PART_Surface");
@@ -87,10 +89,12 @@ public sealed class ActionBarInteractions
         Assert.False(separator.IsVisible);
     }
 
-    [AvaloniaFact]
-    public async Task ActionBarHonorsDismissalCommandAndCanReopenDuringExit()
+    [AvaloniaTheory]
+    [InlineData(0d)]
+    [InlineData(16d)]
+    public async Task ActionBarHonorsDismissalCommandAndCanReopenDuringExit(double blurRadius)
     {
-        var bar = new AlderActionBar { Content = new AlderButton { Content = "Edit" }, IsOpen = true };
+        var bar = new AlderActionBar { Content = new AlderButton { Content = "Edit" }, IsOpen = true, SurfaceBackdropBlurRadius = blurRadius };
         var parameter = new object();
         var command = new DismissCommand(value =>
         {
@@ -134,7 +138,7 @@ public sealed class ActionBarInteractions
     {
         public ActionBarWindow(Control content, double width = 810, bool reducedMotion = true)
         {
-            Window = new Window { Width = width, Height = 320, Content = content };
+            Window = new AlderTestWindow { Width = width, Height = 320, Content = content };
             AlderMotion.SetReduced(Window, reducedMotion);
             Window.Show();
             Pump();

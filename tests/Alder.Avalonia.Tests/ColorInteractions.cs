@@ -276,7 +276,7 @@ public class ColorInteractions
 
     private static Window Show(Control control)
     {
-        var window = new Window { Width = 480, Height = 420, Content = control };
+        var window = new AlderTestWindow { Width = 480, Height = 420, Content = control };
         window.Show();
         Pump();
         return window;

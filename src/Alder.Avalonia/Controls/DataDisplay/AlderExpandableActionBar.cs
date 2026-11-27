@@ -40,6 +40,10 @@ public sealed class AlderExpandableActionBar : SelectingItemsControl
     /// <summary>Identifies the brush used for the shared action highlight.</summary>
     public static readonly StyledProperty<IBrush?> HighlightBrushProperty =
         AvaloniaProperty.Register<AlderExpandableActionBar, IBrush?>(nameof(HighlightBrush));
+    /// <summary>Identifies the radius of the blur behind the toolbar surface.</summary>
+    public static readonly StyledProperty<double> SurfaceBackdropBlurRadiusProperty =
+        AvaloniaProperty.Register<AlderExpandableActionBar, double>(nameof(SurfaceBackdropBlurRadius),
+            validate: radius => double.IsFinite(radius) && radius >= 0);
 
     /// <summary>Identifies the size preset inherited by actions in this bar.</summary>
     public static readonly StyledProperty<AlderExpandableActionBarSize> SizeProperty =
@@ -58,6 +62,8 @@ public sealed class AlderExpandableActionBar : SelectingItemsControl
     public TimeSpan CollapseDelay { get => GetValue(CollapseDelayProperty); set => SetValue(CollapseDelayProperty, value); }
     /// <summary>Gets or sets the brush behind the hovered or selected action.</summary>
     public IBrush? HighlightBrush { get => GetValue(HighlightBrushProperty); set => SetValue(HighlightBrushProperty, value); }
+    /// <summary>The blur radius in DIPs behind the toolbar surface. Zero disables the effect.</summary>
+    public double SurfaceBackdropBlurRadius { get => GetValue(SurfaceBackdropBlurRadiusProperty); set => SetValue(SurfaceBackdropBlurRadiusProperty, value); }
 
     /// <summary>Gets or sets the size preset used by the track and its actions.</summary>
     public AlderExpandableActionBarSize Size { get => GetValue(SizeProperty); set => SetValue(SizeProperty, value); }
@@ -136,6 +142,8 @@ public sealed class AlderExpandableActionBar : SelectingItemsControl
         }
         else if (change.Property == SelectedIndexProperty || change.Property == HighlightBrushProperty)
             ItemsPanelRoot?.InvalidateArrange();
+        else if (change.Property == SurfaceBackdropBlurRadiusProperty)
+            PseudoClasses.Set(":backdrop-blur", SurfaceBackdropBlurRadius > 0);
     }
 
     /// <inheritdoc />

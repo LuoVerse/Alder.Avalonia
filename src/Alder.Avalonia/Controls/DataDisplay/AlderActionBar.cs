@@ -23,6 +23,10 @@ public sealed class AlderActionBar : ContentControl
     /// <summary>Identifies the <see cref="IsAttached"/> Avalonia property.</summary>
     public static readonly StyledProperty<bool> IsAttachedProperty =
         AvaloniaProperty.Register<AlderActionBar, bool>(nameof(IsAttached), true);
+    /// <summary>Identifies the <see cref="SurfaceBackdropBlurRadius"/> Avalonia property.</summary>
+    public static readonly StyledProperty<double> SurfaceBackdropBlurRadiusProperty =
+        AvaloniaProperty.Register<AlderActionBar, double>(nameof(SurfaceBackdropBlurRadius),
+            validate: radius => double.IsFinite(radius) && radius >= 0);
     /// <summary>Identifies the <see cref="Prefix"/> Avalonia property.</summary>
     public static readonly StyledProperty<object?> PrefixProperty =
         AvaloniaProperty.Register<AlderActionBar, object?>(nameof(Prefix));
@@ -58,6 +62,8 @@ public sealed class AlderActionBar : ContentControl
     public bool IsOpen { get => GetValue(IsOpenProperty); set => SetValue(IsOpenProperty, value); }
     /// <summary>Whether the bar uses the appearance for an attached surface.</summary>
     public bool IsAttached { get => GetValue(IsAttachedProperty); set => SetValue(IsAttachedProperty, value); }
+    /// <summary>The blur radius in DIPs behind the attached surface. Zero disables the effect.</summary>
+    public double SurfaceBackdropBlurRadius { get => GetValue(SurfaceBackdropBlurRadiusProperty); set => SetValue(SurfaceBackdropBlurRadiusProperty, value); }
     /// <summary>Optional leading content.</summary>
     public object? Prefix { get => GetValue(PrefixProperty); set => SetValue(PrefixProperty, value); }
     /// <summary>The data template used to present the prefix.</summary>
@@ -156,6 +162,8 @@ public sealed class AlderActionBar : ContentControl
             UpdateSections();
         else if (change.Property == CompactWidthProperty)
             UpdateCompactState();
+        else if (change.Property == SurfaceBackdropBlurRadiusProperty)
+            PseudoClasses.Set(":backdrop-blur", SurfaceBackdropBlurRadius > 0);
         else if (change.Property == AlderMotion.ReducedProperty && AlderMotion.GetReduced(this))
             UpdatePresentation(animate: false);
     }

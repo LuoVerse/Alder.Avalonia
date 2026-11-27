@@ -19,7 +19,7 @@ public sealed class CompactNumberStepperInteractions
     {
         var number = CreateStepper();
         number.Value = 8;
-        var window = new Window { Width = 240, Height = 100, Content = number };
+        var window = new AlderTestWindow { Width = 240, Height = 100, Content = number };
         AlderMotion.SetReduced(window, false);
         window.Show();
         try
@@ -56,7 +56,7 @@ public sealed class CompactNumberStepperInteractions
         var number = CreateStepper();
         number.DataContext = new Row(5);
         number.Bind(AlderNumberField.ValueProperty, new Binding(nameof(Row.Points)));
-        var window = new Window { Width = 240, Height = 100, Content = number };
+        var window = new AlderTestWindow { Width = 240, Height = 100, Content = number };
         AlderMotion.SetReduced(window, false);
         window.Show();
         try
@@ -76,7 +76,7 @@ public sealed class CompactNumberStepperInteractions
     public void ReversedStepperKeepsDirectionAndBounds()
     {
         var number = new AlderNumberStepper { Minimum = 0, Maximum = 6, Value = 5, Increment = 2, IsReversed = true };
-        var window = new Window { Width = 340, Height = 110, Content = number };
+        var window = new AlderTestWindow { Width = 340, Height = 110, Content = number };
         AlderMotion.SetReduced(window, true);
         window.Show();
         try

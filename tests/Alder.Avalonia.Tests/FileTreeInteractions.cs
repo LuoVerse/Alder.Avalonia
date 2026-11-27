@@ -21,7 +21,7 @@ public sealed class FileTreeInteractions
     {
         var nodes = Enumerable.Range(0, 2000).Select(i => new AlderFileTreeNode(i.ToString(), $"File {i}")).ToArray();
         var tree = new AlderFileTree { ItemsSource = nodes, SelectionMode = SelectionMode.Multiple };
-        var window = new Window { Width = 320, Height = 165, Content = tree };
+        var window = new AlderTestWindow { Width = 320, Height = 165, Content = tree };
         window.Show();
         try
         {
@@ -62,10 +62,10 @@ public sealed class FileTreeInteractions
             ItemsSource = new[] { folder }, Height = 130, SelectedItem = selected, AutoScrollToSelectedItem = true
         };
         AlderMotion.SetReduced(tree, true);
-        var before = new Button { Content = "Before" };
-        var after = new Button { Content = "After" };
+        var before = new AlderButton { Content = "Before" };
+        var after = new AlderButton { Content = "After" };
         var host = new StackPanel { Children = { before, tree, after } };
-        var window = new Window { Width = 320, Height = 260, Content = host };
+        var window = new AlderTestWindow { Width = 320, Height = 260, Content = host };
         window.Show();
         try
         {
@@ -98,7 +98,7 @@ public sealed class FileTreeInteractions
         var next = new AlderFileTreeNode("next", "Next");
         var tree = new AlderFileTree { ItemsSource = new[] { root, next } };
         AlderMotion.SetReduced(tree, true);
-        var window = new Window { Width = 320, Height = 165, Content = tree };
+        var window = new AlderTestWindow { Width = 320, Height = 165, Content = tree };
         window.Show();
         try
         {
@@ -139,7 +139,7 @@ public sealed class FileTreeInteractions
             ItemTemplate = new FuncTreeDataTemplate<TestNode>((node, _) => new TextBlock { Text = node.Name }, node => node.Children)
         };
         AlderMotion.SetReduced(tree, true);
-        var window = new Window { Width = 320, Height = 165, Content = tree };
+        var window = new AlderTestWindow { Width = 320, Height = 165, Content = tree };
         window.Show();
         try
         {
@@ -185,7 +185,7 @@ public sealed class FileTreeInteractions
             ShowSelectionCheckboxes = true
         };
         AlderMotion.SetReduced(tree, true);
-        var window = new Window { Width = 340, Height = 200, Content = tree };
+        var window = new AlderTestWindow { Width = 340, Height = 200, Content = tree };
         window.Show();
         try
         {

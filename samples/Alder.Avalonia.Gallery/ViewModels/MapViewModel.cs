@@ -74,6 +74,19 @@ public sealed class MapScene : GalleryViewModel
     public bool ZoomControls { get; internal set; } = true;
     public bool Compass { get; internal set; } = true;
 
+    public bool BlurZoomControls
+    {
+        get => field;
+        set
+        {
+            if (field == value) return;
+            this.RaiseAndSetIfChanged(ref field, value);
+            this.RaisePropertyChanged(nameof(ZoomControlsBackdropBlurRadius));
+        }
+    }
+
+    public double ZoomControlsBackdropBlurRadius => BlurZoomControls ? 16 : 0;
+
     internal MapSceneRow Place(AlderMapMarker marker, string value, IBrush tint) =>
         new(marker.Title ?? string.Empty, value, tint, ReactiveCommand.Create(() =>
         {
@@ -92,6 +105,7 @@ public sealed class MapScene : GalleryViewModel
         map.FullscreenCommand = ReactiveCommand.Create(() => Dialog.Close(map));
         map.ShowCompass = Compass;
         map.ShowZoomControls = ZoomControls;
+        map.ZoomControlsBackdropBlurRadius = ZoomControlsBackdropBlurRadius;
         map.Bind(AlderMap.CenterProperty, CompiledBinding.Create((MapScene scene) => scene.Center, source: this));
         map.Bind(AlderMap.ZoomProperty, CompiledBinding.Create((MapScene scene) => scene.Zoom, source: this));
         map.Bind(AlderMap.SelectedMarkerProperty, CompiledBinding.Create((MapScene scene) => scene.SelectedMarker, source: this));

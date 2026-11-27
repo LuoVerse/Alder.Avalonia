@@ -66,7 +66,7 @@ public sealed class FormControlInteractions
     public void TabbingToFieldActionsMovesTheFocusIndicatorOffTheEditor()
     {
         var reveal = new AlderButton { Content = "Reveal" };
-        var nested = new Button { Content = "Custom" };
+        var nested = new AlderButton { Content = "Custom" };
         var input = new AlderInputGroup { Text = "Secret", Type = InputType.Password, ShowClearButton = true,
             Suffix = new StackPanel { Orientation = Orientation.Horizontal, Children = { reveal, nested } } };
         var search = new AlderSearchField { Text = "Search" };
@@ -561,7 +561,7 @@ public sealed class FormControlInteractions
 
     private static Window Show(Control content, int width = 480, bool reducedMotion = true)
     {
-        var window = new Window { Width = width, Height = 440, RequestedThemeVariant = ThemeVariant.Light, Content = content };
+        var window = new AlderTestWindow { Width = width, Height = 440, RequestedThemeVariant = ThemeVariant.Light, Content = content };
         AlderMotion.SetReduced(window, reducedMotion);
         window.Show();
         Pump(window);

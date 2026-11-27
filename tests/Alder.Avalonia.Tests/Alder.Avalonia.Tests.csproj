@@ -7,10 +7,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <Using Include="Alder.Avalonia.Testing" />
+    <Compile Include="../Alder.Avalonia.AotSmoke/AlderTestWindow.cs" Link="AlderTestWindow.cs" />
     <Compile Include="../Alder.Avalonia.AotSmoke/EditorProtocolSmoke.cs" Link="EditorProtocolSmoke.cs" />
     <ProjectReference Include="../../src/Alder.Avalonia/Alder.Avalonia.csproj" />
     <PackageReference Include="Avalonia.Headless.XUnit" Version="12.2.0" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.2.0" />
     <PackageReference Include="Avalonia.Themes.Fluent2" Version="12.2.0" />
     <PackageReference Include="xunit.v3" Version="3.2.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />

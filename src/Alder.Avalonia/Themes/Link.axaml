@@ -36,7 +36,7 @@
     </Setter>
     <Style Selector="^[ShowExternalIcon=True]">
       <Setter Property="Icon" Value="{DynamicResource AlderIconArrowUpRight}" />
-      <Style Selector="^ /template/ PathIcon"><Setter Property="FlowDirection" Value="LeftToRight" /></Style>
+      <Style Selector="^ /template/ :is(PathIcon)"><Setter Property="FlowDirection" Value="LeftToRight" /></Style>
     </Style>
     <Style Selector="^[IconPlacement=Start] /template/ Viewbox#LinkIconBox">
       <Setter Property="DockPanel.Dock" Value="Left" />

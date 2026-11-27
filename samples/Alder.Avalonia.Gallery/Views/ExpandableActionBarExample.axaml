@@ -45,6 +45,65 @@
       ]]></gallery:ExampleCard.CSharpSource>
     </gallery:ExampleCard>
 
+    <gallery:ExampleCard x:Name="SampleBackdrop" Title="{DynamicResource GalleryText.ExpandableActionBackdrop}">
+      <gallery:ExampleCard.Preview>
+        <Border CornerRadius="14" ClipToBounds="True">
+          <Grid Height="225">
+            <alder:AlderScrollViewer HorizontalScrollBarVisibility="Disabled">
+              <StackPanel>
+                <alder:AlderImage Height="165" Stretch="UniformToFill" AutomationProperties.AccessibilityView="Raw"
+                                  Source="avares://Alder.Avalonia.Gallery/Assets/Card/cherries.jpeg" />
+                <alder:AlderImage Height="165" Stretch="UniformToFill" AutomationProperties.AccessibilityView="Raw"
+                                  Source="avares://Alder.Avalonia.Gallery/Assets/Card/oranges.jpeg" />
+              </StackPanel>
+            </alder:AlderScrollViewer>
+            <alder:AlderExpandableActionBar SurfaceBackdropBlurRadius="16" VerticalAlignment="Bottom" Margin="16,0,16,18" SelectedIndex="0">
+              <alder:AlderExpandableActionBarItem Content="{DynamicResource GalleryText.Copy}"
+                                                  Icon="{StaticResource AlderIconCopy}" IconMotion="Copy" Shortcut="C" />
+              <alder:AlderExpandableActionBarItem Content="{DynamicResource GalleryText.ActionBarExport}"
+                                                  Icon="{StaticResource AlderIconDownload}" IconMotion="Download" />
+              <alder:AlderExpandableActionBarItem Content="{DynamicResource GalleryText.ActionBarArchive}"
+                                                  Icon="{StaticResource AlderIconArchive}" IconMotion="Archive" />
+            </alder:AlderExpandableActionBar>
+          </Grid>
+        </Border>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var photos = new StackPanel();
+        foreach (var file in new[] { "cherries.jpeg", "oranges.jpeg" })
+        {
+            using var stream = AssetLoader.Open(new Uri($"avares://Alder.Avalonia.Gallery/Assets/Card/{file}"));
+            var photo = new AlderImage { Source = new Bitmap(stream), Height = 165, Stretch = Stretch.UniformToFill };
+            AutomationProperties.SetAccessibilityView(photo, AccessibilityView.Raw);
+            photos.Children.Add(photo);
+        }
+        var scroll = new AlderScrollViewer { Content = photos, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
+        var bar = new AlderExpandableActionBar
+        {
+            SurfaceBackdropBlurRadius = 16, VerticalAlignment = VerticalAlignment.Bottom,
+            Margin = new Thickness(16, 0, 16, 18)
+        };
+        foreach (var (label, icon, motion) in new[]
+        {
+            ("Copy", "AlderIconCopy", AlderActionIconMotion.Copy),
+            ("Export", "AlderIconDownload", AlderActionIconMotion.Download),
+            ("Archive", "AlderIconArchive", AlderActionIconMotion.Archive),
+        })
+        {
+            bar.Items.Add(new AlderExpandableActionBarItem
+            {
+                Content = label, Icon = (Geometry)this.FindResource(icon)!, IconMotion = motion,
+                Shortcut = motion == AlderActionIconMotion.Copy ? "C" : null
+            });
+        }
+        bar.SelectedIndex = 0;
+        var preview = new Border
+        {
+            CornerRadius = new CornerRadius(14), ClipToBounds = true,
+            Child = new Grid { Height = 225, Children = { scroll, bar } }
+        };
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
     <gallery:ExampleCard x:Name="SampleExpandableActionBarCompact" Title="{DynamicResource GalleryText.ExpandableActionCompact}">
       <gallery:ExampleCard.Preview>
         <Grid MinHeight="78" MaxWidth="248">

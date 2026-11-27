@@ -24,7 +24,7 @@
     <Style Selector="alder|AlderNavbar.dashboard /template/ Grid#HeaderLayout">
       <Setter Property="ColumnSpacing" Value="8" />
     </Style>
-    <Style Selector="PathIcon.dashboard-slash">
+    <Style Selector=":is(PathIcon).dashboard-slash">
       <Setter Property="Data" Value="{StaticResource DashboardSlash}" />
       <Setter Property="Width" Value="7" />
       <Setter Property="Height" Value="12" />
@@ -369,6 +369,61 @@
         var bar = new AlderNavbar { Brand = brand, Navigation = links, HideOnScroll = true, ScrollHost = scroll };
         var preview = new Grid { Children = { scroll, bar } };
         bar.VerticalAlignment = VerticalAlignment.Top;
+      ]]></gallery:ExampleCard.CSharpSource>
+    </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="SampleBackdrop" Title="{DynamicResource GalleryText.NavbarBackdrop}">
+      <gallery:ExampleCard.Preview>
+        <Grid Height="232" ClipToBounds="True">
+          <alder:AlderScrollViewer x:Name="BackdropScroll" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+              <alder:AlderImage Height="168" Stretch="UniformToFill" AutomationProperties.AccessibilityView="Raw"
+                                Source="avares://Alder.Avalonia.Gallery/Assets/Card/cherries.jpeg" />
+              <alder:AlderImage Height="168" Stretch="UniformToFill" AutomationProperties.AccessibilityView="Raw"
+                                Source="avares://Alder.Avalonia.Gallery/Assets/Card/oranges.jpeg" />
+            </StackPanel>
+          </alder:AlderScrollViewer>
+          <alder:AlderNavbar x:Name="BackdropNavbar" Position="Floating" HeaderBackdropBlurRadius="16" Size="Small"
+                             VerticalAlignment="Top" ScrollHost="{CompiledBinding #BackdropScroll}" CollapseWidth="360"
+                             Brand="{DynamicResource GalleryText.NavbarBrand}" CurrentRoute="NavDemoFeatures">
+            <alder:AlderNavbar.Navigation>
+              <StackPanel Orientation="Horizontal" Spacing="4">
+                <alder:AlderNavbarItem Route="NavDemoFeatures" Content="{DynamicResource GalleryText.NavDemoFeatures}" />
+                <alder:AlderNavbarItem Route="NavbarPricing" Content="{DynamicResource GalleryText.NavbarPricing}" />
+              </StackPanel>
+            </alder:AlderNavbar.Navigation>
+            <alder:AlderNavbar.Menu>
+              <StackPanel>
+                <alder:AlderNavbarItem Route="NavDemoFeatures" IsMenuItem="True" Content="{DynamicResource GalleryText.NavDemoFeatures}" />
+                <alder:AlderNavbarItem Route="NavbarPricing" IsMenuItem="True" Content="{DynamicResource GalleryText.NavbarPricing}" />
+              </StackPanel>
+            </alder:AlderNavbar.Menu>
+          </alder:AlderNavbar>
+        </Grid>
+      </gallery:ExampleCard.Preview>
+      <gallery:ExampleCard.CSharpSource><![CDATA[
+        var photos = new StackPanel();
+        foreach (var file in new[] { "cherries.jpeg", "oranges.jpeg" })
+        {
+            using var stream = AssetLoader.Open(new Uri($"avares://Alder.Avalonia.Gallery/Assets/Card/{file}"));
+            var photo = new AlderImage { Source = new Bitmap(stream), Height = 168, Stretch = Stretch.UniformToFill };
+            AutomationProperties.SetAccessibilityView(photo, AccessibilityView.Raw);
+            photos.Children.Add(photo);
+        }
+        var scroll = new AlderScrollViewer { Content = photos, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
+        var links = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4 };
+        var menu = new StackPanel();
+        foreach (var (route, label) in new[] { ("NavDemoFeatures", "Features"), ("NavbarPricing", "Pricing") })
+        {
+            links.Children.Add(new AlderNavbarItem { Route = route, Content = label });
+            menu.Children.Add(new AlderNavbarItem { Route = route, Content = label, IsMenuItem = true });
+        }
+        var bar = new AlderNavbar
+        {
+            Brand = "Alder", Navigation = links, Menu = menu, Position = AlderNavbarPosition.Floating,
+            HeaderBackdropBlurRadius = 16, Size = AlderSize.Small, ScrollHost = scroll,
+            VerticalAlignment = VerticalAlignment.Top, CollapseWidth = 360, CurrentRoute = "NavDemoFeatures"
+        };
+        var preview = new Grid { Height = 232, ClipToBounds = true, Children = { scroll, bar } };
       ]]></gallery:ExampleCard.CSharpSource>
     </gallery:ExampleCard>
     <gallery:ExampleCard x:Name="SampleDashboard" Title="{DynamicResource GalleryText.NavbarDashboard}">

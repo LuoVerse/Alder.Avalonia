@@ -112,6 +112,20 @@
 
   <StreamGeometry x:Key="AlderIconInfo">M8,1 A7,7 0 1 0 8,15 A7,7 0 1 0 8,1 Z M8,2.5 A5.5,5.5 0 1 1 8,13.5 A5.5,5.5 0 1 1 8,2.5 Z M8,4 A.9,.9 0 1 0 8,5.8 A.9,.9 0 1 0 8,4 Z M7.25,7 H8.75 V11.5 H7.25 Z</StreamGeometry>
   <StreamGeometry x:Key="AlderIconAlert">F0 M8 1 A7 7 0 1 0 8 15 A7 7 0 1 0 8 1 Z M8 2.5 A5.5 5.5 0 1 1 8 13.5 A5.5 5.5 0 1 1 8 2.5 Z M7.25 4.5 H8.75 V9 H7.25 Z M8 10.2 A.9 .9 0 1 0 8 12 A.9 .9 0 1 0 8 10.2 Z</StreamGeometry>
+  <ControlTheme x:Key="{x:Type alder:AlderPathIcon}" TargetType="alder:AlderPathIcon">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Width" Value="20" />
+    <Setter Property="Height" Value="20" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}">
+          <Viewbox Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+            <Path Data="{TemplateBinding Data}" Fill="{TemplateBinding Foreground}" Stretch="Uniform" />
+          </Viewbox>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
   <ControlTheme x:Key="AlderFittedPathIconTheme" TargetType="PathIcon">
     <Setter Property="Template">
       <ControlTemplate>

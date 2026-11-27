@@ -31,8 +31,8 @@ public sealed partial class AlderWorkflowEditor : UserControl
     public ICommand? SaveCommand { get => GetValue(SaveCommandProperty); set => SetValue(SaveCommandProperty, value); }
 
     private readonly WorkflowCanvas canvas = new();
-    private readonly ContentControl paletteHost = new();
-    private readonly ContentControl inspectorHost = new();
+    private readonly AlderContentControl paletteHost = new();
+    private readonly AlderContentControl inspectorHost = new();
     private readonly TextBlock zoomLabel;
     private readonly TextBlock summary;
     private readonly LayoutTransformControl scaledCanvas;
@@ -216,7 +216,7 @@ public sealed partial class AlderWorkflowEditor : UserControl
             label.MaxWidth = PaletteLabelWidth;
             label.TextTrimming = TextTrimming.CharacterEllipsis;
             button.Content = Row(7, Glyph(WorkflowCanvas.IconKey(node.Kind), WorkflowCanvas.Tone(node.Kind), 15), label);
-            ToolTip.SetTip(button, node.Name);
+            AlderToolTip.SetTip(button, node.Name);
             button.FullWidth = true;
             button.HorizontalContentAlignment = HorizontalAlignment.Left;
             AutomationProperties.SetName(button, $"定位{node.Name}");
@@ -254,7 +254,7 @@ public sealed partial class AlderWorkflowEditor : UserControl
             if (paletteNodes.TryGetValue(node, out var row))
             {
                 row.Label.Text = text;
-                ToolTip.SetTip(row.Button, text);
+                AlderToolTip.SetTip(row.Button, text);
                 AutomationProperties.SetName(row.Button, $"定位{text}");
             }
         })));
@@ -337,7 +337,7 @@ public sealed partial class AlderWorkflowEditor : UserControl
 
     private void BuildCopyRecipients(StackPanel body, WorkflowNode node)
     {
-        var recipientField = new ContentControl();
+        var recipientField = new AlderContentControl();
         var kinds = AssigneeKindPicker(node.CopyRecipientKind, kind =>
         {
             if (node.CopyRecipientKind == kind) return;
@@ -400,7 +400,7 @@ public sealed partial class AlderWorkflowEditor : UserControl
 
     private void AddAssigneeFields(StackPanel body, bool escalation, AlderWorkflowAssignee selection, Action<AlderWorkflowAssignee> update)
     {
-        var assigneeField = new ContentControl();
+        var assigneeField = new AlderContentControl();
         var kinds = AssigneeKindPicker(selection.Kind, kind =>
         {
             if (selection.Kind == kind) return;
@@ -776,7 +776,7 @@ public sealed partial class AlderWorkflowEditor : UserControl
         var button = new AlderButton { Content = iconOnly ? null : label, Variant = variant, Size = AlderSize.Small, IsIconOnly = iconOnly, VerticalAlignment = VerticalAlignment.Center };
         if (icon is not null) button[!AlderButton.IconProperty] = new DynamicResourceExtension(icon);
         if (label.Length > 0) AutomationProperties.SetName(button, label);
-        if (iconOnly) ToolTip.SetTip(button, label);
+        if (iconOnly) AlderToolTip.SetTip(button, label);
         button.Click += (_, _) => action();
         return button;
     }

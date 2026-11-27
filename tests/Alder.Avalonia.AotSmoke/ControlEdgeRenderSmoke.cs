@@ -33,6 +33,16 @@ internal static class ControlEdgeRenderSmoke
                 VerifyEmojiGlyph(theme, scale);
                 VerifyChartTooltipShadow(theme, scale);
                 VerifyPromptStarterShadow(theme, scale);
+                VerifyPopoverBackdrop(theme, scale);
+                VerifyHoverCardBackdrop(theme, scale);
+                VerifyNavbarBackdrop(theme, scale);
+                VerifyImageToolbarBackdrop(theme, scale);
+                VerifyExpandableToolbarBackdrop(theme, scale);
+                VerifyActionBarBackdrop(theme, scale);
+                VerifyMapZoomBackdrop(theme, scale);
+                VerifyFloatingTocBackdrop(theme, scale);
+                VerifyCardBackdrop(theme, scale);
+                VerifyOverflowActionsBackdrop(theme, scale);
             }
 
             foreach (double scale in new[] { 1d, 2d })
@@ -75,7 +85,7 @@ internal static class ControlEdgeRenderSmoke
             menu.Items.Add(new AlderBloomMenuItem { Content = label, Icon = glyph, Foreground = itemInk });
 
         var preview = new Border { Child = menu, Height = 300, CornerRadius = new CornerRadius(14), ClipToBounds = true };
-        var window = Show(new ScrollViewer { Content = preview }, theme, scale);
+        var window = Show(new AlderScrollViewer { Content = preview }, theme, scale);
         window.Width = 280;
         try
         {
@@ -448,6 +458,574 @@ internal static class ControlEdgeRenderSmoke
     private sealed class RenderSalashWindow : AlderSalashWindow
     {
         protected override Task<Window?> CreateNextWindow() => Task.FromResult<Window?>(null);
+    }
+
+    private static void VerifyPopoverBackdrop(ThemeVariant theme, double scale)
+    {
+        var scroll = CreateBackdropScroll();
+        var popover = new AlderPopover
+        {
+            Content = new Border { Width = 176, Height = 72 },
+            SurfaceShadow = default(BoxShadows),
+            OverlayDismissEventPassThrough = true,
+            OverlayInputPassThroughElement = scroll
+        };
+        var trigger = new AlderButton { Content = "Open", Flyout = popover, HorizontalAlignment = HorizontalAlignment.Center };
+        Grid.SetRow(scroll, 1);
+        var window = Show(new Grid { RowDefinitions = new RowDefinitions("Auto,*"), Children = { trigger, scroll } }, theme, scale);
+        try
+        {
+            using var closed = Capture(window);
+            popover.ShowAt(trigger);
+            using var standard = Capture(window);
+            var surface = window.GetVisualDescendants().OfType<Panel>().Single(part => part.Name == "AlderPopoverSurface");
+            var frame = surface.Children.OfType<Border>().Single();
+            var bounds = new Rect(frame.TranslatePoint(default, window)!.Value, frame.Bounds.Size);
+            var corner = bounds.TopLeft + new Vector(2, 2);
+            var inside = bounds.TopLeft + new Vector(32, 24);
+            if (frame.Background is not ISolidColorBrush { Color.A: 255 } ||
+                Difference(Pixel(standard, inside, scale), Pixel(closed, inside, scale)) < 12)
+                throw new InvalidOperationException($"The default popover lost its opaque surface in {theme} at {scale}×.");
+
+            popover.SurfaceBackdropBlurRadius = 12;
+            using var blurred = Capture(window);
+            if (Difference(Pixel(blurred, corner, scale), Pixel(closed, corner, scale)) > 2)
+                throw new InvalidOperationException($"Popover backdrop leaked past the rounded corner in {theme} at {scale}×.");
+
+            window.MouseWheel(new Point(24, bounds.Center.Y), new Vector(0, -1));
+            using var scrolled = Capture(window);
+            if (!popover.IsOpen || scroll.Offset.Y <= 0 || !BackdropDiffers(blurred, scrolled))
+                throw new InvalidOperationException($"Popover backdrop did not follow the scrolling content in {theme} at {scale}×.");
+
+            popover.SurfaceBackground = frame.Background;
+            popover.SurfaceBackdropBlurRadius = 0;
+            using var tinted = Capture(window);
+            if (!BackdropDiffers(scrolled, tinted))
+                throw new InvalidOperationException($"Popover rendered a tint without blur in {theme} at {scale}×.");
+
+            popover.SurfaceBackground = null;
+            popover.SurfaceBackdropBlurRadius = 12;
+            popover.SurfaceShadow = null;
+            using var shadowed = Capture(window);
+            var near = new Point(bounds.Center.X, bounds.Bottom + 5);
+            var far = near + new Vector(0, 17);
+            var nearDelta = Difference(Pixel(scrolled, near, scale), Pixel(shadowed, near, scale));
+            var farDelta = Difference(Pixel(scrolled, far, scale), Pixel(shadowed, far, scale));
+            if (nearDelta < 3 || farDelta >= nearDelta)
+                throw new InvalidOperationException($"Popover lost its exterior shadow in {theme} at {scale}× (near {nearDelta}, tail {farDelta}).");
+
+            popover.ShowArrow = true;
+            using var arrowed = Capture(window);
+            if (surface.Children.Any(child => child.BackdropEffect is not null))
+                throw new InvalidOperationException("Popover blur should be limited to arrowless surfaces.");
+
+            bool BackdropDiffers(SKBitmap first, SKBitmap second) => Enumerable.Range(0, 40).Any(y =>
+            {
+                var point = inside + new Vector(0, y);
+                return Difference(Pixel(first, point, scale), Pixel(second, point, scale)) > 5;
+            });
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyHoverCardBackdrop(ThemeVariant theme, double scale)
+    {
+        var trigger = new AlderButton { Content = "Preview" };
+        var hover = new AlderHoverCard
+        {
+            Trigger = trigger, Content = new Border { Width = 176, Height = 56 },
+            HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center
+        };
+        var window = Show(new Grid { Children = { CreateBackdropScroll(), hover } }, theme, scale);
+        try
+        {
+            using var closed = Capture(window);
+            trigger.Focus(NavigationMethod.Tab);
+            using var opened = Capture(window);
+            var surface = window.GetVisualDescendants().OfType<Panel>().Single(part => part.Name == "AlderHoverCardSurface");
+            var frame = surface.Children.OfType<Border>().Single();
+            var bounds = new Rect(frame.TranslatePoint(default, window)!.Value, frame.Bounds.Size);
+            var shadow = frame.BoxShadow;
+
+            hover.SurfaceBackdropBlurRadius = 12;
+            frame.BoxShadow = default;
+            using var blurred = Capture(window);
+            var layer = surface.Children.OfType<Border>().Single(part => part.BackdropEffect is BlurEffect);
+            layer.BackdropEffect = null;
+            using var tinted = Capture(window);
+            VerifyBackdropPixels("Hover Card", closed, blurred, tinted, bounds, theme, scale);
+            layer.BackdropEffect = new BlurEffect { Radius = 12 };
+
+            frame.BoxShadow = shadow;
+            using var shadowed = Capture(window);
+            VerifyBackdropShadow("Hover Card", blurred, shadowed, bounds, theme, scale);
+
+            hover.ShowArrow = true;
+            window.UpdateLayout();
+            if (!hover.IsOpen || surface.Children.Contains(layer))
+                throw new InvalidOperationException("Hover Card did not return to its standard surface when the arrow was enabled.");
+            window.KeyPressQwerty(PhysicalKey.Escape, RawInputModifiers.None);
+            window.KeyReleaseQwerty(PhysicalKey.Escape, RawInputModifiers.None);
+            if (hover.IsOpen) throw new InvalidOperationException("Escape did not dismiss the Hover Card.");
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyNavbarBackdrop(ThemeVariant theme, double scale)
+    {
+        var scroll = CreateBackdropScroll();
+        var navbar = new AlderNavbar
+        {
+            Brand = "Alder", Position = AlderNavbarPosition.Floating, VerticalAlignment = VerticalAlignment.Top, ScrollHost = scroll
+        };
+        var window = Show(new Grid { Children = { scroll, navbar } }, theme, scale);
+        try
+        {
+            using var standard = Capture(window);
+            var header = navbar.GetVisualDescendants().OfType<Border>().Single(part => part.Name == "PART_Header");
+            var layer = navbar.GetVisualDescendants().OfType<Border>().Single(part => part.Name == "PART_HeaderBackdrop");
+            var bounds = new Rect(header.TranslatePoint(default, window)!.Value, header.Bounds.Size);
+            if (layer.BackdropEffect is not null || header.Background is not ISolidColorBrush { Color.A: 255 })
+                throw new InvalidOperationException("Navbar default should be opaque with no backdrop effect.");
+
+            navbar.IsVisible = false;
+            using var closed = Capture(window);
+            navbar.IsVisible = true;
+            navbar.HeaderBackdropBlurRadius = 12;
+            window.UpdateLayout();
+            var shadow = header.BoxShadow;
+            header.BoxShadow = default;
+            using var blurred = Capture(window);
+            layer.BackdropEffect = null;
+            using var tinted = Capture(window);
+            VerifyBackdropPixels("Navbar", closed, blurred, tinted, bounds, theme, scale);
+            layer.BackdropEffect = new BlurEffect { Radius = 12 };
+
+            header.BoxShadow = shadow;
+            using var shadowed = Capture(window);
+            VerifyBackdropShadow("Navbar", blurred, shadowed, bounds, theme, scale);
+            window.MouseWheel(new Point(bounds.Center.X, bounds.Bottom + 28), new Vector(0, -1));
+            using var scrolled = Capture(window);
+            if (scroll.Offset.Y <= 0 || !BackdropInteriorDiffers(shadowed, scrolled, bounds, scale))
+                throw new InvalidOperationException($"Navbar did not sample the scrolled content in {theme} at {scale}×.");
+
+            navbar.HeaderBackdropBlurRadius = 0;
+            using var reset = Capture(window);
+            if (layer.BackdropEffect is not null || BackdropInteriorDiffers(standard, reset, bounds, scale))
+                throw new InvalidOperationException($"Navbar did not restore the original opaque header in {theme} at {scale}×.");
+        }
+        finally { window.Close(); }
+    }
+
+    private static AlderScrollViewer CreateBackdropScroll()
+    {
+        var stripes = new StackPanel();
+        var colors = new[] { new SolidColorBrush(Color.Parse("#354A68")), new SolidColorBrush(Color.Parse("#CFD6E0")) };
+        for (int i = 0; i < 26; i++)
+            stripes.Children.Add(new Border { Height = 18 + i % 2 * 7, Background = colors[i % 2] });
+        return new AlderScrollViewer { Content = stripes };
+    }
+
+    private static void VerifyImageToolbarBackdrop(ThemeVariant theme, double scale)
+    {
+        var stripes = new DrawingGroup();
+        for (int y = 0; y < 240; y += 12)
+            stripes.Children.Add(new GeometryDrawing
+            {
+                Brush = y % 24 == 0 ? Brushes.MidnightBlue : Brushes.LightSkyBlue,
+                Geometry = new RectangleGeometry(new Rect(0, y, 380, 12))
+            });
+        var image = new AlderImageView
+        {
+            Source = new DrawingImage { Drawing = stripes }, ViewportHeight = 240, ShowDetails = false, AllowImmersivePreview = false
+        };
+        var window = Show(image, theme, scale);
+        try
+        {
+            using var standard = Capture(window);
+            T Part<T>(string name) where T : Control => image.GetVisualDescendants().OfType<T>().Single(part => part.Name == name);
+            var frame = Part<Border>("PART_Tools");
+            var viewport = Part<Control>("PART_Viewport");
+            var tools = Part<Panel>("ToolsLayout");
+            var layer = Part<Border>("ToolsBackdrop");
+            Rect BoundsInWindow(Control part) => new(part.TranslatePoint(default, window)!.Value, part.Bounds.Size);
+            if (layer.BackdropEffect is not null || BoundsInWindow(frame).Intersects(BoundsInWindow(viewport)))
+                throw new InvalidOperationException("Image View should place its standard toolbar under the image.");
+
+            image.ToolbarBackdropBlurRadius = 12;
+            tools.Opacity = 0;
+            using var closed = Capture(window);
+            var bounds = BoundsInWindow(frame);
+            if (!BoundsInWindow(viewport).Contains(bounds.Center) || BoundsInWindow(layer) != bounds)
+                throw new InvalidOperationException("Image View toolbar did not float over the image or its backdrop had different bounds.");
+            tools.Opacity = 1;
+            var shadow = frame.BoxShadow;
+            frame.BoxShadow = default;
+            using var blurred = Capture(window);
+            var effect = layer.BackdropEffect;
+            layer.BackdropEffect = null;
+            using var tinted = Capture(window);
+            VerifyBackdropPixels("Image View toolbar", closed, blurred, tinted, bounds, theme, scale);
+            layer.BackdropEffect = effect;
+            frame.BoxShadow = shadow;
+            using var shadowed = Capture(window);
+            VerifyBackdropShadow("Image View toolbar", blurred, shadowed, bounds, theme, scale);
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyExpandableToolbarBackdrop(ThemeVariant theme, double scale)
+    {
+        var scroll = CreateBackdropScroll();
+        var bar = new AlderExpandableActionBar
+        {
+            VerticalAlignment = VerticalAlignment.Bottom, Margin = new Thickness(16, 0, 16, 32),
+            Items = { new AlderExpandableActionBarItem { Content = "Open collection", Shortcut = "O" }, new AlderExpandableActionBarItem { Content = "Export image" } }
+        };
+        var window = Show(new Grid { Children = { scroll, bar } }, theme, scale);
+        try
+        {
+            using var standard = Capture(window);
+            var frame = bar.GetVisualDescendants().OfType<Border>().Single(part => part.Name == "PART_Surface");
+            var layer = bar.GetVisualDescendants().OfType<Border>().Single(part => part.Name == "SurfaceBackdrop");
+            var collapsedWidth = frame.Bounds.Width;
+            if (layer.BackdropEffect is not null || frame.Background is not ISolidColorBrush { Color.A: 255 })
+                throw new InvalidOperationException("Expandable Action Bar should default to an opaque surface.");
+            bar.SurfaceBackdropBlurRadius = 12;
+            bar.IsExpanded = true;
+            bar.Opacity = 0;
+            using var closed = Capture(window);
+            var bounds = new Rect(frame.TranslatePoint(default, window)!.Value, frame.Bounds.Size);
+            if (bounds.Width <= collapsedWidth || layer.Bounds != frame.Bounds)
+                throw new InvalidOperationException("The backdrop did not track the expandable toolbar width.");
+            var shortcut = bar.GetVisualDescendants().OfType<TextBlock>().Single(part => part.Name == "ShortcutLabel" && part.Text == "O");
+            if (shortcut.Foreground is not ISolidColorBrush ink || ink.Color != Color.Parse(theme == ThemeVariant.Light ? "#18181B" : "#FCFCFC"))
+                throw new InvalidOperationException("Expandable Action Bar did not use the contrast brush for its shortcut.");
+            bar.Opacity = 1;
+            var shadow = frame.BoxShadow;
+            frame.BoxShadow = default;
+            using var blurred = Capture(window);
+            var effect = layer.BackdropEffect;
+            layer.BackdropEffect = null;
+            using var tinted = Capture(window);
+            VerifyBackdropPixels("Expandable Action Bar", closed, blurred, tinted, bounds, theme, scale);
+            layer.BackdropEffect = effect;
+            frame.BoxShadow = shadow;
+            using var shadowed = Capture(window);
+            VerifyBackdropShadow("Expandable Action Bar", blurred, shadowed, bounds, theme, scale);
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyActionBarBackdrop(ThemeVariant theme, double scale)
+    {
+        var bar = new AlderActionBar { Content = new Border { Width = 172, Height = 46 }, Margin = new Thickness(8, 0, 8, 32) };
+        var window = Show(new Grid { Children = { CreateBackdropScroll(), bar } }, theme, scale);
+        try
+        {
+            using var closed = Capture(window);
+            bar.IsOpen = true;
+            using var standard = Capture(window);
+            var presentation = bar.GetVisualDescendants().OfType<Border>().Single(part => part.Name == "PART_Surface");
+            var frame = bar.GetVisualDescendants().OfType<Border>().Single(part => part.Name == "SurfaceChrome");
+            var layer = bar.GetVisualDescendants().OfType<Border>().Single(part => part.Name == "SurfaceBackdrop");
+            var bounds = new Rect(frame.TranslatePoint(default, window)!.Value, frame.Bounds.Size);
+            if (layer.BackdropEffect is not null || frame.Background is not ISolidColorBrush { Color.A: 255 })
+                throw new InvalidOperationException("Action Bar should default to an opaque surface.");
+            if (!presentation.IsVisualAncestorOf(layer) || !presentation.IsVisualAncestorOf(frame))
+                throw new InvalidOperationException("Action Bar blur and shadow must follow the same open and close animation.");
+
+            bar.SurfaceBackdropBlurRadius = 12;
+            var shadow = frame.BoxShadow;
+            frame.BoxShadow = default;
+            using var blurred = Capture(window);
+            var effect = layer.BackdropEffect;
+            layer.BackdropEffect = null;
+            using var tinted = Capture(window);
+            VerifyBackdropPixels("Action Bar", closed, blurred, tinted, bounds, theme, scale);
+            layer.BackdropEffect = effect;
+            frame.BoxShadow = shadow;
+            using var shadowed = Capture(window);
+            VerifyBackdropShadow("Action Bar", blurred, shadowed, bounds, theme, scale);
+
+            frame.ClearValue(Border.BoxShadowProperty);
+            bar.IsAttached = false;
+            using var detached = Capture(window);
+            if (layer.BackdropEffect is not null || layer.IsEffectivelyVisible || frame.BoxShadow != default)
+                throw new InvalidOperationException("Detached Action Bar should have no blur or surface shadow.");
+            bar.IsOpen = false;
+            using var dismissed = Capture(window);
+            if (presentation.IsVisible || BackdropInteriorDiffers(closed, dismissed, bounds, scale))
+                throw new InvalidOperationException("Action Bar left a rendered surface after dismissal.");
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyMapZoomBackdrop(ThemeVariant theme, double scale)
+    {
+        var map = new AlderMap { Center = new MapCoordinate(0, 0), Zoom = 6, ShowCompass = false, Background = Brushes.MidnightBlue };
+        var window = Show(map, theme, scale);
+        try
+        {
+            using var standard = Capture(window);
+            var cluster = map.GetVisualDescendants().OfType<Panel>().Single(part => part.Name == "ZoomControls");
+            var frame = cluster.Children.OfType<Border>().Single(part => part.Name == "ZoomControlsSurface");
+            var layer = cluster.Children.OfType<Border>().Single(part => part.Name == "ZoomControlsBackdrop");
+            var bounds = new Rect(frame.TranslatePoint(default, window)!.Value, frame.Bounds.Size);
+            var origin = frame.TranslatePoint(default, map)!.Value;
+            if (layer.BackdropEffect is not null || frame.Background is not ISolidColorBrush { Color.A: 255 })
+                throw new InvalidOperationException("Map zoom buttons should default to an opaque surface.");
+
+            double bandTop = origin.Y + 23;
+            map.Paths = [new AlderMapPath([map.PointToLocation(new Point(origin.X - 36, bandTop)),
+                map.PointToLocation(new Point(origin.X + 39, bandTop))], Stroke: Brushes.LightGoldenrodYellow, Thickness: 21)];
+            map.ZoomControlsBackdropBlurRadius = 12;
+            cluster.Opacity = 0;
+            using var closed = Capture(window);
+            cluster.Opacity = 1;
+            using var blurred = Capture(window);
+            var effect = layer.BackdropEffect;
+            layer.BackdropEffect = null;
+            using var tinted = Capture(window);
+            VerifyBackdropPixels("Map zoom buttons", closed, blurred, tinted, bounds, theme, scale);
+            layer.BackdropEffect = effect;
+
+            map.Center = map.PointToLocation(new Point(map.Bounds.Width / 2, map.Bounds.Height / 2 - 21));
+            using var panned = Capture(window);
+            if (!BackdropInteriorDiffers(blurred, panned, bounds, scale))
+                throw new InvalidOperationException($"Map zoom buttons did not sample the panned map in {theme} at {scale}×.");
+            if (map.GetVisualDescendants().Count(visual => visual.BackdropEffect is not null) != 1)
+                throw new InvalidOperationException("The map blur should be limited to the zoom button group.");
+            window.MouseMove(bounds.TopLeft + new Vector(16, 16));
+            window.MouseDown(bounds.TopLeft + new Vector(16, 16), MouseButton.Left);
+            window.MouseUp(bounds.TopLeft + new Vector(16, 16), MouseButton.Left);
+            using var zoomed = Capture(window);
+            if (map.Zoom <= 6) throw new InvalidOperationException("The blur layer intercepted the Map zoom button.");
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyFloatingTocBackdrop(ThemeVariant theme, double scale)
+    {
+        var scroll = CreateBackdropScroll();
+        var toc = new AlderFloatingToc
+        {
+            Header = "Contents", ItemsSource = [new("lighting", "Lighting"), new("framing", "Framing"), new("color", "Color")],
+            ActiveKey = "lighting", TriggerMode = FloatingTocTriggerMode.Press,
+            IsLightDismissEnabled = false, Margin = new Thickness(0, 0, 16, 0)
+        };
+        var window = Show(new Grid { Children = { scroll, toc } }, theme, scale);
+        try
+        {
+            using var closed = Capture(window);
+            toc.IsOpen = true;
+            using var standard = Capture(window);
+            var surface = window.GetVisualDescendants().OfType<Panel>().Single(part => part.Name == "PART_Surface");
+            var frame = surface.Children.OfType<Border>().Single(part => part.Name == "SurfaceChrome");
+            var layer = surface.Children.OfType<Border>().Single(part => part.Name == "SurfaceBackdrop");
+            var trigger = toc.GetVisualDescendants().OfType<Button>().Single(part => part.Name == "PART_Trigger");
+            var bounds = new Rect(frame.TranslatePoint(default, window)!.Value, frame.Bounds.Size);
+            if (layer.BackdropEffect is not null || frame.Background is not ISolidColorBrush { Color.A: 255 })
+                throw new InvalidOperationException("Floating Toc should default to an opaque surface.");
+
+            toc.SurfaceBackdropBlurRadius = 10;
+            var shadow = frame.BoxShadow;
+            frame.BoxShadow = default;
+            using var blurred = Capture(window);
+            var effect = layer.BackdropEffect;
+            layer.BackdropEffect = null;
+            using var tinted = Capture(window);
+            VerifyBackdropPixels("Floating Toc", closed, blurred, tinted, bounds, theme, scale);
+            layer.BackdropEffect = effect;
+            frame.BoxShadow = shadow;
+            using var shadowed = Capture(window);
+            VerifyBackdropShadow("Floating Toc", blurred, shadowed, bounds, theme, scale);
+            if (trigger.GetSelfAndVisualDescendants().Any(part => part.BackdropEffect is not null))
+                throw new InvalidOperationException("Floating Toc blur leaked to the collapsed trigger.");
+
+            // The opposite extreme to the tint gives the lowest text contrast on this panel.
+            scroll.IsVisible = false;
+            window.Background = theme == ThemeVariant.Light ? Brushes.Black : Brushes.White;
+            using var contrast = Capture(window);
+            var surfacePixel = Pixel(contrast, bounds.TopRight + new Vector(-20, 19), scale);
+            var titles = surface.GetVisualDescendants().OfType<TextBlock>();
+            foreach (var label in new[] { "Contents", "Lighting", "Framing", "Color" })
+            {
+                var text = titles.Single(part => part.IsEffectivelyVisible && part.Text == label);
+                if (text.Foreground is not ISolidColorBrush { Color.A: 255, Opacity: 1 } ink)
+                    throw new InvalidOperationException($"Floating Toc title {label} did not use an opaque ink brush.");
+                var color = ink.Color;
+                double background = Luminance(surfacePixel.Red, surfacePixel.Green, surfacePixel.Blue) + .05;
+                double foreground = Luminance(color.R, color.G, color.B) + .05;
+                double ratio = Math.Max(background, foreground) / Math.Min(background, foreground);
+                if (ratio < 4.5)
+                    throw new InvalidOperationException($"Floating Toc title {label} fell below 4.5:1 in {theme} at {scale}× ({ratio:F2}:1).");
+            }
+        }
+        finally { window.Close(); }
+
+        static double Luminance(byte red, byte green, byte blue) =>
+            .2126 * Linear(red) + .7152 * Linear(green) + .0722 * Linear(blue);
+
+        static double Linear(byte channel)
+        {
+            double value = channel / 255d;
+            return value <= .04045 ? value / 12.92 : Math.Pow((value + .055) / 1.055, 2.4);
+        }
+    }
+
+    private static void VerifyCardBackdrop(ThemeVariant theme, double scale)
+    {
+        var scroll = CreateBackdropScroll();
+        var card = new AlderCard
+        {
+            Width = 208, Title = "Market notes", Description = "Cherries and oranges are in season.",
+            Content = new Border { Height = 20 }, HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center, CornerRadius = new CornerRadius(26, 14, 22, 8),
+            BorderThickness = new Thickness(3, 2, 5, 4), BorderBrush = Brushes.SlateGray, IsHitTestVisible = false
+        };
+        var window = Show(new Grid { Children = { scroll, card } }, theme, scale);
+        try
+        {
+            using var standard = Capture(window);
+            var layer = card.GetVisualDescendants().OfType<Border>().Single(part => part.Name == "SurfaceBackdrop");
+            var description = card.GetVisualDescendants().OfType<TextBlock>().Single(part => part.Name == "CardDescription");
+            var bounds = new Rect(card.TranslatePoint(default, window)!.Value, card.Bounds.Size);
+            if (layer.BackdropEffect is not null || card.Background is not ISolidColorBrush { Color.A: 255 })
+                throw new InvalidOperationException("Card should default to an opaque surface.");
+
+            card.Opacity = 0;
+            using var closed = Capture(window);
+            var shadow = card.BoxShadow;
+            card.BoxShadow = default;
+            card.SurfaceBackdropBlurRadius = 12;
+            card.Opacity = 1;
+            using var blurred = Capture(window);
+            var effect = layer.BackdropEffect;
+            layer.BackdropEffect = null;
+            using var tinted = Capture(window);
+            VerifyBackdropPixels("Card", closed, blurred, tinted, bounds, theme, scale);
+            var lowerCorner = bounds.BottomRight - new Vector(1, 1);
+            if (Difference(Pixel(closed, lowerCorner, scale), Pixel(blurred, lowerCorner, scale)) > 3 ||
+                !Equals(description.Foreground, card.Foreground) || card.Bounds.Size != bounds.Size)
+                throw new InvalidOperationException("Card blur changed the outline, title contrast, or layout.");
+
+            layer.BackdropEffect = effect;
+            card.BoxShadow = shadow;
+            using var shadowed = Capture(window);
+            VerifyBackdropShadow("Card", blurred, shadowed, bounds, theme, scale);
+
+            var defaultTint = card.Background;
+            card.Variant = SurfaceVariant.Secondary;
+            var secondaryTint = card.Background;
+            card.Variant = SurfaceVariant.Tertiary;
+            if (secondaryTint is not ISolidColorBrush { Color.A: 217 } || card.Background is not ISolidColorBrush { Color.A: 217 } ||
+                Equals(defaultTint, secondaryTint) || Equals(secondaryTint, card.Background))
+                throw new InvalidOperationException("Card lost its surface variants while blurring.");
+            card.Variant = SurfaceVariant.Transparent;
+            if (card.Background is not ISolidColorBrush { Color.A: 0 })
+                throw new InvalidOperationException("Transparent Card should not paint a tint.");
+            var customTint = new SolidColorBrush(Color.FromArgb(200, 21, 57, 82));
+            card.Background = customTint;
+            if (!ReferenceEquals(card.Background, customTint))
+                throw new InvalidOperationException("Card blur overrode its custom background.");
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyOverflowActionsBackdrop(ThemeVariant theme, double scale)
+    {
+        var contrast = new Border { Background = Brushes.Black, VerticalAlignment = VerticalAlignment.Top };
+        var bar = new AlderOverflowActions
+        {
+            PrimaryActions = { new AlderOverflowAction { Content = "Preview" } },
+            OverflowActions = { new AlderOverflowAction { Content = "Archive selected file" } }
+        };
+        var window = Show(new Grid { Background = Brushes.White, Children = { contrast, bar } }, theme, scale);
+        try
+        {
+            using var standard = Capture(window);
+            var frame = bar.GetVisualDescendants().OfType<Border>().Single(part => part.Name == "PART_Surface");
+            var layer = bar.GetVisualDescendants().OfType<Border>().Single(part => part.Name == "SurfaceBackdrop");
+            if (layer.IsEffectivelyVisible || layer.BackdropEffect is not null || bar.Background is not ISolidColorBrush { Color.A: 255 })
+                throw new InvalidOperationException("Overflow Actions should default to an opaque surface.");
+
+            // Put a high-contrast seam in the padding above the action buttons.
+            contrast.Height = frame.TranslatePoint(default, window)!.Value.Y + 4;
+            bar.Opacity = 0;
+            using var bare = Capture(window);
+            bar.Opacity = 1;
+            bar.SurfaceBackdropBlurRadius = 12;
+            double collapsedWidth = VerifySurface("collapsed");
+            bar.IsExpanded = true;
+            if (VerifySurface("expanded") <= collapsedWidth)
+                throw new InvalidOperationException("Overflow Actions did not expand when blurring.");
+            bar.IsExpanded = false;
+            if (VerifySurface("closed again") != collapsedWidth)
+                throw new InvalidOperationException("Overflow Actions did not return to its collapsed width.");
+
+            var center = new Rect(frame.TranslatePoint(default, window)!.Value, frame.Bounds.Size).Center;
+            bar.PrimaryActions.Clear();
+            bar.OverflowActions.Clear();
+            using var empty = Capture(window);
+            if (layer.IsEffectivelyVisible || Difference(Pixel(bare, center, scale), Pixel(empty, center, scale)) > 3)
+                throw new InvalidOperationException("Empty Overflow Actions still rendered a backdrop.");
+
+            double VerifySurface(string state)
+            {
+                var shadow = frame.BoxShadow;
+                frame.BoxShadow = default;
+                using var blurred = Capture(window);
+                var bounds = new Rect(frame.TranslatePoint(default, window)!.Value, frame.Bounds.Size);
+                var effect = layer.BackdropEffect;
+                layer.BackdropEffect = null;
+                using var tinted = Capture(window);
+                var corners = new[] { bounds.TopLeft + new Vector(1, 1), bounds.BottomRight - new Vector(1, 1) };
+                if (corners.Any(corner => Difference(Pixel(bare, corner, scale), Pixel(blurred, corner, scale)) > 3))
+                    throw new InvalidOperationException($"Overflow Actions ({state}) leaked past a rounded corner in {theme} at {scale}×.");
+                int blurDelta = Enumerable.Range(2, 5).Max(y =>
+                {
+                    var point = new Point(bounds.Center.X, bounds.Top + y);
+                    return Difference(Pixel(blurred, point, scale), Pixel(tinted, point, scale));
+                });
+                if (blurDelta < 6)
+                    throw new InvalidOperationException($"Overflow Actions ({state}) rendered a tint without blur in {theme} at {scale}× (RGB delta {blurDelta}).");
+                layer.BackdropEffect = effect;
+                frame.BoxShadow = shadow;
+                using var shadowed = Capture(window);
+                VerifyBackdropShadow($"Overflow Actions ({state})", blurred, shadowed, bounds, theme, scale);
+                return bounds.Width;
+            }
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyBackdropPixels(string name, SKBitmap closed, SKBitmap blurred, SKBitmap tinted,
+        Rect bounds, ThemeVariant theme, double scale)
+    {
+        var corner = bounds.TopLeft + new Vector(1, 1);
+        if (Difference(Pixel(closed, corner, scale), Pixel(blurred, corner, scale)) > 3)
+            throw new InvalidOperationException($"{name} backdrop leaked past the rounded corner in {theme} at {scale}×.");
+        if (!BackdropInteriorDiffers(blurred, tinted, bounds, scale))
+            throw new InvalidOperationException($"{name} rendered a tint without blur in {theme} at {scale}×.");
+    }
+
+    private static bool BackdropInteriorDiffers(SKBitmap first, SKBitmap second, Rect bounds, double scale) =>
+        Enumerable.Range(8, (int)bounds.Height - 16).Any(y =>
+        {
+            var point = new Point(bounds.Center.X, bounds.Top + y);
+            return Difference(Pixel(first, point, scale), Pixel(second, point, scale)) > 5;
+        });
+
+    private static void VerifyBackdropShadow(string name, SKBitmap unshadowed, SKBitmap shadowed, Rect bounds, ThemeVariant theme, double scale)
+    {
+        int x = (int)(bounds.Center.X * scale);
+        int firstOutsidePixel = (int)Math.Ceiling(bounds.Bottom * scale);
+        var nearDelta = Enumerable.Range(firstOutsidePixel, 3).Max(y => Difference(unshadowed.GetPixel(x, y), shadowed.GetPixel(x, y)));
+        var far = new Point(bounds.Center.X, bounds.Bottom + 23);
+        var farDelta = Difference(Pixel(unshadowed, far, scale), Pixel(shadowed, far, scale));
+        if (nearDelta < 3 || farDelta >= nearDelta)
+            throw new InvalidOperationException($"{name} lost its exterior shadow in {theme} at {scale}× (near {nearDelta}, tail {farDelta}).");
     }
 
     private static void VerifyPopoverFocusReturn(ThemeVariant theme, double scale)
@@ -1088,7 +1666,7 @@ internal static class ControlEdgeRenderSmoke
             BorderBrush = Brushes.Magenta,
             BorderThickness = new Thickness(3)
         };
-        var window = Show(new ScrollViewer { Content = agenda }, theme, scale);
+        var window = Show(new AlderScrollViewer { Content = agenda }, theme, scale);
         try
         {
             foreach (var view in new[] { AlderCalendarView.Day, AlderCalendarView.Week, AlderCalendarView.Month })
@@ -1168,7 +1746,7 @@ internal static class ControlEdgeRenderSmoke
 
     private static Window Show(Control content, ThemeVariant theme, double scale)
     {
-        var window = new Window
+        var window = new AlderTestWindow
         {
             Width = 390, Height = 410, Content = content, RequestedThemeVariant = theme,
             Background = theme == ThemeVariant.Light ? Brushes.WhiteSmoke : new SolidColorBrush(Color.Parse("#060607"))

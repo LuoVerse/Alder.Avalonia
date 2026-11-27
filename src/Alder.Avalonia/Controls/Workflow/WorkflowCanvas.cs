@@ -215,7 +215,7 @@ internal sealed class WorkflowCanvas : Canvas
             else if (card.Transitions is not null && reducedMotion) card.Transitions = null;
             SetSelected(selection);
             AutomationProperties.SetName(this, $"{KindName(node.Kind)}，{title.Text}，{details.Text}");
-            ToolTip.SetTip(this, $"{title.Text}\n{details.Text}");
+            AlderToolTip.SetTip(this, $"{title.Text}\n{details.Text}");
         }
 
         public void SetSelected(bool selection)

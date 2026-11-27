@@ -130,7 +130,7 @@ public sealed class BloomMenuInteractions
     [AvaloniaFact]
     public async Task ReducedMotionUsesViewportWidthAndOutsideClickPassesThrough()
     {
-        var outside = new Button { Content = "Outside", VerticalAlignment = VerticalAlignment.Top };
+        var outside = new AlderButton { Content = "Outside", VerticalAlignment = VerticalAlignment.Top };
         var menu = new AlderBloomMenu { ItemsSource = new[] { "A", "B", "C", "D" } };
         var root = new Grid { Children = { outside, menu } };
         AlderMotion.SetReduced(root, true);
@@ -246,7 +246,7 @@ public sealed class BloomMenuInteractions
 
     private static Window Show(Control content, int width = 580, int height = 400)
     {
-        var window = new Window { Width = width, Height = height, Content = content };
+        var window = new AlderTestWindow { Width = width, Height = height, Content = content };
         window.Show();
         Pump(window);
         return window;

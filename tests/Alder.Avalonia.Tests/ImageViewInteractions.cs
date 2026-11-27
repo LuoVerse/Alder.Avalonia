@@ -158,7 +158,7 @@ public sealed class ImageViewInteractions
 
     private static Window Show(Control content)
     {
-        var window = new Window { Width = 570, Height = 580, Content = content };
+        var window = new AlderTestWindow { Width = 570, Height = 580, Content = content };
         AlderMotion.SetReduced(window, true);
         window.Show();
         Pump(window);

@@ -8,9 +8,9 @@
     <DataTemplate x:Key="StepperStatusIcon" x:DataType="alder:AlderStepperStep">
       <Panel>
         <Panel.Styles>
-          <Style Selector="PathIcon.state-glyph"><Setter Property="Foreground" Value="{DynamicResource AlderMuted}" /></Style>
-          <Style Selector="alder|AlderStepperStep[Status=Active] PathIcon.state-glyph"><Setter Property="Foreground" Value="{DynamicResource AlderAccent}" /></Style>
-          <Style Selector="alder|AlderStepperStep[Status=Complete] PathIcon.state-glyph"><Setter Property="Foreground" Value="{DynamicResource AlderOnAccent}" /></Style>
+          <Style Selector=":is(PathIcon).state-glyph"><Setter Property="Foreground" Value="{DynamicResource AlderMuted}" /></Style>
+          <Style Selector="alder|AlderStepperStep[Status=Active] :is(PathIcon).state-glyph"><Setter Property="Foreground" Value="{DynamicResource AlderAccent}" /></Style>
+          <Style Selector="alder|AlderStepperStep[Status=Complete] :is(PathIcon).state-glyph"><Setter Property="Foreground" Value="{DynamicResource AlderOnAccent}" /></Style>
         </Panel.Styles>
         <alder:AlderPathIcon Classes="state-glyph" Data="{CompiledBinding Icon}" Width="14" Height="14" />
       </Panel>

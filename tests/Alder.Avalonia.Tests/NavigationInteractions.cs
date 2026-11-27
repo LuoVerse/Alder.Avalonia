@@ -362,7 +362,7 @@ public class NavigationInteractions
             ItemTemplate = new FuncTreeDataTemplate<SidebarNode>(
                 (item, _) => new TextBlock { Text = item.Title }, item => item.Children)
         };
-        var scroll = new ScrollViewer { Content = menu, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
+        var scroll = new AlderScrollViewer { Content = menu, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
         AlderMotion.SetReduced(scroll, true);
         using var view = new NavigationWindow(scroll);
 
@@ -411,9 +411,9 @@ public class NavigationInteractions
             ItemsSource = nodes,
             ItemTemplate = new FuncDataTemplate<SidebarNode>((item, _) => new TextBlock { Text = item.Title })
         };
-        var before = new Button { Content = "Before menu" };
+        var before = new AlderButton { Content = "Before menu" };
         DockPanel.SetDock(before, Dock.Top);
-        var scroll = new ScrollViewer { Content = menu, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
+        var scroll = new AlderScrollViewer { Content = menu, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
         using var view = new NavigationWindow(new DockPanel { Children = { before, scroll } });
 
         Assert.True(before.Focus());
@@ -449,7 +449,7 @@ public class NavigationInteractions
                 return item.Children;
             })
         };
-        var scroll = new ScrollViewer { Content = menu, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
+        var scroll = new AlderScrollViewer { Content = menu, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
         AlderMotion.SetReduced(scroll, true);
         using var view = new NavigationWindow(scroll);
         var branch = Assert.IsType<AlderSidebarItem>(menu.ContainerFromIndex(0));
@@ -493,7 +493,7 @@ public class NavigationInteractions
         };
         Control root = useDialogHost ? new DialogHost { Content = sidebar } : sidebar;
         AlderMotion.SetReduced(root, true);
-        using var view = new NavigationWindow(root);
+        using var view = new NavigationWindow(root, useDialogHost: useDialogHost);
         var trigger = Find<AlderButton>(sidebar, "PART_Search");
         Assert.False(trigger.IsEffectivelyVisible);
         sidebar.IsSearchEnabled = true;
@@ -574,7 +574,7 @@ public class NavigationInteractions
         var branch = new AlderSidebarItem
         {
             Header = "Directory", Icon = Geometry.Parse("M0,0 H8 V8 H0 Z"), IsExpanded = true,
-            IsCurrent = true, Badge = 4, Actions = new Button { Content = "Action" }, Items = { child }
+            IsCurrent = true, Badge = 4, Actions = new AlderButton { Content = "Action" }, Items = { child }
         };
         var sidebar = new AlderSidebar { Content = new AlderSidebarMenu { Items = { branch } } };
         var host = new AlderSidebarHost { Sidebar = sidebar, Content = "Page" };
@@ -617,9 +617,9 @@ public class NavigationInteractions
 
     private sealed class NavigationWindow : IDisposable
     {
-        public NavigationWindow(Control child, double width = 680)
+        public NavigationWindow(Control child, double width = 680, bool useDialogHost = true)
         {
-            Window = new Window { Width = width, Height = 420, Content = child };
+            Window = new AlderTestWindow(useDialogHost) { Width = width, Height = 420, Content = child };
             Window.Show();
             Pump();
         }

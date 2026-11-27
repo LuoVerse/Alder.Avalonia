@@ -31,12 +31,12 @@ public sealed class CommandInteractions
         var palette = new AlderCommand
         {
             Groups = [new() { Heading = "Navigation", Items = [recent] }],
-            Header = new Button { Content = "Custom header action" }
+            Header = new AlderButton { Content = "Custom header action" }
         };
-        var trigger = new Button { Content = "Open", HotKey = new(Key.K, KeyModifiers.Control) };
+        var trigger = new AlderButton { Content = "Open", HotKey = new(Key.K, KeyModifiers.Control) };
         Task<DialogResult>? opening = null;
         trigger.Click += (_, _) => opening = palette.ShowAsync(trigger);
-        var window = new Window { Width = 640, Height = 480, Content = new DialogHost { Content = trigger } };
+        var window = new AlderTestWindow { Width = 640, Height = 480, Content = new DialogHost { Content = trigger } };
         AlderMotion.SetReduced(window, true);
         window.Show();
         try
@@ -79,7 +79,7 @@ public sealed class CommandInteractions
         var items = Enumerable.Range(0, 5000).Select(i => new AlderCommandItem { Label = $"Task {i}" })
             .Append(first).Append(second).ToArray();
         var palette = new AlderCommand { Groups = items.Chunk(1000).Select(group => new AlderCommandGroup { Items = group }).ToArray() };
-        var window = new Window { Width = 400, Height = 420, Content = palette };
+        var window = new AlderTestWindow { Width = 400, Height = 420, Content = palette };
         window.Show();
         try
         {
@@ -108,7 +108,7 @@ public sealed class CommandInteractions
         var palette = new AlderCommand { Groups = [new() { Heading = "Workspace", Items = items }] };
         var invoked = new List<string>();
         palette.ItemInvoked += (_, item) => invoked.Add(item.Label);
-        var window = new Window { Width = 400, Height = 420, Content = palette };
+        var window = new AlderTestWindow { Width = 400, Height = 420, Content = palette };
         window.Show();
         try
         {
@@ -152,7 +152,7 @@ public sealed class CommandInteractions
         var palette = new AlderCommand { Groups = [new() { Items = items }] };
         AlderCommandItem? invoked = null;
         palette.ItemInvoked += (_, item) => invoked = item;
-        var window = new Window { Width = 440, Height = 440, Content = palette };
+        var window = new AlderTestWindow { Width = 440, Height = 440, Content = palette };
         window.Show();
         try
         {
@@ -192,7 +192,7 @@ public sealed class CommandInteractions
             }).ToArray()
         }).ToArray();
         var palette = new AlderCommand { Groups = groups, Filter = (item, query) => item.Keywords == query };
-        var window = new Window { Width = 440, Height = 440, Content = palette };
+        var window = new AlderTestWindow { Width = 440, Height = 440, Content = palette };
         window.Show();
         try
         {
@@ -232,12 +232,12 @@ public sealed class CommandInteractions
     [InlineData(390, 358)]
     public async Task CommandKeepsItsTopAnchorWhileFilteringAndClosesFromEscapeButton(int width, int expectedWidth)
     {
-        var trigger = new Button { Content = "Open" };
+        var trigger = new AlderButton { Content = "Open" };
         var palette = new AlderCommand
         {
             Groups = [new() { Heading = "Actions", Items = [new() { Label = "Open" }, new() { Label = "Save" }] }]
         };
-        var window = new Window { Width = width, Height = 720, Content = new DialogHost { Content = trigger } };
+        var window = new AlderTestWindow { Width = width, Height = 720, Content = new DialogHost { Content = trigger } };
         AlderMotion.SetReduced(window, true);
         window.Show();
         try
@@ -272,12 +272,12 @@ public sealed class CommandInteractions
     [AvaloniaFact]
     public async Task CommandClearButtonReservesSpaceAndReturnsFocusToSearch()
     {
-        var trigger = new Button { Content = "Open" };
+        var trigger = new AlderButton { Content = "Open" };
         var palette = new AlderCommand
         {
             Groups = [new() { Items = [new() { Label = "Open" }, new() { Label = "Save" }] }]
         };
-        var window = new Window { Width = 640, Height = 720, Content = new DialogHost { Content = trigger } };
+        var window = new AlderTestWindow { Width = 640, Height = 720, Content = new DialogHost { Content = trigger } };
         AlderMotion.SetReduced(window, true);
         window.Show();
         try
@@ -327,7 +327,7 @@ public sealed class CommandInteractions
             PreviewTemplate = new FuncDataTemplate<AlderCommandItem>((item, _) =>
                 new TextBlock { Name = "PreviewText", Text = item?.Label })
         };
-        var window = new Window { Width = 576, Height = 440, Content = palette };
+        var window = new AlderTestWindow { Width = 576, Height = 440, Content = palette };
         window.Show();
         try
         {

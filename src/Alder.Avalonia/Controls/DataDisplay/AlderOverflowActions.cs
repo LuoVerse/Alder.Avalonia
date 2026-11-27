@@ -25,6 +25,10 @@ public sealed class AlderOverflowActions : TemplatedControl
     /// <summary>Identifies the policy for collapsing after an action runs.</summary>
     public static readonly StyledProperty<bool> CollapseOnActionProperty =
         AvaloniaProperty.Register<AlderOverflowActions, bool>(nameof(CollapseOnAction));
+    /// <summary>Identifies the <see cref="SurfaceBackdropBlurRadius"/> Avalonia property.</summary>
+    public static readonly StyledProperty<double> SurfaceBackdropBlurRadiusProperty =
+        AvaloniaProperty.Register<AlderOverflowActions, double>(nameof(SurfaceBackdropBlurRadius),
+            validate: radius => double.IsFinite(radius) && radius >= 0);
     /// <summary>Identifies the layout density, inherited by the action buttons.</summary>
     public static readonly AttachedProperty<AlderSize> SizeProperty =
         AvaloniaProperty.RegisterAttached<AlderOverflowActions, StyledElement, AlderSize>(nameof(Size), AlderSize.Medium, inherits: true);
@@ -43,6 +47,8 @@ public sealed class AlderOverflowActions : TemplatedControl
     public bool IsExpanded { get => GetValue(IsExpandedProperty); set => SetValue(IsExpandedProperty, value); }
     /// <summary>Gets or sets whether the bar collapses after a primary or overflow action runs.</summary>
     public bool CollapseOnAction { get => GetValue(CollapseOnActionProperty); set => SetValue(CollapseOnActionProperty, value); }
+    /// <summary>The blur radius in DIPs behind the toolbar surface. Zero disables the effect.</summary>
+    public double SurfaceBackdropBlurRadius { get => GetValue(SurfaceBackdropBlurRadiusProperty); set => SetValue(SurfaceBackdropBlurRadiusProperty, value); }
     /// <summary>Gets or sets the action density. Small uses the compact rail.</summary>
     public AlderSize Size { get => GetSize(this); set => SetSize(this, value); }
     /// <summary>Gets or sets the text read by assistive technology when the toggle opens the rail.</summary>
@@ -125,6 +131,8 @@ public sealed class AlderOverflowActions : TemplatedControl
         }
         else if (change.Property == ExpandLabelProperty || change.Property == CollapseLabelProperty)
             UpdateToggleName();
+        else if (change.Property == SurfaceBackdropBlurRadiusProperty)
+            PseudoClasses.Set(":backdrop-blur", SurfaceBackdropBlurRadius > 0);
         else if (change.Property == AlderMotion.ReducedProperty)
             Snap();
     }
@@ -188,7 +196,7 @@ public sealed class AlderOverflowActions : TemplatedControl
         if (toggle is null) return;
         var label = IsExpanded ? CollapseLabel : ExpandLabel;
         AutomationProperties.SetName(toggle, label);
-        ToolTip.SetTip(toggle, label);
+        AlderToolTip.SetTip(toggle, label);
     }
 
     private void Animate()

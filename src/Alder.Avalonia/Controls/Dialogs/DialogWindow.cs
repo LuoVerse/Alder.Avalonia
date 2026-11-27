@@ -7,7 +7,7 @@ using Avalonia.Threading;
 
 namespace Alder.Avalonia.Controls;
 
-internal sealed class DialogWindow : Window
+internal sealed class DialogWindow : AlderWindow
 {
     private readonly DialogSurface surface;
     private readonly Control viewport;
@@ -31,6 +31,8 @@ internal sealed class DialogWindow : Window
         ShowInTaskbar = false;
         CanResize = false;
         WindowDecorations = WindowDecorations.None;
+        ExtendClientAreaToDecorationsHint = false;
+        ShowTitleBar = false;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         TransparencyLevelHint = [WindowTransparencyLevel.Transparent];
         Background = Brushes.Transparent;

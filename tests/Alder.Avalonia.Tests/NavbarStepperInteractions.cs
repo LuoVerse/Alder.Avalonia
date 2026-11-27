@@ -207,7 +207,7 @@ public sealed class NavbarStepperInteractions
                 Children = { new AlderNavbarItem { Content = "Team", IsMenuItem = true } }
             }
         };
-        var scroll = new ScrollViewer
+        var scroll = new AlderScrollViewer
         {
             Content = new StackPanel { Children = { new Border { Height = 345 }, navbar, new Border { Height = 320 } } }
         };
@@ -253,7 +253,7 @@ public sealed class NavbarStepperInteractions
     {
         var navbar = new AlderNavbar { Brand = "Alder", HideOnScroll = true };
         var content = new StackPanel { Children = { navbar, new Border { Height = 900 } } };
-        var scroll = new ScrollViewer { Content = content };
+        var scroll = new AlderScrollViewer { Content = content };
         var window = Show(scroll);
         try
         {
@@ -281,7 +281,7 @@ public sealed class NavbarStepperInteractions
     [AvaloniaFact]
     public void NavbarCanAllowBackgroundScrollWhileMenuIsOpen()
     {
-        var scroll = new ScrollViewer { Content = new Border { Height = 900 } };
+        var scroll = new AlderScrollViewer { Content = new Border { Height = 900 } };
         var navbar = new AlderNavbar
         {
             AlwaysShowMenuToggle = true, ScrollHost = scroll,
@@ -312,7 +312,7 @@ public sealed class NavbarStepperInteractions
 
     private static Window Show(Control child)
     {
-        var window = new Window { Width = 760, Height = 425, Content = child };
+        var window = new AlderTestWindow { Width = 760, Height = 425, Content = child };
         AlderMotion.SetReduced(window, true);
         window.Show();
         Pump(window);

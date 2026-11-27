@@ -155,7 +155,7 @@ public sealed class IconCompatibilityInteractions
 
     private static Window Show(Control control)
     {
-        var window = new Window { Width = 420, Height = 320, Content = control };
+        var window = new AlderTestWindow { Width = 420, Height = 320, Content = control };
         AlderMotion.SetReduced(window, true);
         window.Show();
         Pump(window);

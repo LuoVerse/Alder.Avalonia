@@ -11,10 +11,10 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Using Include="Alder.Avalonia.Testing" />
     <ProjectReference Include="../../src/Alder.Avalonia/Alder.Avalonia.csproj" />
     <PackageReference Include="Avalonia.Headless" Version="12.2.0" />
     <PackageReference Include="Avalonia.Skia" Version="12.2.0" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.2.0" />
     <!-- Enable for a full-library diagnostics pass. Leave off for the normal trimmed runtime check. -->
     <TrimmerRootAssembly Include="Alder.Avalonia" Condition="'$(AuditWholeLibrary)' == 'true'" />
   </ItemGroup>

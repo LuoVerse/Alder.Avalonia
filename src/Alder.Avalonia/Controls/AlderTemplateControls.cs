@@ -12,11 +12,7 @@ public class AlderRepeatButton : RepeatButton
 }
 
 /// <summary>Provides the native Thumb interaction contract for Alder templates.</summary>
-public class AlderThumb : Thumb
-{
-    /// <inheritdoc />
-    protected override Type StyleKeyOverride => typeof(Thumb);
-}
+public class AlderThumb : Thumb;
 
 /// <summary>A scroll viewport with Alder scrollbars, retaining native scrolling and input support.</summary>
 public class AlderScrollViewer : ScrollViewer;
@@ -25,11 +21,7 @@ public class AlderScrollViewer : ScrollViewer;
 public class AlderScrollBar : ScrollBar;
 
 /// <summary>Provides the native GridSplitter interaction contract for Alder templates.</summary>
-public class AlderGridSplitter : GridSplitter
-{
-    /// <inheritdoc />
-    protected override Type StyleKeyOverride => typeof(GridSplitter);
-}
+public class AlderGridSplitter : GridSplitter;
 
 /// <summary>A native selection list whose items and scroll viewport use Alder controls.</summary>
 public class AlderListBox : ListBox
@@ -93,11 +85,7 @@ public class AlderImage : Image
 }
 
 /// <summary>A vector geometry icon that inherits the current Alder foreground.</summary>
-public class AlderPathIcon : PathIcon
-{
-    /// <inheritdoc />
-    protected override Type StyleKeyOverride => typeof(PathIcon);
-}
+public class AlderPathIcon : PathIcon;
 
 /// <summary>A content host that keeps the standard content presenter contract.</summary>
 public class AlderContentControl : ContentControl
@@ -107,11 +95,7 @@ public class AlderContentControl : ContentControl
 }
 
 /// <summary>An item template host for unselectable Alder collections.</summary>
-public class AlderItemsControl : ItemsControl
-{
-    /// <inheritdoc />
-    protected override Type StyleKeyOverride => typeof(ItemsControl);
-}
+public class AlderItemsControl : ItemsControl;
 
 /// <summary>The popup host used by Alder's anchored overlays.</summary>
 public class AlderPopup : Popup

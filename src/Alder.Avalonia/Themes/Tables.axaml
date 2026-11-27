@@ -166,13 +166,13 @@
     <Style Selector="^:vertical /template/ Track#PART_Track">
       <Setter Property="IsDirectionReversed" Value="True" />
     </Style>
-    <Style Selector="^:horizontal /template/ Thumb#PART_Thumb"><Setter Property="MinWidth" Value="26" /></Style>
-    <Style Selector="^:vertical /template/ Thumb#PART_Thumb"><Setter Property="MinHeight" Value="26" /></Style>
+    <Style Selector="^:horizontal /template/ :is(Thumb)#PART_Thumb"><Setter Property="MinWidth" Value="26" /></Style>
+    <Style Selector="^:vertical /template/ :is(Thumb)#PART_Thumb"><Setter Property="MinHeight" Value="26" /></Style>
   </ControlTheme>
   <ControlTheme x:Key="{x:Type alder:AlderScrollBar}" TargetType="alder:AlderScrollBar" BasedOn="{StaticResource AlderDataGridScrollBarTheme}">
     <Style Selector="^:horizontal"><Setter Property="Height" Value="10" /></Style>
     <Style Selector="^:vertical"><Setter Property="Width" Value="10" /></Style>
-    <Style Selector="^[Tag=scroll-focus] /template/ Thumb#PART_Thumb">
+    <Style Selector="^[Tag=scroll-focus] /template/ :is(Thumb)#PART_Thumb">
       <Setter Property="Background" Value="{DynamicResource AlderDataGridScrollThumbActive}" />
     </Style>
   </ControlTheme>
@@ -218,7 +218,7 @@
       <Setter Property="Theme">
         <ControlTheme TargetType="alder:AlderScrollBar" BasedOn="{StaticResource AlderDataGridScrollBarTheme}">
           <Setter Property="Width" Value="8" />
-          <Style Selector="^:vertical /template/ Thumb#PART_Thumb">
+          <Style Selector="^:vertical /template/ :is(Thumb)#PART_Thumb">
             <Setter Property="MinHeight" Value="20" />
           </Style>
         </ControlTheme>
@@ -481,8 +481,8 @@
       <Setter Property="Cursor" Value="Hand" />
     </Style>
     <Style Selector="^[CanSort=True]:pointerover"><Setter Property="Foreground" Value="{DynamicResource AlderInk}" /></Style>
-    <Style Selector="^:sorted /template/ PathIcon#SortIcon"><Setter Property="IsVisible" Value="True" /></Style>
-    <Style Selector="^:descending /template/ PathIcon#SortIcon"><Setter Property="Data" Value="{DynamicResource AlderIconChevronDown}" /></Style>
+    <Style Selector="^:sorted /template/ :is(PathIcon)#SortIcon"><Setter Property="IsVisible" Value="True" /></Style>
+    <Style Selector="^:descending /template/ :is(PathIcon)#SortIcon"><Setter Property="Data" Value="{DynamicResource AlderIconChevronDown}" /></Style>
     <Style Selector="^:focus-visible /template/ Border#SortSurface"><Setter Property="BorderThickness" Value="2" /></Style>
   </ControlTheme>
   <ControlTheme x:Key="{x:Type alder:AlderTableExpander}" TargetType="alder:AlderTableExpander">
@@ -498,14 +498,14 @@
       </ControlTemplate>
     </Setter>
     <Style Selector="^:branch"><Setter Property="Height" Value="32" /></Style>
-    <Style Selector="^ /template/ PathIcon#Chevron">
+    <Style Selector="^ /template/ :is(PathIcon)#Chevron">
       <Setter Property="RenderTransform" Value="rotate(0deg)" />
       <Setter Property="Transitions">
         <Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" Easing="0.4,0,0.2,1" /></Transitions>
       </Setter>
     </Style>
-    <Style Selector="^:expanded /template/ PathIcon#Chevron"><Setter Property="RenderTransform" Value="rotate(90deg)" /></Style>
-    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ PathIcon#Chevron">
+    <Style Selector="^:expanded /template/ :is(PathIcon)#Chevron"><Setter Property="RenderTransform" Value="rotate(90deg)" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ :is(PathIcon)#Chevron">
       <Setter Property="Transitions" Value="{x:Null}" />
     </Style>
     <Style Selector="^:pointerover /template/ Border#ToggleSurface, ^:focus-visible /template/ Border#ToggleSurface">

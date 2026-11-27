@@ -20,6 +20,7 @@ internal sealed class AnchoredSurface : Panel
     private static readonly SplineEasing AutocompleteEnterEase = new(.32, .72, 0, 1);
     private static readonly SplineEasing AutocompleteExitEase = new(.25, .46, .45, .94);
     private readonly Border frame;
+    private Border? backdrop;
     private ArrowGlyph? arrow;
     private Point? lastAnchor;
 
@@ -59,16 +60,38 @@ internal sealed class AnchoredSurface : Panel
     }
 
     public void ModifyAppearance(IBrush? background, CornerRadius radius, Thickness padding,
-        IBrush? borderBrush, Thickness borderThickness, BoxShadows? shadow)
+        IBrush? borderBrush, Thickness borderThickness, BoxShadows? shadow, double blurRadius = 0)
     {
         frame.CornerRadius = radius;
         frame.Padding = padding;
         frame.BorderBrush = borderBrush;
         frame.BorderThickness = borderThickness;
-        if (background is null) frame[!Border.BackgroundProperty] = new DynamicResourceExtension("AlderSurface");
+        if (background is null)
+            frame[!Border.BackgroundProperty] = new DynamicResourceExtension(blurRadius > 0 ? "AlderPopoverBackdropTint" : "AlderSurface");
         else frame.Background = background;
         if (shadow is { } custom) frame.BoxShadow = custom;
         else frame[!Border.BoxShadowProperty] = new DynamicResourceExtension("AlderToolbarShadow");
+        UpdateBackdrop(radius, blurRadius);
+    }
+
+    private void UpdateBackdrop(CornerRadius radius, double blurRadius)
+    {
+        if (blurRadius == 0)
+        {
+            if (backdrop is not null) Children.Remove(backdrop);
+            backdrop = null;
+            return;
+        }
+
+        if (backdrop is null)
+        {
+            // Clip only the sampling layer. The frame still draws its shadow outside the radius.
+            backdrop = new Border { ClipToBounds = true, IsHitTestVisible = false, BackdropEffect = new BlurEffect() };
+            Children.Insert(0, backdrop);
+        }
+
+        backdrop.CornerRadius = radius;
+        ((BlurEffect)backdrop.BackdropEffect!).Radius = blurRadius;
     }
 
     public (Point Pivot, Vector3D Offset) Position(Control anchor, PlacementMode placement, Rect? anchorRect = null)

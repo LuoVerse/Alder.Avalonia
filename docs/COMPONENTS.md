@@ -194,6 +194,8 @@ var select = new AlderSelect
 | Stepper | [Stepper](../samples/Alder.Avalonia.Gallery/Views/StepperExample.axaml) |
 | Tabs | [ExpandableTabs](../samples/Alder.Avalonia.Gallery/Views/ExpandableTabsExample.axaml) · [MorphingTabs](../samples/Alder.Avalonia.Gallery/Views/MorphingTabsExample.axaml) · [Tabs](../samples/Alder.Avalonia.Gallery/Views/TabsExample.axaml) |
 
+`AlderNavbar` 的 `HeaderBackdropBlurRadius` 默认值为 `0`。开启后，导航栏会在原有 `Background` 的半透明版本下模糊经过栏头的内容。紧凑菜单继续使用原有的 `Background`。
+
 ### 弹出层
 
 | Gallery 页面 | 示例源码 |
@@ -207,6 +209,10 @@ var select = new AlderSelect
 | Sheet | [Sheet](../samples/Alder.Avalonia.Gallery/Views/SheetExample.axaml) |
 | Toast | [Toast](../samples/Alder.Avalonia.Gallery/Views/ToastExample.axaml) |
 | Tooltip | [ToolTip](../samples/Alder.Avalonia.Gallery/Views/ToolTipExample.axaml) |
+
+`AlderPopover` 可通过 `SurfaceBackdropBlurRadius` 为无箭头的表面启用背景模糊。默认值为 `0`。启用时会采用当前主题的半透明底色。自定义 `SurfaceBackground` 时，使用带透明度的画刷可保留可见的模糊效果。Popover 页的「背景模糊」示例使用同一组可滚动照片对照普通和模糊表面。
+
+`AlderHoverCard` 的 `SurfaceBackdropBlurRadius` 也适用于无箭头预览，默认值为 `0`。启用后可用半透明的 `Background` 覆盖主题底色。
 
 `AlderBloomMenu` 将触发按钮从中心展开为三列菜单。通过 `Items` 添加 `AlderBloomMenuItem`，或通过 `ItemsSource` 和 `ItemTemplate` 绑定数据。每个操作可绑定 `Command` 和 `CommandParameter`，并通过 `Icon` 指定图标。
 
@@ -246,6 +252,8 @@ var select = new AlderSelect
 | Surface | [Surface](../samples/Alder.Avalonia.Gallery/Views/SurfaceExample.axaml) |
 | Toolbar | [Toolbar](../samples/Alder.Avalonia.Gallery/Views/ToolbarExample.axaml) |
 | Transitioning Content | [接入指南](guides/navigation-and-actions.md#transitioning-content) · [六种过渡示例](../samples/Alder.Avalonia.Gallery/Views/TransitioningContentExample.axaml) |
+
+`AlderCard` 的 `SurfaceBackdropBlurRadius` 默认值为 `0`。启用后，背景模糊限制在卡片圆角内，并随卡片下方的内容更新。主题底色随 `Variant` 切换，自定义 `Background` 可使用带透明度的画刷。Gallery 的卡片示例可在同一组滚动照片上切换普通和模糊效果。
 
 ### 媒体
 
@@ -310,8 +318,11 @@ var select = new AlderSelect
 | Timeline | [Timeline](../samples/Alder.Avalonia.Gallery/Views/TimelineExample.axaml) |
 | Widget | [Widget](../samples/Alder.Avalonia.Gallery/Views/WidgetExample.axaml) |
 
+`AlderActionBar` 的 `SurfaceBackdropBlurRadius` 默认值为 `0`。启用后，模糊随附着操作栏一起开合。可以通过半透明的 `Background` 自定义底色。Gallery 的表格示例可在保持当前选择的情况下切换普通和模糊表面。
+
 `AlderExpandableActionBar` 用于常驻的图标操作栏。悬停、键盘聚焦或初次触摸会展开标签。
 可绑定 `IsExpanded` 和 `SelectedIndex`，通过 `ExpandOnHover`、`ExpandOnFocus` 和 `Size` 调整行为。
+当操作栏盖在图片或滚动内容上时，可用 `SurfaceBackdropBlurRadius` 启用表面后方的模糊。默认值为 `0`，启用后可用半透明的 `Background` 自定义底色。
 `AlderExpandableActionBarItem` 使用标准按钮的 `Command`，支持 `Icon`、`Badge`、`Shortcut` 提示和 `IconMotion`。
 交互动效参考 [beUI Web 预览](https://beui.dev/components/blocks/expandable-action-bar) 和 [组件说明](https://beui.dev/components/blocks/expandable-action-bar.md)，表面复用 Alder 工具栏主题资源。
 
@@ -319,12 +330,19 @@ var select = new AlderSelect
 两组接受带标准 `Command` 的 `AlderOverflowAction`。通过 `IsExpanded` 双向绑定开关状态，可配置 `CollapseOnAction` 和 `Size`。
 窄幅下操作区域可滚动，展开／收起按钮留在尾部。动效参考 [beUI Web 预览](https://beui.dev/components/blocks/overflow-actions) 和 [组件说明](https://beui.dev/components/blocks/overflow-actions.md)。
 
+在滚动内容上浮动时，可用 `AlderOverflowActions.SurfaceBackdropBlurRadius` 启用表面背景模糊。默认值为 `0`。模糊区域随操作栏展开或收起，自定义 `Background` 可使用带透明度的画刷。
+
 `AlderImageView` 的 `Source` 接受单个 `IImage`，也可以将 `AlderImageViewItem` 放入 `Items` 或绑定 `ItemsSource`，通过 `SelectedIndex` 或 `SelectedItem` 双向绑定选择。
 每个集合项目可以提供 `Title`、`FileName`、可访问的 `Description` 和独立的 `Thumbnail`。
 `ViewportHeight` 设置内嵌画布高度，`ShowDetails`、`ShowThumbnails` 和 `AllowImmersivePreview` 控制查看器界面。 `Zoom` 和 `IsImmersive` 可用于观察状态，`Fit()`、`ShowActualSize()`、`TryOpenImmersive()` 和 `CloseImmersive()` 可从代码控制。
+`ToolbarBackdropBlurRadius` 大于 `0` 时，工具栏浮在图像画布底部，并实时模糊后方图像。默认值为 `0`，工具栏位于图像下方。
 滚轮以指针为锚点缩放，双击切换适配与原始大小，放大后可拖动。键盘支持 `+` / `−`、`0`、`1`、`←` / `→`、`F` 与 `Esc`。原始大小按屏幕物理像素显示位图。缩略图沿用 Alder Carousel，沉浸切换参考 [beUI Image Viewer](https://beui.dev/components/motion/image-viewer)。
 通过 `ImageTransition` 选择切图效果，例如 `ImageTransition="Slide"`。可选 `CrossFade`（默认交叉淡化）、`Slide`（沿浏览方向水平滑动）、`Zoom`（居中缩放）、`Lift`（向上浮入）和 `None`（立即切换）。
 动效使用 200 ms 的合成关键帧。启用 `AlderMotion.Reduced` 时直接显示目标图片。
+
+`AlderMap` 的 `ZoomControlsBackdropBlurRadius` 只作用于右下角的缩放按钮组，默认值为 `0`。Gallery 的路线规划示例可在保留地图位置和缩放级别的情况下切换。
+
+`AlderFloatingToc` 的 `SurfaceBackdropBlurRadius` 默认值为 `0`，仅作用于展开的目录面板。Gallery 的图文示例可在目录打开时滚动文章并切换模糊。
 
 ### 颜色
 

@@ -23,10 +23,10 @@ public sealed class FloatingTocInteractions
             toc.Items.Add(new(key, key));
         }
 
-        var scroll = new ScrollViewer { Height = 210, Content = document };
+        var scroll = new AlderScrollViewer { Height = 210, Content = document };
         toc.ScrollHost = scroll;
         AlderMotion.SetReduced(toc, true);
-        var window = new Window { Width = 420, Height = 250, Content = new Grid { Children = { scroll, toc } } };
+        var window = new AlderTestWindow { Width = 420, Height = 250, Content = new Grid { Children = { scroll, toc } } };
         window.Show();
         try
         {

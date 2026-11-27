@@ -17,7 +17,7 @@ internal static class TransitioningContentRenderSmoke
 {
     public static void Run()
     {
-        var window = new Window { Width = 280, Height = 180 };
+        var window = new AlderTestWindow { Width = 280, Height = 180 };
         window.Show();
         try
         {
@@ -47,7 +47,7 @@ internal static class TransitioningContentRenderSmoke
             Content = outgoing, Transition = mode, Duration = TimeSpan.FromSeconds(1),
             Margin = new Thickness(18), Height = 120, CornerRadius = new CornerRadius(14), IsTransitionReversed = reversed
         };
-        window.Content = new ScrollViewer { Content = control };
+        window.Content = new AlderScrollViewer { Content = control };
         using var before = Capture(window);
         var origin = control.TranslatePoint(default, window)!.Value;
         var frame = new Rect(origin, control.Bounds.Size);

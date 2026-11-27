@@ -7,17 +7,25 @@
     <g:ExampleCard x:Name="SampleUsage" Title="{DynamicResource GalleryText.ProDemoMapUsage}">
       <g:ExampleCard.Preview>
         <Border MaxWidth="1020" Padding="2,10" HorizontalAlignment="Stretch" DataContext="{CompiledBinding Usage}">
-          <alder:AlderMap x:DataType="vm:MapScene" Height="420" WheelZoomRequiresFocus="True"
-                          Center="{CompiledBinding Center}" Zoom="{CompiledBinding Zoom}" SelectedMarker="{CompiledBinding SelectedMarker}"
-                          Basemap="{CompiledBinding Basemap}" RoadLayers="{CompiledBinding Roads}" Paths="{CompiledBinding Paths}" Markers="{CompiledBinding Markers}"
-                          ClusterMarkers="{CompiledBinding Clusters}" ShowLabels="{CompiledBinding Labels}" ShowCompass="{CompiledBinding Compass}"
-                          ShowZoomControls="{CompiledBinding ZoomControls}" Attribution="{CompiledBinding Attribution}"
-                          AutomationProperties.Name="{CompiledBinding Title}"
-                            FullscreenCommand="{CompiledBinding Fullscreen}">
-            <alder:AlderMap.OverlayContent>
-                <views:MapScenarioPanel />
-            </alder:AlderMap.OverlayContent>
-          </alder:AlderMap>
+          <StackPanel Spacing="8" x:DataType="vm:MapScene">
+            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.MapBlurZoomControls}" VerticalAlignment="Center" />
+              <alder:AlderSwitch x:Name="MapBackdropSwitch" Size="Small" IsChecked="{CompiledBinding BlurZoomControls, Mode=TwoWay}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.MapBlurZoomControls}" />
+            </StackPanel>
+            <alder:AlderMap x:Name="ComparisonMap" x:DataType="vm:MapScene" Height="420" WheelZoomRequiresFocus="True"
+                            Center="{CompiledBinding Center}" Zoom="{CompiledBinding Zoom}" SelectedMarker="{CompiledBinding SelectedMarker}"
+                            Basemap="{CompiledBinding Basemap}" RoadLayers="{CompiledBinding Roads}" Paths="{CompiledBinding Paths}" Markers="{CompiledBinding Markers}"
+                            ClusterMarkers="{CompiledBinding Clusters}" ShowLabels="{CompiledBinding Labels}" ShowCompass="{CompiledBinding Compass}"
+                            ShowZoomControls="{CompiledBinding ZoomControls}" ZoomControlsBackdropBlurRadius="{CompiledBinding ZoomControlsBackdropBlurRadius}"
+                            Attribution="{CompiledBinding Attribution}"
+                            AutomationProperties.Name="{CompiledBinding Title}"
+                              FullscreenCommand="{CompiledBinding Fullscreen}">
+              <alder:AlderMap.OverlayContent>
+                  <views:MapScenarioPanel />
+              </alder:AlderMap.OverlayContent>
+            </alder:AlderMap>
+          </StackPanel>
         </Border>
       </g:ExampleCard.Preview>
       <g:ExampleCard.CSharpSource><![CDATA[
@@ -34,6 +42,18 @@
         map.Bind(AlderMap.CenterProperty, CompiledBinding.Create((MapScene vm) => vm.Center, source: scene));
         map.Bind(AlderMap.ZoomProperty, CompiledBinding.Create((MapScene vm) => vm.Zoom, source: scene));
         map.Bind(AlderMap.SelectedMarkerProperty, CompiledBinding.Create((MapScene vm) => vm.SelectedMarker, source: scene));
+        map.Bind(AlderMap.ZoomControlsBackdropBlurRadiusProperty,
+            CompiledBinding.Create((MapScene vm) => vm.ZoomControlsBackdropBlurRadius, source: scene));
+        var blur = new AlderSwitch { Size = AlderSize.Small };
+        blur.Bind(AlderSwitch.IsCheckedProperty,
+            CompiledBinding.Create((MapScene vm) => vm.BlurZoomControls, source: scene, mode: BindingMode.TwoWay));
+        AutomationProperties.SetName(blur, "Blur zoom controls");
+        var controls = new StackPanel
+        {
+            Orientation = Orientation.Horizontal, Spacing = 8, HorizontalAlignment = HorizontalAlignment.Right,
+            Children = { new AlderTextBlock { Text = "Blur zoom controls", VerticalAlignment = VerticalAlignment.Center }, blur }
+        };
+        var preview = new StackPanel { Spacing = 8, Children = { controls, map } };
       ]]></g:ExampleCard.CSharpSource>
     </g:ExampleCard>
     <g:ExampleCard x:Name="SampleVisitors" Title="{DynamicResource GalleryText.ProDemoMapVisitors}">

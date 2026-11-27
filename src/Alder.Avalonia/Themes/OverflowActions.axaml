@@ -26,32 +26,40 @@
     <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.OverflowActions}" />
     <Setter Property="Template">
       <ControlTemplate x:DataType="alder:AlderOverflowActions">
-        <Border Name="PART_Surface" ClipToBounds="False" Background="{TemplateBinding Background}"
-                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
-                CornerRadius="{TemplateBinding CornerRadius}" Padding="{TemplateBinding Padding}"
-                BoxShadow="{DynamicResource AlderToolbarShadow}">
-          <DockPanel>
-            <alder:AlderOverflowActionsToggle Name="PART_Toggle" DockPanel.Dock="Right" Margin="6,0,0,0">
-              <Grid IsHitTestVisible="False">
-                <alder:AlderPathIcon Name="MoreIcon" Data="{DynamicResource AlderIconEllipsis}" Width="16" Height="16"
-                                     AutomationProperties.AccessibilityView="Raw" />
-                <alder:AlderPathIcon Name="CloseIcon" Data="{DynamicResource AlderIconXmark}" Width="16" Height="16" Opacity="0"
-                                     AutomationProperties.AccessibilityView="Raw" />
-              </Grid>
-            </alder:AlderOverflowActionsToggle>
-            <alder:AlderScrollViewer Name="PART_Scroller" Focusable="False" HorizontalScrollBarVisibility="Hidden"
-                                    VerticalScrollBarVisibility="Disabled" VerticalAlignment="Center">
-              <alder:AlderOverflowActionsPanel Name="PART_Rail">
-                <ItemsControl Name="PART_Primary" ItemsPanel="{StaticResource AlderOverflowActionsItemsPanel}"
-                              ItemsSource="{CompiledBinding PrimaryActions, RelativeSource={RelativeSource TemplatedParent}}" />
-                <ItemsControl Name="PART_Overflow" IsVisible="False" ItemsPanel="{StaticResource AlderOverflowActionsItemsPanel}"
-                              ItemsSource="{CompiledBinding OverflowActions, RelativeSource={RelativeSource TemplatedParent}}" />
-              </alder:AlderOverflowActionsPanel>
-            </alder:AlderScrollViewer>
-          </DockPanel>
-        </Border>
+        <Panel IsVisible="{CompiledBinding #PART_Surface.IsVisible}">
+          <!-- The two layers share the animated width while only the backdrop is clipped. -->
+          <alder:RoundedBackdropLayer Name="SurfaceBackdrop" CornerRadius="{TemplateBinding CornerRadius}"
+                                      Margin="{TemplateBinding BorderThickness}" Radius="{TemplateBinding SurfaceBackdropBlurRadius}" />
+          <Border Name="PART_Surface" ClipToBounds="False" Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="{TemplateBinding CornerRadius}" Padding="{TemplateBinding Padding}"
+                  BoxShadow="{DynamicResource AlderToolbarShadow}">
+            <DockPanel>
+              <alder:AlderOverflowActionsToggle Name="PART_Toggle" DockPanel.Dock="Right" Margin="6,0,0,0">
+                <Grid IsHitTestVisible="False">
+                  <alder:AlderPathIcon Name="MoreIcon" Data="{DynamicResource AlderIconEllipsis}" Width="16" Height="16"
+                                       AutomationProperties.AccessibilityView="Raw" />
+                  <alder:AlderPathIcon Name="CloseIcon" Data="{DynamicResource AlderIconXmark}" Width="16" Height="16" Opacity="0"
+                                       AutomationProperties.AccessibilityView="Raw" />
+                </Grid>
+              </alder:AlderOverflowActionsToggle>
+              <alder:AlderScrollViewer Name="PART_Scroller" Focusable="False" HorizontalScrollBarVisibility="Hidden"
+                                      VerticalScrollBarVisibility="Disabled" VerticalAlignment="Center">
+                <alder:AlderOverflowActionsPanel Name="PART_Rail">
+                  <alder:AlderItemsControl Name="PART_Primary" ItemsPanel="{StaticResource AlderOverflowActionsItemsPanel}"
+                                ItemsSource="{CompiledBinding PrimaryActions, RelativeSource={RelativeSource TemplatedParent}}" />
+                  <alder:AlderItemsControl Name="PART_Overflow" IsVisible="False" ItemsPanel="{StaticResource AlderOverflowActionsItemsPanel}"
+                                ItemsSource="{CompiledBinding OverflowActions, RelativeSource={RelativeSource TemplatedParent}}" />
+                </alder:AlderOverflowActionsPanel>
+              </alder:AlderScrollViewer>
+            </DockPanel>
+          </Border>
+        </Panel>
       </ControlTemplate>
     </Setter>
+    <Style Selector="^:backdrop-blur">
+      <Setter Property="Background" Value="{DynamicResource AlderToolbarBackdropTint}" />
+    </Style>
     <Style Selector="^[Size=Small]">
       <Setter Property="Padding" Value="4" />
       <Setter Property="CornerRadius" Value="22" />
@@ -59,7 +67,8 @@
     <Style Selector="^[Size=Small] /template/ alder|AlderOverflowActionsToggle">
       <Setter Property="Margin" Value="4,0,0,0" />
     </Style>
-    <Style Selector="^[Size=Small] /template/ ItemsControl#PART_Primary, ^[Size=Small] /template/ ItemsControl#PART_Overflow">
+    <Style Selector="^[Size=Small] /template/ alder|AlderItemsControl#PART_Primary,
+                     ^[Size=Small] /template/ alder|AlderItemsControl#PART_Overflow">
       <Setter Property="ItemsPanel" Value="{StaticResource AlderOverflowActionsSmallItemsPanel}" />
     </Style>
     <Style Selector="^[Size=Small] /template/ alder|AlderPathIcon#MoreIcon, ^[Size=Small] /template/ alder|AlderPathIcon#CloseIcon">

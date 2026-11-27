@@ -8,7 +8,7 @@
   <UserControl.Styles>
     <Style Selector="alder|AlderInputGroup"><Setter Property="Width" Value="248" /></Style>
     <Style Selector="alder|AlderInputGroup[FullWidth=True]"><Setter Property="Width" Value="NaN" /></Style>
-    <Style Selector="PathIcon"><Setter Property="Theme" Value="{StaticResource AlderIcon16Theme}" /></Style>
+    <Style Selector=":is(PathIcon)"><Setter Property="Theme" Value="{StaticResource AlderIcon16Theme}" /></Style>
     <Style Selector="WrapPanel"><Setter Property="ItemSpacing" Value="16" /><Setter Property="LineSpacing" Value="12" /></Style>
     <Style Selector="TextBlock.hint">
       <Setter Property="FontSize" Value="12" />

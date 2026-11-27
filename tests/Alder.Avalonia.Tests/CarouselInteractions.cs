@@ -217,7 +217,7 @@ public sealed class CarouselInteractions
         public CarouselWindow(AlderCarousel control, bool reducedMotion = true)
         {
             control.Margin = new Thickness(16);
-            Window = new Window { Width = 660, Height = 320, Content = control };
+            Window = new AlderTestWindow { Width = 660, Height = 320, Content = control };
             AlderMotion.SetReduced(Window, reducedMotion);
             Window.Show();
             Pump();

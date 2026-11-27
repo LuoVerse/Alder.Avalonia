@@ -18,8 +18,8 @@ public sealed class CardPreviewInteractions
     [AvaloniaFact]
     public async Task HoverCardKeepsThePreviewOpenAcrossTheGapAndWarmsTheNextCard()
     {
-        var trigger = new Button { Content = "First" };
-        var secondTrigger = new Button { Content = "Second" };
+        var trigger = new AlderButton { Content = "First" };
+        var secondTrigger = new AlderButton { Content = "Second" };
         var first = new AlderHoverCard { Trigger = trigger, Content = "First preview", OpenDelay = 180, CloseDelay = 65 };
         var second = new AlderHoverCard { Trigger = secondTrigger, Content = "Second preview", OpenDelay = 1500, CloseDelay = 65 };
         var panel = new Canvas { Children = { first, second } };
@@ -58,9 +58,9 @@ public sealed class CardPreviewInteractions
     [AvaloniaFact]
     public void HoverCardSupportsKeyboardFocusEscapeAndControlledReopen()
     {
-        var trigger = new Button { Content = "Open profile" };
-        var action = new Button { Content = "Follow" };
-        var outside = new Button { Content = "Outside" };
+        var trigger = new AlderButton { Content = "Open profile" };
+        var action = new AlderButton { Content = "Follow" };
+        var outside = new AlderButton { Content = "Outside" };
         var card = new AlderHoverCard { Trigger = trigger, Content = action, ShowArrow = true };
         var panel = new Canvas { Children = { card, outside } };
         Canvas.SetLeft(card, 130);
@@ -106,8 +106,8 @@ public sealed class CardPreviewInteractions
     [AvaloniaFact]
     public async Task TouchHoldOpensTheHoverCardAndMovesFocusIntoIt()
     {
-        var trigger = new Button { Content = "Preview" };
-        var action = new Button { Content = "More" };
+        var trigger = new AlderButton { Content = "Preview" };
+        var action = new AlderButton { Content = "More" };
         var card = new AlderHoverCard
         {
             Trigger = trigger, Content = action, OpenDelay = 10_000,
@@ -177,7 +177,7 @@ public sealed class CardPreviewInteractions
 
     private static Window Show(Control content, bool reduced)
     {
-        var window = new Window { Width = 440, Height = 340, Content = content };
+        var window = new AlderTestWindow { Width = 440, Height = 340, Content = content };
         AlderMotion.SetReduced(window, reduced);
         window.Show();
         Pump();

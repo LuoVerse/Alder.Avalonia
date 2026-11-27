@@ -14,7 +14,6 @@ using Avalonia.Logging;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Styling;
-using Avalonia.Themes.Fluent;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Alder.Avalonia.AotSmoke;
@@ -85,7 +84,7 @@ void VerifyAiControls()
     document.LoadNow("# Build status\n\n```json\n{\"ok\":true}\n```");
     var markdown = new AlderMarkdown { Document = document };
     var code = new AlderCodeBlock { Language = "cs", Code = "int n = 1;" };
-    var host = new Window { Width = 420, Height = 320, Content = new StackPanel { Children = { markdown, code } } };
+    var host = new AlderTestWindow { Width = 420, Height = 320, Content = new StackPanel { Children = { markdown, code } } };
     AlderMotion.SetReduced(host, true);
     host.Show();
     try
@@ -108,7 +107,7 @@ void VerifyChatToolStatusIcons()
     foreach (var status in new[] { AiRunStatus.Completed, AiRunStatus.Failed, AiRunStatus.Pending, AiRunStatus.Stopped })
         stack.Children.Add(new AlderChatTool { Header = status.ToString(), Status = status, Arguments = "{}",
             Approval = status == AiRunStatus.Pending ? "Review" : null });
-    var host = new Window { Width = 320, Height = 230, Content = stack };
+    var host = new AlderTestWindow { Width = 320, Height = 230, Content = stack };
     AlderMotion.SetReduced(host, true);
     host.Show();
     try
@@ -159,7 +158,7 @@ void VerifyShimmerFrames()
 {
     var text = new AlderTextShimmer { Text = "Generating a response…", FontSize = 22, Foreground = Brushes.Black };
     var scope = new Border { Child = text };
-    var host = new Window { Width = 270, Height = 40, Background = Brushes.White, Content = scope };
+    var host = new AlderTestWindow { Width = 270, Height = 40, Background = Brushes.White, Content = scope };
     host.Show();
     try
     {
@@ -220,7 +219,7 @@ void VerifyModelEffortFrames()
     };
     track.Classes.Add("accent-effort");
     var scope = new Border { Child = track };
-    var host = new Window { Width = 248, Height = 56, Background = Brushes.White, Content = scope };
+    var host = new AlderTestWindow { Width = 248, Height = 56, Background = Brushes.White, Content = scope };
     host.Show();
     try
     {
@@ -278,7 +277,7 @@ static byte[] CaptureFramePixels(Window host)
 void VerifyRichEditor()
 {
     var editor = new AlderRichTextEditor();
-    var host = new Window { Width = 580, Height = 260, Content = editor };
+    var host = new AlderTestWindow { Width = 580, Height = 260, Content = editor };
     host.Show();
     try
     {
@@ -351,7 +350,7 @@ void VerifyRichLinkArrow()
     };
     var canvas = new Canvas { Background = Brushes.Gray, ClipToBounds = true, Children = { editor } };
     Canvas.SetLeft(editor, 22);
-    var host = new Window { Width = 320, Height = 350, Content = canvas };
+    var host = new AlderTestWindow { Width = 320, Height = 350, Content = canvas };
     AlderMotion.SetReduced(host, true);
     host.Show();
     try
@@ -423,7 +422,7 @@ void VerifyFormControls()
     var option = new AlderRadioButtonGroupItem { Content = "Standard" };
     AlderChoiceGroup.SetKey(option, "standard");
     var radios = new AlderRadioButtonGroup { SelectedKey = "standard", Children = { option } };
-    var owner = new Window
+    var owner = new AlderTestWindow
     {
         Width = 450, Height = 620, RequestedThemeVariant = ThemeVariant.Light,
         Content = new StackPanel { Margin = new Thickness(12), Spacing = 12, Children = { drop, inline, scope, number, radios } }
@@ -452,7 +451,7 @@ void VerifyEmojiControls()
 {
     var reaction = new AlderEmojiReactionButton { Emoji = "❤️", Count = 12, IsChecked = true };
     var picker = new AlderEmojiPicker { IsInline = true, SelectedEmoji = "😀" };
-    var host = new Window
+    var host = new AlderTestWindow
     {
         Width = 420, Height = 460, Background = Brushes.White, RequestedThemeVariant = ThemeVariant.Light,
         Content = new StackPanel { Margin = new Thickness(20), Spacing = 10, Children = { reaction, picker } }
@@ -559,7 +558,7 @@ void VerifyMetricCardEdges()
     Canvas.SetTop(group, 18);
     Canvas.SetLeft(widget, 354);
     Canvas.SetTop(widget, 18);
-    var owner = new Window { Width = 522, Height = 128, Content = canvas };
+    var owner = new AlderTestWindow { Width = 522, Height = 128, Content = canvas };
     owner.Show();
     try
     {
@@ -674,7 +673,7 @@ void VerifyMapProjection()
         Center = new MapCoordinate(0, 179), Zoom = 4, Bearing = 35,
         ShowControls = false, Markers = [marker], Paths = [new AlderMapPath(path, Stroke: Brushes.Magenta, Thickness: 3)]
     };
-    var owner = new Window { Width = 340, Height = 240, Content = map };
+    var owner = new AlderTestWindow { Width = 340, Height = 240, Content = map };
     owner.Show();
     try
     {
@@ -717,13 +716,13 @@ void VerifyMapProjection()
 void VerifyCardPreviews()
 {
     var holo = new AlderHoloCard { Width = 116, Height = 160, Content = new TextBlock { Text = "Ed. 7" } };
-    var action = new Button { Content = "Details" };
+    var action = new AlderButton { Content = "Details" };
     var hover = new AlderHoverCard
     {
-        Trigger = new Button { Content = "Preview" }, Content = action, IsOpen = true,
+        Trigger = new AlderButton { Content = "Preview" }, Content = action, IsOpen = true,
         Placement = PlacementMode.Right, ShowArrow = true
     };
-    var owner = new Window
+    var owner = new AlderTestWindow
     {
         Width = 400, Height = 310,
         Content = new StackPanel { Margin = new Thickness(24), Spacing = 12, Children = { holo, hover } }
@@ -751,7 +750,7 @@ void VerifyHoloCardLighting()
         Width = 302, Height = 453, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
         VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center
     };
-    var owner = new Window { Width = 440, Height = 590, Content = card, Background = Brushes.White };
+    var owner = new AlderTestWindow { Width = 440, Height = 590, Content = card, Background = Brushes.White };
     AlderMotion.SetReduced(owner, false);
     owner.Show();
     try
@@ -834,7 +833,7 @@ void VerifyDataGridDragPreview()
     };
     grid.Columns.Add(MarkerColumn("Start", Brushes.Magenta));
     grid.Columns.Add(MarkerColumn("End", Brushes.Cyan));
-    var owner = new Window { Width = 400, Height = 260, Content = grid, RequestedThemeVariant = ThemeVariant.Light };
+    var owner = new AlderTestWindow { Width = 400, Height = 260, Content = grid, RequestedThemeVariant = ThemeVariant.Light };
     owner.Show();
     try
     {
@@ -986,6 +985,14 @@ void VerifyFeedback()
           Part<PathIcon>(spinner, "SpinnerGlyph") is { Width: 40, OpacityMask: DrawingBrush } &&
           !Part<Control>(Find<AlderSkeleton>("Skeleton"), "Shimmer").IsVisible,
         "feedback templates apply the spinner mask, size and reduced motion");
+    var button = Find<AlderButton>("ActionButton");
+    button.IsPending = true;
+    window.UpdateLayout();
+    Pump();
+    var pending = Part<Alder.Avalonia.Controls.ButtonSpinner>(button, "Spinner");
+    Check(pending.IsEffectivelyVisible && pending.GetVisualDescendants().OfType<Avalonia.Controls.Shapes.Path>()
+        .Any(path => path.Data is not null && path.Bounds.Width > 0), "the pending button paints its Alder spinner");
+    button.IsPending = false;
 }
 
 void VerifyLayout()
@@ -1110,6 +1117,26 @@ void VerifyPopups()
 
 void VerifyNavigation()
 {
+    var firstPage = new AlderSidebarPage { Content = new AlderTextBlock { Text = "Workspace" } };
+    var secondPage = new AlderSidebarPage { Content = new AlderTextBlock { Text = "Documents" } };
+    var sidebarPages = new AlderSidebarPages { Items = { firstPage, secondPage } };
+    var host = new AlderTestWindow { Width = 320, Height = 220, Content = sidebarPages };
+    AlderMotion.SetReduced(host, true);
+    host.Show();
+    try
+    {
+        host.UpdateLayout();
+        Check(sidebarPages.ContainerFromIndex(0)?.IsAttachedToVisualTree() == true,
+            "the first sidebar page is realized by AlderTheme");
+        sidebarPages.Next();
+        host.UpdateLayout();
+        Pump();
+        Check(sidebarPages.SelectedIndex == 1 &&
+              sidebarPages.ContainerFromIndex(1)?.GetVisualDescendants().OfType<AlderTextBlock>()
+                  .Any(text => text.Text == "Documents") == true, "Alder sidebar pages display the selected content");
+    }
+    finally { host.Close(); }
+
     var link = Find<AlderLink>("Link");
     Check(ControlAutomationPeer.CreatePeerForElement(link).GetAutomationControlType() == AutomationControlType.Hyperlink,
         "native link accessibility");
@@ -1287,7 +1314,7 @@ void VerifyExpandableTabs()
     tabs.Bind(AlderExpandableTabs.SelectedIndexProperty, CompiledBinding.Create(
         (SmokeModel value) => value.SelectedExpandableTab, mode: BindingMode.TwoWay));
     var stage = new Grid { Background = Brushes.Transparent, Children = { tabs } };
-    var host = new Window { Width = 430, Height = 250, DataContext = model, Content = stage };
+    var host = new AlderTestWindow { Width = 430, Height = 250, DataContext = model, Content = stage };
     host.Show();
     try
     {
@@ -1362,7 +1389,7 @@ void VerifyDialogs()
 {
     var trigger = new AlderButton { Content = "Open dialog", HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Center };
     var host = new DialogHost { HostId = "smoke", Content = trigger };
-    var overlayOwner = new Window { Content = host, Width = 800, Height = 600 };
+    var overlayOwner = new AlderTestWindow { Content = host, Width = 800, Height = 600 };
     AlderMotion.SetReduced(overlayOwner, true);
     overlayOwner.Show();
     try
@@ -1524,7 +1551,7 @@ void VerifyOverlays()
     {
         Content = new StackPanel { Margin = new Thickness(36), Spacing = 12, Children = { trigger, tipTarget } }
     };
-    var owner = new Window { Width = 720, Height = 560, Content = host };
+    var owner = new AlderTestWindow { Width = 720, Height = 560, Content = host };
     AlderMotion.SetReduced(owner, true);
     owner.Show();
     try
@@ -1696,7 +1723,6 @@ public sealed class SmokeApp : Application
 {
     public override void Initialize()
     {
-        Styles.Add(new FluentTheme());
         Styles.Add(new AlderTheme());
     }
 }

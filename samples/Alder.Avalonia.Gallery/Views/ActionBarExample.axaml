@@ -5,6 +5,7 @@
   <UserControl.Resources>
     <DataTemplate x:Key="BulkActions" x:DataType="vm:ActionBarSelectionDemo">
       <alder:AlderActionBar IsOpen="{Binding HasSelection, Mode=OneWay}" DismissCommand="{Binding Clear}"
+                           SurfaceBackdropBlurRadius="{CompiledBinding SurfaceBackdropBlurRadius}"
                            AutomationProperties.Name="{DynamicResource AlderText.ActionBarActions}">
         <alder:AlderActionBar.Prefix>
           <alder:AlderChip Size="Small" Variant="Soft" Color="Default" Content="{Binding Count}" />
@@ -92,11 +93,18 @@
 
     <gallery:ExampleCard x:Name="DataGridExample" Title="{DynamicResource GalleryText.ActionBarWithDataGrid}">
       <gallery:ExampleCard.Preview>
-        <Grid MinHeight="498">
-          <StackPanel Margin="16,16,16,72" Spacing="8">
+        <StackPanel Margin="16" Spacing="8">
+          <WrapPanel HorizontalAlignment="Right" ItemSpacing="12" LineSpacing="8">
+            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.ActionBarBlurSurface}" VerticalAlignment="Center" />
+              <alder:AlderSwitch x:Name="BackdropSwitch" Size="Small" IsChecked="{CompiledBinding Employees.BlurSurface, Mode=TwoWay}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.ActionBarBlurSurface}" />
+            </StackPanel>
             <alder:AlderButton Size="Small" Variant="Secondary" HorizontalAlignment="Right"
                                Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding Employees.Reset}" />
-            <alder:AlderDataGrid ItemsSource="{Binding Employees.Rows}" SelectedKeys="{Binding Employees.SelectedKeys, Mode=TwoWay}"
+          </WrapPanel>
+          <Grid>
+            <alder:AlderDataGrid x:Name="EmployeeTable" ItemsSource="{Binding Employees.Rows}" SelectedKeys="{Binding Employees.SelectedKeys, Mode=TwoWay}"
                                  SelectionMode="Multiple" ShowSelectionCheckboxes="True" Variant="Primary" Height="395" MinRowHeight="42"
                                  AutomationProperties.Name="{DynamicResource GalleryText.ActionBarEmployee}">
               <alder:AlderTableColumn Key="employee" Width="2*" MinWidth="148" Header="{DynamicResource GalleryText.ActionBarEmployee}"
@@ -108,12 +116,12 @@
               <alder:AlderTableColumn Key="joined" Width="*" MinWidth="98" Header="{DynamicResource GalleryText.ActionBarJoined}"
                                       x:DataType="vm:ActionBarRow" Binding="{CompiledBinding Joined}" />
             </alder:AlderDataGrid>
-            <alder:AlderTextBlock Text="{Binding Employees.Feedback}" IsVisible="{Binding Employees.HasFeedback}" TextWrapping="Wrap"
-                       Foreground="{DynamicResource AlderMuted}" AutomationProperties.LiveSetting="Polite" />
-          </StackPanel>
-          <alder:AlderContentControl Content="{Binding Employees}" ContentTemplate="{StaticResource BulkActions}" ClipToBounds="False"
-                          HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
-        </Grid>
+            <alder:AlderContentControl Content="{Binding Employees}" ContentTemplate="{StaticResource BulkActions}" ClipToBounds="False"
+                                       HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+          </Grid>
+          <alder:AlderTextBlock Text="{Binding Employees.Feedback}" IsVisible="{Binding Employees.HasFeedback}" TextWrapping="Wrap"
+                               Foreground="{DynamicResource AlderMuted}" AutomationProperties.LiveSetting="Polite" />
+        </StackPanel>
       </gallery:ExampleCard.Preview>
     </gallery:ExampleCard>
   </StackPanel>

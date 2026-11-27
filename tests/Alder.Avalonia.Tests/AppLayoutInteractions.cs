@@ -50,7 +50,7 @@ public class AppLayoutInteractions
     }
 
     [AvaloniaFact]
-    public void TemplatedSidebarSearchInTheDesktopRailRevealsAndSelectsTheMatchingChild()
+    public async Task TemplatedSidebarSearchInTheDesktopRailRevealsAndSelectsTheMatchingChild()
     {
         var home = new AlderSidebarItem { Header = "Home", IsCurrent = true };
         var details = new AlderSidebarItem { Header = "Details" };
@@ -61,8 +61,8 @@ public class AppLayoutInteractions
             Sidebar = "Workspace", SidebarCollapse = AppLayoutSidebarCollapse.Icon,
             SidebarTemplate = new FuncDataTemplate<string>((title, _) => new AlderSidebar { Header = title, Content = menu })
         };
-        AlderMotion.SetReduced(layout, true);
         using var view = new LayoutWindow(layout, 1000);
+        AlderMotion.SetReduced(view.Window, true);
         var sidebar = Assert.Single(layout.GetVisualDescendants().OfType<AlderSidebar>());
         var trigger = Find<AlderButton>(sidebar, "PART_Search");
         Assert.False(IsDisplayed(trigger));
@@ -84,7 +84,11 @@ public class AppLayoutInteractions
         view.Pump();
         Assert.Equal("Details", palette.ActiveItem?.Label);
 
+        var invoked = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        palette.ItemInvoked += (_, _) => invoked.TrySetResult();
         view.Press(PhysicalKey.Enter);
+        await invoked.Task.WaitAsync(TimeSpan.FromSeconds(2));
+        view.Pump();
         Assert.True(layout.IsSidebarOpen);
         Assert.True(reports.IsExpanded);
         Assert.Same(details, sidebar.SelectedItem);
@@ -124,8 +128,8 @@ public class AppLayoutInteractions
     [AvaloniaFact]
     public void ResponsiveLayoutKeepsNavigationSelectionContentAndScrollOffset()
     {
-        var item = new ListBoxItem { Content = "Members" };
-        var nav = new ListBox { Items = { new ListBoxItem { Content = "Workspace" }, item }, SelectedIndex = 1 };
+        var item = new AlderListBoxItem { Content = "Members" };
+        var nav = new AlderListBox { Items = { new AlderListBoxItem { Content = "Workspace" }, item }, SelectedIndex = 1 };
         var content = new TextBlock { Text = "Members", Height = 1200 };
         var layout = new AlderAppLayout
         {
@@ -133,7 +137,7 @@ public class AppLayoutInteractions
             Navbar = new TextBlock { Text = "Workspace settings", Height = 28 },
             Toolbar = new TextBlock { Text = "Actions", Height = 24 },
             Content = content,
-            Aside = new Button { Content = "Details" },
+            Aside = new AlderButton { Content = "Details" },
             Footer = new TextBlock { Text = "Status", Height = 28 }
         };
         using var view = new LayoutWindow(layout, 1180);
@@ -175,8 +179,8 @@ public class AppLayoutInteractions
     [AvaloniaFact]
     public void CompactPanelsAreMutuallyExclusiveAndDismissWithoutChangingDesktopState()
     {
-        var nav = new Button { Content = "Workspace" };
-        var details = new Button { Content = "Details" };
+        var nav = new AlderButton { Content = "Workspace" };
+        var details = new AlderButton { Content = "Details" };
         var layout = new AlderAppLayout
         {
             Sidebar = nav, Aside = details, Content = new TextBlock { Text = "Main" },
@@ -390,9 +394,9 @@ public class AppLayoutInteractions
     public void CompactSlotsReplaceDesktopContentOnlyInTheDrawers()
     {
         var sidebar = new TextBlock { Text = "Navigation" };
-        var mobileSidebar = new Button { Content = "Mobile navigation" };
+        var mobileSidebar = new AlderButton { Content = "Mobile navigation" };
         var aside = new TextBlock { Text = "Details" };
-        var mobileAside = new Button { Content = "Mobile details" };
+        var mobileAside = new AlderButton { Content = "Mobile details" };
         var layout = new AlderAppLayout
         {
             Sidebar = sidebar, MobileSidebar = mobileSidebar, Aside = aside, MobileAside = mobileAside,
@@ -433,7 +437,7 @@ public class AppLayoutInteractions
     [AvaloniaFact]
     public void AsideTransitionCanReverseAndReducedMotionClosesImmediately()
     {
-        var layout = new AlderAppLayout { Aside = new Button { Content = "Details" } };
+        var layout = new AlderAppLayout { Aside = new AlderButton { Content = "Details" } };
         using var view = new LayoutWindow(layout, 1120);
         var aside = Find<Border>(layout, "PART_Aside");
         Assert.Equal(320, aside.Bounds.Width);
@@ -467,7 +471,7 @@ public class AppLayoutInteractions
     {
         var layout = new AlderAppLayout
         {
-            Sidebar = new Button { Content = "Navigation" },
+            Sidebar = new AlderButton { Content = "Navigation" },
             SidebarCollapse = AppLayoutSidebarCollapse.OffCanvas
         };
         using var view = new LayoutWindow(layout, 940);
@@ -488,7 +492,7 @@ public class AppLayoutInteractions
     [AvaloniaFact]
     public void ClosingDrawerImmediatelyReleasesInputAndRetainsSurfaceForExit()
     {
-        var layout = new AlderAppLayout { Sidebar = new Button { Content = "Navigation" } };
+        var layout = new AlderAppLayout { Sidebar = new AlderButton { Content = "Navigation" } };
         using var view = new LayoutWindow(layout, 390);
         var sidebar = Find<Border>(layout, "PART_Sidebar");
         var scrim = Find<Border>(layout, "PART_Scrim");
@@ -533,7 +537,7 @@ public class AppLayoutInteractions
     {
         public LayoutWindow(AlderAppLayout content, double width)
         {
-            Window = new Window { Width = width, Height = 520 };
+            Window = new AlderTestWindow { Width = width, Height = 520 };
             Window.Content = content;
             Window.Show();
             Pump();

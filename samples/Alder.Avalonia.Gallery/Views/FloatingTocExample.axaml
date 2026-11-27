@@ -30,6 +30,39 @@
         </Grid>
       </gallery:ExampleCard.Preview>
     </gallery:ExampleCard>
+    <gallery:ExampleCard x:Name="BackdropInPage" Title="{DynamicResource GalleryText.TocBackdropInPage}">
+      <gallery:ExampleCard.Preview>
+        <StackPanel Spacing="10" MaxWidth="720">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <alder:AlderTextBlock Text="{DynamicResource GalleryText.TocBlurPanel}" VerticalAlignment="Center" />
+            <alder:AlderSwitch x:Name="BackdropSwitch" Size="Small" IsChecked="{CompiledBinding BlurPhotoToc, Mode=TwoWay}"
+                               AutomationProperties.Name="{DynamicResource GalleryText.TocBlurPanel}" />
+          </StackPanel>
+          <Grid Height="395">
+            <alder:AlderScrollViewer x:Name="PhotoScroll" Margin="0,0,48,0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+              <alder:AlderItemsControl ItemsSource="{CompiledBinding PhotoPage}">
+                <alder:AlderItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:TocPhotoSection">
+                    <StackPanel Margin="4,4,12,20" Spacing="8">
+                      <alder:AlderTextBlock FontSize="22" FontWeight="SemiBold" TextWrapping="Wrap" Text="{CompiledBinding Title}"
+                                           alder:AlderFloatingToc.AnchorKey="{CompiledBinding Key}" />
+                      <alder:AlderTextBlock Text="{CompiledBinding Body}" TextWrapping="Wrap" LineHeight="20" />
+                      <Border CornerRadius="12" ClipToBounds="True">
+                        <alder:AlderImage Height="174" Stretch="UniformToFill" Source="{CompiledBinding Photo}"
+                                          AutomationProperties.Name="{CompiledBinding Description}" />
+                      </Border>
+                    </StackPanel>
+                  </DataTemplate>
+                </alder:AlderItemsControl.ItemTemplate>
+              </alder:AlderItemsControl>
+            </alder:AlderScrollViewer>
+            <alder:AlderFloatingToc x:Name="PhotoToc" ItemsSource="{CompiledBinding PhotoEntries}" ScrollHost="{CompiledBinding #PhotoScroll}"
+                                   TriggerMode="Press" IsLightDismissEnabled="False" Margin="0,0,8,0"
+                                   Header="{DynamicResource GalleryText.TocContents}" SurfaceBackdropBlurRadius="{CompiledBinding PhotoTocBlurRadius}" />
+          </Grid>
+        </StackPanel>
+      </gallery:ExampleCard.Preview>
+    </gallery:ExampleCard>
     <gallery:ExampleCard x:Name="Hierarchy" Title="{DynamicResource GalleryText.TocHierarchy}">
       <gallery:ExampleCard.Preview>
         <Grid MinHeight="365" MaxWidth="660" Background="Transparent">

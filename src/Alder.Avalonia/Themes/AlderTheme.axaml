@@ -50,6 +50,17 @@
       <x:String x:Key="AlderText.SecondPlaceholder">ss</x:String>
 
       <BoxShadows x:Key="AlderFocusShadow">0 0 0 2 #0485F7</BoxShadows>
+      <ControlTheme x:Key="{x:Type alder:AlderItemsControl}" TargetType="alder:AlderItemsControl">
+        <Setter Property="Template">
+          <ControlTemplate>
+            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}"
+                    Padding="{TemplateBinding Padding}">
+              <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+            </Border>
+          </ControlTemplate>
+        </Setter>
+      </ControlTheme>
       <ControlTheme x:Key="AlderAttachedToolbarSurfaceTheme" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
         <Setter Property="CornerRadius" Value="24" />
@@ -90,6 +101,9 @@
           <SolidColorBrush x:Key="AlderDangerSoft" Color="#26FF383C" />
           <SolidColorBrush x:Key="AlderDangerInk" Color="#A43533" />
           <SolidColorBrush x:Key="AlderSurface" Color="White" />
+          <SolidColorBrush x:Key="AlderPopoverBackdropTint" Color="#CCFFFFFF" />
+          <SolidColorBrush x:Key="AlderToolbarBackdropTint" Color="#D9FFFFFF" />
+          <SolidColorBrush x:Key="AlderToolbarBackdropFocusTint" Color="#F2EFEFF0" />
           <SolidColorBrush x:Key="AlderSurfaceSecondary" Color="#EFEFF0" />
           <BoxShadows x:Key="AlderToolbarShadow">0 2 8 0 #0F000000, 0 -6 12 0 #08000000, 0 14 28 0 #14000000</BoxShadows>
         </ResourceDictionary>
@@ -124,6 +138,9 @@
           <SolidColorBrush x:Key="AlderDangerSoft" Color="#26DB3B3E" />
           <SolidColorBrush x:Key="AlderDangerInk" Color="#EB7872" />
           <SolidColorBrush x:Key="AlderSurface" Color="#18181B" />
+          <SolidColorBrush x:Key="AlderPopoverBackdropTint" Color="#CC18181B" />
+          <SolidColorBrush x:Key="AlderToolbarBackdropTint" Color="#D918181B" />
+          <SolidColorBrush x:Key="AlderToolbarBackdropFocusTint" Color="#F2232325" />
           <SolidColorBrush x:Key="AlderSurfaceSecondary" Color="#232325" />
           <BoxShadows x:Key="AlderToolbarShadow">0 10 20 0 #66000000, 0 4 12 0 #883A3A42, inset 0 0 1 0 #4DFFFFFF</BoxShadows>
         </ResourceDictionary>
@@ -293,6 +310,9 @@
   </Style>
   <Style Selector="alder|AlderContextMenu Separator">
     <Setter Property="Theme" Value="{DynamicResource AlderContextMenuSeparatorTheme}" />
+  </Style>
+  <Style Selector="alder|AlderNavbar:backdrop-blur alder|AlderNavbarItem[IsMenuItem=False]:not(:current):not(:pointerover)">
+    <Setter Property="Foreground" Value="{DynamicResource AlderNavbarBackdropItemInk}" />
   </Style>
   <Style Selector="alder|AlderTabs:morphing > TabItem.alder-tab-closing">
     <Setter Property="Opacity" Value="0" />

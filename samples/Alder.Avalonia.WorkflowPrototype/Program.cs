@@ -3,7 +3,6 @@ using Alder.Avalonia.Gallery.ViewModels;
 using Alder.Avalonia.Themes;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Themes.Fluent;
 
 namespace Alder.Avalonia.WorkflowPrototype;
 
@@ -18,7 +17,6 @@ public sealed class PrototypeApp : Application
 {
     public override void Initialize()
     {
-        Styles.Add(new FluentTheme());
         Styles.Add(new AlderTheme());
     }
 

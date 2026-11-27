@@ -209,14 +209,14 @@
         </StackPanel>
       </ControlTemplate>
     </Setter>
-    <Style Selector="^ /template/ PathIcon#PART_HeadingIcon">
+    <Style Selector="^ /template/ :is(PathIcon)#PART_HeadingIcon">
       <Setter Property="RenderTransform" Value="rotate(0deg)" />
       <Setter Property="Transitions">
         <Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" Easing="0,0,0.2,1" /></Transitions>
       </Setter>
     </Style>
-    <Style Selector="^ /template/ PathIcon#PART_HeadingIcon.expanded"><Setter Property="RenderTransform" Value="rotate(90deg)" /></Style>
-    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ PathIcon#PART_HeadingIcon"><Setter Property="Transitions" Value="{x:Null}" /></Style>
+    <Style Selector="^ /template/ :is(PathIcon)#PART_HeadingIcon.expanded"><Setter Property="RenderTransform" Value="rotate(90deg)" /></Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ :is(PathIcon)#PART_HeadingIcon"><Setter Property="Transitions" Value="{x:Null}" /></Style>
     <Style Selector="^[(alder|AlderMotion.Reduced)=True] /template/ WrapPanel#PART_Months, ^[(alder|AlderMotion.Reduced)=True] /template/ :is(ListBox)#PART_Years"><Setter Property="Transitions" Value="{x:Null}" /></Style>
     <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
   </ControlTheme>

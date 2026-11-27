@@ -29,8 +29,8 @@
           <alder:AlderTextBlock Text="{CompiledBinding Title}" FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap" />
           <alder:AlderTextBlock Text="{CompiledBinding Detail}" Foreground="{DynamicResource AlderMuted}" TextWrapping="Wrap" />
         </StackPanel>
-        <ItemsControl Grid.Column="1" ItemsSource="{CompiledBinding Rows}" VerticalAlignment="Center">
-          <ItemsControl.ItemTemplate>
+        <alder:AlderItemsControl Grid.Column="1" ItemsSource="{CompiledBinding Rows}" VerticalAlignment="Center">
+          <alder:AlderItemsControl.ItemTemplate>
             <DataTemplate x:DataType="vm:TransitioningContentRow">
               <Border Padding="0,8" BorderBrush="{DynamicResource AlderSeparator}" BorderThickness="0,0,0,1">
                 <DockPanel>
@@ -40,8 +40,8 @@
                 </DockPanel>
               </Border>
             </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
+          </alder:AlderItemsControl.ItemTemplate>
+        </alder:AlderItemsControl>
       </Grid>
     </DataTemplate>
   </UserControl.Resources>

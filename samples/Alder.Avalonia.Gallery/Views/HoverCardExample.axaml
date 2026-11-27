@@ -224,6 +224,44 @@
         };
       ]]></g:ExampleCard.CSharpSource>
     </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleBackdrop" Title="{DynamicResource GalleryText.HoverCardBackdrop}">
+      <g:ExampleCard.Preview>
+        <Border CornerRadius="14" ClipToBounds="True">
+          <Grid Height="226">
+            <alder:AlderImage Stretch="UniformToFill" Source="avares://Alder.Avalonia.Gallery/Assets/Card/robot1.jpeg"
+                              AutomationProperties.Name="{DynamicResource GalleryText.HoloArtAutomaton}" />
+            <alder:AlderHoverCard x:Name="BackdropHoverCard" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,18"
+                                 SurfaceBackdropBlurRadius="16" MaxContentWidth="232" PreviewName="{DynamicResource GalleryText.HoverCardArtwork}">
+              <alder:AlderHoverCard.Trigger>
+                <alder:AlderButton Variant="Secondary" Content="{DynamicResource GalleryText.HoverCardArtwork}" />
+              </alder:AlderHoverCard.Trigger>
+              <alder:AlderTextBlock Text="{DynamicResource GalleryText.HoverCardArtworkDescription}" TextWrapping="Wrap" LineHeight="20" />
+            </alder:AlderHoverCard>
+          </Grid>
+        </Border>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        using var file = AssetLoader.Open(new Uri("avares://Alder.Avalonia.Gallery/Assets/Card/robot1.jpeg"));
+        var photo = new AlderImage { Source = new Bitmap(file), Stretch = Stretch.UniformToFill };
+        AutomationProperties.SetName(photo, "An automaton under warm light");
+        var hover = new AlderHoverCard
+        {
+            HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Bottom,
+            Margin = new Thickness(0, 0, 0, 18), SurfaceBackdropBlurRadius = 16, MaxContentWidth = 232,
+            PreviewName = "Material Studies",
+            Trigger = new AlderButton { Content = "Material Studies", Variant = ButtonVariant.Secondary },
+            Content = new AlderTextBlock
+            {
+                Text = "A study of warm light on a matte surface.", TextWrapping = TextWrapping.Wrap, LineHeight = 20
+            }
+        };
+        var preview = new Border
+        {
+            CornerRadius = new CornerRadius(14), ClipToBounds = true,
+            Child = new Grid { Height = 226, Children = { photo, hover } }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
     <g:ExampleCard x:Name="Delays" Title="{DynamicResource GalleryText.HoverCardDelays}">
       <g:ExampleCard.Preview>
         <Grid MinHeight="235">

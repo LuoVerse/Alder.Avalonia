@@ -5,15 +5,45 @@
   <ResourceDictionary.ThemeDictionaries>
     <ResourceDictionary x:Key="Light">
       <SolidColorBrush x:Key="AlderSurfaceTertiary" Color="#EAEAEB" />
+      <SolidColorBrush x:Key="AlderCardBackdropSecondaryTint" Color="#D9EFEFF0" />
+      <SolidColorBrush x:Key="AlderCardBackdropTertiaryTint" Color="#D9EAEAEB" />
       <SolidColorBrush x:Key="AlderSeparatorSecondary" Color="#D8D8D8" />
       <SolidColorBrush x:Key="AlderSeparatorTertiary" Color="#CDCDCE" />
     </ResourceDictionary>
     <ResourceDictionary x:Key="Dark">
       <SolidColorBrush x:Key="AlderSurfaceTertiary" Color="#262728" />
+      <SolidColorBrush x:Key="AlderCardBackdropSecondaryTint" Color="#D9232325" />
+      <SolidColorBrush x:Key="AlderCardBackdropTertiaryTint" Color="#D9262728" />
       <SolidColorBrush x:Key="AlderSeparatorSecondary" Color="#343437" />
       <SolidColorBrush x:Key="AlderSeparatorTertiary" Color="#3C3C3F" />
     </ResourceDictionary>
   </ResourceDictionary.ThemeDictionaries>
+
+  <ControlTheme x:Key="{x:Type alder:AlderGridSplitter}" TargetType="alder:AlderGridSplitter">
+    <Setter Property="Background" Value="{DynamicResource AlderSeparator}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" />
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover, ^:pressed, ^:focus-visible">
+      <Setter Property="Background" Value="{DynamicResource AlderAccent}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderThumb}" TargetType="alder:AlderThumb">
+    <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
+                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" />
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover, ^:pressed, ^:focus-visible">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
+    </Style>
+  </ControlTheme>
 
   <ControlTheme x:Key="{x:Type alder:AlderSurface}" TargetType="alder:AlderSurface">
     <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
@@ -48,6 +78,9 @@
     <Setter Property="Template">
       <ControlTemplate>
         <Grid>
+          <!-- Keep the backdrop inside the outline while the fill draws the shadow outside it. -->
+          <alder:RoundedBackdropLayer Name="SurfaceBackdrop" Radius="{TemplateBinding SurfaceBackdropBlurRadius}"
+                                      CornerRadius="{TemplateBinding CornerRadius}" Margin="{TemplateBinding BorderThickness}" />
           <alder:SurfaceFill ClipToBounds="False" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
                          BorderThickness="{TemplateBinding BorderThickness}" BoxShadow="{TemplateBinding BoxShadow}" />
           <Border CornerRadius="{TemplateBinding CornerRadius}" Padding="{TemplateBinding Padding}" BackgroundSizing="OuterBorderEdge"
@@ -72,6 +105,18 @@
       </ControlTemplate>
     </Setter>
     <Style Selector="^[Variant=Transparent]"><Setter Property="BoxShadow" Value="none" /></Style>
+    <Style Selector="^:backdrop-blur[Variant=Default]">
+      <Setter Property="Background" Value="{DynamicResource AlderToolbarBackdropTint}" />
+    </Style>
+    <Style Selector="^:backdrop-blur[Variant=Secondary]">
+      <Setter Property="Background" Value="{DynamicResource AlderCardBackdropSecondaryTint}" />
+    </Style>
+    <Style Selector="^:backdrop-blur[Variant=Tertiary]">
+      <Setter Property="Background" Value="{DynamicResource AlderCardBackdropTertiaryTint}" />
+    </Style>
+    <Style Selector="^:backdrop-blur /template/ TextBlock#CardDescription">
+      <Setter Property="Foreground" Value="{CompiledBinding Foreground, RelativeSource={RelativeSource TemplatedParent}}" />
+    </Style>
     <Style Selector="^ /template/ ContentPresenter#CustomHeader:empty, ^ /template/ ContentPresenter#PART_ContentPresenter:empty,
                      ^ /template/ ContentPresenter#CardFooter:empty"><Setter Property="IsVisible" Value="False" /></Style>
     <Style Selector="^[Orientation=Horizontal] /template/ StackPanel#CardHeader">
