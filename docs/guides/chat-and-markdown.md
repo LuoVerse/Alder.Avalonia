@@ -1,18 +1,18 @@
-# AI 会话与 Markdown
+# AI conversations and Markdown
 
-**简体中文** · [English](chat-and-markdown.en.md)
+**English** · [简体中文](chat-and-markdown.zh-CN.md)
 
-用 `AlderMarkdown` 渲染 Markdown 文稿，用 `AlderChatConversation` 组织可滚动的会话。消息发送、模型调用、工具批准和附件上传由宿主实现。需要带格式的可编辑正文时，参见 [Rich Text Editor](rich-text-editor.md)。
+Use `AlderMarkdown` to render Markdown and `AlderChatConversation` to organize a scrollable conversation. The host application handles sending messages, calling models, approving tool calls, and uploading attachments. For editable rich text, see the editor guide. [Rich Text Editor](rich-text-editor.md)
 
-## 静态内容与流式响应
+## Static content and streaming responses
 
-已经完整的 Markdown 可直接绑定 `Markdown`。有代码源码时，`AlderCodeBlock.Code` 和 `Language` 可以直接接收源代码和语言名。
+Bind completed Markdown directly through `Markdown`. To show source code, pass the source and language name to `AlderCodeBlock.Code` and `Language`.
 
 ```xml
 <alder:AlderMarkdown Markdown="{CompiledBinding ReplyText}" />
 ```
 
-流式响应开始时在 UI 线程调用 `BeginStream()`，之后把收到的新增文本传给 `Push`，结束时调用 `Complete`。同时在应用侧收集原始文本，用于保存和后续恢复。
+Call `BeginStream()` on the UI thread to start a streaming response. Forward incoming text deltas to `Push` and call `Complete` at the end. Collect the original text in the application for persistence and restoration.
 
 ```csharp
 using System.Collections.Generic;
@@ -42,13 +42,13 @@ static async Task<string> DisplayReplyAsync(AlderMarkdown view,
 }
 ```
 
-`Push` 和 `Complete` 可由后台线程调用。上面的函数成功时返回可保存的完整 Markdown，取消和异常交给调用方。需要保留未完成回复时，在宿主的消息模型里增量记录正文，并附上取消或失败状态。若流式请求发来的是累计全文，先提取新增部分再推送。[Markdown 示例](../../samples/Alder.Avalonia.Gallery/Views/MarkdownExample.axaml) · [流式与代码示例 ViewModel](../../samples/Alder.Avalonia.Gallery/ViewModels/AiExampleViewModel.cs)
+You can call `Push` and `Complete` from a background thread. The function above returns the full Markdown on success and propagates cancellation and exceptions to the caller. To keep an incomplete response, incrementally store its body in the host's message model along with the cancellation or failure status. If the stream sends cumulative text, extract the new portion before pushing it. [Markdown example](../../samples/Alder.Avalonia.Gallery/Views/MarkdownExample.axaml) · [Streaming and source code ViewModel](../../samples/Alder.Avalonia.Gallery/ViewModels/AiExampleViewModel.cs)
 
-## 保存与重开聊天记录
+## Saving and reopening chat history
 
-给 `AlderChatConversation.ItemsSource` 绑定 `ObservableCollection<TranscriptEntry>`。纯 Markdown 回复可用 `MarkdownEntry.FromText` 创建。包含头像、操作或卡片的消息可用 `ContentEntry` 包装控件。在 UI 线程添加、替换或清空绑定集合。
+Bind `AlderChatConversation.ItemsSource` to an `ObservableCollection<TranscriptEntry>`. Use `MarkdownEntry.FromText` for Markdown-only responses. Use `ContentEntry` to wrap controls for messages that include avatars, actions, or cards. Add, replace, and clear bound entries on the UI thread.
 
-保存自己的会话记录，例如 `id`、`role`、正文 Markdown、消息顺序、附件存储 ID 和工具状态。以下示例从已加载的消息集合重建可绑定条目。
+Save your own conversation records with fields such as `id`, `role`, Markdown body, message order, attachment storage IDs, and tool state. This example rebuilds bindable entries from the loaded messages.
 
 ```csharp
 using System.Collections.Generic;
@@ -79,15 +79,15 @@ public static class TranscriptFactory
 }
 ```
 
-创建新回复时，也可为会话添加一个由 `MarkdownStream` 创建的 `MarkdownEntry`，随后推送增量。可用 `ShowScrollButton` 提供返回底部入口，用 `ScrollOnUserMessage` 控制发送消息后的跟随行为。打开已完成的历史记录时直接用静态条目重建，正文和工具状态均从持久化记录取得。[会话示例](../../samples/Alder.Avalonia.Gallery/Views/ChatConversationExample.axaml) · [发送与重建条目的 C# 代码](../../samples/Alder.Avalonia.Gallery/ViewModels/AiExampleViewModel.cs)
+For a new response, you can add a `MarkdownEntry` backed by a `MarkdownStream` and then push deltas. Use `ShowScrollButton` to offer a way back to the bottom and `ScrollOnUserMessage` to control scrolling after a message is sent. When reopening a completed conversation, build static entries from the saved message bodies and tool states. [Conversation example](../../samples/Alder.Avalonia.Gallery/Views/ChatConversationExample.axaml) · [C# for sending and rebuilding entries](../../samples/Alder.Avalonia.Gallery/ViewModels/AiExampleViewModel.cs)
 
-## 组合输入、模型、工具与附件
+## Prompt input, models, tools, and attachments
 
-| 组件 | 接入及恢复 |
+| Component | Integration and restoration |
 | --- | --- |
-| Prompt Input | 双向绑定 `Text`，用 `SendCommand` 从草稿创建请求，用 `StopCommand` 取消，用 `IsRunning` 映射运行状态。`Tools` 和 `Attachments` 是界面插槽。重新打开时可恢复未发送草稿和已保存的附件引用。[示例](../../samples/Alder.Avalonia.Gallery/Views/PromptInputExample.axaml) |
-| Model Selector | 绑定 `ItemsSource`、`Efforts`、`SelectedModel` 和 `SelectedEffort`。保存应用的模型 ID 和推理强度，刷新可用模型后重新选择。[示例](../../samples/Alder.Avalonia.Gallery/Views/ModelSelectorExample.axaml) |
-| Chat Tool、Approval Card | 从应用状态设置 `AlderChatTool.Status`、`Arguments` 和 `Result`。批准卡绑定 `ApproveCommand`、`RejectCommand` 和 `Decision`。保存工具调用 ID、结果以及决定。恢复时展示已记录状态，后续执行由应用的会话逻辑决定。[工具示例](../../samples/Alder.Avalonia.Gallery/Views/ChatToolExample.axaml) · [批准卡示例](../../samples/Alder.Avalonia.Gallery/Views/ApprovalCardExample.axaml) |
-| Chat Attachment、Chat Source | 从已上传附件的记录或可重新访问的文件引用构建卡片，从标题和地址构建来源。文件选择器或拖放只提供输入，宿主负责读写与上传。[附件示例](../../samples/Alder.Avalonia.Gallery/Views/ChatAttachmentExample.axaml) · [来源示例](../../samples/Alder.Avalonia.Gallery/Views/ChatSourceExample.axaml) |
-| Chat List View、Chat Message Actions | 会话列表绑定应用的会话模型，消息操作绑定对应命令。保存会话和消息 ID，打开时从当前集合恢复选择和命令上下文。[列表示例](../../samples/Alder.Avalonia.Gallery/Views/ChatListViewExample.axaml) · [操作示例](../../samples/Alder.Avalonia.Gallery/Views/ChatMessageActionsExample.axaml) |
-| Reasoning、Chain of Thought、Loader | 从业务记录渲染可向用户展示的摘要、步骤和过程反馈。加载历史时根据已有状态重建内容，运行中的加载指示随当前请求更新。[摘要示例](../../samples/Alder.Avalonia.Gallery/Views/ReasoningExample.axaml) · [步骤示例](../../samples/Alder.Avalonia.Gallery/Views/ChainOfThoughtExample.axaml) · [加载示例](../../samples/Alder.Avalonia.Gallery/Views/ChatLoaderExample.axaml) |
+| Prompt Input | Bind `Text` two-way. Use `SendCommand` to create a request from the draft, `StopCommand` to cancel, and `IsRunning` to reflect request state. `Tools` and `Attachments` are content slots. Restore unsent drafts and saved attachment references when reopening. [Example](../../samples/Alder.Avalonia.Gallery/Views/PromptInputExample.axaml) |
+| Model Selector | Bind `ItemsSource`, `Efforts`, `SelectedModel`, and `SelectedEffort`. Persist the application's model ID and reasoning effort, then restore the selection after refreshing the available models. [Example](../../samples/Alder.Avalonia.Gallery/Views/ModelSelectorExample.axaml) |
+| Chat Tool, Approval Card | Set `AlderChatTool.Status`, `Arguments`, and `Result` from application state. Bind the approval card's `ApproveCommand`, `RejectCommand`, and `Decision`. Save the tool call ID, result, and decision. Restore the recorded state and leave any follow-up execution to the application's conversation logic. [Tool example](../../samples/Alder.Avalonia.Gallery/Views/ChatToolExample.axaml) · [Approval card example](../../samples/Alder.Avalonia.Gallery/Views/ApprovalCardExample.axaml) |
+| Chat Attachment, Chat Source | Create attachment cards from uploaded file records or reusable file references. Create source cards from titles and URLs. The host reads, writes, and uploads files supplied through the picker or drag and drop. [Attachment example](../../samples/Alder.Avalonia.Gallery/Views/ChatAttachmentExample.axaml) · [Source example](../../samples/Alder.Avalonia.Gallery/Views/ChatSourceExample.axaml) |
+| Chat List View, Chat Message Actions | Bind the list to the application's conversation model and bind each message action to its command. Persist conversation and message IDs and use the current collection to restore selection and command context. [List example](../../samples/Alder.Avalonia.Gallery/Views/ChatListViewExample.axaml) · [Actions example](../../samples/Alder.Avalonia.Gallery/Views/ChatMessageActionsExample.axaml) |
+| Reasoning, Chain of Thought, Loader | Render user-facing summaries, steps, and progress from application records. Rebuild the display from saved state when loading history and keep the loading indicator in sync with the current request. [Summary example](../../samples/Alder.Avalonia.Gallery/Views/ReasoningExample.axaml) · [Steps example](../../samples/Alder.Avalonia.Gallery/Views/ChainOfThoughtExample.axaml) · [Loading example](../../samples/Alder.Avalonia.Gallery/Views/ChatLoaderExample.axaml) |

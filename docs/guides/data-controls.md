@@ -1,12 +1,12 @@
-# 表格、看板、日程与地图
+# Tables, boards, schedules, and maps
 
-**简体中文** · [English](data-controls.en.md)
+**English** · [简体中文](data-controls.zh-CN.md)
 
-这些控件从应用的数据模型生成界面。把数据和顺序保存在业务记录中，把用户上次使用的视图状态保存在偏好设置中。重开页面时先重建数据集合与模板，再用稳定的 ID 恢复选中、展开和定位。
+These controls display data from application models. Save data and ordering in application records, and save the user's last view state in preferences. When reopening a page, rebuild the data collections and templates before restoring selection, expansion, and position using stable IDs.
 
-## Table 与 Data Grid
+## Table and Data Grid
 
-使用 `AlderTable` 展示行、列和选择。需要固定列、拖拽重排、显式配置虚拟化或服务端排序时，使用同一套列定义的 `AlderDataGrid`。下面的 AXAML 放在已声明 `alder`、`local` 命名空间以及 ViewModel `x:DataType` 的视图中。
+Use `AlderTable` to show rows, columns, and selection. For pinned columns, drag reordering, explicit virtualization settings, or server-side sorting, use `AlderDataGrid` with the same column definitions. Put the following AXAML in a view that declares the `alder` and `local` namespaces and the ViewModel's `x:DataType`.
 
 ```xml
 <alder:AlderDataGrid Height="320" RowHeight="40"
@@ -16,7 +16,7 @@
                      SelectedKeys="{CompiledBinding SelectedKeys, Mode=TwoWay}"
                      SortDescriptor="{CompiledBinding Sort, Mode=TwoWay}">
   <alder:AlderDataGrid.Columns>
-    <alder:AlderTableColumn Key="title" Header="任务" Width="*"
+    <alder:AlderTableColumn Key="title" Header="Task" Width="*"
                             CanSort="True" SortComparison="{CompiledBinding ByTitle}">
       <alder:AlderTableColumn.CellTemplate>
         <DataTemplate x:DataType="local:TaskRow">
@@ -28,34 +28,34 @@
 </alder:AlderDataGrid>
 ```
 
-例如，令 `TaskRow` 为 `record TaskRow(string Id, string Title)`，`Rows` 为 `ObservableCollection<TaskRow>`，`RowKey` 为 `Func<object, object>`（`row => ((TaskRow)row).Id`），`ByTitle` 为 `Comparison<object>`（比较两个 `TaskRow` 的标题）。`SelectedKeys` 使用 `IReadOnlyCollection<object>?`，`Sort` 使用 `AlderTableSort?`。由应用代码重新赋值时，通过 ViewModel 的属性变更通知更新控件。
+For example, define `TaskRow` as `record TaskRow(string Id, string Title)` and `Rows` as an `ObservableCollection<TaskRow>`. Use a `Func<object, object>` for `RowKey` (`row => ((TaskRow)row).Id`) and a `Comparison<object>` for `ByTitle` (compare the titles of two `TaskRow` objects). Use `IReadOnlyCollection<object>?` for `SelectedKeys` and `AlderTableSort?` for `Sort`. Raise property change notifications when assigning new values from application code.
 
-| 操作 | 接入方式 |
+| Operation | Integration |
 | --- | --- |
-| 树形行 | 提供 `ChildrenSelector`，设置 `TreeColumnKey`，双向绑定 `ExpandedKeys` |
-| 服务端排序 | 设 `SortMode="External"`，在 `SortChangedCommand` 中使用收到的 `AlderTableSort` 重新查询。初次载入时用已保存的排序发起首个请求 |
-| 增量加载 | 用 `HasMoreItems`、`IsLoading` 和 `LoadMoreCommand` 管理后续页。由业务命令防止重复请求，查询条件变更时丢弃旧请求的结果 |
-| 拖拽行 | 开启 `CanReorderRows` 并绑定 `ReorderCommand`，根据 `DataGridReorderRequest` 的行键、目标键、位置和父键更新数据源。默认在排序生效时关闭拖拽 |
-| 从上次状态继续 | 保存选中和展开项的业务 ID，以及排序的列 `ColumnKey` 和 `Direction`。恢复时保留 ID 的原始类型，例如整数键恢复为整数。丢弃失效列和已删除的项 |
+| Tree rows | Provide `ChildrenSelector`, set `TreeColumnKey`, and bind `ExpandedKeys` two-way. |
+| Server-side sorting | Set `SortMode="External"` and requery using the `AlderTableSort` passed to `SortChangedCommand`. Use the saved sort for the first request. |
+| Incremental loading | Manage subsequent pages with `HasMoreItems`, `IsLoading`, and `LoadMoreCommand`. Prevent duplicate requests in the application command and discard stale results when query criteria change. |
+| Dragging rows | Enable `CanReorderRows` and bind `ReorderCommand`. Update the source using the row key, target key, position, and parent key from `DataGridReorderRequest`. Dragging is disabled by default while sorting is active. |
+| Restoring view state | Save the application IDs for selected and expanded items, along with the sort's `ColumnKey` and `Direction`. Restore the original ID types, such as integers for integer keys. Drop missing columns and deleted items. |
 
-为网格提供有限高度，例如放在 `Grid` 的星号行中，让网格内部滚动。`VisibleRowCount` 统计的是当前展开后展平视图中的总行数。验证虚拟化时，应在有限视口内检查实际生成的行容器。[Table 示例](../../samples/Alder.Avalonia.Gallery/Views/TableExample.axaml) · [Data Grid 示例](../../samples/Alder.Avalonia.Gallery/Views/DataGridExample.axaml) · [Data Grid ViewModel](../../samples/Alder.Avalonia.Gallery/ViewModels/DataGridViewModel.cs)
+Give the grid a bounded height, for example by placing it in a star-sized `Grid` row, so it can scroll internally. `VisibleRowCount` counts all rows in the flattened view after expansion. To verify virtualization, inspect the row containers actually created within a bounded viewport. [Table example](../../samples/Alder.Avalonia.Gallery/Views/TableExample.axaml) · [Data Grid example](../../samples/Alder.Avalonia.Gallery/Views/DataGridExample.axaml) · [Data Grid ViewModel](../../samples/Alder.Avalonia.Gallery/ViewModels/DataGridViewModel.cs)
 
 ## Kanban
 
-`AlderKanban.ItemsSource` 提供列。列模板用 `AlderKanbanColumn` 声明 `Key`、`Header` 和卡片的 `ItemsSource`。拖拽命令收到 `KanbanMoveRequest`，其中 `SourceColumn` 和 `TargetColumn` 是列的 `Key`，`Item` 是卡片对象，`TargetIndex` 是应用移动后的插入位置。同列移动时可用 `ObservableCollection.Move`，跨列时从源集合移除后插入目标集合。提交前用当前集合重新定位卡片，以处理拖动期间的数据更新。
+`AlderKanban.ItemsSource` supplies the columns. Use `AlderKanbanColumn` in the column template to declare `Key`, `Header`, and the card `ItemsSource`. The drag command receives a `KanbanMoveRequest`. `SourceColumn` and `TargetColumn` contain the column keys, `Item` is the card object, and `TargetIndex` is the insertion index after the move. Use `ObservableCollection.Move` within a column. Between columns, remove from the source collection and insert into the target. Look up the card in the current collection before committing to account for updates during the drag.
 
-例如，在项目数据中保存如下记录。由拖拽命令更新卡片的列 ID 和顺序。打开看板时先按列 ID 分组，再按每列的顺序构建绑定集合。跨列移动时，源列和目标列的顺序应一并保存。
+The following record is an example of what to persist. Use the drag command to update the card's column ID and order. When opening the board, group by column ID and build the bound collections in each column's saved order. When moving across columns, save both the source and target order together.
 
 ```json
 {
   "columns": [
-    { "id": "todo", "title": "待办", "taskIds": ["t-12", "t-18"] },
-    { "id": "doing", "title": "进行中", "taskIds": ["t-09"] }
+    { "id": "todo", "title": "To do", "taskIds": ["t-12", "t-18"] },
+    { "id": "doing", "title": "In progress", "taskIds": ["t-09"] }
   ]
 }
 ```
 
-[列与卡片模板](../../samples/Alder.Avalonia.Gallery/Views/KanbanExample.axaml) · [同列和跨列移动代码](../../samples/Alder.Avalonia.Gallery/ViewModels/KanbanViewModel.cs)
+[Column and card templates](../../samples/Alder.Avalonia.Gallery/Views/KanbanExample.axaml) · [Moving cards within and between columns](../../samples/Alder.Avalonia.Gallery/ViewModels/KanbanViewModel.cs)
 
 ## File Tree
 
@@ -71,13 +71,13 @@ folder.Children.Add(new AlderFileTreeNode("notes-id", "notes.md"));
 var tree = new AlderFileTree { ItemsSource = new[] { folder } };
 ```
 
-节点用 `Key` 标识，`Children` 维护层级。需要拖拽时，按 Gallery 示例启用拖放并绑定 `MoveCommand`。命令收到 `AlderFileTreeMove`，根据 `Items`、`Target` 和 `Position` 判断移动范围。应用负责权限判断、防止把目录移入自己的子树，以及在真实文件移动成功后更新节点集合。
+Use `Key` to identify nodes and `Children` to represent the hierarchy. To support dragging, enable drag and drop and bind `MoveCommand` as shown in the Gallery. The command receives an `AlderFileTreeMove`. Use its `Items`, `Target`, and `Position` to determine the move. The application checks permissions, prevents a directory from moving into its own subtree, and updates the node collection after the file move succeeds.
 
-保存应用自己的节点记录，例如 `id`、`parentId`、顺序和名称。节点从文件系统生成时，刷新后可按稳定 ID 恢复状态。展开状态存节点键，重新构建时设置各节点的 `IsExpanded`。多选也可保存键，加载后将键解析成新的节点对象再恢复选择。[File Tree 示例](../../samples/Alder.Avalonia.Gallery/Views/FileTreeExample.axaml) · [拖拽与多选 ViewModel](../../samples/Alder.Avalonia.Gallery/ViewModels/FileTreeViewModel.cs)
+Persist your own node records with fields such as `id`, `parentId`, order, and name. For nodes generated from the file system, restore state by stable ID after refreshing. Save expanded node keys and set each node's `IsExpanded` when rebuilding. For multi-selection, save selected keys and resolve them to the newly loaded node objects. [File Tree example](../../samples/Alder.Avalonia.Gallery/Views/FileTreeExample.axaml) · [Drag-and-drop and multi-selection ViewModel](../../samples/Alder.Avalonia.Gallery/ViewModels/FileTreeViewModel.cs)
 
 ## Agenda
 
-`Events` 接收 `AlderAgendaEvent` 的可观察集合。应用把新增、移动、调整结束时间和删除接到 `EditCommand`，接收 `AlderAgendaEdit`。创建时分配稳定 ID，修改时按 ID 替换记录，删除时从集合移除。业务校验和写入存储都在命令中完成。下面是 ViewModel 里的移动或调整时长分支。
+`Events` accepts an observable collection of `AlderAgendaEvent` objects. Route creation, moves, duration changes, and deletion to `EditCommand`, which receives an `AlderAgendaEdit`. Assign a stable ID when creating an event, replace the record by ID on edit, and remove it on deletion. The command handles application validation and persistence. The code below shows the ViewModel branch for moving or resizing an event.
 
 ```csharp
 using Alder.Avalonia.Controls;
@@ -96,11 +96,11 @@ static void UpdateTimes(ObservableCollection<AlderAgendaEvent> events, AlderAgen
 }
 ```
 
-保存业务事件的 ID、标题、时间及全天标记。控件的 `Start` 和 `End` 是日程时区中的墙上时间。保存实际时刻时，在应用层保留时区并完成映射。全天事件的结束日期是排他的，例如 11 月 26 日这一天的全天事件结束于 11 月 27 日。恢复视图时可以再设置 `DisplayDate`、`View` 和 `SelectedEventId`。[Agenda 示例](../../samples/Alder.Avalonia.Gallery/Views/AgendaExample.axaml) · [完整编辑 ViewModel](../../samples/Alder.Avalonia.Gallery/ViewModels/AgendaViewModel.cs)
+Persist the application event ID, title, time, and all-day flag. The control's `Start` and `End` use wall-clock time in the schedule's time zone. To persist actual instants, retain the time zone and perform the conversion in the application. All-day end dates are exclusive. For example, an all-day event on November 26 ends on November 27. To restore the view, set `DisplayDate`, `View`, and `SelectedEventId`. [Agenda example](../../samples/Alder.Avalonia.Gallery/Views/AgendaExample.axaml) · [Full editing ViewModel](../../samples/Alder.Avalonia.Gallery/ViewModels/AgendaViewModel.cs)
 
 ## Map
 
-`AlderMap` 使用宿主提供的地理数据。`Basemap` 可放底图多边形，`Paths` 画线路或区域，`RoadLayers` 按缩放层级绘制路网，`Markers` 提供地点及其弹窗内容。
+`AlderMap` draws geographic data supplied by the host. Use `Basemap` for basemap polygons, `Paths` for lines or regions, `RoadLayers` for road networks by zoom level, and `Markers` for places and their popup content.
 
 ```csharp
 using Alder.Avalonia.Controls;
@@ -110,17 +110,17 @@ var map = new AlderMap
 {
     Center = station,
     Zoom = 12,
-    Markers = new[] { new AlderMapMarker(station, "站点 A") }
+    Markers = new[] { new AlderMapMarker(station, "Station A") }
 };
 ```
 
-上面的代码只提供一个点位。实际显示道路和边界时，从应用加载对应地理图层。用 `FlyTo(center, zoom)` 实现从结果列表定位。用户偏好可保存 `Center`、`Zoom` 与 `Bearing`。点位详情在应用中保存自己的 ID，加载后将 ID 对应到当前 `Markers` 的对象，再设置 `SelectedMarker`。[地图图层和定位示例](../../samples/Alder.Avalonia.Gallery/Views/MapExample.axaml) · [Map ViewModel](../../samples/Alder.Avalonia.Gallery/ViewModels/MapViewModel.cs)
+The example supplies one marker. Load the corresponding geographic layers from the application to show roads and boundaries. Use `FlyTo(center, zoom)` to navigate from a result list. Save `Center`, `Zoom`, and `Bearing` as user preferences. Persist application IDs for places, resolve an ID to the current object in `Markers` on load, and set `SelectedMarker`. [Map layers and navigation example](../../samples/Alder.Avalonia.Gallery/Views/MapExample.axaml) · [Map ViewModel](../../samples/Alder.Avalonia.Gallery/ViewModels/MapViewModel.cs)
 
-## 其他数据展示
+## Other data displays
 
-| 控件 | 数据与状态 |
+| Control | Data and state |
 | --- | --- |
-| List View | 绑定 `ItemsSource` 与项目模板，按需要启用单选或多选。对需恢复的选择保存业务键，再映射回已重建的行对象。[示例](../../samples/Alder.Avalonia.Gallery/Views/ListViewExample.axaml) |
-| Carousel | 绑定 `ItemsSource` 与 `ItemTemplate`，用 `SelectedIndex` 或 `GoTo` 恢复停靠位置。内容顺序可能改变时保存项目 ID，重新计算索引。[示例](../../samples/Alder.Avalonia.Gallery/Views/CarouselExample.axaml) |
-| Floating TOC | 准备标题条目和内容锚点，配置 `ScrollHost` 连接正文滚动。记住阅读位置时保存业务章节 ID。[示例](../../samples/Alder.Avalonia.Gallery/Views/FloatingTocExample.axaml) |
-| Timeline、KPI、Widget | 用事件、指标或小组件配置重建展示。持久化原始值及其时间、单位等业务信息。[Timeline](../../samples/Alder.Avalonia.Gallery/Views/TimelineExample.axaml) · [KPI](../../samples/Alder.Avalonia.Gallery/Views/KpiExample.axaml) · [Widget](../../samples/Alder.Avalonia.Gallery/Views/WidgetExample.axaml) |
+| List View | Bind `ItemsSource` and an item template. Enable single or multiple selection as needed. Persist application keys and map them to the rebuilt row objects when restoring selection. [Example](../../samples/Alder.Avalonia.Gallery/Views/ListViewExample.axaml) |
+| Carousel | Bind `ItemsSource` and `ItemTemplate`. Use `SelectedIndex` or `GoTo` to restore position. If the content order can change, save the item ID and recompute its index. [Example](../../samples/Alder.Avalonia.Gallery/Views/CarouselExample.axaml) |
+| Floating TOC | Supply heading entries and content anchors. Connect scrolling with `ScrollHost`. To remember the reading position, save the application section ID. [Example](../../samples/Alder.Avalonia.Gallery/Views/FloatingTocExample.axaml) |
+| Timeline, KPI, Widget | Rebuild the display from events, metrics, or widget configuration. Persist raw values and application data such as their timestamps and units. [Timeline](../../samples/Alder.Avalonia.Gallery/Views/TimelineExample.axaml) · [KPI](../../samples/Alder.Avalonia.Gallery/Views/KpiExample.axaml) · [Widget](../../samples/Alder.Avalonia.Gallery/Views/WidgetExample.axaml) |

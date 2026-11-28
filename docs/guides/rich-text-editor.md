@@ -1,14 +1,14 @@
 # Rich Text Editor
 
-**简体中文** · [English](rich-text-editor.en.md)
+**English** · [简体中文](rich-text-editor.zh-CN.md)
 
-`AlderRichTextEditor.Value` 是可读写的 JSON 字符串。第一次打开时给它初始文档，编辑后保存最新的 `Value`，下次打开时把保存的字符串赋回同一属性。编辑器通过双向绑定发布正文和格式的变更。`PlainText` 则用于搜索、摘要和纯文本导出。
+`AlderRichTextEditor.Value` is a read/write JSON string. Supply an initial document when the editor opens, save the latest `Value` after editing, and assign the saved string to the same property when reopening. The editor publishes content and formatting changes through two-way binding. Use `PlainText` for search, summaries, and plain-text export.
 
-先在应用中加载 [AlderTheme](../../README.md#在-avalonia-应用中使用)。完整的工具栏、扩展命令、只读和字数统计用法见 [Gallery 视图](../../samples/Alder.Avalonia.Gallery/Views/RichTextEditorExample.axaml) 和 [Gallery ViewModel](../../samples/Alder.Avalonia.Gallery/ViewModels/RichTextEditorViewModel.cs)。
+Load `AlderTheme` in your app first. The Gallery demonstrates the full toolbar, custom commands, read-only mode, and character counts. [Theme setup](../../README.md#use-in-an-avalonia-app) · [Gallery view](../../samples/Alder.Avalonia.Gallery/Views/RichTextEditorExample.axaml) · [Gallery ViewModel](../../samples/Alder.Avalonia.Gallery/ViewModels/RichTextEditorViewModel.cs)
 
-## 构建一份富文本文档
+## Building a rich-text document
 
-根节点使用 `type: "doc"`，`content` 按顺序放段落、标题、列表等块。行内格式放在各个 `text` 节点的 `marks` 中。下面的 C# 构建一个二级标题、带粗体和链接的段落，以及两项有序列表。应用提供的动态文本可直接赋给 `JsonObject`，序列化时会处理引号和换行的转义。
+Use `type: "doc"` for the root node. Put blocks such as paragraphs, headings, and lists in `content` in display order. Inline formatting goes in each `text` node's `marks`. This C# example builds a level-two heading, a paragraph with bold text and a link, and an ordered list with two items. Assign dynamic text directly to a `JsonObject` so serialization handles quotes and line breaks.
 
 ```csharp
 using System.Text.Json.Nodes;
@@ -28,9 +28,9 @@ public static class NoteDocument
                     ["content"] = new JsonArray(Text(title))
                 },
                 Paragraph(
-                    Text("状态", new JsonObject { ["type"] = "bold" }),
-                    Text("：待确认。查看"),
-                    Text("项目主页", new JsonObject
+                    Text("Status", new JsonObject { ["type"] = "bold" }),
+                    Text(": Pending confirmation. See the "),
+                    Text("project homepage", new JsonObject
                     {
                         ["type"] = "link",
                         ["attrs"] = new JsonObject { ["href"] = "https://example.com/" }
@@ -69,22 +69,22 @@ public static class NoteDocument
 }
 ```
 
-| 内容 | JSON 节点 | 写法 |
+| Content | JSON nodes | Structure |
 | --- | --- | --- |
-| 空文档 | `doc` | `{"type":"doc","content":[{"type":"paragraph"}]}` |
-| 段落和标题 | `paragraph`、`heading` | `content` 放行内节点。标题用 `attrs.level` 指定 1、2 或 3 |
-| 引用 | `blockquote` | `content` 可放一个或多个段落 |
-| 无序／有序列表 | `bulletList`、`orderedList` | `content` 放 `listItem`，每项再放 `paragraph` 等块。有序列表可设置 `attrs.start` |
-| 代码块 | `codeBlock` | `content` 放 `text` 节点，`text` 字符串可包含换行 |
-| 分割线 | `horizontalRule` | 可直接作为块放入文档 |
-| 行内换行 | `hardBreak` | 可与 `text` 一起放在段落的 `content` 中 |
-| 行内样式 | `bold`、`italic`、`underline`、`strike`、`code`、`link` | 每种样式是 `marks` 中带 `type` 的对象，可组合。链接用 `attrs.href` 存地址 |
+| Empty document | `doc` | `{"type":"doc","content":[{"type":"paragraph"}]}` |
+| Paragraphs and headings | `paragraph`, `heading` | Put inline nodes in `content`. Set `attrs.level` to 1, 2, or 3 for a heading. |
+| Quote | `blockquote` | Put one or more paragraphs in `content`. |
+| Unordered and ordered lists | `bulletList`, `orderedList` | Put `listItem` nodes in `content`, with blocks such as `paragraph` inside each item. Ordered lists can set `attrs.start`. |
+| Code block | `codeBlock` | Put `text` nodes in `content`. The `text` string can include line breaks. |
+| Divider | `horizontalRule` | Insert as a document block. |
+| Inline line break | `hardBreak` | Place alongside `text` in a paragraph's `content`. |
+| Inline formatting | `bold`, `italic`, `underline`, `strike`, `code`, `link` | Each mark is a `marks` object with a `type`. Marks can be combined. Set `attrs.href` for a link. |
 
-保存后的 JSON 可能合并相邻且格式相同的文本节点。需要比较文档内容时，应比较解析后的语义，避免依赖缩进、键顺序或文本节点的拆分位置。导入 HTML、Markdown 或其他编辑器的 JSON 时，宿主需要先映射到上表支持的节点和标记。图片、表格等文档节点当前不受此编辑器支持。[文档读写实现](../../src/Alder.Avalonia/Controls/Forms/RichText/RichDocument.cs)
+Saved JSON may merge adjacent text nodes that have identical formatting. Compare the parsed document structure and content, since indentation, key order, and text node boundaries can change. When importing HTML, Markdown, or another editor's JSON, map it to the nodes and marks above. Importers need to convert unsupported elements such as images and tables before loading them. [Document reader and writer](../../src/Alder.Avalonia/Controls/Forms/RichText/RichDocument.cs)
 
-## 绑定、保存与重新打开
+## Binding, saving, and reopening
 
-下面把文件路径交给 ViewModel。保存时写入完整 JSON，打开时先读到局部变量，再更新绑定属性。给每条记录分配稳定的路径或数据库主键。数据库中可以直接把 JSON 字符串存入文本列。
+Pass the file path to the ViewModel. Save the entire JSON string. On open, read into a local variable before updating the bound property. Give each record a stable file path or database key. In a database, store the JSON string directly in a text column.
 
 ```csharp
 using System;
@@ -139,7 +139,7 @@ public sealed class NoteViewModel(string filePath, string initialDocument) : INo
 }
 ```
 
-在视图上声明 `x:DataType`，并把 `DataContext` 设为上面的 `NoteViewModel` 实例。
+Declare `x:DataType` on the view and assign the `NoteViewModel` instance above as its `DataContext`.
 
 ```xml
 <UserControl xmlns="https://github.com/avaloniaui"
@@ -148,11 +148,11 @@ public sealed class NoteViewModel(string filePath, string initialDocument) : INo
              xmlns:alder="using:Alder.Avalonia.Controls"
              x:DataType="local:NoteViewModel" x:CompileBindings="True">
   <alder:AlderRichTextEditor Value="{Binding DocumentJson, Mode=TwoWay}"
-                             Placeholder="输入记录…" />
+                             Placeholder="Write a note…" />
 </UserControl>
 ```
 
-在 UI 线程创建视图时使用下面的代码。把保存按钮或应用的保存命令接到 `await note.SaveAsync()`。再次启动时，这段初始化代码会从同一个路径读取文档。也可以在视图已打开时调用 `OpenAsync()` 重新载入。
+Use this code when creating the view on the UI thread. Wire the Save button or application command to `await note.SaveAsync()`. On the next launch, this initialization reads the document from the same path. You can also call `OpenAsync()` to reload an already open view.
 
 ```csharp
 using System;
@@ -163,21 +163,21 @@ var path = Path.Combine(
     "MyApp", "notes", "weekly.json");
 
 var note = new MyApp.NoteViewModel(path,
-    NoteDocument.Create("每周记录", "汇总进度", "确认待办"));
+    NoteDocument.Create("Weekly notes", "Summarize progress", "Review action items"));
 if (File.Exists(path))
     await note.OpenAsync();
 
-// 把 note 设为视图的 DataContext。保存按钮调用 await note.SaveAsync()。
+// Set note as the view's DataContext. Call await note.SaveAsync() from the Save button.
 ```
 
-- 初次打开时使用初稿。重新加载会替换整份文档及其撤销历史，覆盖当前编辑前可按应用的交互规则提示保存。
-- 文件 I/O 异常应交给宿主的错误提示处理。加载外部或旧版本数据时，先检查并迁移文档。无效 JSON 或不受支持的节点可能在给 `Value` 赋值时抛出异常。做导入功能时，可先在 UI 线程尝试创建 `new AlderRichTextEditor { Value = json }`，解析成功后再替换当前绑定值。
-- `Value` 记录正文结构与格式。光标、选区、撤销栈和宿主的文档标题、业务 ID 等元数据按需单独管理。
-- 自动保存可在 ViewModel 属性变更后防抖并串行写入。初始化和载入文档时，应明确区分新编辑和已保存的快照。
+- The initial draft is used on first open. Reloading replaces the entire document and its undo history. Follow the application's save prompt behavior before replacing current edits.
+- Surface file I/O errors through the host's error UI. Validate and migrate external or older documents before loading. Assigning invalid JSON or an unsupported node to `Value` can throw. For an import flow, try creating `new AlderRichTextEditor { Value = json }` on the UI thread and update the bound value after parsing succeeds.
+- `Value` stores document structure and formatting. Manage cursor position, selection, undo history, and host metadata such as the title and application ID separately as needed.
+- For autosave, debounce ViewModel property changes and serialize writes. During initialization and reload, distinguish fresh edits from saved snapshots.
 
-## 在当前文档中插入或格式化
+## Inserting and formatting in the current document
 
-在视图模板已应用后调用这些编辑方法。下面将第一行设为粗体，再在文末插入分割线。`Select` 使用 `PlainText` 的 UTF-16 字符串偏移。样式命令也可用 `IsActive` 查询对应按钮状态。
+Call the editing methods after the view template has been applied. This example bolds the first line and inserts a divider at the end. `Select` uses UTF-16 string offsets into `PlainText`. Use `IsActive` to query the button state for a formatting command.
 
 ```csharp
 using Alder.Avalonia.Controls;
@@ -198,8 +198,8 @@ static void FormatAndInsert(AlderRichTextEditor editor)
 }
 ```
 
-- `InsertText(text)` 用文本替换选区。`InsertBlocks(json)` 接受带 `doc` 根节点的片段，作为一次可撤销操作插入。
-- 选中文本后用 `SetLink(url)` 设置链接，用 `SetLink(null)` 清除链接。
-- 用 `IsReadOnly` 展示可阅读的文档，用 `MaxLength` 约束编辑输入。导入文件的大小与业务字数限制由宿主单独校验。
-- `ToolbarCommands` 可选择工具栏命令，空集合可移除内置工具按钮。用 `AdditionalToolbarContent` 放入应用自己的按钮。启用 `ShowSlashMenu` 或 `ShowFloatingMenu` 后，可通过 `Suggestions` 或 `FloatingCommands` 注册 `RichTextSuggestion`，回调收到当前编辑器，可调用插入方法。
-- 接入语法诊断、悬浮提示或补全时，`ConnectLanguageServerAsync` 同步的是文档的纯文本投影。关闭文档时异步释放返回的会话，持久化仍读取 `Value`。[协议与编辑流程示例](../../tests/Alder.Avalonia.AotSmoke/EditorProtocolSmoke.cs)
+- `InsertText(text)` replaces the selection with text. `InsertBlocks(json)` accepts a fragment with a `doc` root and inserts it as one undoable operation.
+- Select text and call `SetLink(url)` to set a link. Call `SetLink(null)` to clear it.
+- Set `IsReadOnly` to show a read-only document and `MaxLength` to constrain editing input. Validate imported file sizes and application word limits separately in the host.
+- Use `ToolbarCommands` to choose toolbar commands. An empty collection hides the built-in buttons. Use `AdditionalToolbarContent` for custom buttons. With `ShowSlashMenu` or `ShowFloatingMenu` enabled, register `RichTextSuggestion` items through `Suggestions` or `FloatingCommands`. Callbacks receive the current editor and can invoke insertion methods.
+- To connect diagnostics, hovers, or completions, use `ConnectLanguageServerAsync` to synchronize the plain-text projection. Dispose the returned session asynchronously when the document closes and use `Value` for persistence. [Protocol and editing example](../../tests/Alder.Avalonia.AotSmoke/EditorProtocolSmoke.cs)

@@ -1,16 +1,16 @@
 # Alder.Avalonia
 
-**简体中文** · [English](README.en.md)
+**English** · [简体中文](README.zh-CN.md)
 
-Alder.Avalonia 是一套 Avalonia 原生桌面控件库。它提供基础表单、颜色编辑、导航布局、数据展示、图表和 AI 会话组件，并在同一个 Gallery 中展示可操作的预览、AXAML 和 C# 示例。
+Alder.Avalonia is a native desktop control library for Avalonia. It includes form controls, color editors, navigation and layout, data displays, charts, and AI conversation components. The Gallery brings together interactive previews, AXAML, and C# examples.
 
-界面和交互参考 [HeroUI Web](https://heroui.com/en/docs/react/components) 与 [HeroUI Pro Web](https://heroui.pro/docs/react/components)。控件通过 Avalonia 的模板、属性系统、命令和输入事件运行。
+The visuals and interactions draw on HeroUI Web and HeroUI Pro Web. The controls use Avalonia templates, properties, commands, and input events. [HeroUI Web](https://heroui.com/en/docs/react/components) · [HeroUI Pro Web](https://heroui.pro/docs/react/components)
 
-## 在线预览
+## Online preview
 
-在浏览器中试用 Gallery 控件、搜索示例、切换语言和主题，并查看 AXAML 和 C# 示例。首次打开会下载 WebAssembly 运行时，独立系统窗口示例在桌面版运行。[打开 Alder Gallery 在线预览](https://luoverse.github.io/Alder.Avalonia/)
+Try the Gallery controls, search examples, switch languages and themes, and inspect the AXAML and C# source in your browser. The first visit downloads the WebAssembly runtime. Examples that open separate system windows run in the desktop Gallery. [Open the online Gallery](https://luoverse.github.io/Alder.Avalonia/)
 
-`Alder.Avalonia.Gallery.Browser` 在解决方案中可见。浏览器版需要 .NET 11 SDK 和 `wasm-tools` 工作负载，按项目单独构建和运行。常规解决方案构建只需要 .NET 11 SDK。
+The solution lists `Alder.Avalonia.Gallery.Browser`. Build and run this project separately with the .NET 11 SDK and the `wasm-tools` workload. A regular solution build only requires the .NET 11 SDK.
 
 ```sh
 cd samples/Alder.Avalonia.Gallery.Browser
@@ -18,29 +18,29 @@ dotnet workload install wasm-tools
 dotnet run
 ```
 
-浏览器项目和控件库的改动合并到 `main` 后，由 GitHub Actions 构建并部署到 GitHub Pages。[部署记录](https://github.com/LuoVerse/Alder.Avalonia/actions/workflows/gallery-pages.yml)
+GitHub Actions builds and deploys the browser Gallery to GitHub Pages when changes to the browser project or control library reach `main`. [Deployment runs](https://github.com/LuoVerse/Alder.Avalonia/actions/workflows/gallery-pages.yml)
 
-## 运行桌面 Gallery
+## Run the desktop Gallery
 
-[GitHub Releases](https://github.com/LuoVerse/Alder.Avalonia/releases) 提供可直接运行的 Gallery 桌面程序。若从源码运行，需要 .NET 11 SDK。解决方案目标为 `net11.0`，使用 Avalonia 12.2.0。
+Download a desktop build from GitHub Releases or run it from source with the .NET 11 SDK. The solution targets `net11.0` and uses Avalonia 12.2.0. [GitHub Releases](https://github.com/LuoVerse/Alder.Avalonia/releases)
 
 ```sh
 dotnet run --project samples/Alder.Avalonia.Gallery
 ```
 
-Gallery 默认打开 Home。侧栏可以搜索组件，窗口支持浅色和深色切换，以及英文和简体中文。示例卡包含 Preview、AXAML 和 C# 标签。
+The Gallery opens on Home. Use the sidebar to search components. The window supports Light and Dark themes and English and Simplified Chinese. Each example card has Preview, AXAML, and C# tabs.
 
-在 Gallery 的「数据视图 → 工作流编辑器」中，可以编辑审批、会签与条件分支，并通过预览页的按钮试跑流程或导入导出 JSON。
+In Data Views → Workflow Editor, edit approval steps, countersignatures, and conditional branches. Use the preview controls to run a simulation or import and export JSON.
 
-## 在 Avalonia 应用中使用
+## Use in an Avalonia app
 
-当前稳定版为 [2.0.0](https://www.nuget.org/packages/Alder.Avalonia/2.0.0)。要试用最新控件与修复，可安装 [2.0.1-preview](https://www.nuget.org/packages/Alder.Avalonia/2.0.1-preview)。
+The current stable version is 2.0.0. Install 2.0.1-preview to try the latest controls and fixes. [Stable package](https://www.nuget.org/packages/Alder.Avalonia/2.0.0) · [Preview package](https://www.nuget.org/packages/Alder.Avalonia/2.0.1-preview)
 
 ```sh
 dotnet package add Alder.Avalonia --version 2.0.1-preview
 ```
 
-在 `App.axaml` 中加载 `AlderTheme`，桌面窗口使用 `AlderWindow`。如果应用也使用原生 Avalonia 窗口或控件，可以为它们添加宿主主题，并在宿主主题之后加载 `AlderTheme`。
+Load `AlderTheme` in `App.axaml` and use `AlderWindow` for desktop windows. If your app also uses built-in Avalonia windows or controls, load their host theme before `AlderTheme`.
 
 ```xml
 <Application xmlns="https://github.com/avaloniaui"
@@ -52,7 +52,7 @@ dotnet package add Alder.Avalonia --version 2.0.1-preview
 </Application>
 ```
 
-控件命名空间是 `Alder.Avalonia.Controls`。按钮、列表与输入控件支持 Avalonia 的命令、绑定和模板组合。
+The control namespace is `Alder.Avalonia.Controls`. Buttons, lists, and inputs support Avalonia commands, bindings, and templates.
 
 ```xml
 <StackPanel xmlns="https://github.com/avaloniaui"
@@ -66,15 +66,15 @@ dotnet package add Alder.Avalonia --version 2.0.1-preview
 </StackPanel>
 ```
 
-## 项目结构与验证
+## Project structure and verification
 
-| 路径 | 用途 |
+| Path | Purpose |
 | --- | --- |
-| [`src/Alder.Avalonia`](src/Alder.Avalonia) | 控件、主题、资产和原生文本引擎 |
-| [`samples/Alder.Avalonia.Gallery`](samples/Alder.Avalonia.Gallery) | Gallery、双语资源及完整示例 |
-| [`samples/Alder.Avalonia.Gallery.Browser`](samples/Alder.Avalonia.Gallery.Browser) | Gallery 的 WebAssembly 入口 |
-| [`tests/Alder.Avalonia.Tests`](tests/Alder.Avalonia.Tests) | Headless 交互、绑定和状态回归 |
-| [`tests/Alder.Avalonia.AotSmoke`](tests/Alder.Avalonia.AotSmoke) | Skia 像素验收、绑定诊断和 NativeAOT 烟测 |
+| [`src/Alder.Avalonia`](src/Alder.Avalonia) | Controls, themes, assets, and the native text engine |
+| [`samples/Alder.Avalonia.Gallery`](samples/Alder.Avalonia.Gallery) | Gallery, bilingual resources, and complete examples |
+| [`samples/Alder.Avalonia.Gallery.Browser`](samples/Alder.Avalonia.Gallery.Browser) | WebAssembly entry point for the Gallery |
+| [`tests/Alder.Avalonia.Tests`](tests/Alder.Avalonia.Tests) | Headless interaction, binding, and state regression tests |
+| [`tests/Alder.Avalonia.AotSmoke`](tests/Alder.Avalonia.AotSmoke) | Skia pixel checks, binding diagnostics, and NativeAOT smoke tests |
 
 ```sh
 dotnet build Alder.Avalonia.slnx -c Release
@@ -82,32 +82,31 @@ dotnet test tests/Alder.Avalonia.Tests -c Release
 dotnet run --project tests/Alder.Avalonia.AotSmoke -c Release
 ```
 
-交互回归和 Skia 烟测的默认宿主只加载 `AlderTheme`。Fluent2 共存由独立测试宿主验证。
+The default host for interaction regressions and Skia smoke tests loads only `AlderTheme`. A separate test host checks compatibility with Fluent2.
 
-在 macOS arm64 上验证 NativeAOT 时，使用匹配宿主的 RID 并运行生成的可执行文件。
+For NativeAOT on macOS arm64, publish for the host RID and run the resulting executable.
 
 ```sh
 dotnet publish tests/Alder.Avalonia.AotSmoke -c Release -r osx-arm64 -p:PublishAot=true
 ./tests/Alder.Avalonia.AotSmoke/bin/Release/net11.0/osx-arm64/publish/Alder.Avalonia.AotSmoke
 ```
 
-全库裁剪诊断使用同一条发布命令并追加 `-p:AuditWholeLibrary=true`。该选项将 `Alder.Avalonia` 程序集设为裁剪根，检查烟测未直接使用的代码。常规发布用于测试裁剪后实际保留的控件、主题和交互行为。
+Append `-p:AuditWholeLibrary=true` to the publish command for a library-wide trimming audit. This roots the `Alder.Avalonia` assembly so diagnostics also cover code outside the smoke test's direct references. A regular publish tests the controls, themes, and interactions retained after trimming.
 
-[NativeAOT smoke](.github/workflows/nativeaot-smoke.yml) 在 Windows x64 和 Linux x64 上运行常规裁剪后的原生可执行文件。烟测只加载 `AlderTheme`，通过 `--all-controls Light` 和 `--all-controls Dark` 逐个实例化并渲染公开控件和弹层，随后运行交互、像素和绑定回归。
+The NativeAOT smoke workflow runs normally trimmed executables on Windows x64 and Linux x64. The host loads only `AlderTheme`. It renders the public controls and flyouts with `--all-controls Light` and `--all-controls Dark`, then runs interaction, pixel, and binding regressions. [NativeAOT smoke workflow](.github/workflows/nativeaot-smoke.yml)
 
-构建、截图探针和本地压测结果可以通过 `--artifacts-path` 或工具自身的输出选项写到工作区外。
+Write builds, screenshot probes, and local benchmark results outside the checkout with `--artifacts-path` or the tool's own output options.
 
-## 文档
+## Documentation
 
-- [2.0.1-preview 发布说明](docs/releases/2.0.1-preview.md)
-- [2.0.0 发布与升级说明](docs/releases/2.0.0.md)
-- [NuGet 安装与配置](docs/NuGet.zh-CN.md)
-- [设计系统](DESIGN.md)
-- [组件目录与使用契约](docs/COMPONENTS.md)
-- [组件接入指南](docs/COMPONENTS.md#接入指南)
-- [Rich Text Editor：构建、保存与重新加载](docs/guides/rich-text-editor.md)
+- [2.0.1-preview release notes](docs/releases/2.0.1-preview.md)
+- [2.0.0 release and migration notes](docs/releases/2.0.0.md)
+- [NuGet installation and setup](docs/NuGet.md)
+- [Design system](DESIGN.md)
+- [Component catalog and usage contracts](docs/COMPONENTS.md)
+- [Integration guides](docs/COMPONENTS.md#integration-guides)
+- [Rich Text Editor construction, saving, and reloading](docs/guides/rich-text-editor.md)
 
-## 许可
+## License
 
-本项目采用 [MIT 许可](LICENSE)。第三方资产和代码保留各自的许可，见[资产目录](src/Alder.Avalonia/Assets)中的许可文件。
-浏览器版的中文回退字体基于 Noto Sans SC，采用 [SIL Open Font License 1.1](samples/Alder.Avalonia.Gallery.Browser/wwwroot/licenses/NotoSansSC-OFL.txt)。
+The project uses the MIT license. Third-party assets and code retain their own licenses. The Chinese fallback font in the browser Gallery is based on Noto Sans SC and uses the SIL Open Font License 1.1. [MIT license](LICENSE) · [Asset notices](src/Alder.Avalonia/Assets) · [Noto Sans SC license](samples/Alder.Avalonia.Gallery.Browser/wwwroot/licenses/NotoSansSC-OFL.txt)

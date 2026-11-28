@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: Alder.Avalonia
-description: Avalonia 原生桌面控件与交互式组件 Gallery 的设计系统。
+description: The design system for native Avalonia desktop controls and their interactive Gallery.
 colors:
   accent: "#0485F7"
   accent-hover: "#3592F9"
@@ -38,64 +38,64 @@ spacing:
 
 ## Overview
 
-**简体中文** · [English](DESIGN.en.md)
+**English** · [简体中文](DESIGN.zh-CN.md)
 
-Alder 是一套原生桌面控件。基础控件、布局壳、复杂数据组件和 AI 会话组件统一由 `Alder.Avalonia` 提供。Gallery 用真实控件展示状态和组合方式。Web 参考用于校对视觉与交互，应用本身使用 C#、AXAML 和 Avalonia 的输入、布局及渲染。
+Alder is a native desktop control library. `Alder.Avalonia` provides basic controls, layout shells, complex data components, and AI conversation components. The Gallery uses live controls to demonstrate states and composition. Web references guide visual and interaction checks. The application uses C#, AXAML, and Avalonia's input, layout, and rendering.
 
-### 新组件参考基线
+### References for new components
 
-**Alder 的外观、交互和动效以 HeroUI 和 HeroUI Pro 的 React Web 组件为设计参考。** 先定位对应的组件文档和可操作预览，再确定要移植的变体和场景。[HeroUI React Web](https://heroui.com/en/docs/react/components) · [HeroUI Pro React Web](https://heroui.pro/docs/react/components)
+**Use the React Web components in HeroUI and HeroUI Pro as Alder's references for appearance, interaction, and motion.** Find the documentation and interactive preview before selecting the variants and scenarios to implement. [HeroUI React Web](https://heroui.com/en/docs/react/components) · [HeroUI Pro React Web](https://heroui.pro/docs/react/components)
 
-- **有对应的 Web 组件时**，记录文档和预览链接，在实现前实际操作目标状态。核对尺寸、间距、图标、边框、圆角和阴影。对相关交互检查悬停、按压、释放、焦点、开关或拖拽，并核对过渡时长、缓动和减少动效下的状态。Gallery 使用同一组场景验收。
-- **没有对应的 Web 组件时**，选取 Alder 中用途和交互最接近的控件，沿用它的语义资源、状态和动效。提交说明注明参考了哪个控件，以及新增行为的依据。任务额外指定的参考应用于其明确要求的场景。
+- **When a corresponding Web component exists**, record the documentation and preview links and exercise the target states before implementation. Check size, spacing, icons, borders, corners, and shadows. Exercise the relevant hover, press, release, focus, open, close, and drag states. Check duration, easing, and reduced motion. Use the same scenarios to verify the Gallery.
+- **When there is no Web equivalent**, reuse the semantic resources, states, and motion of the nearest Alder control in purpose and interaction. Record the reference control and the rationale for any new behavior in the commit message. Use task-specific references for the scenarios they cover.
 
-本文的尺寸以 Avalonia DIP 为准。上方 `px` 是设计文档交换格式。运行时数值以 [AlderTheme.axaml](src/Alder.Avalonia/Themes/AlderTheme.axaml)、各组件主题以及 [Gallery App.axaml](samples/Alder.Avalonia.Gallery/App.axaml) 为准。
+Dimensions in this document are Avalonia DIPs. The `px` values in the front matter are for design document interchange. The Alder theme, each component theme, and the Gallery app specify the runtime values. [AlderTheme.axaml](src/Alder.Avalonia/Themes/AlderTheme.axaml) · [Gallery App.axaml](samples/Alder.Avalonia.Gallery/App.axaml)
 
 ## Colors
 
-| 角色 | Avalonia 资源 | 应用 |
+| Role | Avalonia resources | Use |
 | --- | --- | --- |
-| 强调 | `AlderAccent`、`AlderAccentHover`、`AlderOnAccent` | 主要操作、强调选中态、适用的键盘焦点 |
-| 文本 | `AlderInk`、`AlderMuted` | 标题与正文、辅助文案与次要图标 |
-| 表面 | `AlderSurface`、`AlderSurfaceSecondary`、`AlderNeutral` | 卡片和浮层表面、次级层与交互填充 |
-| 轮廓 | `AlderBorder`、`AlderSeparator` | 容器描边与内容分隔线 |
-| Gallery | `GalleryPreviewSurface`、`GalleryCodeSurface` | 预览底色与示例卡／代码区底色 |
+| Accent | `AlderAccent`, `AlderAccentHover`, `AlderOnAccent` | Primary actions, emphasized selection, and relevant keyboard focus states |
+| Text | `AlderInk`, `AlderMuted` | Headings and body text, supporting copy, and secondary icons |
+| Surface | `AlderSurface`, `AlderSurfaceSecondary`, `AlderNeutral` | Cards, overlays, secondary layers, and interactive fills |
+| Outline | `AlderBorder`, `AlderSeparator` | Container strokes and content dividers |
+| Gallery | `GalleryPreviewSurface`, `GalleryCodeSurface` | Backgrounds for previews, example cards, and code areas |
 
-模板通过 `DynamicResource` 解析颜色和阴影。用 Light 和 Dark 主题字典校对同一状态。语义色、悬停填充、禁用态和细分隔线各自取自相应模板，组件有专用资源时从该资源入手。
+Templates resolve colors and shadows using `DynamicResource`. Verify the same state with the Light and Dark theme dictionaries. Use the relevant template for semantic colors, hover fills, disabled states, and subtle dividers. Start with component-specific resources when available.
 
 ## Typography
 
-Gallery 通过 `WithInterFont()` 加载 Inter。控件模板使用可继承字体，正文和操作标签常用 14 DIP，辅助文字常用 12 DIP。多行内容以实际 `LineHeight` 和换行行为校对，单行表格、选择项和菜单在有限宽度下可截断。对照时固定字体、语言和缩放倍率。
+The Gallery loads Inter through `WithInterFont()`. Control templates inherit fonts. Body text and action labels typically use 14 DIP, and supporting text uses 12 DIP. Check multiline content with its actual `LineHeight` and wrapping. Single-line tables, options, and menus can truncate at limited widths. Keep font, language, and scale consistent during comparisons.
 
 ## Layout
 
-控件组合通过内容槽、集合与数据模板实现。Gallery 的一般示例卡内，预览与外壳相隔 8 DIP，内容默认内边距为横向 24 DIP、纵向 20 DIP。需要全幅布局或紧凑预览的示例按各自容器明确设置边距。
+Compose controls through content slots, collections, and data templates. A standard Gallery example card leaves 8 DIP between the preview and its shell. Content typically has 24 DIP horizontal and 20 DIP vertical padding. Set margins on the relevant containers for full-bleed or compact previews.
 
-Sidebar 和 AppLayout 用实际可用宽度决定布局状态。图标栏保留导航、品牌图标以及启用后的搜索入口。窄幅校对还应包含嵌套滚动、标题缩略、弹层翻转和窗口边缘。
+Sidebar and AppLayout choose their layout from the available width. The icon rail retains navigation, the brand icon, and search when enabled. At narrow widths, check nested scrolling, truncated titles, popup flipping, and window edges.
 
 ## Elevation & Depth
 
-字段、卡片和设置单元格使用较短的外阴影。浮层和附着工具栏使用范围更大的阴影，并在深色主题中保留细内沿。深色外阴影以柔和的中性近层衔接接近黑色的背景，较宽的黑色层在较亮的深色表面上提供落差。共享卡片只在外层绘制表面，分隔线与子项状态单独控制。
+Fields, cards, and settings cells use short outer shadows. Overlays and attached toolbars use wider shadows and retain a thin inner edge in Dark. Dark shadows use a soft neutral layer near black backgrounds and a wider black layer to add depth against lighter dark surfaces. Shared cards paint the surface at the outer layer and handle dividers and child states independently.
 
-把阴影、键盘环和拖动预览留在能容纳外溢的层。圆角内容裁剪放在最小的内容层，必要时用上层描边覆盖内沿。比较截图时取样背景、描边内外及阴影尾部。
+Keep shadows, keyboard rings, and drag previews on layers that allow overflow. Clip rounded content at the smallest relevant layer and use an overlay stroke when needed to cover the inner edge. Sample the background, both sides of the stroke, and the shadow falloff when comparing screenshots.
 
 ## Shapes
 
-普通字段使用 12 DIP 圆角，Gallery 预览面为 14 DIP，Sidebar 导航行常用 16 DIP。示例卡外壳为 20 DIP，默认 Select 弹层为 22 DIP，默认 AlderCard 为 24 DIP。组内项目、无框布局、圆形图标和细分隔线各有独立形状。尺寸变化通过所属组件主题实现。
+Fields typically use 12 DIP corners, Gallery previews use 14 DIP, and Sidebar navigation rows often use 16 DIP. Example card shells use 20 DIP, the default Select popup uses 22 DIP, and the default AlderCard uses 24 DIP. Group items, borderless layouts, circular icons, and fine dividers have their own shapes. Variant sizing belongs in the relevant component theme.
 
 ## Components
 
-- 高级控件在 AXAML 和 C# 中统一由 Alder 的基础组件和主题搭建。需要主题的部件必须由 `AlderTheme` 提供模板，新增或修改高级控件时须在仅加载 `AlderTheme` 的宿主中验证。布局、绘制和输入底层可使用 Avalonia 基元。
-- 普通动作使用 AlderButton。按压反馈复用 AlderPressableFeedback，连续拖拽跟随指针，收尾的回弹或吸附使用组件自身逻辑。
-- 按钮在键盘焦点下复用所属组件的悬停反馈或专用焦点样式。内容区的 Tab 顺序跳过窗口标题栏的系统按钮。
-- 表单在休息、悬停、编辑与校验状态间保持表面结构。Cell 的选中值与键盘焦点分别呈现。选择触发器、选项行与滑块在自身的圆角表面或手柄内提示键盘焦点。文本编辑和校验保留各自的状态轮廓。
-- 弹层由 Alder 的菜单、选择器、对话框或 Popover 承载。校对首次打开、内容滚动、关闭后的焦点、圆角内沿与阴影外沿。
-- 短背景或透明度过渡常见 150 ms，部分布局、滑块定位和展开过渡常见 200 ms。准确时长与曲线以组件为准。交互验证包含有效的 `AlderMotion.Reduced` 状态。
-- 同时维护 [组件目录](docs/COMPONENTS.md) 和 Gallery 中与预览对应的 AXAML、C# 源码。
+- Build advanced controls from Alder primitives and themes in AXAML and C#. Parts that require templates get them from `AlderTheme`. Verify new or updated advanced controls in a host that loads only `AlderTheme`. Avalonia primitives can provide layout, drawing, and input.
+- Use AlderButton for regular actions. Reuse AlderPressableFeedback for press states. Continuous drags follow the pointer. Each component handles its own snap or settle motion.
+- For keyboard focus, buttons use the component's hover feedback or a dedicated focus style. Content-area tab navigation skips system buttons in the title bar.
+- Keep form surfaces consistent across rest, hover, editing, and validation. Cell shows selection and keyboard focus separately. Selection triggers, option rows, and sliders show focus within their rounded surfaces or thumbs. Text editing and validation retain their respective outlines.
+- Host overlays in Alder menus, pickers, dialogs, or Popover. Check first open, content scrolling, focus after dismissal, the rounded inner edge, and the outer shadow.
+- Short background and opacity transitions commonly use 150 ms. Some layout, slider position, and expansion transitions use 200 ms. Refer to the component for its exact duration and easing. Interaction tests cover the effective `AlderMotion.Reduced` setting.
+- Maintain the component catalog and keep the Gallery's AXAML and C# source in sync with its previews. [Component catalog](docs/COMPONENTS.md)
 
 ## Do's and Don'ts
 
-- 从所属主题、命名部件和当前示例着手。修改共享模板前查看受影响的控件，优先复用已有语义资源和行为。
-- 保持鼠标、键盘、可访问名称和 MVVM 状态一致。图标按钮设置可访问名称，主题切换保留所处页面和已有状态。
-- 对裁剪回归检查模板和祖先直到窗口或 Overlay，记录失效像素及修复后的取样。视觉对照记录主题、宽度、DPI 和操作阶段。
-- 对可删除或隐藏数据的示例提供 Reset。新可见文字同步到 Gallery 的英文与简体中文目录。
+- Start with the related theme, named parts, and existing example. Check affected controls before changing a shared template and reuse existing semantic resources and behavior.
+- Keep pointer, keyboard, accessible names, and MVVM state consistent. Give icon buttons accessible names. Preserve the current Gallery page and state when switching themes.
+- For clipping regressions, trace the template and its ancestors up to the window or overlay. Record the affected pixels and samples after the fix. Record theme, width, DPI, and interaction phase for visual checks.
+- Provide Reset in examples that can remove or hide data. Add new visible copy to both the English and Simplified Chinese Gallery catalogs.
