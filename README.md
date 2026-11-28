@@ -1,5 +1,7 @@
 # Alder.Avalonia
 
+**简体中文** · [English](README.en.md)
+
 Alder.Avalonia 是一套 Avalonia 原生桌面控件库。它提供基础表单、颜色编辑、导航布局、数据展示、图表和 AI 会话组件，并在同一个 Gallery 中展示可操作的预览、AXAML 和 C# 示例。
 
 界面和交互参考 [HeroUI Web](https://heroui.com/en/docs/react/components) 与 [HeroUI Pro Web](https://heroui.pro/docs/react/components)。控件通过 Avalonia 的模板、属性系统、命令和输入事件运行。
@@ -28,7 +30,7 @@ dotnet run --project samples/Alder.Avalonia.Gallery
 
 Gallery 默认打开 Home。侧栏可以搜索组件，窗口支持浅色和深色切换，以及英文和简体中文。示例卡包含 Preview、AXAML 和 C# 标签。
 
-在 Gallery 的「实用工具 → 工作流编辑器」中，可以编辑审批、会签与条件分支，并通过预览页的按钮试跑流程或导入导出 JSON。
+在 Gallery 的「数据视图 → 工作流编辑器」中，可以编辑审批、会签与条件分支，并通过预览页的按钮试跑流程或导入导出 JSON。
 
 ## 在 Avalonia 应用中使用
 
@@ -99,6 +101,7 @@ dotnet publish tests/Alder.Avalonia.AotSmoke -c Release -r osx-arm64 -p:PublishA
 
 - [2.0.1-preview 发布说明](docs/releases/2.0.1-preview.md)
 - [2.0.0 发布与升级说明](docs/releases/2.0.0.md)
+- [NuGet 安装与配置](docs/NuGet.zh-CN.md)
 - [设计系统](DESIGN.md)
 - [组件目录与使用契约](docs/COMPONENTS.md)
 - [组件接入指南](docs/COMPONENTS.md#接入指南)

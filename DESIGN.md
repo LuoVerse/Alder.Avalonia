@@ -38,6 +38,8 @@ spacing:
 
 ## Overview
 
+**简体中文** · [English](DESIGN.en.md)
+
 Alder 是一套原生桌面控件。基础控件、布局壳、复杂数据组件和 AI 会话组件统一由 `Alder.Avalonia` 提供。Gallery 用真实控件展示状态和组合方式。Web 参考用于校对视觉与交互，应用本身使用 C#、AXAML 和 Avalonia 的输入、布局及渲染。
 
 ### 新组件参考基线

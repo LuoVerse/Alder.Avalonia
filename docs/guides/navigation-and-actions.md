@@ -1,5 +1,7 @@
 # 导航、浮层和操作栏
 
+**简体中文** · [English](navigation-and-actions.en.md)
+
 ## AppLayout 与 Sidebar
 
 用 `AlderAppLayout` 放置 `Sidebar`、`Navbar`、`Toolbar`、`Content`、`Aside` 和 `Footer`。侧栏通过 `AlderSidebarGroup`、`AlderSidebarMenu` 组织项目，可以用 `IsSearchEnabled` 启用统一搜索。把 `AlderSidebar.SelectedItem` 绑定到导航模型，收到选择后根据项目的路由打开内容。
@@ -40,7 +42,7 @@
 
 `Duration` 接受可绑定的 `TimeSpan?`。例如 `Duration="0:0:0.4"` 将过渡设为 400 ms，设为零可即时切换。窗口或任意祖先上的 `AlderMotion.Reduced="True"` 会使用最多 120 ms 的原地淡入淡出。继承的 `PageTransition` 可接入自定义 Avalonia 过渡。若需要在退出完成后释放页面资源，可订阅 `TransitionCompleted` 并检查 `HasRunToCompletion` 和 `From`。
 
-Gallery 为六种动效各提供独立的 Preview、AXAML 和 C#。在每个示例中可双向切换概览、活动和版本，也可开启慢放和减少动效。[Gallery 示例](../../samples/Alder.Avalonia.Gallery/Views/TransitioningContentExample.axaml) · [绑定 ViewModel](../../samples/Alder.Avalonia.Gallery/ViewModels/TransitioningContentViewModel.cs) · [SVG 原型](../prototypes/alder-transitioning-content-control.svg)
+Gallery 为六种动效各提供独立的 Preview、AXAML 和 C#。在每个示例中可双向切换概览、活动和版本，也可开启慢放和减少动效。[Gallery 示例](../../samples/Alder.Avalonia.Gallery/Views/TransitioningContentExample.axaml) · [绑定 ViewModel](../../samples/Alder.Avalonia.Gallery/ViewModels/TransitioningContentViewModel.cs)
 
 ## Resizable
 

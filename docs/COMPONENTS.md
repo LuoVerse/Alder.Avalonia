@@ -1,5 +1,7 @@
 # 组件目录
 
+**简体中文** · [English](COMPONENTS.en.md)
+
 所有组件位于 `Alder.Avalonia.Controls`。在应用中加载 [AlderTheme](../README.md#在-avalonia-应用中使用) 后，即可用 AXAML 或 C# 组合组件。控件公开属性、事件和枚举的详细定义以代码及构建生成的 XML API 文档为准。
 
 ## 接入指南

@@ -1,5 +1,7 @@
 # Alder.Avalonia
 
+[简体中文](https://github.com/LuoVerse/Alder.Avalonia/blob/main/docs/NuGet.zh-CN.md) · **English**
+
 Alder.Avalonia is a native Avalonia control library for desktop applications. It includes form and color editors, navigation and application layouts, data views, and AI conversation components. It targets .NET 11 and uses Avalonia 12.2.0.
 
 ## Install
@@ -45,6 +47,6 @@ AppBuilder.Configure<App>()
     .WithAlderPuHuiTiFont(new FontManagerOptions { DefaultFamilyName = "fonts:Inter#Inter" });
 ```
 
-- Browse the [component documentation](https://github.com/LuoVerse/Alder.Avalonia/blob/v2.0.1-preview/docs/COMPONENTS.md).
+- Browse the latest component documentation. [Component catalog](https://github.com/LuoVerse/Alder.Avalonia/blob/main/docs/COMPONENTS.en.md)
 - Try the [desktop Gallery](https://github.com/LuoVerse/Alder.Avalonia/releases/tag/v2.0.1-preview) for interactive examples and their AXAML and C# source.
 - Read the [MIT license](https://github.com/LuoVerse/Alder.Avalonia/blob/v2.0.1-preview/LICENSE). Bundled third-party notices are included in the package's `licenses/` directory.

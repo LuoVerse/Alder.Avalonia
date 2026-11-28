@@ -1,5 +1,7 @@
 # AI 会话与 Markdown
 
+**简体中文** · [English](chat-and-markdown.en.md)
+
 用 `AlderMarkdown` 渲染 Markdown 文稿，用 `AlderChatConversation` 组织可滚动的会话。消息发送、模型调用、工具批准和附件上传由宿主实现。需要带格式的可编辑正文时，参见 [Rich Text Editor](rich-text-editor.md)。
 
 ## 静态内容与流式响应

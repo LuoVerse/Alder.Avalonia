@@ -1,6 +1,8 @@
 # AlderWorkflowEditor
 
-在 Gallery 的「实用工具 → 工作流编辑器」中可以边编辑边测试保存命令、试跑流程和 JSON 导入导出。也可以从仓库根目录启动独立示例。
+**简体中文** · [English](README.en.md)
+
+在 Gallery 的「数据视图 → 工作流编辑器」中可以边编辑边测试保存命令、试跑流程和 JSON 导入导出。也可以从仓库根目录启动独立示例。
 
 ```sh
 dotnet run --project samples/Alder.Avalonia.WorkflowPrototype

@@ -1,5 +1,7 @@
 # Rich Text Editor
 
+**简体中文** · [English](rich-text-editor.en.md)
+
 `AlderRichTextEditor.Value` 是可读写的 JSON 字符串。第一次打开时给它初始文档，编辑后保存最新的 `Value`，下次打开时把保存的字符串赋回同一属性。编辑器通过双向绑定发布正文和格式的变更。`PlainText` 则用于搜索、摘要和纯文本导出。
 
 先在应用中加载 [AlderTheme](../../README.md#在-avalonia-应用中使用)。完整的工具栏、扩展命令、只读和字数统计用法见 [Gallery 视图](../../samples/Alder.Avalonia.Gallery/Views/RichTextEditorExample.axaml) 和 [Gallery ViewModel](../../samples/Alder.Avalonia.Gallery/ViewModels/RichTextEditorViewModel.cs)。
