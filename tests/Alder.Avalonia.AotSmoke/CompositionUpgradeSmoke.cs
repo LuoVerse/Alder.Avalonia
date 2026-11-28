@@ -299,10 +299,16 @@ internal static class CompositionUpgradeSmoke
                 $"the DataGrid snapshot follows the pointer at {scale}×");
 
             window.MouseUp(landing, MouseButton.Left);
-            using var released = Capture(window);
+            // MouseUp has already rendered the release. Another capture tick advances the easing
+            // beyond the first frame on slower runners.
+            using var releaseFrame = window.GetLastRenderedFrame()!;
+            using var released = DecodeFrame(releaseFrame);
             var releaseCenter = Marker(released);
-            Check(releaseCenter.X > initialCenter.X + (dragCenter.X - initialCenter.X) / 2 && releaseCenter.X <= dragCenter.X + 1,
-                $"the DataGrid release starts at the dragged position at {scale}×");
+            Check(items[3] == 1 &&
+                window.GetVisualDescendants().Any(visual => visual is Border { Name: "DataGridDragPreview" }) &&
+                releaseCenter.X > initialCenter.X + (dragCenter.X - initialCenter.X) / 2 && releaseCenter.X <= dragCenter.X + 1,
+                $"the DataGrid release starts at the dragged position at {scale}× " +
+                $"(source {initialCenter.X:F1}, drag {dragCenter.X:F1}, release {releaseCenter.X:F1})");
 
             using (var end = new CancellationTokenSource(260)) Dispatcher.UIThread.MainLoop(end.Token);
             using var settled = Capture(window);
@@ -597,6 +603,11 @@ internal static class CompositionUpgradeSmoke
     {
         Pump(window);
         using var frame = window.CaptureRenderedFrame()!;
+        return DecodeFrame(frame);
+    }
+
+    private static SKBitmap DecodeFrame(Bitmap frame)
+    {
         using var stream = new MemoryStream();
         frame.Save(stream, PngBitmapEncoderOptions.Default);
         stream.Position = 0;
