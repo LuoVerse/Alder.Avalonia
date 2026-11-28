@@ -6,6 +6,9 @@
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="FontFeatures" Value="tnum" />
     <Setter Property="ti:TextInputOptions.ContentType" Value="Number" />
+    <Style Selector="^ /template/ ContentPresenter#FieldSuffix">
+      <Setter Property="KeyboardNavigation.TabNavigation" Value="Continue" />
+    </Style>
     <Style Selector="^ /template/ Border#FieldSurface">
       <Setter Property="Background" Value="Transparent" />
       <Setter Property="BoxShadow" Value="none" />

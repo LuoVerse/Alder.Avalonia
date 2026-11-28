@@ -232,6 +232,7 @@
     <Style Selector="^:focus-visible:pointerover /template/ :is(Thumb)"><Setter Property="Tag" Value="cell-focus-hover" /></Style>
     <Style Selector="^:dragging /template/ :is(Thumb)"><Setter Property="Tag" Value="cell-drag" /></Style>
     <Style Selector="^:pointerover:not(:disabled) /template/ Border#CellSurface,
+                     ^:dragging:not(:disabled) /template/ Border#CellSurface,
                      ^:focus-visible:not(:disabled) /template/ Border#CellSurface">
       <Setter Property="Background" Value="{DynamicResource AlderFieldHover}" />
     </Style>
@@ -239,6 +240,7 @@
     <Style Selector="^[Variant=Secondary] /template/ Border#CellSurface"><Setter Property="BoxShadow" Value="none" /></Style>
     <Style Selector="^[Variant=Secondary] /template/ alder|SliderSurface#Fill"><Setter Property="FillBrush" Value="{DynamicResource AlderCellSecondaryFill}" /></Style>
     <Style Selector="^[Variant=Secondary]:pointerover:not(:disabled) /template/ Border#CellSurface,
+                     ^[Variant=Secondary]:dragging:not(:disabled) /template/ Border#CellSurface,
                      ^[Variant=Secondary]:focus-visible:not(:disabled) /template/ Border#CellSurface">
       <Setter Property="Background" Value="{DynamicResource AlderSurfaceTertiary}" />
     </Style>

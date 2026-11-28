@@ -102,12 +102,15 @@ public sealed class CellEditorInteractions
             var start = Center(slider, window);
             var end = start + new Vector(76, 56);
             var handle = Part<Border>(slider, "Handle");
+            var surface = Part<Border>(slider, "CellSurface");
             window.MouseMove(start);
             Pump(window);
             Assert.Equal(0.4, handle.Opacity);
+            var activeBackground = surface.Background;
             window.MouseDown(start, MouseButton.Left);
             window.MouseMove(end);
             Pump(window);
+            Assert.Same(activeBackground, surface.Background);
             Assert.Equal(0.7, handle.Opacity);
             Assert.Equal(1.5, handle.RenderTransform!.Value.M22);
             window.MouseUp(end, MouseButton.Left);

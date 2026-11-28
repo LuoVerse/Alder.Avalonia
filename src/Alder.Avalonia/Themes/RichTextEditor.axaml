@@ -96,7 +96,7 @@
                   <alder:AlderTextBlock Text="{TemplateBinding Footer}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource AlderMuted}" VerticalAlignment="Center" />
                   <alder:AlderTextBlock Name="PART_Count" VerticalAlignment="Center" Grid.Column="1" Margin="4,0,0,0" FontSize="12" Foreground="{DynamicResource AlderMuted}" IsVisible="{TemplateBinding ShowCharacterCount}" />
                 </Grid>
-                <alder:AlderPopup Name="PART_Popup" WindowManagerAddShadowHint="False" ShouldUseOverlayLayer="True"
+                <alder:AlderEntrancePopup Name="PART_Popup" FadeOnly="True" WindowManagerAddShadowHint="False" ShouldUseOverlayLayer="True"
                        TakesFocusFromNativeControl="False" PlacementConstraintAdjustment="FlipY,SlideX,SlideY" VerticalOffset="4" />
               </Grid>
             </Border>

@@ -437,10 +437,14 @@ void VerifyFormControls()
     var option = new AlderRadioButtonGroupItem { Content = "Standard" };
     AlderChoiceGroup.SetKey(option, "standard");
     var radios = new AlderRadioButtonGroup { SelectedKey = "standard", Children = { option } };
+    var draft = new SmokeModel { Text = "" };
+    var name = new AlderTextField { Label = "Project name", IsRequired = true };
+    name.Bind(AlderTextField.TextProperty, CompiledBinding.Create((SmokeModel value) => value.Text, source: draft));
+    var form = new AlderForm { SubmitCommand = draft.Activate, Content = new AlderFieldset { Content = name } };
     var owner = new AlderTestWindow
     {
         Width = 450, Height = 620, RequestedThemeVariant = ThemeVariant.Light,
-        Content = new StackPanel { Margin = new Thickness(12), Spacing = 12, Children = { drop, inline, scope, number, radios } }
+        Content = new StackPanel { Margin = new Thickness(12), Spacing = 12, Children = { drop, inline, scope, number, radios, form } }
     };
     AlderMotion.SetReduced(owner, true);
     owner.Show();
@@ -451,13 +455,35 @@ void VerifyFormControls()
             "Drop Zone uses the compiled browse command and starts empty");
         Check(inline.SelectionText == "Design" && option.IsChecked == true, "Inline Select and Radio Button Group initial values");
         Check(Part<RepeatButton>(number, "PART_IncreaseButton").Bounds.Width == 28, "small Number Stepper has a sized native button");
+        var editor = Part<AlderInput>(name, "PART_Input");
+        var error = name.GetVisualDescendants().OfType<AlderFieldError>().Single();
+        Check(!form.TrySubmit() && editor.IsFocused && editor.IsInvalid && error.IsVisible && draft.Activations == 0,
+            "an invalid form exposes the error and focuses its native editor");
+        Pump();
+        using (var validationFrame = owner.CaptureRenderedFrame()!)
+        using (var png = new MemoryStream())
+        {
+            validationFrame.Save(png, PngBitmapEncoderOptions.Default);
+            png.Position = 0;
+            using var pixels = SKBitmap.Decode(png);
+            var origin = editor.TranslatePoint(default, owner)!.Value;
+            var scale = owner.RenderScaling;
+            var centerY = (int)((origin.Y + editor.Bounds.Height / 2) * scale);
+            var left = pixels.GetPixel((int)((origin.X - 1) * scale), centerY);
+            var right = pixels.GetPixel((int)((origin.X + editor.Bounds.Width + 1) * scale), centerY);
+            var outline = new SKColor(255, 56, 60);
+            Check(left == outline && right == outline, "the invalid editor's focus ring extends outside both edges of the form field");
+        }
+        editor.SetCurrentValue(AlderInput.TextProperty, "Library");
+        Check(form.TrySubmit() && draft.Text == "Library" && draft.Activations == 1 && !error.IsVisible,
+            "editing clears the required error and submits the compiled binding value");
         select.IsDropDownOpen = true;
         Pump();
         var border = Part<Control>(owner, "AlderPopoverSurface").GetVisualChildren().OfType<Border>().Single();
         Check(border.Background is ISolidColorBrush brush && brush.Color == Color.Parse("#18181B"),
             "Native Select resolves its local dark popup theme under a light window");
         using var frame = owner.CaptureRenderedFrame();
-        Check(frame is not null, "Skia renders all five form controls");
+        Check(frame is not null, "Skia renders the form controls");
     }
     finally { owner.Close(); }
 }

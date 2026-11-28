@@ -1437,6 +1437,77 @@ public class Interactions
     }
 
     [AvaloniaFact]
+    public async Task TemporalFormatsKeepDisplayAndClipboardParsingIndependent()
+    {
+        var culture = CultureInfo.GetCultureInfo("en-US");
+        var date = new AlderDatePicker { Culture = culture, DisplayFormat = "ddd, d MMM yyyy", ParseFormat = "yyyyMMdd", Value = new DateOnly(2026, 11, 7) };
+        var time = new AlderTimeField { Culture = culture, DisplayFormat = "h:mm tt", ParseFormat = "HHmmss", Value = new TimeOnly(14, 5, 30) };
+        var range = new AlderDateRangePicker
+        {
+            Culture = culture, DisplayFormat = "dd.MM.yy", ParseFormat = "yyyyMMdd",
+            Value = new AlderDateRange(new DateOnly(2026, 11, 7), new DateOnly(2026, 11, 28))
+        };
+        var calendar = new AlderCalendar { Culture = culture, DisplayDate = date.Value, DisplayFormat = "yyyy/MM" };
+        var window = new AlderTestWindow { Content = new StackPanel { Children = { date, time, range, calendar } }, Width = 460, Height = 440 };
+        window.Show();
+        try
+        {
+            Assert.Equal(["Sat", ",", " ", "7", " ", "Nov", " ", "2026"], Segments(date));
+            Assert.Equal(["2", ":", "05", " ", "PM"], Segments(time));
+            Assert.Equal("2026/11", Heading(calendar));
+
+            await Paste(date, "20261209");
+            Assert.Equal(new DateOnly(2026, 12, 9), date.Value);
+            Assert.Equal(["Wed", ",", " ", "9", " ", "Dec", " ", "2026"], Segments(date));
+            await Paste(date, "12/08/2026");
+            Assert.Equal(new DateOnly(2026, 12, 9), date.Value);
+            date.ParseFormat = null;
+            await Paste(date, "12/08/2026");
+            Assert.Equal(new DateOnly(2026, 12, 8), date.Value);
+
+            await Paste(time, "164530");
+            Assert.Equal(new TimeOnly(16, 45, 30), time.Value);
+            Assert.Equal(["4", ":", "45", " ", "PM"], Segments(time));
+            time.DisplayFormat = "HH:mm:ss";
+            Assert.Equal(["16", ":", "45", ":", "30"], Segments(time));
+            Assert.Equal(new TimeOnly(16, 45, 30), time.Value);
+
+            var fields = range.GetVisualDescendants().OfType<AlderDateField>().ToArray();
+            Assert.Equal(["07", ".", "11", ".", "26"], Segments(fields[0]));
+            Assert.Equal(["28", ".", "11", ".", "26"], Segments(fields[1]));
+            await Paste(fields[1], "20261201");
+            Assert.Equal(new DateOnly(2026, 12, 1), range.Value!.Value.End);
+            Assert.True(SegmentPanel(fields[1]).Children.OfType<Button>().Last().Focus());
+            window.KeyTextInput("27");
+            Assert.Equal(new DateOnly(2027, 12, 1), range.Value!.Value.End);
+
+            calendar.DisplayFormat = null;
+            Assert.Equal(new DateOnly(2026, 11, 7).ToString("Y", culture), Heading(calendar));
+        }
+        finally { window.Close(); }
+
+        async Task Paste(AlderTemporalField field, string value)
+        {
+            var first = SegmentPanel(field).Children.OfType<Button>().First();
+            Assert.True(first.IsFocused || first.Focus());
+            await window.Clipboard!.SetTextAsync(value);
+            window.KeyPressQwerty(PhysicalKey.V, RawInputModifiers.Control);
+            window.KeyReleaseQwerty(PhysicalKey.V, RawInputModifiers.Control);
+            await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+        }
+
+        static string? Heading(AlderCalendar calendar) =>
+            calendar.GetVisualDescendants().OfType<TextBlock>().Single(x => x.Name == "PART_HeadingText").Text;
+
+        static StackPanel SegmentPanel(AlderTemporalField field) =>
+            field.GetVisualDescendants().OfType<StackPanel>().Single(x => x.Name == "PART_Segments");
+
+        static string[] Segments(AlderTemporalField field) =>
+            SegmentPanel(field).Children.Select(control => control is Button button
+                ? Assert.IsType<string>(button.Content) : ((TextBlock)control).Text ?? "").ToArray();
+    }
+
+    [AvaloniaFact]
     public async Task DatePickerHighlightsCalendarDaysOnlyForKeyboardNavigation()
     {
         var selectedDate = new DateOnly(2026, 11, 25);

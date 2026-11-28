@@ -21,7 +21,7 @@
       <StackPanel Spacing="6">
         <alder:AlderLabel x:Name="AccountLabel" Target="{Binding #AccountField}" Content="{DynamicResource GalleryText.SalashAccount}" />
         <alder:AlderInput x:Name="AccountField" FullWidth="True" Height="44" ShowClearButton="True"
-                          Text="{CompiledBinding Account, Mode=TwoWay}" IsReadOnly="{CompiledBinding IsSigningIn}"
+                          Text="{CompiledBinding Account, Mode=TwoWay}"
                           PlaceholderText="{DynamicResource GalleryText.SalashAccountHint}"
                           AutomationProperties.LabeledBy="{Binding #AccountLabel}" />
       </StackPanel>
@@ -29,7 +29,7 @@
         <alder:AlderLabel x:Name="PasswordLabel" Target="{Binding #PasswordField}" Content="{DynamicResource GalleryText.Password}" />
         <alder:AlderInputGroup x:Name="PasswordField" FullWidth="True" Height="44" Type="Password"
                               Text="{CompiledBinding Password, Mode=TwoWay}" RevealPassword="{CompiledBinding IsPasswordVisible}"
-                              IsReadOnly="{CompiledBinding IsSigningIn}" SuffixPadding="4,0,6,0"
+                              SuffixPadding="4,0,6,0"
                               PlaceholderText="{DynamicResource GalleryText.EnterPassword}"
                               AutomationProperties.LabeledBy="{Binding #PasswordLabel}">
           <alder:AlderInputGroup.Suffix>
@@ -53,7 +53,7 @@
                  Foreground="{DynamicResource AlderDanger}" TextWrapping="Wrap" FontSize="13"
                  AutomationProperties.LiveSetting="Polite" />
       <alder:AlderButton x:Name="SignInButton" FullWidth="True" Height="44" IsDefault="True"
-                        IsPending="{CompiledBinding IsSigningIn}" Command="{CompiledBinding SignIn}"
+                        Command="{CompiledBinding SignIn}"
                         Content="{DynamicResource GalleryText.SalashSignIn}" />
     </StackPanel>
   </alder:AlderCard>

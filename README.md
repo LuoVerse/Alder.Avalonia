@@ -32,10 +32,10 @@ Gallery 默认打开 Home。侧栏可以搜索组件，窗口支持浅色和深�
 
 ## 在 Avalonia 应用中使用
 
-从 [NuGet.org](https://www.nuget.org/packages/Alder.Avalonia/2.0.0) 安装 `Alder.Avalonia`。
+当前稳定版为 [2.0.0](https://www.nuget.org/packages/Alder.Avalonia/2.0.0)。要试用最新控件与修复，可安装 [2.0.1-preview](https://www.nuget.org/packages/Alder.Avalonia/2.0.1-preview)。
 
 ```sh
-dotnet package add Alder.Avalonia --version 2.0.0
+dotnet package add Alder.Avalonia --version 2.0.1-preview
 ```
 
 在 `App.axaml` 中加载 `AlderTheme`，桌面窗口使用 `AlderWindow`。如果应用也使用原生 Avalonia 窗口或控件，可以为它们添加宿主主题，并在宿主主题之后加载 `AlderTheme`。
@@ -97,6 +97,7 @@ dotnet publish tests/Alder.Avalonia.AotSmoke -c Release -r osx-arm64 -p:PublishA
 
 ## 文档
 
+- [2.0.1-preview 发布说明](docs/releases/2.0.1-preview.md)
 - [2.0.0 发布与升级说明](docs/releases/2.0.0.md)
 - [设计系统](DESIGN.md)
 - [组件目录与使用契约](docs/COMPONENTS.md)

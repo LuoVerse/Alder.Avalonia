@@ -1,0 +1,56 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" xmlns:conv="using:Avalonia.Data.Converters"
+             x:Class="Alder.Avalonia.Gallery.Views.FieldMessagesExample" x:DataType="vm:FormDemoViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleDescription" Title="{DynamicResource GalleryText.Description}">
+      <g:ExampleCard.Preview>
+        <StackPanel MaxWidth="340" HorizontalAlignment="Stretch" Spacing="4" Margin="8,16">
+          <alder:AlderLabel x:Name="NameLabel" Content="{DynamicResource GalleryText.FormProjectName}" Target="{CompiledBinding #NameEditor}" />
+          <alder:AlderInput x:Name="NameEditor" FullWidth="True" PlaceholderText="{DynamicResource GalleryText.FormNamePlaceholder}"
+                            AutomationProperties.LabeledBy="{CompiledBinding #NameLabel}"
+                            AutomationProperties.HelpText="{CompiledBinding #NameHelp.Text}" />
+          <alder:AlderDescription x:Name="NameHelp" Text="{DynamicResource GalleryText.FormNameHint}" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var description = new AlderDescription { Text = "This name appears in the team’s project list." };
+        var editor = new AlderInput();
+        editor.Bind(AutomationProperties.HelpTextProperty, description.GetObservable(TextBlock.TextProperty));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleFieldError" Title="{DynamicResource GalleryText.FieldError}">
+      <g:ExampleCard.Preview>
+        <StackPanel MaxWidth="340" HorizontalAlignment="Stretch" Spacing="4" Margin="8,16">
+          <alder:AlderLabel x:Name="EmailLabel" Content="{DynamicResource GalleryText.FormEmail}" Target="{CompiledBinding #EmailEditor}" />
+          <alder:AlderInput x:Name="EmailEditor" FullWidth="True" Type="Email" Text="{CompiledBinding SampleEmail}"
+                            IsInvalid="{CompiledBinding IsSampleEmailInvalid}" AutomationProperties.LabeledBy="{CompiledBinding #EmailLabel}" />
+          <alder:AlderFieldError Target="{CompiledBinding #EmailEditor}" Text="{DynamicResource GalleryText.FormEmailInvalid}" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var editor = new AlderInput { Type = InputType.Email, IsInvalid = true };
+        var error = new AlderFieldError { Target = editor, Text = "Enter a valid email address." };
+        // Omitting Text displays the errors supplied by the target's Avalonia binding.
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleErrorMessage" Title="{DynamicResource GalleryText.ErrorMessage}">
+      <g:ExampleCard.Preview>
+        <StackPanel MaxWidth="340" HorizontalAlignment="Stretch" Spacing="4" Margin="8,16">
+          <alder:AlderTagGroup x:Name="Topics" Label="{DynamicResource GalleryText.FormTopics}" SelectionMode="Multiple">
+            <alder:AlderTag Content="{DynamicResource GalleryText.TagDesign}" />
+            <alder:AlderTag Content="{DynamicResource GalleryText.TagEngineering}" />
+            <alder:AlderTag Content="{DynamicResource GalleryText.TagAccessibility}" />
+          </alder:AlderTagGroup>
+          <alder:AlderErrorMessage Text="{DynamicResource GalleryText.FormSelectTopic}"
+                                   IsVisible="{CompiledBinding #Topics.SelectedItem, Converter={x:Static conv:ObjectConverters.IsNull}}" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var error = new AlderErrorMessage { Text = "Select at least one topic." };
+        var topics = new AlderTagGroup { SelectionMode = TagSelectionMode.Multiple };
+        topics.SelectionChanged += (_, _) => error.IsVisible = topics.SelectedItem is null;
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,43 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.TextFieldExample" x:DataType="vm:FormDemoViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleTextField" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <StackPanel MaxWidth="340" HorizontalAlignment="Stretch" Spacing="16" Margin="8,16">
+          <alder:AlderTextField Label="{DynamicResource GalleryText.FormProjectName}" IsRequired="True"
+                                PlaceholderText="{DynamicResource GalleryText.FormNamePlaceholder}"
+                                Description="{DynamicResource GalleryText.FormNameHint}" Text="{CompiledBinding ProjectName}" />
+          <alder:AlderTextField Label="{DynamicResource GalleryText.FormEmail}" Type="Email" Text="{CompiledBinding Email}"
+                                PlaceholderText="team@example.com" Description="{DynamicResource GalleryText.FormEmailHint}" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var field = new AlderTextField
+        {
+            Label = "Project name",
+            Description = "This name appears in the team’s project list.",
+            PlaceholderText = "Enter a name",
+            IsRequired = true
+        };
+        field.Bind(AlderTextField.TextProperty, CompiledBinding.Create((FormDemoViewModel model) => model.ProjectName));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleEditorStates" Title="{DynamicResource GalleryText.FormEditorStates}">
+      <g:ExampleCard.Preview>
+        <StackPanel MaxWidth="340" HorizontalAlignment="Stretch" Spacing="16" Margin="8,16">
+          <alder:AlderTextField Label="{DynamicResource GalleryText.FormNotes}" AcceptsReturn="True" MinLines="3"
+                                PlaceholderText="{DynamicResource GalleryText.FormNotesPlaceholder}" Text="{CompiledBinding Notes}" />
+          <alder:AlderTextField Label="{DynamicResource GalleryText.FormProjectId}" Text="PRJ-024" IsReadOnly="True" />
+          <alder:AlderTextField Label="{DynamicResource GalleryText.FormWorkspace}" Text="{DynamicResource GalleryText.FormWorkspaceName}"
+                                IsEnabled="False" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var notes = new AlderTextField { Label = "Notes", AcceptsReturn = true, MinLines = 3 };
+        var projectId = new AlderTextField { Label = "Project ID", Text = "PRJ-024", IsReadOnly = true };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

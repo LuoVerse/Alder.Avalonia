@@ -1,0 +1,52 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls">
+  <ControlTheme x:Key="AlderMenuHeaderTheme" TargetType="MenuItem" BasedOn="{StaticResource AlderContextMenuItemTheme}">
+    <Setter Property="Padding" Value="10,5" />
+    <Setter Property="MinHeight" Value="30" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="PART_LayoutRoot" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}"
+                  CornerRadius="{TemplateBinding CornerRadius}">
+            <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+              <alder:AlderIconPresenter Name="PART_IconPresenter" Content="{TemplateBinding Icon}" Width="14" Height="14"
+                                        IsHitTestVisible="False" AutomationProperties.AccessibilityView="Raw" />
+              <ContentPresenter Name="PART_HeaderPresenter" Content="{TemplateBinding Header}"
+                                ContentTemplate="{TemplateBinding HeaderTemplate}" RecognizesAccessKey="True" />
+            </StackPanel>
+          </Border>
+          <alder:AlderEntrancePopup Name="PART_Popup" IsOpen="{TemplateBinding IsSubMenuOpen, Mode=TwoWay}"
+                           Placement="BottomEdgeAlignedLeft" VerticalOffset="4" ShouldUseOverlayLayer="True"
+                           IsLightDismissEnabled="False" WindowManagerAddShadowHint="False">
+            <Border Theme="{StaticResource AlderContextMenuSurfaceTheme}" MinWidth="180" MaxWidth="320" MaxHeight="416"
+                    Margin="{StaticResource AlderContextMenuShadowMargin}">
+              <alder:AlderScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+              </alder:AlderScrollViewer>
+            </Border>
+          </alder:AlderEntrancePopup>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover:not(:disabled) /template/ Border#PART_LayoutRoot, ^:focus-visible /template/ Border#PART_LayoutRoot">
+      <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderMenu}" TargetType="alder:AlderMenu">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="ItemContainerTheme" Value="{StaticResource AlderMenuHeaderTheme}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" Padding="{TemplateBinding Padding}"
+                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}">
+          <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+</ResourceDictionary>

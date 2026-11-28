@@ -93,6 +93,8 @@ public sealed partial class AlderAgenda : TemplatedControl
     /// <summary>Identifies the <see cref="HourCycle"/> Avalonia property.</summary>
     public static readonly StyledProperty<AlderAgendaHourCycle> HourCycleProperty =
         AvaloniaProperty.Register<AlderAgenda, AlderAgendaHourCycle>(nameof(HourCycle));
+    /// <summary>Identifies the <see cref="DisplayFormat"/> Avalonia property.</summary>
+    public static readonly StyledProperty<string?> DisplayFormatProperty = AlderTemporalInput.DisplayFormatProperty.AddOwner<AlderAgenda>();
     /// <summary>Identifies the <see cref="WeekDays"/> Avalonia property.</summary>
     public static readonly StyledProperty<int> WeekDaysProperty =
         AvaloniaProperty.Register<AlderAgenda, int>(nameof(WeekDays), 7, validate: value => value is >= 1 and <= 7);
@@ -141,6 +143,8 @@ public sealed partial class AlderAgenda : TemplatedControl
     public DayOfWeek? FirstDayOfWeek { get => GetValue(FirstDayOfWeekProperty); set => SetValue(FirstDayOfWeekProperty, value); }
     /// <summary>The clock format used for the time axis.</summary>
     public AlderAgendaHourCycle HourCycle { get => GetValue(HourCycleProperty); set => SetValue(HourCycleProperty, value); }
+    /// <summary>The format of time labels and event times. Null or whitespace uses <see cref="HourCycle"/>.</summary>
+    public string? DisplayFormat { get => GetValue(DisplayFormatProperty); set => SetValue(DisplayFormatProperty, value); }
     /// <summary>The number of days displayed in week view, from one to seven.</summary>
     public int WeekDays { get => GetValue(WeekDaysProperty); set => SetValue(WeekDaysProperty, value); }
     /// <summary>Whether touch swipes can change the visible agenda period.</summary>
@@ -273,7 +277,7 @@ public sealed partial class AlderAgenda : TemplatedControl
         if (change.Property == DisplayDateProperty || change.Property == ViewProperty ||
             change.Property == EventsProperty || change.Property == IsAllDayExpandedProperty ||
             change.Property == CultureProperty || change.Property == TimeZoneProperty ||
-            change.Property == FirstDayOfWeekProperty || change.Property == HourCycleProperty ||
+            change.Property == FirstDayOfWeekProperty || change.Property == HourCycleProperty || change.Property == DisplayFormatProperty ||
             change.Property == WeekDaysProperty || change.Property == AllowsSwipeProperty || change.Property == StartHourProperty ||
             change.Property == EndHourProperty || change.Property == SlotDurationProperty ||
             change.Property == SlotHeightProperty || change.Property == SnapMinutesProperty ||
@@ -337,12 +341,13 @@ public sealed partial class AlderAgenda : TemplatedControl
         FocusBody();
     }
 
-    private string FormatTime(DateTime value) => HourCycle switch
-    {
-        AlderAgendaHourCycle.TwelveHour => value.ToString("h:mm tt", Language),
-        AlderAgendaHourCycle.TwentyFourHour => value.ToString("HH:mm", Language),
-        _ => value.ToString("t", Language)
-    };
+    private string FormatTime(DateTime value) =>
+        AlderTemporalInput.FormatOrDefault(value, DisplayFormat, HourCycle switch
+        {
+            AlderAgendaHourCycle.TwelveHour => "h:mm tt",
+            AlderAgendaHourCycle.TwentyFourHour => "HH:mm",
+            _ => "t"
+        }, Language);
 
     private DateOnly StartOfWeek(DateOnly date) => ShiftDate(date, -((7 + (int)date.DayOfWeek - (int)WeekStart) % 7));
     private DateOnly FirstScheduledDay(DateOnly date) => ScheduleStart(View == AlderCalendarView.Day ? date

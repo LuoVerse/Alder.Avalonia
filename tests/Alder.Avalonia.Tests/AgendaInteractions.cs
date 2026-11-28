@@ -19,6 +19,26 @@ public sealed class AgendaInteractions
     private static readonly DateOnly Monday = new(2030, 6, 3);
 
     [AvaloniaFact]
+    public void AgendaDisplayFormatUpdatesEventTimesAndFallsBackToHourCycle()
+    {
+        var item = new AlderAgendaEvent("release", "Release", At(Monday, 13, 20), At(Monday, 14, 20));
+        var agenda = new AlderAgenda
+        {
+            Culture = System.Globalization.CultureInfo.GetCultureInfo("en-US"),
+            DisplayDate = Monday, View = AlderCalendarView.Day, StartHour = 12, EndHour = 16,
+            Events = [item], HourCycle = AlderAgendaHourCycle.TwelveHour, DisplayFormat = "HH:mm:ss"
+        };
+        using var preview = new AgendaWindow(agenda);
+        Assert.Contains(EventButton(agenda, item.Title).GetVisualDescendants().OfType<TextBlock>(),
+            label => label.Text == "13:20:00 – 14:20:00");
+
+        agenda.DisplayFormat = null;
+        preview.Pump();
+        Assert.Contains(EventButton(agenda, item.Title).GetVisualDescendants().OfType<TextBlock>(),
+            label => label.Text == "1:20 PM – 2:20 PM");
+    }
+
+    [AvaloniaFact]
     public async Task AgendaPacksOverlapsAndSpansAndOpensTheDayFromMonthOverflow()
     {
         var agenda = new AlderAgenda

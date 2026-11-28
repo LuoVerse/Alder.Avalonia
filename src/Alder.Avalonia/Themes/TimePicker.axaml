@@ -1,0 +1,77 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls">
+  <x:String x:Key="AlderText.OpenTimePicker">Choose time</x:String>
+  <x:String x:Key="AlderText.TimePickerOutOfRange">Choose a time within the allowed range.</x:String>
+
+  <ControlTheme x:Key="AlderTimePickerOptionsScrollTheme" TargetType="alder:AlderScrollViewer"
+                BasedOn="{StaticResource {x:Type alder:AlderScrollViewer}}">
+    <Style Selector="^ /template/ alder|AlderScrollBar#PART_VerticalScrollBar">
+      <Setter Property="Theme">
+        <ControlTheme TargetType="alder:AlderScrollBar" BasedOn="{StaticResource AlderDataGridScrollBarTheme}">
+          <Setter Property="Width" Value="7" />
+        </ControlTheme>
+      </Setter>
+      <Setter Property="Margin" Value="2,0,0,0" />
+    </Style>
+  </ControlTheme>
+  <ControlTheme x:Key="AlderTimePickerOptionsTheme" TargetType="alder:AlderListBox"
+                BasedOn="{StaticResource {x:Type alder:AlderListBox}}">
+    <Setter Property="ScrollViewer.AllowAutoHide" Value="False" />
+    <Style Selector="^ /template/ alder|AlderScrollViewer#PART_ScrollViewer">
+      <Setter Property="Theme" Value="{StaticResource AlderTimePickerOptionsScrollTheme}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="AlderTimePickerOptionTheme" TargetType="ListBoxItem">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="MinHeight" Value="28" />
+    <Setter Property="CornerRadius" Value="7" />
+    <Setter Property="FontFeatures" Value="tnum" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="OptionSurface" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
+                BorderThickness="1" BorderBrush="Transparent">
+          <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                            VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
+    <Style Selector="^:selected">
+      <Setter Property="Background" Value="{DynamicResource AlderSoft}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" />
+    </Style>
+    <Style Selector="^:selected:pointerover"><Setter Property="Background" Value="{DynamicResource AlderSoftHover}" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#OptionSurface"><Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderTimePicker}" TargetType="alder:AlderTimePicker" BasedOn="{StaticResource AlderTemporalFieldTheme}">
+    <Setter Property="MinWidth" Value="184" />
+    <Setter Property="Indicator" Value="{StaticResource AlderIconClock}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="FieldSurface" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto" Margin="{TemplateBinding Padding}">
+              <ContentPresenter Content="{TemplateBinding Prefix}" VerticalAlignment="Center" />
+              <alder:AlderScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
+                <StackPanel Name="PART_Segments" Orientation="Horizontal" VerticalAlignment="Center" />
+              </alder:AlderScrollViewer>
+              <ContentPresenter Grid.Column="2" Content="{TemplateBinding Suffix}" VerticalAlignment="Center" />
+              <alder:AlderDateTriggerButton Name="PART_TimeTrigger" Grid.Column="3" Margin="6,0,0,0" Theme="{StaticResource AlderDateTriggerTheme}"
+                                           AutomationProperties.Name="{DynamicResource AlderText.OpenTimePicker}">
+                <alder:AlderPathIcon Width="16" Height="16" Data="{TemplateBinding Indicator}" />
+              </alder:AlderDateTriggerButton>
+            </Grid>
+          </Border>
+          <alder:InputFocusRing Name="FieldRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False"
+                                Classes.editing="{CompiledBinding #PART_Segments.IsKeyboardFocusWithin}" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[IsReadOnly=True] /template/ :is(Button)#PART_TimeTrigger"><Setter Property="IsEnabled" Value="False" /></Style>
+  </ControlTheme>
+</ResourceDictionary>

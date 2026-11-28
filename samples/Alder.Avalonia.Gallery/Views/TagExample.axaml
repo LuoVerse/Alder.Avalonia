@@ -1,0 +1,64 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.TagExample" x:DataType="vm:TagViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleTag" Title="{DynamicResource GalleryText.Tag}">
+      <g:ExampleCard.Preview>
+        <WrapPanel ItemSpacing="8" LineSpacing="8" Margin="8,16">
+          <alder:AlderTag Size="Small" Content="{DynamicResource GalleryText.TagDesign}" />
+          <alder:AlderTag Icon="{DynamicResource AlderIconGlobe}" Content="{DynamicResource GalleryText.TagTravel}" />
+          <alder:AlderTag Size="Large" Variant="Surface" Icon="{DynamicResource AlderIconBookmark}"
+                          Content="{DynamicResource GalleryText.TagBooks}" />
+          <alder:AlderTag IsEnabled="False" Content="{DynamicResource GalleryText.TagEngineering}" />
+        </WrapPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var tag = new AlderTag { Content = "Travel", Size = AlderSize.Medium };
+        tag[!AlderTag.IconProperty] = new DynamicResourceExtension("AlderIconGlobe");
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleTagGroup" Title="{DynamicResource GalleryText.TagGroups}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="20" Margin="8,16" MaxWidth="316" HorizontalAlignment="Left">
+          <alder:AlderTagGroup Label="{DynamicResource GalleryText.TagDisplayOnly}" Size="Small">
+            <alder:AlderTag Content="{DynamicResource GalleryText.TagDesign}" />
+            <alder:AlderTag Content="{DynamicResource GalleryText.TagEngineering}" />
+            <alder:AlderTag Content="{DynamicResource GalleryText.TagAccessibility}" />
+          </alder:AlderTagGroup>
+          <alder:AlderTagGroup Label="{DynamicResource GalleryText.TagSingleSelection}" SelectionMode="Single"
+                               Variant="Surface">
+            <alder:AlderTag Content="{DynamicResource GalleryText.TagDesign}" IsSelected="True" />
+            <alder:AlderTag Content="{DynamicResource GalleryText.TagEngineering}" />
+            <alder:AlderTag Content="{DynamicResource GalleryText.TagAccessibility}" IsEnabled="False" />
+          </alder:AlderTagGroup>
+          <alder:AlderTagGroup Name="TopicsGroup" Label="{DynamicResource GalleryText.TagMultipleSelection}"
+                               Description="{DynamicResource GalleryText.TagKeyboardHint}" EmptyContent="{DynamicResource GalleryText.TagEmpty}"
+                               SelectionMode="Multiple" IsRemovable="True"
+                               RemoveButtonLabel="{DynamicResource GalleryText.TagRemove}" ItemsSource="{CompiledBinding Topics}"
+                               SelectedItems="{CompiledBinding SelectedTopics, Mode=OneWay}" RemoveCommand="{CompiledBinding RemoveTopicCommand}">
+            <alder:AlderTagGroup.ItemTemplate>
+              <DataTemplate x:DataType="vm:TagExampleItem">
+                <alder:AlderTextBlock Text="{CompiledBinding Label}" TextWrapping="Wrap" />
+              </DataTemplate>
+            </alder:AlderTagGroup.ItemTemplate>
+          </alder:AlderTagGroup>
+          <alder:AlderButton Content="{DynamicResource GalleryText.Reset}" Command="{CompiledBinding ResetTopicsCommand}"
+                             Variant="Secondary" Size="Small" HorizontalAlignment="Left" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var topics = new ObservableCollection<string> { "Design", "Engineering", "Travel" };
+        var group = new AlderTagGroup
+        {
+            Label = "Topics",
+            ItemsSource = topics,
+            SelectionMode = TagSelectionMode.Multiple,
+            IsRemovable = true,
+            EmptyContent = "No tags left"
+        };
+        group.RemoveRequested += (_, e) => topics.RemoveAt(e.Index);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

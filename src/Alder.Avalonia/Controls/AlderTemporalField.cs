@@ -38,6 +38,11 @@ public abstract partial class AlderTemporalField : AlderTemporalInput
     protected virtual DateTime ReferenceValue => DateTime.Today;
     /// <summary>The culture-dependent pattern from which the segments are built.</summary>
     protected abstract string InputPattern { get; }
+
+    private protected virtual bool IsDateEditor => false;
+    private protected bool UsesTwelveHourClock => HasPatternPart('h');
+    private protected bool HasPatternPart(char part) => PatternParts().Matches(InputPattern)
+        .Any(match => UnescapeToken(match.Value)[0] == part);
     /// <summary>Reads the current committed date or time from the derived editor.</summary>
     protected abstract DateTime? ReadValue();
     /// <summary>Attempts to interpret a text value using the derived editor's input format.</summary>
@@ -48,6 +53,7 @@ public abstract partial class AlderTemporalField : AlderTemporalInput
     protected abstract void WriteValue(DateTime? value);
 
     private readonly List<Segment> segments = [];
+    private readonly List<(AlderTextBlock Label, string Token)> dateLabels = [];
     private StackPanel? panel;
     private Segment? editing;
     private bool writingValue;
@@ -60,8 +66,10 @@ public abstract partial class AlderTemporalField : AlderTemporalInput
     /// <summary>Initializes a new instance of <see cref="AlderTemporalField"/>.</summary>
     protected AlderTemporalField() => ResourcesChanged += (_, _) => UpdateSegments();
 
-    [GeneratedRegex(@"'[^']*'|""[^""]*""|\\.|y+|M+|d+|[Hh]+|m+|s+|t+|g+|.", RegexOptions.CultureInvariant)]
+    [GeneratedRegex(@"'[^']*'|""[^""]*""|\\.|%[yMdhHmstg/]|y+|M+|d+|[Hh]+|m+|s+|t+|g+|.", RegexOptions.CultureInvariant)]
     private static partial Regex PatternParts();
+
+    private static string UnescapeToken(string token) => token[0] == '%' && token.Length == 2 ? token[1..] : token;
 
     /// <inheritdoc />
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
@@ -75,7 +83,7 @@ public abstract partial class AlderTemporalField : AlderTemporalInput
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
-        if (change.Property == CultureProperty) RebuildSegments();
+        if (change.Property == CultureProperty || change.Property == DisplayFormatProperty) RebuildSegments();
     }
 
     /// <summary>Recreates the editable segments for the current input pattern.</summary>
@@ -83,12 +91,22 @@ public abstract partial class AlderTemporalField : AlderTemporalInput
     {
         if (panel is null) return;
         var focusedPart = segments.Find(x => x.Button.IsFocused)?.Part;
+        ResetTyping(null);
         panel.Children.Clear();
         segments.Clear();
+        dateLabels.Clear();
+        bool custom = HasDisplayFormat;
         var format = InputCulture.DateTimeFormat;
         foreach (Match match in PatternParts().Matches(InputPattern))
         {
-            string token = match.Value;
+            string token = custom ? UnescapeToken(match.Value) : match.Value;
+            if (custom && IsDateEditor && (token[0] == 'g' || token[0] == 'd' && token.Length >= 3))
+            {
+                var label = new AlderTextBlock { VerticalAlignment = global::Avalonia.Layout.VerticalAlignment.Center };
+                dateLabels.Add((label, token));
+                panel.Children.Add(label);
+                continue;
+            }
             var part = token[0] switch
             {
                 'y' => Part.Year,
@@ -118,7 +136,8 @@ public abstract partial class AlderTemporalField : AlderTemporalInput
             }
             var button = new AlderButton { Cursor = new Cursor(StandardCursorType.Ibeam) };
             button[!ThemeProperty] = new DynamicResourceExtension("AlderTemporalSegmentTheme");
-            var segment = new Segment(part.Value, part == Part.Year ? 4 : 2, token[0] == 'h', button);
+            int digits = part == Part.Year && (!custom || token.Length > 2) ? 4 : 2;
+            var segment = new Segment(part.Value, digits, token[0] == 'h', button, custom ? token : null);
             button.Click += (_, _) => button.Focus(NavigationMethod.Pointer);
             button.GotFocus += (_, _) => ResetTyping(segment);
             button.LostFocus += (_, _) => FinishTyping(segment);
@@ -172,15 +191,28 @@ public abstract partial class AlderTemporalField : AlderTemporalInput
     private void UpdateSegments()
     {
         var format = InputCulture.DateTimeFormat;
+        var current = ReadValue();
+        foreach (var (label, token) in dateLabels)
+        {
+            var value = ClampToCalendar(current ?? ReferenceValue);
+            label.Text = token[0] == 'g' ? format.GetEraName(format.Calendar.GetEra(value))
+                : current is null ? "––"
+                : token.Length == 3 ? format.GetAbbreviatedDayName(value.DayOfWeek) : format.GetDayName(value.DayOfWeek);
+        }
         foreach (var segment in segments)
         {
             string text;
             if (segment.Part == Part.Period)
+            {
                 text = segment.Value switch { 0 => format.AMDesignator, 1 => format.PMDesignator, _ => "––" };
+                if (segment.Token == "t" && segment.Value is not null) text = StringInfo.GetNextTextElement(text);
+            }
             else if (segment == editing && typedDigits > 0)
                 text = pendingNumber.ToString("D" + typedDigits, InputCulture);
+            else if (segment.Value is { } number)
+                text = FormatNumber(segment, number, format);
             else
-                text = segment.Value?.ToString("D" + segment.Digits, InputCulture) ?? segment.Part switch
+                text = segment.Part switch
                 {
                     Part.Year => LocalText("YearPlaceholder", "yyyy"),
                     Part.Month => LocalText("MonthPlaceholder", "mm"),
@@ -196,6 +228,16 @@ public abstract partial class AlderTemporalField : AlderTemporalInput
             var name = LocalText(segment.Part == Part.Second ? "SecondUnit" : part, part);
             AutomationProperties.SetName(segment.Button, $"{name}, {text}");
         }
+    }
+
+    private string FormatNumber(Segment segment, int value, DateTimeFormatInfo format)
+    {
+        if (segment.Token is not { } token) return value.ToString("D" + segment.Digits, InputCulture);
+        if (segment.Part == Part.Month && token.Length >= 3)
+            return token.Length == 3 ? format.GetAbbreviatedMonthName(value) : format.GetMonthName(value);
+        if (segment.Part == Part.Year && token.Length <= 2) value %= 100;
+        int width = segment.Part == Part.Year ? token.Length : Math.Min(token.Length, 2);
+        return value.ToString("D" + width, InputCulture);
     }
 
     private string LocalText(string key, string fallback) =>
@@ -248,12 +290,14 @@ public abstract partial class AlderTemporalField : AlderTemporalInput
         try { text = await clipboard.TryGetTextAsync(); }
         catch (Exception error) when (error is InvalidOperationException or ExternalException) { return; }
         if (text is not null && IsKeyboardFocusWithin && !IsReadOnly && IsEffectivelyEnabled && root == TopLevel.GetTopLevel(this))
-            TryParsePastedValue(text);
+            TryParsePastedValue(text, fromClipboard: true);
     }
 
-    private bool TryParsePastedValue(string text)
+    private bool TryParsePastedValue(string text, bool fromClipboard = false)
     {
-        if (text.Length < 3 || !text.Any(c => !char.IsDigit(c)) || !TryParseValue(text, out var date) || !IsAllowed(date))
+        bool wholeText = HasParseFormat && (fromClipboard || text.Length > 4) ||
+                         text.Length >= 3 && text.Any(c => !char.IsDigit(c));
+        if (!wholeText || !TryParseValue(text, out var date) || !IsAllowed(date))
             return false;
         SetEditedValue(date);
         SyncSegments();
@@ -279,7 +323,7 @@ public abstract partial class AlderTemporalField : AlderTemporalInput
         if (text.Any(c => !char.IsDigit(c))) return false;
         if (editing != segment) ResetTyping(segment);
 
-        var (min, max) = Limits(segment);
+        var (min, max) = segment.Part == Part.Year && segment.Digits == 2 ? (0, 99) : Limits(segment);
         foreach (char c in text)
         {
             int digit = CharUnicodeInfo.GetDecimalDigitValue(c);
@@ -329,6 +373,8 @@ public abstract partial class AlderTemporalField : AlderTemporalInput
     private void FinishTyping(Segment segment)
     {
         if (editing != segment) return;
+        if (segment.Part == Part.Year && segment.Digits == 2 && typedDigits > 0 && segment.Value is { } year)
+            segment.Value = InputCulture.Calendar.ToFourDigitYear(year);
         ResetTyping(null);
         Evaluate();
     }
@@ -344,7 +390,7 @@ public abstract partial class AlderTemporalField : AlderTemporalInput
     {
         bool allEmpty = segments.All(x => x.Value is null);
         if (allEmpty && typedDigits == 0) SetEditedValue(null);
-        if (segments.Any(x => x.Value is null) || editing?.Part == Part.Year && typedDigits is > 0 and < 4)
+        if (segments.Any(x => x.Value is null) || editing?.Part == Part.Year && typedDigits > 0)
         {
             UpdateInputError(false);
             UpdateSegments();
@@ -353,19 +399,22 @@ public abstract partial class AlderTemporalField : AlderTemporalInput
 
         var committed = ReadValue();
         var reference = ClampToCalendar(committed ?? ReferenceValue);
-        int hour = PartValue(Part.Hour) ?? 0;
+        int hour = PartValue(Part.Hour) ?? (HasDisplayFormat && !IsDateEditor ? reference.Hour : 0);
         if (PartValue(Part.Period) is { } period) hour = hour % 12 + 12 * period;
+        else if (HasDisplayFormat && segments.Exists(x => x.Part == Part.Hour && x.TwelveHour))
+            hour = hour % 12 + 12 * (reference.Hour / 12);
         bool valid = false;
         try
         {
             DateTime value;
-            if (PartValue(Part.Year) is { } year)
+            if (PartValue(Part.Year) is not null || HasDisplayFormat && IsDateEditor)
             {
                 var calendar = InputCulture.Calendar;
-                int month = PartValue(Part.Month) ?? 1;
+                int year = PartValue(Part.Year) ?? calendar.GetYear(reference);
+                int month = PartValue(Part.Month) ?? (HasDisplayFormat ? calendar.GetMonth(reference) : 1);
                 var era = calendar.GetEra(reference);
-                int day = PartValue(Part.Day) ?? 1;
-                if (clampDay)
+                int day = PartValue(Part.Day) ?? (HasDisplayFormat ? calendar.GetDayOfMonth(reference) : 1);
+                if (clampDay || HasDisplayFormat && PartValue(Part.Day) is null)
                 {
                     day = Math.Min(day, calendar.GetDaysInMonth(year, month, era));
                     if (segments.Find(x => x.Part == Part.Day) is { } daySegment) daySegment.Value = day;
@@ -373,7 +422,9 @@ public abstract partial class AlderTemporalField : AlderTemporalInput
                 value = calendar.ToDateTime(year, month, day, hour, PartValue(Part.Minute) ?? 0, PartValue(Part.Second) ?? 0, 0, era);
             }
             else
-                value = reference.Date.AddHours(hour).AddMinutes(PartValue(Part.Minute) ?? 0).AddSeconds(PartValue(Part.Second) ?? committed?.Second ?? 0);
+                value = reference.Date.AddHours(hour)
+                    .AddMinutes(PartValue(Part.Minute) ?? (HasDisplayFormat ? reference.Minute : 0))
+                    .AddSeconds(PartValue(Part.Second) ?? committed?.Second ?? 0);
             valid = IsAllowed(value);
             if (valid) SetEditedValue(value);
         }
@@ -389,12 +440,13 @@ public abstract partial class AlderTemporalField : AlderTemporalInput
         finally { writingValue = false; }
     }
 
-    private sealed class Segment(Part part, int digits, bool twelveHour, Button button)
+    private sealed class Segment(Part part, int digits, bool twelveHour, Button button, string? token)
     {
         public Part Part { get; } = part;
         public int Digits { get; } = digits;
         public bool TwelveHour { get; } = twelveHour;
         public Button Button { get; } = button;
+        public string? Token { get; } = token;
         public int? Value { get; set; }
     }
 }

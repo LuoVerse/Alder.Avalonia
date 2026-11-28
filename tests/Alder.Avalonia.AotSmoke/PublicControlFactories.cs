@@ -77,6 +77,7 @@ internal static class PublicControlFactories
         Factory<AlderDateField>(),
         Factory<AlderDatePicker>(),
         Factory<AlderDateRangePicker>(),
+        (typeof(AlderDescription), static () => new AlderDescription { Text = "Project notes" }),
         Factory<AlderDisclosure>(),
         Factory<AlderDisclosureGroup>(),
         Factory<AlderDropdownFlyout>(),
@@ -84,12 +85,22 @@ internal static class PublicControlFactories
         Factory<AlderEmojiPicker>(),
         Factory<AlderEmojiReactionButton>(),
         Factory<AlderEmptyState>(),
+        (typeof(AlderErrorMessage), static () => new AlderErrorMessage { Text = "Unable to load projects." }),
         Factory<AlderExpandableActionBar>(),
         Factory<AlderExpandableActionBarItem>(),
         Factory<AlderExpandableTabs>(),
+        (typeof(AlderFieldError), static () => new AlderFieldError { Text = "Enter a project name." }),
+        (typeof(AlderFieldset), static () => new AlderFieldset
+        {
+            Legend = "Project", Description = "Project settings", Content = new AlderInput { Text = "Library" }
+        }),
         Factory<AlderFileTree>(),
         Factory<AlderFileTreeItem>(),
         Factory<AlderFloatingToc>(),
+        (typeof(AlderForm), static () => new AlderForm
+        {
+            Content = new AlderTextField { Label = "Project name", IsRequired = true, Text = "Library" }
+        }),
         Factory<AlderGridSplitter>(),
         Factory<AlderHeading>(),
         Factory<AlderHoloCard>(),
@@ -122,6 +133,7 @@ internal static class PublicControlFactories
         Factory<AlderMap>(),
         Factory<AlderMarkdown>(),
         Factory<AlderMentionHighlights>(),
+        (typeof(AlderMenu), static () => new AlderMenu { Items = { new AlderMenuItem { Header = "File", Items = { new AlderMenuItem { Header = "Open" } } } } }),
         Factory<AlderMenuFlyout>(),
         Factory<AlderMenuItem>(),
         Factory<AlderMeter>(),
@@ -188,17 +200,30 @@ internal static class PublicControlFactories
         Factory<AlderTabItem>(),
         Factory<AlderTable>(),
         Factory<AlderTabs>(),
+        (typeof(AlderTag), static () => new AlderTag { Content = "Tag", IsRemovable = true }),
+        (typeof(AlderTagGroup), static () => new AlderTagGroup
+        {
+            Label = "Topics", SelectionMode = TagSelectionMode.Multiple, SelectedIndex = 0, IsRemovable = true,
+            ItemsSource = new[] { "Design", "Travel" }
+        }),
         Factory<AlderTextArea>(),
         Factory<AlderTextBlock>(),
+        (typeof(AlderTextField), static () => new AlderTextField
+        {
+            Label = "Project name", IsRequired = true, IsInvalid = true, ErrorMessage = "Enter a project name."
+        }),
         Factory<AlderTextShimmer>(),
         Factory<AlderThumb>(),
         Factory<AlderTimeField>(),
         Factory<AlderTimeline>(),
         Factory<AlderTimelineItem>(),
+        (typeof(AlderTimePicker), static () => new AlderTimePicker { Value = new TimeOnly(9, 30) }),
         Factory<AlderToggleButton>(),
         Factory<AlderToggleButtonGroup>(),
         Factory<AlderToolbar>(),
         Factory<AlderTransitioningContentControl>(),
+        (typeof(AlderTreeView), static () => new AlderTreeView { Items = { new AlderTreeViewItem { Header = "Projects" } } }),
+        (typeof(AlderTreeViewItem), static () => new AlderTreeViewItem { Header = "Project" }),
         Factory<AlderTrendChip>(),
         Factory<AlderTypography>(),
         Factory<AlderUserMenu>(),

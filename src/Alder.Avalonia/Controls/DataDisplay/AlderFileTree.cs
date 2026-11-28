@@ -369,6 +369,14 @@ public sealed partial class AlderFileTree : TreeView, ICustomKeyboardNavigation
         return owner.ContainerFromIndex(index) as AlderFileTreeItem;
     }
 
+    internal AlderFileTreeItem? RealizeLastVisibleRow()
+    {
+        var row = RealizeRow(this, ItemCount - 1);
+        while (row is { IsExpanded: true, ItemCount: > 0 })
+            row = RealizeRow(row, row.ItemCount - 1);
+        return row;
+    }
+
     internal void ReleaseRow(AlderFileTreeItem row)
     {
         if (pointerDrag is { } session &&

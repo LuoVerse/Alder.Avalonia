@@ -2,11 +2,14 @@ using System.Windows.Input;
 using Alder.Avalonia.Controls;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
 using Avalonia.Input.Raw;
+using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
@@ -16,6 +19,67 @@ namespace Alder.Avalonia.Tests;
 
 public sealed class FileTreeInteractions
 {
+    [AvaloniaTheory]
+    [InlineData(6, 60, 10)]
+    [InlineData(12, 0, 1)]
+    public void DraggingTheThumbToTheEndRevealsTheLastFile(int earlierFolderSize, int lastFolderSize, int dragSteps)
+    {
+        var nodes = Enumerable.Range(0, 12).Select(index => index switch
+        {
+            0 or 5 or 10 => ExpandedFolder(index, earlierFolderSize),
+            11 when lastFolderSize > 0 => ExpandedFolder(index, lastFolderSize),
+            _ => new AlderFileTreeNode($"File {index}", $"File {index}")
+        }).ToArray();
+        var tree = new AlderFileTree
+        {
+            ItemsSource = nodes, Width = 300, Height = 420, VerticalAlignment = VerticalAlignment.Top
+        };
+        AlderMotion.SetReduced(tree, true);
+        var window = new Window { Width = 360, Height = 480, Content = tree };
+        window.Show();
+        window.SetRenderScaling(1.25);
+        try
+        {
+            Pump(window);
+            var scroll = Assert.Single(tree.GetVisualDescendants().OfType<AlderScrollViewer>());
+            window.MouseMove(tree.TranslatePoint(new Point(295, 210), window)!.Value);
+            Pump(window);
+            var bar = Part<ScrollBar>(scroll, "PART_VerticalScrollBar");
+            var track = Part<Track>(bar, "PART_Track");
+            var thumb = track.Thumb!;
+            var start = thumb.TranslatePoint(new Rect(thumb.Bounds.Size).Center, window)!.Value;
+            var end = track.TranslatePoint(new Point(track.Bounds.Width / 2, track.Bounds.Height - 1), window)!.Value;
+
+            window.MouseMove(start);
+            window.MouseDown(start, MouseButton.Left);
+            for (int step = 1; step <= dragSteps; step++)
+            {
+                window.MouseMove(new Point(start.X, start.Y + (end.Y - start.Y) * step / dragSteps), RawInputModifiers.LeftMouseButton);
+                Pump(window);
+                Pump(window);
+            }
+            window.MouseUp(end, MouseButton.Left);
+            Pump(window);
+            Pump(window);
+
+            var last = lastFolderSize > 0 ? nodes[^1].Children[^1] : nodes[^1];
+            var row = Assert.IsType<AlderFileTreeItem>(tree.TreeContainerFromItem(last));
+            var viewport = Part<ScrollContentPresenter>(scroll, "PART_ContentPresenter");
+            var bottom = row.TranslatePoint(new Point(0, row.Bounds.Height), viewport)!.Value.Y;
+            Assert.InRange(bottom, 1, viewport.Bounds.Height + 1);
+            Assert.InRange(Math.Abs(scroll.ScrollBarMaximum.Y - scroll.Offset.Y), 0, 0.5);
+        }
+        finally { window.Close(); }
+
+        static AlderFileTreeNode ExpandedFolder(int index, int childCount)
+        {
+            var folder = new AlderFileTreeNode($"Folder {index}", $"Folder {index}") { IsFolder = true, IsExpanded = true };
+            folder.Children.AddRange(Enumerable.Range(0, childCount)
+                .Select(child => new AlderFileTreeNode($"File {index}.{child}", $"File {index}.{child}")));
+            return folder;
+        }
+    }
+
     [AvaloniaFact]
     public void VirtualizesRootsAndKeepsSelectionWhenScrollingAwayAndBack()
     {

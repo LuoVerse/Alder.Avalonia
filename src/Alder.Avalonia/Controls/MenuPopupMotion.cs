@@ -12,9 +12,18 @@ using Avalonia.VisualTree;
 
 namespace Alder.Avalonia.Controls;
 
+internal enum PopupEntranceStyle
+{
+    Standard,
+    Compact,
+    Fade
+}
+
 internal sealed class MenuPopupMotion
 {
     private static readonly TimeSpan EnterDuration = TimeSpan.FromMilliseconds(150);
+    private static readonly TimeSpan CompactEnterDuration = TimeSpan.FromMilliseconds(120);
+    private static readonly TimeSpan FadeEnterDuration = TimeSpan.FromMilliseconds(100);
     private static readonly TimeSpan ExitDuration = TimeSpan.FromMilliseconds(100);
     private static readonly SplineEasing Ease = new(.25, .1, .25, 1);
     private static readonly Vector3D FullScale = new(1, 1, 1);
@@ -22,24 +31,30 @@ internal sealed class MenuPopupMotion
     private Control? presenter;
     private PixelPoint? pointerAnchor;
     private PlacementMode? preferredPlacement;
+    private PopupEntranceStyle entranceStyle;
+    private uint entranceVersion;
     private CompositionVisual? visual;
     private Control? motionTarget;
     private IInputElement? focusTarget;
     private bool openedFromKeyboard;
     private IDisposable? closeTimer;
     private bool waitingForPlacement;
+    private bool waitingForCommit;
     private bool finishingClose;
     private bool previousHitTest;
 
     public bool IsClosing => closeTimer is not null;
 
     public void Opened(Popup popup, Control presenter, Control target, PixelPoint? pointerAnchor = null,
-        IInputElement? previousFocus = null, PlacementMode? preferredPlacement = null)
+        IInputElement? previousFocus = null, PlacementMode? preferredPlacement = null,
+        PopupEntranceStyle entranceStyle = PopupEntranceStyle.Standard)
     {
+        entranceVersion++;
         this.popup = popup;
         this.presenter = presenter;
         this.pointerAnchor = pointerAnchor;
         this.preferredPlacement = preferredPlacement;
+        this.entranceStyle = entranceStyle;
         motionTarget = target;
         focusTarget = previousFocus ?? target;
         openedFromKeyboard = pointerAnchor is null && focusTarget is InputElement { } input && input.Classes.Contains(":focus-visible");
@@ -72,7 +87,8 @@ internal sealed class MenuPopupMotion
             (openedFromKeyboard || focused.Classes.Contains(":focus-visible")))
             anchor.Focus(NavigationMethod.Tab);
 
-        if (waitingForPlacement || popup is not { } host || visual is not { } surface || AlderMotion.GetReduced(target)) return;
+        if (waitingForPlacement || waitingForCommit || popup is not { } host ||
+            visual is not { } surface || AlderMotion.GetReduced(target)) return;
 
         args.Cancel = true;
         previousHitTest = host.IsHitTestVisible;
@@ -91,6 +107,7 @@ internal sealed class MenuPopupMotion
 
     public void Closed()
     {
+        entranceVersion++;
         CancelPendingEntrance();
         if (closeTimer is not null)
         {
@@ -132,6 +149,7 @@ internal sealed class MenuPopupMotion
     private void OnTargetPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs change)
     {
         if (change.Property != AlderMotion.ReducedProperty || !change.GetNewValue<bool>()) return;
+        entranceVersion++;
         CancelPendingEntrance();
         if (closeTimer is not null) FinishClose();
         else ResetVisual();
@@ -147,12 +165,22 @@ internal sealed class MenuPopupMotion
         if (content.FindAncestorOfType<OverlayPopupHost>() is { } host && double.IsNaN(Canvas.GetTop(host))) return false;
 
         CancelPendingEntrance();
-        Play(surface, content, target, entering: true);
+        // The first visual synchronization can overwrite opacity before the render commit.
+        uint version = entranceVersion;
+        waitingForCommit = true;
+        surface.Compositor.RequestCompositionUpdate(() =>
+        {
+            if (entranceVersion != version) return;
+            waitingForCommit = false;
+            if (popup is { IsOpen: true } && content.IsAttachedToVisualTree())
+                Play(surface, content, target, entering: true);
+        });
         return true;
     }
 
     private void CancelPendingEntrance()
     {
+        waitingForCommit = false;
         if (!waitingForPlacement) return;
         waitingForPlacement = false;
         if (presenter is not null)
@@ -172,9 +200,12 @@ internal sealed class MenuPopupMotion
 
     private void Play(CompositionVisual surface, Control presenter, Control target, bool entering)
     {
-        var (origin, offset) = GetMotionPlacement(presenter, target);
-        surface.CenterPoint = origin;
-        var duration = entering ? EnterDuration : ExitDuration;
+        var duration = !entering ? ExitDuration : entranceStyle switch
+        {
+            PopupEntranceStyle.Compact => CompactEnterDuration,
+            PopupEntranceStyle.Fade => FadeEnterDuration,
+            _ => EnterDuration
+        };
         var opacity = surface.Compositor.CreateScalarKeyFrameAnimation();
         opacity.Duration = duration;
         if (entering) opacity.InsertKeyFrame(0, 0);
@@ -183,8 +214,15 @@ internal sealed class MenuPopupMotion
         // With no explicit exit start keyframe, the compositor continues from the
         // current value even when dismissal interrupts the entrance.
         surface.StartAnimation(nameof(CompositionVisual.Opacity), opacity);
+        if (entranceStyle == PopupEntranceStyle.Fade) return;
+
+        var (origin, offset) = GetMotionPlacement(presenter, target);
+        surface.CenterPoint = origin;
+        double scale = entranceStyle == PopupEntranceStyle.Compact ? .98 : .9;
+        if (entranceStyle == PopupEntranceStyle.Compact)
+            offset = new Vector3D(offset.X * .75, offset.Y * .75, 0);
         AnimateVector(surface, nameof(CompositionVisual.Scale), duration,
-            entering ? new Vector3D(.9, .9, 1) : null, entering ? FullScale : new Vector3D(.95, .95, 1));
+            entering ? new Vector3D(scale, scale, 1) : null, entering ? FullScale : new Vector3D(.95, .95, 1));
         AnimateVector(surface, nameof(CompositionVisual.Translation), duration, entering ? offset : null, default);
     }
 

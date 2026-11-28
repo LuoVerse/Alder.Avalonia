@@ -5,8 +5,10 @@ Alder.Avalonia is a native Avalonia control library for desktop applications. It
 ## Install
 
 ```sh
-dotnet package add Alder.Avalonia --version 2.0.0
+dotnet package add Alder.Avalonia --version 2.0.1-preview
 ```
+
+This is a prerelease. See the [preview release notes](https://github.com/LuoVerse/Alder.Avalonia/releases/tag/v2.0.1-preview) for new controls and fixes.
 
 Load `AlderTheme` and use `AlderWindow` on desktop. If your application also uses built-in Avalonia windows or controls, load a host theme for them before `AlderTheme`.
 
@@ -43,6 +45,6 @@ AppBuilder.Configure<App>()
     .WithAlderPuHuiTiFont(new FontManagerOptions { DefaultFamilyName = "fonts:Inter#Inter" });
 ```
 
-- Browse the [component documentation](https://github.com/LuoVerse/Alder.Avalonia/blob/v2.0.0/docs/COMPONENTS.md).
-- Try the [desktop Gallery](https://github.com/LuoVerse/Alder.Avalonia/releases/tag/v2.0.0) for interactive examples and their AXAML and C# source.
-- Read the [MIT license](https://github.com/LuoVerse/Alder.Avalonia/blob/v2.0.0/LICENSE). Bundled third-party notices are included in the package's `licenses/` directory.
+- Browse the [component documentation](https://github.com/LuoVerse/Alder.Avalonia/blob/v2.0.1-preview/docs/COMPONENTS.md).
+- Try the [desktop Gallery](https://github.com/LuoVerse/Alder.Avalonia/releases/tag/v2.0.1-preview) for interactive examples and their AXAML and C# source.
+- Read the [MIT license](https://github.com/LuoVerse/Alder.Avalonia/blob/v2.0.1-preview/LICENSE). Bundled third-party notices are included in the package's `licenses/` directory.

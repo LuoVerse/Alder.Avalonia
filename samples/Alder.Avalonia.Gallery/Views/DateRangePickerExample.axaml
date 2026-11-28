@@ -31,6 +31,29 @@
         ]]></gallery:ExampleCard.CSharpSource>
       </gallery:ExampleCard>
     </gallery:GalleryExampleTemplate>
+    <gallery:GalleryExampleTemplate Name="SampleRangeFormat">
+      <gallery:ExampleCard Title="{DynamicResource GalleryText.TemporalDateFormats}">
+        <gallery:ExampleCard.Preview>
+          <StackPanel Spacing="4" Margin="16,20" HorizontalAlignment="Left">
+            <StackPanel.DataContext><vm:DateRangePickerViewModel /></StackPanel.DataContext>
+            <alder:AlderLabel Content="dd/MM/yyyy" Target="{CompiledBinding #FormattedRange}" />
+            <alder:AlderDateRangePicker x:Name="FormattedRange" Culture="{DynamicResource GalleryCulture}"
+                                       Value="{CompiledBinding Dates, Mode=TwoWay}" DisplayFormat="dd/MM/yyyy" ParseFormat="yyyyMMdd" />
+            <alder:AlderDescription Text="{DynamicResource GalleryText.TemporalRangeFormatPaste}" TextWrapping="Wrap" />
+          </StackPanel>
+        </gallery:ExampleCard.Preview>
+        <gallery:ExampleCard.CSharpSource><![CDATA[
+          var model = new DateRangePickerViewModel();
+          var field = new AlderDateRangePicker { DisplayFormat = "dd/MM/yyyy", ParseFormat = "yyyyMMdd" };
+          field[!AlderDateRangePicker.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
+          field.Bind(AlderDateRangePicker.ValueProperty, CompiledBinding.Create((DateRangePickerViewModel vm) => vm.Dates));
+          var label = new AlderLabel { Content = "dd/MM/yyyy", Target = field };
+          var hint = new AlderDescription { TextWrapping = TextWrapping.Wrap };
+          hint[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.TemporalRangeFormatPaste");
+          var preview = new StackPanel { DataContext = model, Spacing = 4, Children = { label, field, hint } };
+        ]]></gallery:ExampleCard.CSharpSource>
+      </gallery:ExampleCard>
+    </gallery:GalleryExampleTemplate>
     <gallery:GalleryExampleTemplate Name="SampleControlled">
       <gallery:ExampleCard Title="{DynamicResource GalleryText.Controlled}">
         <gallery:ExampleCard.Preview>

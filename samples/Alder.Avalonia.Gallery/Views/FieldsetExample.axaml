@@ -1,0 +1,38 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.FieldsetExample" x:DataType="vm:FormDemoViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleFieldset" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <StackPanel MaxWidth="400" HorizontalAlignment="Stretch" Spacing="16" Margin="8,16">
+          <alder:AlderCheckBox x:Name="AllowEditing" Content="{DynamicResource GalleryText.FormAllowEditing}" IsChecked="True" />
+          <alder:AlderFieldset x:Name="ProjectFields" Legend="{DynamicResource GalleryText.FormProjectDetails}"
+                               Description="{DynamicResource GalleryText.FormProjectDetailsHint}"
+                               IsEnabled="{CompiledBinding #AllowEditing.IsChecked, TargetNullValue=False}">
+            <StackPanel Spacing="12">
+              <alder:AlderTextField Label="{DynamicResource GalleryText.FormProjectName}" Text="{CompiledBinding ProjectName}" />
+              <alder:AlderTextField Label="{DynamicResource GalleryText.FormNotes}" Text="{CompiledBinding Notes}" AcceptsReturn="True" />
+            </StackPanel>
+            <alder:AlderFieldset.Actions>
+              <alder:AlderCheckBox Content="{DynamicResource GalleryText.FormIncludeSummary}" />
+            </alder:AlderFieldset.Actions>
+          </alder:AlderFieldset>
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var group = new AlderFieldset
+        {
+            Legend = "Project details",
+            Description = "Choose what appears in the shared project directory.",
+            Content = new StackPanel
+            {
+                Spacing = 12,
+                Children = { new AlderTextField { Label = "Project name" }, new AlderTextField { Label = "Notes", AcceptsReturn = true } }
+            },
+            Actions = new AlderCheckBox { Content = "Include a summary" }
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

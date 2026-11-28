@@ -61,6 +61,9 @@
     <Setter Property="FlowDirection" Value="LeftToRight" />
     <Setter Property="AutomationProperties.Name" Value="{DynamicResource AlderText.ColorValue}" />
     <Setter Property="ValidationMessage" Value="{DynamicResource AlderText.ColorInvalid}" />
+    <Style Selector="^ /template/ ContentPresenter#FieldSuffix">
+      <Setter Property="KeyboardNavigation.TabNavigation" Value="Continue" />
+    </Style>
     <Style Selector="^:has-prefix /template/ :is(ScrollViewer)#PART_ScrollViewer">
       <Setter Property="Margin" Value="8,8,12,8" />
     </Style>

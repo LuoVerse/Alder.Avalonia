@@ -1,0 +1,72 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:g="using:Alder.Avalonia.Gallery.Controls" xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" x:Class="Alder.Avalonia.Gallery.Views.TimePickerExample" x:DataType="vm:TimePickerViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleTimePicker" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="6" HorizontalAlignment="Center" Margin="8,16">
+          <alder:AlderLabel Content="{DynamicResource GalleryText.TimePickerStart}" Target="{CompiledBinding #StartPicker}" />
+          <alder:AlderTimePicker x:Name="StartPicker" Clock="TwentyFourHour" Value="{CompiledBinding StartTime, Mode=TwoWay}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.TimePickerStart}" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderTimePicker { Clock = TimeFieldClock.TwentyFourHour, Value = new TimeOnly(9, 30) };
+        picker.Bind(AlderTimePicker.ValueProperty, CompiledBinding.Create((TimePickerViewModel model) => model.StartTime));
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleTimeFormats" Title="{DynamicResource GalleryText.TemporalTimeFormats}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="8" Margin="16,20">
+          <WrapPanel ItemSpacing="12" LineSpacing="10">
+            <StackPanel Spacing="4">
+              <alder:AlderLabel Content="{DynamicResource GalleryText.TemporalTwelveHour}" Target="{CompiledBinding #TwelveHourPicker}" />
+              <alder:AlderTimePicker x:Name="TwelveHourPicker" Culture="{DynamicResource GalleryCulture}"
+                                     Value="{CompiledBinding FormattedTime, Mode=TwoWay}" DisplayFormat="h:mm tt" ParseFormat="HHmmss" />
+            </StackPanel>
+            <StackPanel Spacing="4">
+              <alder:AlderLabel Content="{DynamicResource GalleryText.TemporalTwentyFourHour}" Target="{CompiledBinding #TwentyFourHourPicker}" />
+              <alder:AlderTimePicker x:Name="TwentyFourHourPicker" Culture="{DynamicResource GalleryCulture}"
+                                     Value="{CompiledBinding FormattedTime, Mode=TwoWay}" DisplayFormat="HH:mm:ss" ParseFormat="HHmmss" />
+            </StackPanel>
+          </WrapPanel>
+          <alder:AlderDescription Text="{DynamicResource GalleryText.TemporalTimeFormatPaste}" TextWrapping="Wrap" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var model = new TimePickerViewModel();
+        var fields = new WrapPanel { DataContext = model, ItemSpacing = 12, LineSpacing = 10 };
+        foreach (var (format, labelKey) in new[] { ("h:mm tt", "TemporalTwelveHour"), ("HH:mm:ss", "TemporalTwentyFourHour") })
+        {
+            var field = new AlderTimePicker { DisplayFormat = format, ParseFormat = "HHmmss" };
+            field[!AlderTimePicker.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
+            field.Bind(AlderTimePicker.ValueProperty, CompiledBinding.Create((TimePickerViewModel vm) => vm.FormattedTime));
+            var label = new AlderLabel { Target = field };
+            label[!ContentControl.ContentProperty] = new DynamicResourceExtension("GalleryText." + labelKey);
+            fields.Children.Add(new StackPanel { Spacing = 4, Children = { label, field } });
+        }
+        var hint = new AlderDescription { TextWrapping = TextWrapping.Wrap };
+        hint[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.TemporalTimeFormatPaste");
+        var preview = new StackPanel { Spacing = 8, Children = { fields, hint } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleTimeLimits" Title="{DynamicResource GalleryText.TimePickerLimits}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="6" HorizontalAlignment="Center" Margin="8,16">
+          <alder:AlderLabel Content="{DynamicResource GalleryText.TimePickerReminder}" Target="{CompiledBinding #ReminderPicker}" />
+          <alder:AlderTimePicker x:Name="ReminderPicker" Clock="TwelveHour" Granularity="Second" Value="{CompiledBinding Reminder, Mode=TwoWay}"
+                                 Minimum="{CompiledBinding Minimum}" Maximum="{CompiledBinding Maximum}"
+                                 AutomationProperties.Name="{DynamicResource GalleryText.TimePickerReminder}" />
+          <alder:AlderDescription Text="{DynamicResource GalleryText.TimePickerWindow}" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var picker = new AlderTimePicker
+        {
+            Clock = TimeFieldClock.TwelveHour, Granularity = TimeFieldGranularity.Second,
+            Minimum = new TimeOnly(8, 0), Maximum = new TimeOnly(18, 0), Value = new TimeOnly(14, 15, 20)
+        };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

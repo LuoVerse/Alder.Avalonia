@@ -33,6 +33,12 @@ internal sealed class GallerySectionStack : StackPanel
         return count != Children.Count;
     }
 
+    internal void LoadRemainingSections()
+    {
+        while (pendingSections.TryDequeue(out var build))
+            Children.Add(build());
+    }
+
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);

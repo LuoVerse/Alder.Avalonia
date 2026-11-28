@@ -1,0 +1,114 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls" xmlns:conv="using:Avalonia.Data.Converters">
+  <x:String x:Key="AlderText.RequiredField">This field is required.</x:String>
+
+  <ControlTheme x:Key="{x:Type alder:AlderDescription}" TargetType="alder:AlderDescription">
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="LineHeight" Value="16" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderMuted}" />
+    <Setter Property="IsVisible" Value="{CompiledBinding Text, RelativeSource={RelativeSource Self}, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderErrorMessage}" TargetType="alder:AlderErrorMessage">
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="LineHeight" Value="16" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderDangerInk}" />
+    <Setter Property="AutomationProperties.AccessibilityView" Value="Content" />
+    <Setter Property="AutomationProperties.LiveSetting" Value="Polite" />
+    <Setter Property="IsVisible" Value="{CompiledBinding Text, RelativeSource={RelativeSource Self}, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderFieldError}" TargetType="alder:AlderFieldError" BasedOn="{StaticResource {x:Type alder:AlderErrorMessage}}">
+    <Setter Property="Text" Value="{CompiledBinding ValidationText, RelativeSource={RelativeSource Self}}" />
+    <Setter Property="IsVisible" Value="{CompiledBinding HasMessage, RelativeSource={RelativeSource Self}}" />
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderTextField}" TargetType="alder:AlderTextField">
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="AutomationProperties.AccessibilityView" Value="Raw" />
+    <Setter Property="RequiredErrorMessage" Value="{DynamicResource AlderText.RequiredField}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel Spacing="4" Margin="{TemplateBinding Padding}">
+          <alder:AlderLabel Name="FieldLabel" Content="{TemplateBinding Label}" Target="{CompiledBinding #PART_Input}"
+                            IsVisible="{TemplateBinding Label, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+          <alder:AlderInput Name="PART_Input" FullWidth="True" Text="{TemplateBinding Text, Mode=TwoWay}" IsReadOnly="{TemplateBinding IsReadOnly}"
+                            PlaceholderText="{TemplateBinding PlaceholderText}" AcceptsReturn="{TemplateBinding AcceptsReturn}"
+                            MaxLength="{TemplateBinding MaxLength}" IsRequired="{TemplateBinding IsRequired}"
+                            IsInvalid="{TemplateBinding HasValidationError}" Variant="{TemplateBinding Variant}" Type="{TemplateBinding Type}"
+                            ShowClearButton="{TemplateBinding ShowClearButton}"
+                            AutomationProperties.Name="{TemplateBinding (AutomationProperties.Name)}"
+                            AutomationProperties.LabeledBy="{CompiledBinding #FieldLabel}"
+                            AutomationProperties.HelpText="{TemplateBinding Description}" />
+          <alder:AlderDescription Name="FieldDescription" Margin="4,0" Text="{TemplateBinding Description}" />
+          <alder:AlderFieldError Margin="4,0" Text="{TemplateBinding ValidationMessage}" />
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[AcceptsReturn=True] /template/ alder|AlderInput#PART_Input">
+      <Setter Property="Height" Value="NaN" />
+      <Setter Property="MinHeight" Value="36" />
+      <Setter Property="MinLines" Value="{CompiledBinding MinLines, RelativeSource={RelativeSource TemplatedParent}}" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="VerticalContentAlignment" Value="Top" />
+      <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+    </Style>
+    <Style Selector="^[HasValidationError=True] /template/ alder|AlderInput#PART_Input">
+      <Setter Property="AutomationProperties.HelpText" Value="{CompiledBinding ValidationMessage, RelativeSource={RelativeSource TemplatedParent}}" />
+    </Style>
+    <Style Selector="^[HasValidationError=True] /template/ alder|AlderLabel#FieldLabel">
+      <Setter Property="Foreground" Value="{DynamicResource AlderDangerInk}" />
+    </Style>
+    <Style Selector="^[HasValidationError=True] /template/ alder|AlderDescription#FieldDescription">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderFieldset}" TargetType="alder:AlderFieldset">
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" Padding="{TemplateBinding Padding}"
+                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+          <StackPanel Spacing="20">
+            <StackPanel Spacing="4">
+              <StackPanel.IsVisible>
+                <MultiBinding Converter="{x:Static conv:BoolConverters.Or}">
+                  <Binding Path="Legend" RelativeSource="{RelativeSource TemplatedParent}" Converter="{x:Static conv:StringConverters.IsNotNullOrEmpty}" />
+                  <Binding Path="Description" RelativeSource="{RelativeSource TemplatedParent}" Converter="{x:Static conv:StringConverters.IsNotNullOrEmpty}" />
+                </MultiBinding>
+              </StackPanel.IsVisible>
+              <alder:AlderTextBlock Text="{TemplateBinding Legend}" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap"
+                                    Foreground="{DynamicResource AlderInk}" AutomationProperties.AccessibilityView="Raw"
+                                    IsVisible="{TemplateBinding Legend, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+              <alder:AlderDescription Text="{TemplateBinding Description}" AutomationProperties.AccessibilityView="Raw" />
+            </StackPanel>
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+            <ContentPresenter Content="{TemplateBinding Actions}" HorizontalAlignment="Right"
+                              IsVisible="{TemplateBinding Actions, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+          </StackPanel>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderForm}" TargetType="alder:AlderForm">
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <ContentPresenter Name="PART_ContentPresenter" Margin="{TemplateBinding Padding}"
+                          Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+</ResourceDictionary>

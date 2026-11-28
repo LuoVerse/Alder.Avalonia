@@ -121,7 +121,7 @@ public abstract class AlderSalashWindow : AlderWindow
             if (ReferenceEquals(next, this))
                 throw new InvalidOperationException("CreateNextWindow must return a different window.");
 
-            bool activateNext = false;
+            bool restoreActivationAfterModalClose = false;
             if (next is not null)
             {
                 var desktop = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
@@ -132,10 +132,8 @@ public abstract class AlderSalashWindow : AlderWindow
                 {
                     if (!next.IsVisible)
                     {
-                        activateNext = next.ShowActivated && CanFadeOut;
-                        if (activateNext) next.SetCurrentValue(ShowActivatedProperty, false);
-                        try { next.Show(); }
-                        finally { if (activateNext) next.SetCurrentValue(ShowActivatedProperty, true); }
+                        restoreActivationAfterModalClose = IsDialog && next.ShowActivated;
+                        next.Show();
                     }
                 }
                 catch
@@ -152,7 +150,8 @@ public abstract class AlderSalashWindow : AlderWindow
             committed = true;
             if (requestedResult is { } result) Close(result);
             else Close();
-            if (activateNext && next is { IsVisible: true }) next.Activate();
+            // Avalonia reactivates the modal owner on close. Restore the new window's focus in that case.
+            if (restoreActivationAfterModalClose && next is { IsVisible: true }) next.Activate();
         }
         catch (Exception error)
         {

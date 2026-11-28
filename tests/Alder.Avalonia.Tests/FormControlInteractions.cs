@@ -63,18 +63,63 @@ public sealed class FormControlInteractions
     }
 
     [AvaloniaFact]
+    public void TabSkipsInputSuffixButtonsWhilePointerActionsStillWork()
+    {
+        var input = new AlderInput { Text = "Name", ShowClearButton = true };
+        var reveal = new AlderButton { Content = "Reveal" };
+        var action = new AlderButton { Content = "Action" };
+        var password = new AlderInputGroup { Text = "Secret", Type = InputType.Password, ShowClearButton = true,
+            Suffix = new StackPanel { Orientation = Orientation.Horizontal, Children = { reveal, action } } };
+        reveal.Click += (_, _) => password.RevealPassword = !password.RevealPassword;
+        var search = new AlderSearchField { Text = "Search" };
+        var area = new AlderTextArea { Text = "Notes", ShowClearButton = true, Rows = 2 };
+        var outside = new AlderButton { Content = "Outside" };
+        var window = Show(new StackPanel { Children = { input, password, search, area, outside } });
+        try
+        {
+            Assert.True(input.Focus());
+            foreach (var target in new Control[] { password, search, area, outside })
+            {
+                Press(window, PhysicalKey.Tab);
+                Assert.True(target.IsFocused, $"Tab did not move to {target.GetType().Name}.");
+            }
+
+            foreach (var target in new Control[] { area, search, password, input })
+            {
+                window.KeyPressQwerty(PhysicalKey.Tab, RawInputModifiers.Shift);
+                window.KeyReleaseQwerty(PhysicalKey.Tab, RawInputModifiers.Shift);
+                Pump(window);
+                Assert.True(target.IsFocused, $"Shift+Tab did not move to {target.GetType().Name}.");
+            }
+
+            Click(Part<AlderButton>(input, "PART_ClearButton"));
+            Assert.Equal("", input.Text);
+            Assert.True(input.IsFocused);
+            Click(reveal);
+            Assert.True(password.RevealPassword);
+            Assert.True(search.Focus());
+            Press(window, PhysicalKey.Escape);
+            Assert.Equal("", search.Text);
+            Assert.True(search.IsFocused);
+        }
+        finally { window.Close(); }
+
+        void Click(Button button)
+        {
+            var point = button.TranslatePoint(new Rect(button.Bounds.Size).Center, window)!.Value;
+            window.MouseDown(point, MouseButton.Left);
+            window.MouseUp(point, MouseButton.Left);
+            Pump(window);
+        }
+    }
+
+    [AvaloniaFact]
     public void TabbingToFieldActionsMovesTheFocusIndicatorOffTheEditor()
     {
-        var reveal = new AlderButton { Content = "Reveal" };
-        var nested = new AlderButton { Content = "Custom" };
-        var input = new AlderInputGroup { Text = "Secret", Type = InputType.Password, ShowClearButton = true,
-            Suffix = new StackPanel { Orientation = Orientation.Horizontal, Children = { reveal, nested } } };
-        var search = new AlderSearchField { Text = "Search" };
         var numberAction = new AlderButton { Content = "Units" };
         var number = new AlderNumberField { Value = 3, ShowButtonSpinner = false, InnerRightContent = numberAction };
         var colorAction = new AlderButton { Content = "Copy" };
         var color = new AlderColorField { Suffix = colorAction };
-        var area = new AlderTextArea { Text = "Notes", ShowClearButton = true, Rows = 2 };
         var date = new AlderDatePicker();
         var range = new AlderDateRangePicker();
         var timeAction = new AlderButton { Content = "Now" };
@@ -83,28 +128,11 @@ public sealed class FormControlInteractions
         var prompt = new AlderPromptInput { Tools = promptAction };
         var outside = new AlderButton { Content = "Outside" };
         var darkTime = new ThemeVariantScope { RequestedThemeVariant = ThemeVariant.Dark, Child = time };
-        var window = Show(new StackPanel { Children = { input, search, number, color, area, date, range, darkTime, prompt, outside } });
+        var window = Show(new StackPanel { Children = { number, color, date, range, darkTime, prompt, outside } });
         try
         {
-            var clear = Part<AlderButton>(input, "PART_ClearButton");
-            MoveToAction(input, input, clear);
-            Press(window, PhysicalKey.Tab);
-            CheckAction(reveal);
-            Press(window, PhysicalKey.Tab);
-            CheckAction(nested);
-            window.KeyPressQwerty(PhysicalKey.Tab, RawInputModifiers.Shift);
-            window.KeyReleaseQwerty(PhysicalKey.Tab, RawInputModifiers.Shift);
-            Pump(window);
-            CheckAction(reveal);
-
-            var clearSearch = search.GetVisualDescendants().OfType<Button>().Single(button => button.IsEffectivelyVisible);
-            MoveToAction(search, search, clearSearch);
-            Press(window, PhysicalKey.Space);
-            Assert.Equal("", search.Text);
-            Assert.True(search.IsFocused);
             MoveToAction(number, Part<TextBox>(number, "PART_TextBox"), numberAction);
             MoveToAction(color, color, colorAction);
-            MoveToAction(area, area, Part<AlderButton>(area, "PART_ClearButton"));
             MoveToAction(date, LastSegment(date), Part<Button>(date, "PART_CalendarTrigger"));
             MoveToAction(range, LastSegment(Part<AlderDateField>(range, "PART_End")), Part<Button>(range, "PART_CalendarTrigger"));
             MoveToAction(time, LastSegment(time), timeAction);

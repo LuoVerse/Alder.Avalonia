@@ -1,0 +1,85 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls" xmlns:conv="using:Avalonia.Controls.Converters">
+  <x:Double x:Key="AlderTreeViewIndent">16</x:Double>
+  <ControlTheme x:Key="AlderTreeViewItemTheme" TargetType="TreeViewItem">
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="6,4" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel>
+          <Border Name="PART_Header" MinHeight="28" CornerRadius="{TemplateBinding CornerRadius}" Background="Transparent"
+                  BorderThickness="1" BorderBrush="Transparent" Padding="{TemplateBinding Padding}">
+            <Grid ColumnDefinitions="20,*" ColumnSpacing="4">
+              <Grid.Margin>
+                <MultiBinding Converter="{x:Static conv:TreeViewItemIndentConverter.Instance}">
+                  <Binding Path="Level" RelativeSource="{RelativeSource TemplatedParent}" />
+                  <DynamicResource ResourceKey="AlderTreeViewIndent" />
+                </MultiBinding>
+              </Grid.Margin>
+              <alder:AlderToggleButton Name="Expander" Theme="{StaticResource AlderFileTreeIndicatorTheme}"
+                                       AutomationProperties.AccessibilityView="Raw" Focusable="False"
+                                       IsChecked="{TemplateBinding IsExpanded, Mode=TwoWay}">
+                <alder:AlderPathIcon Name="Chevron" Width="12" Height="12" Data="{StaticResource AlderIconChevronRight}" RenderTransform="rotate(0deg)"
+                                     Foreground="{DynamicResource AlderMuted}" />
+              </alder:AlderToggleButton>
+              <ContentPresenter Name="PART_HeaderPresenter" Grid.Column="1" Content="{TemplateBinding Header}"
+                                ContentTemplate="{TemplateBinding HeaderTemplate}" VerticalAlignment="Center" />
+            </Grid>
+          </Border>
+          <alder:AlderAccordionPanel Name="Subtree" ClipToBounds="True" IsHitTestVisible="False" IsEnabled="False">
+            <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+          </alder:AlderAccordionPanel>
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[ItemCount=0] /template/ :is(ToggleButton)#Expander"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="^[IsExpanded=True] /template/ alder|AlderPathIcon#Chevron">
+      <Setter Property="RenderTransform" Value="rotate(90deg)" />
+    </Style>
+    <Style Selector="^[IsExpanded=True] /template/ alder|AlderAccordionPanel#Subtree">
+      <Setter Property="Progress" Value="1" />
+      <Setter Property="IsHitTestVisible" Value="True" />
+      <Setter Property="IsEnabled" Value="True" />
+    </Style>
+    <Style Selector="^[IsExpanded=False] /template/ alder|AlderAccordionPanel#Subtree[Progress=0] > ItemsPresenter#PART_ItemsPresenter">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=False] /template/ alder|AlderAccordionPanel#Subtree">
+      <Setter Property="Transitions">
+        <Transitions><DoubleTransition Property="Progress" Duration="0:0:0.18" Easing="CubicEaseOut" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^[(alder|AlderMotion.Reduced)=False] /template/ alder|AlderPathIcon#Chevron">
+      <Setter Property="Transitions">
+        <Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.18" Easing="CubicEaseOut" /></Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^ /template/ Border#PART_Header:pointerover"><Setter Property="Background" Value="{DynamicResource AlderNeutral}" /></Style>
+    <Style Selector="^:selected /template/ Border#PART_Header"><Setter Property="Background" Value="{DynamicResource AlderSoft}" /></Style>
+    <Style Selector="^:selected /template/ ContentPresenter#PART_HeaderPresenter"><Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" /></Style>
+    <Style Selector="^:focus-visible /template/ Border#PART_Header"><Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" /></Style>
+    <Style Selector="^:disabled /template/ Border#PART_Header"><Setter Property="Opacity" Value="0.5" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderTreeViewItem}" TargetType="alder:AlderTreeViewItem" BasedOn="{StaticResource AlderTreeViewItemTheme}" />
+  <ControlTheme x:Key="{x:Type alder:AlderTreeView}" TargetType="alder:AlderTreeView">
+    <Setter Property="Padding" Value="4" />
+    <Setter Property="ItemContainerTheme" Value="{StaticResource AlderTreeViewItemTheme}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}">
+          <alder:AlderScrollViewer HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+                                   VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}">
+            <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" Margin="{TemplateBinding Padding}" />
+          </alder:AlderScrollViewer>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+  </ControlTheme>
+</ResourceDictionary>

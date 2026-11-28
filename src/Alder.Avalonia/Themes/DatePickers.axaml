@@ -44,11 +44,13 @@
               <alder:AlderScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
                 <StackPanel Name="RangeEditors" Orientation="Horizontal" VerticalAlignment="Center">
                   <alder:AlderDateField Name="PART_Start" Classes="range-endpoint" Culture="{TemplateBinding Culture}"
+                                        DisplayFormat="{TemplateBinding DisplayFormat}" ParseFormat="{TemplateBinding ParseFormat}"
                                    IsReadOnly="{TemplateBinding IsReadOnly}" IsInvalid="{TemplateBinding IsInvalid}" Minimum="{TemplateBinding Minimum}"
                                    Maximum="{TemplateBinding Maximum}" IsDateUnavailable="{TemplateBinding IsDateUnavailable}"
                                    AutomationProperties.Name="{DynamicResource AlderText.StartDate}" />
                   <alder:AlderTextBlock Text="–" Margin="6,0" VerticalAlignment="Center" Foreground="{DynamicResource AlderMuted}" />
                   <alder:AlderDateField Name="PART_End" Classes="range-endpoint" Culture="{TemplateBinding Culture}"
+                                        DisplayFormat="{TemplateBinding DisplayFormat}" ParseFormat="{TemplateBinding ParseFormat}"
                                    IsReadOnly="{TemplateBinding IsReadOnly}" IsInvalid="{TemplateBinding IsInvalid}" Minimum="{TemplateBinding Minimum}"
                                    Maximum="{TemplateBinding Maximum}" IsDateUnavailable="{TemplateBinding IsDateUnavailable}"
                                    AutomationProperties.Name="{DynamicResource AlderText.EndDate}" />

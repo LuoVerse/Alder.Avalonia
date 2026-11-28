@@ -104,7 +104,7 @@
               </Grid>
             </Border>
           </Border>
-          <alder:AlderPopup Name="PART_Menu" Placement="BottomEdgeAlignedLeft" PlacementTarget="{Binding #PART_Header}"
+          <alder:AlderEntrancePopup Name="PART_Menu" FadeOnly="True" Placement="BottomEdgeAlignedLeft" PlacementTarget="{Binding #PART_Header}"
                  PlacementConstraintAdjustment="SlideX" InheritsTransform="True"
                  IsOpen="{CompiledBinding IsMenuOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                  ShouldUseOverlayLayer="True" IsLightDismissEnabled="True" OverlayDismissEventPassThrough="False"
@@ -115,7 +115,7 @@
                 <ContentPresenter Content="{TemplateBinding Menu}" />
               </alder:AlderScrollViewer>
             </Border>
-          </alder:AlderPopup>
+          </alder:AlderEntrancePopup>
         </Panel>
       </ControlTemplate>
     </Setter>

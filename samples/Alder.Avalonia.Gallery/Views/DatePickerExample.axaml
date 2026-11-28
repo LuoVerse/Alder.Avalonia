@@ -31,6 +31,48 @@
         ]]></gallery:ExampleCard.CSharpSource>
       </gallery:ExampleCard>
     </gallery:GalleryExampleTemplate>
+    <gallery:GalleryExampleTemplate Name="SampleDateFormats">
+      <gallery:ExampleCard Title="{DynamicResource GalleryText.TemporalDateFormats}">
+        <gallery:ExampleCard.Preview>
+          <StackPanel Spacing="8" Margin="16,20">
+            <StackPanel.DataContext><vm:DatePickerViewModel /></StackPanel.DataContext>
+            <WrapPanel ItemSpacing="12" LineSpacing="10">
+              <StackPanel Spacing="4">
+                <alder:AlderLabel Content="yyyy-MM-dd" Target="{CompiledBinding #IsoDate}" />
+                <alder:AlderDatePicker x:Name="IsoDate" Culture="{DynamicResource GalleryCulture}" Value="{CompiledBinding Date, Mode=TwoWay}"
+                                      DisplayFormat="yyyy-MM-dd" ParseFormat="yyyyMMdd" />
+              </StackPanel>
+              <StackPanel Spacing="4">
+                <alder:AlderLabel Content="dd.MM.yyyy" Target="{CompiledBinding #DayFirstDate}" />
+                <alder:AlderDatePicker x:Name="DayFirstDate" Culture="{DynamicResource GalleryCulture}" Value="{CompiledBinding Date, Mode=TwoWay}"
+                                      DisplayFormat="dd.MM.yyyy" ParseFormat="yyyyMMdd" />
+              </StackPanel>
+              <StackPanel Spacing="4">
+                <alder:AlderLabel Content="dd MMM yyyy" Target="{CompiledBinding #MonthNameDate}" />
+                <alder:AlderDatePicker x:Name="MonthNameDate" Culture="{DynamicResource GalleryCulture}" Value="{CompiledBinding Date, Mode=TwoWay}"
+                                      DisplayFormat="dd MMM yyyy" ParseFormat="yyyyMMdd" />
+              </StackPanel>
+            </WrapPanel>
+            <alder:AlderDescription Text="{DynamicResource GalleryText.TemporalDateFormatPaste}" TextWrapping="Wrap" />
+          </StackPanel>
+        </gallery:ExampleCard.Preview>
+        <gallery:ExampleCard.CSharpSource><![CDATA[
+          var model = new DatePickerViewModel();
+          var fields = new WrapPanel { DataContext = model, ItemSpacing = 12, LineSpacing = 10 };
+          foreach (var format in new[] { "yyyy-MM-dd", "dd.MM.yyyy", "dd MMM yyyy" })
+          {
+              var field = new AlderDatePicker { DisplayFormat = format, ParseFormat = "yyyyMMdd" };
+              field[!AlderDatePicker.CultureProperty] = new DynamicResourceExtension("GalleryCulture");
+              field.Bind(AlderDatePicker.ValueProperty, CompiledBinding.Create((DatePickerViewModel vm) => vm.Date));
+              var label = new AlderLabel { Content = format, Target = field };
+              fields.Children.Add(new StackPanel { Spacing = 4, Children = { label, field } });
+          }
+          var hint = new AlderDescription { TextWrapping = TextWrapping.Wrap };
+          hint[!TextBlock.TextProperty] = new DynamicResourceExtension("GalleryText.TemporalDateFormatPaste");
+          var preview = new StackPanel { Spacing = 8, Children = { fields, hint } };
+        ]]></gallery:ExampleCard.CSharpSource>
+      </gallery:ExampleCard>
+    </gallery:GalleryExampleTemplate>
     <gallery:GalleryExampleTemplate Name="SampleControlled">
       <gallery:ExampleCard Title="{DynamicResource GalleryText.Controlled}">
         <gallery:ExampleCard.Preview>

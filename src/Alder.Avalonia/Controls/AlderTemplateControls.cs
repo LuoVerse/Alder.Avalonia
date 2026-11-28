@@ -14,9 +14,6 @@ public class AlderRepeatButton : RepeatButton
 /// <summary>Provides the native Thumb interaction contract for Alder templates.</summary>
 public class AlderThumb : Thumb;
 
-/// <summary>A scroll viewport with Alder scrollbars, retaining native scrolling and input support.</summary>
-public class AlderScrollViewer : ScrollViewer;
-
 /// <summary>A scrollbar whose track and handle are styled by Alder.</summary>
 public class AlderScrollBar : ScrollBar;
 

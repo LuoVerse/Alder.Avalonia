@@ -163,7 +163,8 @@
 
   <ControlTheme x:Key="{x:Type alder:AlderFileTree}" TargetType="alder:AlderFileTree">
     <Setter Property="Padding" Value="4" />
-    <Setter Property="ItemsPanel"><ItemsPanelTemplate><VirtualizingStackPanel /></ItemsPanelTemplate></Setter>
+    <!-- Measure nearby roots across the viewport edge when expanded branches vary in height. -->
+    <Setter Property="ItemsPanel"><ItemsPanelTemplate><VirtualizingStackPanel CacheLength="0.5" /></ItemsPanelTemplate></Setter>
     <Setter Property="IndicatorIcon" Value="{StaticResource AlderIconChevronRight}" />
     <Setter Property="ItemTemplate" Value="{StaticResource AlderFileTreeNodeTemplate}" />
     <Setter Property="ItemContainerTheme" Value="{StaticResource {x:Type alder:AlderFileTreeItem}}" />
@@ -171,9 +172,9 @@
     <Setter Property="Template">
       <ControlTemplate>
         <Panel>
-          <alder:AlderScrollViewer Padding="{TemplateBinding Padding}" HorizontalScrollBarVisibility="Disabled">
+          <alder:AlderFileTreeScrollViewer Padding="{TemplateBinding Padding}" HorizontalScrollBarVisibility="Disabled">
             <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
-          </alder:AlderScrollViewer>
+          </alder:AlderFileTreeScrollViewer>
           <alder:AlderTextBlock Name="Placeholder" IsVisible="False" Foreground="{DynamicResource AlderMuted}" FontStyle="Italic"
                      Text="{DynamicResource AlderText.FileTreeEmpty}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" />
         </Panel>

@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:g="using:Alder.Avalonia.Gallery.Controls" xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" x:Class="Alder.Avalonia.Gallery.Views.TreeViewExample" x:DataType="vm:TreeViewExampleViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleBoundTree" Title="{DynamicResource GalleryText.TreeViewBound}">
+      <g:ExampleCard.Preview>
+        <StackPanel MaxWidth="380" Margin="8,16" Spacing="8">
+          <alder:AlderTreeView ItemsSource="{CompiledBinding Nodes}" SelectedItem="{CompiledBinding SelectedNode, Mode=TwoWay}"
+                               AutomationProperties.Name="{DynamicResource GalleryText.TreeView}">
+            <alder:AlderTreeView.ItemTemplate>
+              <TreeDataTemplate x:DataType="vm:TreeViewExampleNode" ItemsSource="{CompiledBinding Children}">
+                <alder:AlderTextBlock Text="{CompiledBinding Title}" TextTrimming="CharacterEllipsis" />
+              </TreeDataTemplate>
+            </alder:AlderTreeView.ItemTemplate>
+          </alder:AlderTreeView>
+          <alder:AlderDescription Text="{CompiledBinding SelectedNode?.Title}" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var tree = new AlderTreeView { ItemsSource = viewModel.Nodes };
+        tree.ItemTemplate = new FuncTreeDataTemplate<TreeViewExampleNode>(
+            (node, _) => new AlderTextBlock { Text = node.Title }, node => node.Children);
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+    <g:ExampleCard x:Name="SampleTreeSelection" Title="{DynamicResource GalleryText.TreeViewMultiple}">
+      <g:ExampleCard.Preview>
+        <alder:AlderTreeView SelectionMode="Multiple" MaxWidth="380" Margin="8,16" AutomationProperties.Name="{DynamicResource GalleryText.TreeView}">
+          <alder:AlderTreeViewItem Header="{DynamicResource GalleryText.TreeViewProjects}" IsExpanded="True">
+            <alder:AlderTreeViewItem Header="{DynamicResource GalleryText.TreeViewDesign}" />
+            <alder:AlderTreeViewItem Header="{DynamicResource GalleryText.TreeViewEngineering}" />
+          </alder:AlderTreeViewItem>
+          <alder:AlderTreeViewItem Header="{DynamicResource GalleryText.TreeViewArchive}" IsEnabled="False" />
+        </alder:AlderTreeView>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var projects = new AlderTreeViewItem { Header = "Projects", IsExpanded = true };
+        projects.Items.Add(new AlderTreeViewItem { Header = "Design" });
+        var tree = new AlderTreeView { SelectionMode = SelectionMode.Multiple, Items = { projects } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

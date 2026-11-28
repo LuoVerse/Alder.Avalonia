@@ -13,6 +13,10 @@
         RequestedThemeVariant="{Binding WindowTheme, Mode=TwoWay}"
         Title="{DynamicResource GalleryText.AlderGallery}">
   <alder:AlderWindow.Styles>
+    <!-- Keep the page scrollbar clear of the window's edge resize grips. -->
+    <Style Selector="alder|AlderScrollViewer.galleryPageScroll /template/ alder|AlderScrollBar#PART_VerticalScrollBar">
+      <Setter Property="Margin" Value="0,0,6,6" />
+    </Style>
     <Style Selector="alder|AlderWindow.mac">
       <Setter Property="CaptionMargin" Value="14,18,0,0" />
     </Style>

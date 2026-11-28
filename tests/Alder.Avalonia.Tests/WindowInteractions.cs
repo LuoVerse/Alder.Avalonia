@@ -65,6 +65,38 @@ public class WindowInteractions
         }
     }
 
+    [AvaloniaTheory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task SalashWindowHonorsReplacementActivationDuringTheFade(bool showActivated)
+    {
+        var next = new AlderWindow { ShowActivated = showActivated };
+        var splash = new TestSalashWindow(_ => Task.FromResult<Window?>(next));
+        var closed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        bool? activationRequestedAtOpen = null;
+        bool activatedWhileSplashVisible = false;
+        next.Opened += (_, _) => activationRequestedAtOpen = next.ShowActivated;
+        next.Activated += (_, _) => activatedWhileSplashVisible |= splash.IsVisible;
+        splash.Closed += (_, _) => closed.TrySetResult();
+        splash.Show();
+        try
+        {
+            Pump();
+            splash.Close();
+            await closed.Task.WaitAsync(TimeSpan.FromSeconds(2));
+            Pump();
+            Assert.True(next.IsVisible);
+            Assert.Equal(showActivated, activationRequestedAtOpen);
+            Assert.Equal(showActivated, activatedWhileSplashVisible);
+            Assert.Equal(showActivated, next.IsActive);
+        }
+        finally
+        {
+            if (splash.IsVisible) splash.Close();
+            if (next.IsVisible) next.Close();
+        }
+    }
+
     [AvaloniaFact]
     public async Task SalashWindowRetainsItsHostsWhenTheFactoryFailsAndCanRetry()
     {

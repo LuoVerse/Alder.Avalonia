@@ -1,0 +1,120 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:alder="using:Alder.Avalonia.Controls" xmlns:conv="using:Avalonia.Data.Converters">
+  <ControlTheme x:Key="AlderTagRemoveButtonTheme" TargetType="Button">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="KeyboardNavigation.IsTabStop" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" BorderBrush="{DynamicResource AlderAccent}"
+                CornerRadius="{TemplateBinding CornerRadius}" Name="RemoveSurface">
+          <alder:AlderPathIcon Data="{StaticResource AlderIconXmark}" Foreground="{TemplateBinding Foreground}"
+                               Width="10" Height="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover">
+      <Setter Property="Background" Value="{DynamicResource AlderSoftHoverTint}" />
+    </Style>
+    <Style Selector="^:pressed">
+      <Setter Property="Background" Value="{DynamicResource AlderSoftHover}" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ Border#RemoveSurface">
+      <Setter Property="BorderThickness" Value="1" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderTag}" TargetType="alder:AlderTag">
+    <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
+    <Setter Property="Foreground" Value="{DynamicResource AlderInk}" />
+    <Setter Property="Padding" Value="8,0" />
+    <Setter Property="MinHeight" Value="24" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}"
+                  Padding="{TemplateBinding Padding}">
+            <DockPanel>
+              <alder:AlderIconPresenter Content="{TemplateBinding Icon}" VerticalAlignment="Center" Width="12" Height="12"
+                                        DockPanel.Dock="Left" Margin="0,0,4,0"
+                                        IsVisible="{TemplateBinding Icon, Converter={x:Static conv:ObjectConverters.IsNotNull}}"
+                                        Foreground="{TemplateBinding Foreground}" IsHitTestVisible="False" />
+              <Button DockPanel.Dock="Right" Name="PART_RemoveButton" Theme="{StaticResource AlderTagRemoveButtonTheme}"
+                      IsVisible="{TemplateBinding IsRemovable}" AutomationProperties.Name="{TemplateBinding RemoveButtonLabel}"
+                      Width="24" Margin="4,0,-4,0" Foreground="{TemplateBinding Foreground}" />
+              <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+            </DockPanel>
+          </Border>
+          <Border Name="FocusRing" CornerRadius="{TemplateBinding CornerRadius}" IsHitTestVisible="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[Size=Small]"><Setter Property="MinHeight" Value="20" /></Style>
+    <Style Selector="^[Size=Large]">
+      <Setter Property="MinHeight" Value="32" />
+      <Setter Property="Padding" Value="10,0" />
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="CornerRadius" Value="16" />
+    </Style>
+    <Style Selector="^[IsRemovable=True]">
+      <Setter Property="Focusable" Value="True" />
+      <Setter Property="MinHeight" Value="24" />
+    </Style>
+    <Style Selector="^[IsRemovable=True][Size=Large]"><Setter Property="MinHeight" Value="32" /></Style>
+    <Style Selector="^[Variant=Surface]">
+      <Setter Property="Background" Value="{DynamicResource AlderSurface}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderBorder}" />
+      <Setter Property="BorderThickness" Value="1" />
+    </Style>
+    <Style Selector="^:selected">
+      <Setter Property="Background" Value="{DynamicResource AlderSoft}" />
+      <Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+    <Style Selector="^:focus-visible /template/ Border#FocusRing">
+      <Setter Property="BorderBrush" Value="{DynamicResource AlderAccent}" />
+      <Setter Property="BorderThickness" Value="1.5" />
+    </Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5" /></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type alder:AlderTagGroup}" TargetType="alder:AlderTagGroup">
+    <Setter Property="ItemsPanel"><ItemsPanelTemplate><WrapPanel ItemSpacing="6" LineSpacing="6" /></ItemsPanelTemplate></Setter>
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel Spacing="6" Margin="{TemplateBinding Padding}">
+          <alder:AlderTextBlock Text="{TemplateBinding Label}" FontSize="14" FontWeight="Medium" TextWrapping="Wrap"
+                                IsVisible="{TemplateBinding Label, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+          <Panel>
+            <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+            <ContentPresenter Name="EmptyPresenter" Content="{TemplateBinding EmptyContent}" IsVisible="False"
+                              Foreground="{DynamicResource AlderMuted}" FontSize="12" />
+          </Panel>
+          <alder:AlderTextBlock Text="{TemplateBinding Description}" FontSize="12" Foreground="{DynamicResource AlderMuted}"
+                                TextWrapping="Wrap"
+                                IsVisible="{TemplateBinding Description, Converter={x:Static conv:StringConverters.IsNotNullOrEmpty}}" />
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[ItemCount=0] /template/ ContentPresenter#EmptyPresenter">
+      <Setter Property="IsVisible" Value="{CompiledBinding Content, RelativeSource={RelativeSource Self}, Converter={x:Static conv:ObjectConverters.IsNotNull}}" />
+    </Style>
+    <Style Selector="^[ItemCount=0]:focus-visible /template/ ContentPresenter#EmptyPresenter">
+      <Setter Property="Foreground" Value="{DynamicResource AlderSoftInk}" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

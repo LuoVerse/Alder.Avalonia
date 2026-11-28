@@ -154,6 +154,7 @@
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/DropZone.axaml" />
 
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Labels.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Forms.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Inputs.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/InputOtp.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/NumberField.axaml" />
@@ -169,6 +170,7 @@
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/OverflowActions.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/EmptyState.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/FileTree.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/TreeView.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/FloatingToc.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/HoloCard.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/HoverCard.axaml" />
@@ -179,6 +181,7 @@
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Carousel.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/ImageView.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/DatePickers.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/TimePicker.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Disclosure.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Accordion.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Breadcrumbs.axaml" />
@@ -200,6 +203,7 @@
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Stepper.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Navbar.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/ContextMenu.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Menu.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/UserMenu.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Avatars.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Pickers.axaml" />
@@ -208,6 +212,7 @@
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Cells.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Typography.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/StatusIndicators.axaml" />
+        <ResourceInclude Source="avares://Alder.Avalonia/Themes/Tags.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Tables.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/Charts.axaml" />
         <ResourceInclude Source="avares://Alder.Avalonia/Themes/ScrollShadow.axaml" />
@@ -332,6 +337,15 @@
   <Style Selector="alder|AlderListView[ShowSelectionIndicator=False] alder|AlderListViewItem /template/ alder|AlderCheckBox#SelectMark,
                    alder|AlderListView[SelectionEnabled=False] alder|AlderListViewItem /template/ alder|AlderCheckBox#SelectMark">
     <Setter Property="IsVisible" Value="False" />
+  </Style>
+  <Style Selector="alder|AlderTagGroup > alder|AlderTag">
+    <Setter Property="Focusable" Value="True" />
+  </Style>
+  <Style Selector="alder|AlderTagGroup[SelectionMode=Single] > alder|AlderTag, alder|AlderTagGroup[SelectionMode=Multiple] > alder|AlderTag">
+    <Setter Property="Cursor" Value="Hand" />
+    <Style Selector="^:pointerover:not(:selected):not(:disabled)"><Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" /></Style>
+    <Style Selector="^[Variant=Surface]:pointerover:not(:selected):not(:disabled)"><Setter Property="Background" Value="{DynamicResource AlderSurfaceSecondary}" /></Style>
+    <Style Selector="^:selected:pointerover:not(:disabled)"><Setter Property="Background" Value="{DynamicResource AlderSoftHover}" /></Style>
   </Style>
   <Style Selector="alder|AlderKanban[Size=Small] alder|AlderKanbanColumn"><Setter Property="Width" Value="240" /></Style>
   <Style Selector="alder|AlderKanban[Size=Large] alder|AlderKanbanColumn"><Setter Property="Width" Value="320" /></Style>

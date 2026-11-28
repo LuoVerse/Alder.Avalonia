@@ -76,6 +76,12 @@ internal sealed class GalleryExampleList : AlderItemsControl
             Reveal(entry);
     }
 
+    internal void RevealLastExample()
+    {
+        if (ItemCount > 0)
+            Reveal((Entry)Items[ItemCount - 1]!);
+    }
+
     private void Reveal(Entry entry)
     {
         int index = Items.IndexOf(entry);

@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:alder="using:Alder.Avalonia.Controls" xmlns:g="using:Alder.Avalonia.Gallery.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels"
+             x:Class="Alder.Avalonia.Gallery.Views.FormExample" x:DataType="vm:FormDemoViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleForm" Title="{DynamicResource GalleryText.FormValidationAndSubmission}">
+      <g:ExampleCard.Preview>
+        <alder:AlderForm x:Name="ProjectForm" MaxWidth="400" Margin="8,16" SubmitCommand="{CompiledBinding SaveCommand}"
+                         IsSubmitting="{CompiledBinding IsSubmitting}" AutomationProperties.Name="{DynamicResource GalleryText.FormProjectDetails}">
+          <alder:AlderFieldset Legend="{DynamicResource GalleryText.FormProjectDetails}" Description="{DynamicResource GalleryText.FormProjectDetailsHint}">
+            <StackPanel Spacing="12">
+              <alder:AlderTextField x:Name="ProjectNameField" Label="{DynamicResource GalleryText.FormProjectName}" IsRequired="True"
+                                    Text="{CompiledBinding ProjectName}" Description="{DynamicResource GalleryText.FormNameHint}" />
+              <alder:AlderTextField x:Name="ProjectEmailField" Label="{DynamicResource GalleryText.FormEmail}" IsRequired="True" Type="Email"
+                                    Text="{CompiledBinding Email}" PlaceholderText="team@example.com"
+                                    Description="{DynamicResource GalleryText.FormEmailHint}" />
+              <alder:AlderTextField Label="{DynamicResource GalleryText.FormNotes}" Text="{CompiledBinding Notes}" AcceptsReturn="True"
+                                    PlaceholderText="{DynamicResource GalleryText.FormNotesPlaceholder}" />
+              <alder:AlderDescription Text="{DynamicResource GalleryText.FormSaved}" IsVisible="{CompiledBinding Submitted}"
+                                      AutomationProperties.LiveSetting="Polite" />
+            </StackPanel>
+            <alder:AlderFieldset.Actions>
+              <WrapPanel ItemSpacing="8" LineSpacing="8">
+                <alder:AlderButton Content="{DynamicResource GalleryText.Reset}" Click="ResetForm" Variant="Secondary"
+                                   IsEnabled="{CompiledBinding !IsSubmitting}" />
+                <alder:AlderButton Content="{DynamicResource GalleryText.FormSave}" IsPending="{CompiledBinding IsSubmitting}"
+                                   Command="{CompiledBinding #ProjectForm.Submit}" />
+              </WrapPanel>
+            </alder:AlderFieldset.Actions>
+          </alder:AlderFieldset>
+        </alder:AlderForm>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var name = new AlderTextField { Label = "Project name", IsRequired = true };
+        var save = new AlderButton { Content = "Save" };
+        var form = new AlderForm
+        {
+            SubmitCommand = viewModel.SaveCommand,
+            Content = new AlderFieldset { Legend = "Project details", Content = name, Actions = save }
+        };
+        save.Command = form.Submit;
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

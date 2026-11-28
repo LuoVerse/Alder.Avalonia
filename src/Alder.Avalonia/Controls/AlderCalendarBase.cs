@@ -31,6 +31,8 @@ public abstract partial class AlderCalendarBase : TemplatedControl
 {
     /// <summary>Identifies the <see cref="Culture"/> Avalonia property.</summary>
     public static readonly StyledProperty<CultureInfo?> CultureProperty = AlderTemporalInput.CultureProperty.AddOwner<AlderCalendarBase>();
+    /// <summary>Identifies the <see cref="DisplayFormat"/> Avalonia property.</summary>
+    public static readonly StyledProperty<string?> DisplayFormatProperty = AlderTemporalInput.DisplayFormatProperty.AddOwner<AlderCalendarBase>();
     /// <summary>Identifies the <see cref="IsReadOnly"/> Avalonia property.</summary>
     public static readonly StyledProperty<bool> IsReadOnlyProperty =
         TextBox.IsReadOnlyProperty.AddOwner<AlderCalendarBase>();
@@ -55,6 +57,8 @@ public abstract partial class AlderCalendarBase : TemplatedControl
     public partial DateOnly? Maximum { get; set; }
     /// <summary>The culture used to format dates and determine calendar conventions.</summary>
     public CultureInfo? Culture { get => GetValue(CultureProperty); set => SetValue(CultureProperty, value); }
+    /// <summary>The date format used in calendar headings. Null or whitespace uses the default for the current view.</summary>
+    public string? DisplayFormat { get => GetValue(DisplayFormatProperty); set => SetValue(DisplayFormatProperty, value); }
     /// <summary>The first day in the week layout. Null uses the culture's first day.</summary>
     [GeneratedStyledProperty]
     public partial DayOfWeek? FirstDayOfWeek { get; set; }
@@ -160,7 +164,7 @@ public abstract partial class AlderCalendarBase : TemplatedControl
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
-        if (change.Property == DisplayDateProperty || change.Property == CultureProperty ||
+        if (change.Property == DisplayDateProperty || change.Property == CultureProperty || change.Property == DisplayFormatProperty ||
             change.Property == FirstDayOfWeekProperty || change.Property == ViewProperty ||
             change.Property == VisibleMonthsProperty || change.Property == FixedWeeksProperty ||
             change.Property == MinimumProperty || change.Property == MaximumProperty || change.Property == TodayProperty)
@@ -301,7 +305,7 @@ public abstract partial class AlderCalendarBase : TemplatedControl
             grid.Children.Add(cell);
         }
         if (!showMonth) return grid;
-        var title = new AlderTextBlock { Text = Format(start, "Y"), FontSize = 12, HorizontalAlignment = HorizontalAlignment.Center };
+        var title = new AlderTextBlock { Text = FormatHeading(start, "Y"), FontSize = 12, HorizontalAlignment = HorizontalAlignment.Center };
         title[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("AlderMuted");
         return new StackPanel { Spacing = 4, Children = { title, grid } };
     }
@@ -561,12 +565,14 @@ public abstract partial class AlderCalendarBase : TemplatedControl
         DateOnly.FromDayNumber(Math.Clamp(date.DayNumber + days, CalendarMinimum.DayNumber, CalendarMaximum.DayNumber));
     private static DateTime AsDateTime(DateOnly date) => date.ToDateTime(TimeOnly.MinValue);
     private string Format(DateOnly date, string format) => AsDateTime(date).ToString(format, EffectiveCulture);
+    private string FormatHeading(DateOnly date, string defaultFormat) =>
+        AlderTemporalInput.FormatOrDefault(AsDateTime(date), DisplayFormat, defaultFormat, EffectiveCulture);
 
     private string HeaderText(DateOnly anchor, DateOnly start, DateOnly last) => View switch
     {
-        AlderCalendarView.Day => Format(anchor, "D"),
-        AlderCalendarView.Week => $"{Format(start, "M")} – {Format(AddDays(start, 6), "M")}",
-        _ => last == start ? Format(start, "Y") : $"{Format(start, "MMM")} – {Format(last, "Y")}"
+        AlderCalendarView.Day => FormatHeading(anchor, "D"),
+        AlderCalendarView.Week => $"{FormatHeading(start, "M")} – {FormatHeading(AddDays(start, 6), "M")}",
+        _ => last == start ? FormatHeading(start, "Y") : $"{FormatHeading(start, "MMM")} – {FormatHeading(last, "Y")}"
     };
 
     private sealed record CalendarDay(DateOnly Date, int Column, bool Outside, AlderCalendarDayButton Button);

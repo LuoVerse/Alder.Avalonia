@@ -48,6 +48,8 @@ internal sealed class GalleryLocalization
         "CarouselPrevious", "CarouselNext", "CarouselGoToSlide", "CarouselPlay", "CarouselPause",
         "ImageViewEmpty", "ImageViewZoomIn", "ImageViewZoomOut", "ImageViewFit", "ImageViewFitImage", "ImageViewActual",
         "ImageViewOpen", "ImageViewClose", "ImageViewPrevious", "ImageViewNext",
+        "RequiredField",
+        "OpenTimePicker", "TimePickerOutOfRange",
         "CommandPalette", "CommandSearch", "CommandEmpty", "CommandBack", "CommandDismiss",
         "NavbarNavigation", "NavbarOpenMenu", "NavbarCloseMenu", "StepperProgress", "StepperActive", "StepperComplete", "StepperInactive",
         "Unavailable", "Selected", "Loading", "Year", "Month", "Day", "Hour", "Minute", "SecondUnit", "Period",

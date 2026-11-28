@@ -68,7 +68,7 @@
                         Foreground="{DynamicResource AlderMuted}" AutomationProperties.AccessibilityView="Raw" />
             </Grid>
           </Border>
-          <alder:AlderPopup Name="PART_Popup" Placement="Custom"
+          <alder:AlderEntrancePopup Name="PART_Popup" Placement="Custom"
                  CustomPopupPlacementCallback="{x:Static alder:ContextMenuPlacement.Submenu}"
                  WindowManagerAddShadowHint="False" IsLightDismissEnabled="False" ShouldUseOverlayLayer="True"
                  IsOpen="{TemplateBinding IsSubMenuOpen, Mode=TwoWay}">
@@ -79,7 +79,7 @@
                 <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
               </alder:AlderScrollViewer>
             </Border>
-          </alder:AlderPopup>
+          </alder:AlderEntrancePopup>
         </Panel>
       </ControlTemplate>
     </Setter>
@@ -92,7 +92,8 @@
     <Style Selector="^:selected /template/ Border#PART_LayoutRoot, ^:open /template/ Border#PART_LayoutRoot">
       <Setter Property="Background" Value="{DynamicResource AlderNeutral}" />
     </Style>
-    <Style Selector="^:pressed /template/ Border#PART_LayoutRoot">
+    <!-- Submenu input also reaches its parent MenuItem. Only the row under the pointer should look pressed. -->
+    <Style Selector="^:pressed /template/ Border#PART_LayoutRoot:pointerover">
       <Setter Property="Background" Value="{DynamicResource AlderNeutralHover}" />
     </Style>
     <Style Selector="^:disabled /template/ Border#PART_LayoutRoot"><Setter Property="Opacity" Value="0.5" /></Style>

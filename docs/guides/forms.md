@@ -15,15 +15,21 @@
 
 ## 日期、时间和范围
 
-`AlderDateField` 与 `AlderDatePicker` 的 `Value` 使用 `DateOnly?`，`AlderTimeField.Value` 使用 `TimeOnly?`，`AlderDateRangePicker.Value` 使用 `AlderDateRange?`。把日期范围的开始和结束分别保存。使用结构化字段或固定格式记录，避免按打开时的语言解析上次的显示文本。
+`AlderDateField` 与 `AlderDatePicker` 的 `Value` 使用 `DateOnly?`，`AlderTimeField` 与 `AlderTimePicker` 使用 `TimeOnly?`，`AlderDateRangePicker` 使用 `AlderDateRange?`。把日期范围的开始和结束分别保存。使用结构化字段或固定格式记录，避免按打开时的语言解析上次的显示文本。
 
 ```xml
 <alder:AlderDatePicker Value="{CompiledBinding AppointmentDate, Mode=TwoWay}"
+                       DisplayFormat="dd MMM yyyy" ParseFormat="yyyyMMdd"
                        IsRequired="True" />
-<alder:AlderTimeField Value="{CompiledBinding AppointmentTime, Mode=TwoWay}" />
+<alder:AlderTimePicker Value="{CompiledBinding AppointmentTime, Mode=TwoWay}"
+                       DisplayFormat="h:mm tt" ParseFormat="HHmmss" />
 ```
 
-同样可以绑定 `AlderCalendar` 与 `AlderRangeCalendar` 的 `Value`，视需求把日历放在页面内。用 `Minimum`、`Maximum` 和验证属性表达输入约束。修改约束后，在 ViewModel 中检查历史数据是否仍有效。[日期与时间示例索引](../COMPONENTS.md#日期与时间) · [日期范围 ViewModel](../../samples/Alder.Avalonia.Gallery/ViewModels/DateRangePickerViewModel.cs)
+`DisplayFormat` 决定分段字段的显示顺序、分隔符和数字位数。日期段支持年、月、日、月份名称和星期，时间段支持小时、分钟、秒及上午／下午。时间字段设置 `DisplayFormat` 后，由格式中的 `h`、`H` 和 `s` 决定时制和秒。省略格式时沿用 `Culture`、`Clock` 和 `Granularity`。分段输入沿用键盘编辑，`ParseFormat` 用于粘贴和整段文本的精确解析。日期范围的两个端点共用这两个格式。
+
+独立的 `AlderCalendar` 和 `AlderRangeCalendar` 可以用 `DisplayFormat` 控制日期标题，`AlderAgenda` 用它控制时间轴和事件时间标签。
+
+同样可以绑定 `AlderCalendar` 与 `AlderRangeCalendar` 的 `Value`，视需求把日历放在页面内。用 `Minimum`、`Maximum` 和验证属性表达输入约束。修改约束后，在 ViewModel 中检查历史数据是否仍有效。[日期与时间示例索引](../COMPONENTS.md#输入与编辑) · [日期范围 ViewModel](../../samples/Alder.Avalonia.Gallery/ViewModels/DateRangePickerViewModel.cs)
 
 ## 调色和提交
 

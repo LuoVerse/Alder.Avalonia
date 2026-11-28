@@ -54,8 +54,8 @@
     </StackPanel>
 
     <StackPanel Grid.Column="1" Spacing="6">
-      <alder:AlderDateField x:Name="Date" Value="{CompiledBinding Date}" />
-      <alder:AlderTimeField x:Name="Time" Value="{CompiledBinding Time}" />
+      <alder:AlderDateField x:Name="Date" Value="{CompiledBinding Date}" DisplayFormat="yyyy-MM-dd" ParseFormat="yyyyMMdd" />
+      <alder:AlderTimeField x:Name="Time" Value="{CompiledBinding Time}" DisplayFormat="HH:mm:ss" ParseFormat="HHmmss" />
       <alder:AlderDatePicker x:Name="DatePicker" Value="{CompiledBinding Date}" />
       <alder:AlderDateRangePicker x:Name="RangePicker" Value="{CompiledBinding Dates}" />
       <alder:AlderCalendar x:Name="Calendar" Value="{CompiledBinding Date}" />

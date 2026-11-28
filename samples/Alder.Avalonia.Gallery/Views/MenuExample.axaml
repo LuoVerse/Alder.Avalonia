@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:g="using:Alder.Avalonia.Gallery.Controls" xmlns:alder="using:Alder.Avalonia.Controls"
+             xmlns:vm="using:Alder.Avalonia.Gallery.ViewModels" x:Class="Alder.Avalonia.Gallery.Views.MenuExample" x:DataType="vm:MenuViewModel">
+  <StackPanel Spacing="20">
+    <g:ExampleCard x:Name="SampleMenu" Title="{DynamicResource GalleryText.Usage}">
+      <g:ExampleCard.Preview>
+        <StackPanel Spacing="12" MaxWidth="400" Margin="8,16">
+          <alder:AlderMenu Background="{DynamicResource AlderSurface}" Padding="4" CornerRadius="12"
+                           AutomationProperties.Name="{DynamicResource GalleryText.Menu}">
+            <alder:AlderMenuItem Header="{DynamicResource GalleryText.MenuFile}">
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.MenuNew}" Icon="{DynamicResource AlderIconPlus}"
+                                   Command="{CompiledBinding RunAction}" CommandParameter="MenuCreated" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.MenuExport}">
+                <alder:AlderMenuItem Header="PDF" Command="{CompiledBinding RunAction}" CommandParameter="MenuExportedPdf" />
+                <alder:AlderMenuItem Header="CSV" Command="{CompiledBinding RunAction}" CommandParameter="MenuExportedCsv" />
+              </alder:AlderMenuItem>
+              <alder:AlderMenuItem Header="-" />
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.MenuPrint}" IsEnabled="False" />
+            </alder:AlderMenuItem>
+            <alder:AlderMenuItem Header="{DynamicResource GalleryText.MenuView}">
+              <alder:AlderMenuItem Header="{DynamicResource GalleryText.MenuSidebar}" ToggleType="CheckBox" IsChecked="True"
+                                   Command="{CompiledBinding RunAction}" CommandParameter="MenuSidebarChanged" />
+            </alder:AlderMenuItem>
+          </alder:AlderMenu>
+          <alder:AlderDescription Text="{CompiledBinding LastAction}" AutomationProperties.LiveSetting="Polite" />
+        </StackPanel>
+      </g:ExampleCard.Preview>
+      <g:ExampleCard.CSharpSource><![CDATA[
+        var export = new AlderMenuItem { Header = "Export" };
+        export.Items.Add(new AlderMenuItem { Header = "PDF", Command = viewModel.RunAction, CommandParameter = "MenuExportedPdf" });
+        var file = new AlderMenuItem { Header = "_File", Items = { export } };
+        var menu = new AlderMenu { Items = { file } };
+      ]]></g:ExampleCard.CSharpSource>
+    </g:ExampleCard>
+  </StackPanel>
+</UserControl>

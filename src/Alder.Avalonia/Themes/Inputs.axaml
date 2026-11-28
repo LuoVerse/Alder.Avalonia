@@ -59,7 +59,8 @@
               <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4">
                 <alder:AlderButton Name="PART_ClearButton" IsVisible="False" Size="Small" IsIconOnly="True"
                                    Variant="Ghost" Icon="{StaticResource AlderIconXmark}" Margin="0,-6"
-                                   VerticalAlignment="Center" AutomationProperties.Name="{DynamicResource AlderText.ClearInput}"
+                                   VerticalAlignment="Center" KeyboardNavigation.IsTabStop="False"
+                                   AutomationProperties.Name="{DynamicResource AlderText.ClearInput}"
                                    alder:AlderToolTip.Tip="{DynamicResource AlderText.ClearInput}" />
                 <ContentPresenter Name="FieldSuffix" Content="{TemplateBinding InnerRightContent}" VerticalContentAlignment="Center" />
               </StackPanel>
@@ -110,6 +111,9 @@
     <Setter Property="Width" Value="200" />
     <Setter Property="HorizontalAlignment" Value="Left" />
     <Setter Property="VerticalAlignment" Value="Center" />
+    <Style Selector="^ /template/ ContentPresenter#FieldSuffix">
+      <Setter Property="KeyboardNavigation.TabNavigation" Value="None" />
+    </Style>
     <Style Selector="^[FullWidth=True]">
       <Setter Property="Width" Value="NaN" />
       <Setter Property="HorizontalAlignment" Value="Stretch" />

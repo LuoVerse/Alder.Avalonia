@@ -35,7 +35,15 @@ public class AlderDateField : AlderTemporalField
     /// <inheritdoc />
     protected override DateTime ReferenceValue => PlaceholderDate?.ToDateTime(TimeOnly.MinValue) ?? base.ReferenceValue;
     /// <inheritdoc />
-    protected override string InputPattern => InputCulture.DateTimeFormat.ShortDatePattern;
+    protected override string InputPattern => DisplayFormat?.Trim() switch
+    {
+        null or "" or "d" => InputCulture.DateTimeFormat.ShortDatePattern,
+        "D" => InputCulture.DateTimeFormat.LongDatePattern,
+        "M" or "m" => InputCulture.DateTimeFormat.MonthDayPattern,
+        "Y" or "y" => InputCulture.DateTimeFormat.YearMonthPattern,
+        _ => DisplayFormat!
+    };
+    private protected override bool IsDateEditor => true;
     /// <inheritdoc />
     protected override DateTime? ReadValue() => Value?.ToDateTime(TimeOnly.MinValue);
     /// <inheritdoc />
@@ -54,7 +62,9 @@ public class AlderDateField : AlderTemporalField
     /// <inheritdoc />
     protected override bool TryParseValue(string text, out DateTime value)
     {
-        bool parsed = DateOnly.TryParse(text, InputCulture, DateTimeStyles.AllowWhiteSpaces, out var date);
+        bool parsed = HasParseFormat
+            ? DateOnly.TryParseExact(text, ParseFormat, InputCulture, DateTimeStyles.None, out var date)
+            : DateOnly.TryParse(text, InputCulture, DateTimeStyles.AllowWhiteSpaces, out date);
         value = date.ToDateTime(TimeOnly.MinValue);
         return parsed;
     }

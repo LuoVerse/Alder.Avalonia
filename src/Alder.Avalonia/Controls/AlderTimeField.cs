@@ -25,7 +25,7 @@ public enum TimeFieldGranularity
 }
 
 /// <summary>Edits a nullable time through culture-aware time segments.</summary>
-public sealed partial class AlderTimeField : AlderTemporalField
+public partial class AlderTimeField : AlderTemporalField
 {
     /// <summary>Identifies the <see cref="Value"/> Avalonia property.</summary>
     public static readonly StyledProperty<TimeOnly?> ValueProperty =
@@ -64,6 +64,13 @@ public sealed partial class AlderTimeField : AlderTemporalField
         get
         {
             var format = InputCulture.DateTimeFormat;
+            if (HasDisplayFormat)
+                return DisplayFormat!.Trim() switch
+                {
+                    "t" => format.ShortTimePattern,
+                    "T" => format.LongTimePattern,
+                    _ => DisplayFormat!
+                };
             string pattern = Granularity == TimeFieldGranularity.Second ? format.LongTimePattern : format.ShortTimePattern;
             if (Granularity == TimeFieldGranularity.Minute) pattern = SecondsPattern().Replace(pattern, "");
             if (Clock == TimeFieldClock.TwentyFourHour) return PeriodPattern().Replace(pattern.Replace('h', 'H'), "").Trim();
@@ -75,6 +82,8 @@ public sealed partial class AlderTimeField : AlderTemporalField
             return pattern;
         }
     }
+
+    internal bool ShowsSeconds => HasDisplayFormat ? HasPatternPart('s') : Granularity == TimeFieldGranularity.Second;
 
     /// <inheritdoc />
     protected override DateTime ReferenceValue => DateTime.Now;
@@ -96,7 +105,10 @@ public sealed partial class AlderTimeField : AlderTemporalField
     /// <inheritdoc />
     protected override bool TryParseValue(string text, out DateTime value)
     {
-        if (TimeOnly.TryParse(text, InputCulture, DateTimeStyles.AllowWhiteSpaces, out var time))
+        bool parsed = HasParseFormat
+            ? TimeOnly.TryParseExact(text, ParseFormat, InputCulture, DateTimeStyles.None, out var time)
+            : TimeOnly.TryParse(text, InputCulture, DateTimeStyles.AllowWhiteSpaces, out time);
+        if (parsed)
         {
             value = ReferenceValue.Date.Add(time.ToTimeSpan());
             return true;

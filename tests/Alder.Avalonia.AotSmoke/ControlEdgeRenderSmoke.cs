@@ -43,6 +43,8 @@ internal static class ControlEdgeRenderSmoke
                 VerifyFloatingTocBackdrop(theme, scale);
                 VerifyCardBackdrop(theme, scale);
                 VerifyOverflowActionsBackdrop(theme, scale);
+                VerifyTimePickerPopup(theme, scale);
+                VerifyMenuEntrance(theme, scale);
             }
 
             foreach (double scale in new[] { 1d, 2d })
@@ -58,6 +60,7 @@ internal static class ControlEdgeRenderSmoke
                 VerifyDenseLineChart(theme, scale);
                 VerifyChipGeometry(theme, scale);
                 VerifyCells(theme, scale);
+                VerifyCellSliderDrag(theme, scale);
                 VerifyPickerChartAndMarkdownFocus(theme, scale);
                 VerifyInlineSelectScrollBar(theme, scale);
                 VerifyAgendaCorners(theme, scale);
@@ -1141,14 +1144,20 @@ internal static class ControlEdgeRenderSmoke
     private static void VerifyFieldActionFocus(ThemeVariant theme, double scale)
     {
         var field = new AlderSearchField { Text = "Find a project" };
-        var window = Show(new Border { Child = field, Padding = new Thickness(24) }, theme, scale);
+        var next = new AlderInput();
+        var window = Show(new StackPanel { Margin = new Thickness(24), Spacing = 10, Children = { field, next } }, theme, scale);
         try
         {
             field.Focus(NavigationMethod.Tab);
             using var editing = Capture(window);
             Tab(window);
+            if (!next.IsFocused)
+                throw new InvalidOperationException($"Tab did not skip the search suffix ({theme.Key}, {scale}×).");
+
+            var action = field.GetVisualDescendants().OfType<Button>().Single(button => button.IsEffectivelyVisible);
+            var hitPoint = action.TranslatePoint(new Rect(action.Bounds.Size).Center, window)!.Value;
+            window.MouseMove(hitPoint);
             using var acting = Capture(window);
-            var action = field.GetVisualDescendants().OfType<Button>().Single(button => button.IsFocused);
             // Sample outside the field so subpixel text rendering cannot be mistaken for the focus ring.
             var ringPoint = field.TranslatePoint(new Point(field.Bounds.Width / 2, -1), window)!.Value;
             var editorRing = Pixel(editing, ringPoint, scale);
@@ -1162,6 +1171,12 @@ internal static class ControlEdgeRenderSmoke
             var fill = Pixel(acting, fillPoint, scale);
             if (Difference(fill, new SKColor(color.R, color.G, color.B)) > 5)
                 throw new InvalidOperationException($"Search suffix did not use its hover fill ({theme.Key}, {scale}×): actual {fill}, expected {color}.");
+
+            window.MouseDown(hitPoint, MouseButton.Left);
+            window.MouseUp(hitPoint, MouseButton.Left);
+            Dispatcher.UIThread.RunJobs();
+            if (!field.IsFocused || !string.IsNullOrEmpty(field.Text))
+                throw new InvalidOperationException($"Clicking the search suffix did not clear the field and restore editing focus ({theme.Key}, {scale}×).");
         }
         finally { window.Close(); }
     }
@@ -1554,6 +1569,121 @@ internal static class ControlEdgeRenderSmoke
                 using var focused = Capture(window);
                 CheckFocusInside(trigger, window, rest, focused, theme, scale);
             }
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyCellSliderDrag(ThemeVariant theme, double scale)
+    {
+        var primary = new AlderCellSlider { Width = 252, Value = .5 };
+        var secondary = new AlderCellSlider { Width = 252, Value = .5, Variant = InputVariant.Secondary };
+        var window = Show(new StackPanel { Margin = new Thickness(24), Spacing = 32, Children = { primary, secondary } }, theme, scale);
+        try
+        {
+            using var initial = Capture(window);
+            foreach (var slider in new[] { primary, secondary })
+            {
+                var origin = slider.TranslatePoint(default, window)!.Value;
+                var start = origin + new Vector(126, 18);
+                var filled = origin + new Vector(40, 6);
+                var unfilled = origin + new Vector(225, 6);
+                window.MouseMove(start);
+                using var hover = Capture(window);
+                window.MouseDown(start, MouseButton.Left);
+                foreach (var offset in new[] { new Vector(20, -36), new Vector(40, 0), new Vector(54, 26) })
+                {
+                    window.MouseMove(start + offset);
+                    using var dragging = Capture(window);
+                    if (Pixel(dragging, filled, scale) != Pixel(hover, filled, scale) ||
+                        Pixel(dragging, unfilled, scale) != Pixel(hover, unfilled, scale))
+                        throw new InvalidOperationException($"Cell Slider {slider.Variant} changed its background during capture ({theme.Key}, {scale}×).");
+                }
+                window.MouseUp(start + new Vector(54, 26), MouseButton.Left);
+                if (slider.Value <= .5) throw new InvalidOperationException("Cell Slider lost its drag value.");
+            }
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyTimePickerPopup(ThemeVariant theme, double scale)
+    {
+        var picker = new AlderTimePicker { Value = new TimeOnly(13, 20, 30), DisplayFormat = "h:mm:ss tt" };
+        var window = Show(new StackPanel { Margin = new Thickness(24), Children = { picker } }, theme, scale);
+        try
+        {
+            using var closed = Capture(window);
+            picker.OpenPicker();
+            using var open = Capture(window);
+            var minutes = window.GetVisualDescendants().OfType<AlderListBox>().Single(list => list.Name == "MinuteOptions");
+            var columns = window.GetVisualDescendants().OfType<AlderListBox>().ToArray();
+            foreach (var name in new[] { "HourOptions", "MinuteOptions", "SecondOptions" })
+            {
+                var column = columns.Single(list => list.Name == name);
+                var viewport = column.GetVisualDescendants().OfType<ScrollContentPresenter>().Single();
+                var bar = column.GetVisualDescendants().OfType<ScrollBar>().Single(x => x.IsVisible);
+                var fill = bar.GetVisualDescendants().OfType<Border>().Single(x => x.Name == "ThumbFill");
+                var viewportRight = viewport.TranslatePoint(new Point(viewport.Bounds.Width, 0), window)!.Value.X;
+                var barLeft = bar.TranslatePoint(default, window)!.Value.X;
+                var fillCenter = fill.TranslatePoint(new Rect(fill.Bounds.Size).Center, window)!.Value;
+                double gap = barLeft - viewportRight;
+                int contrast = Difference(Pixel(open, fillCenter, scale), Pixel(open, new Point(barLeft - 1, fillCenter.Y), scale));
+                // The two thumb insets round independently at fractional DPI.
+                double widthTolerance = scale == 1.25 ? 1.05 : .1;
+                if (gap < 1 || Math.Abs(fill.Bounds.Width - 3) > widthTolerance || contrast < 8)
+                    throw new InvalidOperationException(
+                        $"The {name} thumb overlaps or is not thin and visible ({theme.Key}, {scale}×, gap {gap}, width {fill.Bounds.Width}, contrast {contrast}).");
+            }
+            var option = (ListBoxItem?)minutes.ContainerFromIndex(minutes.SelectedIndex);
+            if (option is null || !option.IsSelected || !option.IsEffectivelyVisible ||
+                option.Background is not ISolidColorBrush { Color.A: > 0 })
+                throw new InvalidOperationException($"The selected minute has no visible fill ({theme.Key}, {scale}×).");
+
+            minutes.SelectedIndex = 25;
+            using var pending = Capture(window);
+            var apply = window.GetVisualDescendants().OfType<AlderButton>().Single(button => button.Name == "ApplyTime");
+            var center = apply.TranslatePoint(new Rect(apply.Bounds.Size).Center, window)!.Value;
+            window.MouseDown(center, MouseButton.Left);
+            window.MouseUp(center, MouseButton.Left);
+            if (picker.IsPickerOpen || picker.Value != new TimeOnly(13, 25, 30))
+                throw new InvalidOperationException("The time picker did not commit and close after confirmation.");
+        }
+        finally { window.Close(); }
+    }
+
+    private static void VerifyMenuEntrance(ThemeVariant theme, double scale)
+    {
+        var header = new AlderMenuItem { Header = "File", Items = { new AlderMenuItem { Header = "Open" } } };
+        var menu = new AlderMenu { Items = { header } };
+        var window = Show(new StackPanel { Margin = new Thickness(24), Children = { menu } }, theme, scale);
+        try
+        {
+            using var before = Capture(window);
+            var popup = header.GetVisualDescendants().OfType<Popup>().Single(x => x.Name == "PART_Popup");
+            var surface = (Border)popup.Child!;
+            surface.Background = new SolidColorBrush(Color.Parse("#166B48"));
+
+            AlderMotion.SetReduced(window, false);
+            header.IsSubMenuOpen = true;
+            using var entrance = Capture(window);
+            var sample = surface.TranslatePoint(new Point(surface.Bounds.Width - 16, surface.Bounds.Height / 2), window)!.Value;
+            var initial = Pixel(entrance, sample, scale);
+            Thread.Sleep(140);
+            using var settled = Capture(window);
+            var final = Pixel(settled, sample, scale);
+            if (final.Green <= final.Red + 40 || Difference(initial, final) < 16)
+                throw new InvalidOperationException(
+                    $"The menu did not visibly animate onto its final surface ({theme.Key}, {scale}×, sample {sample}, start {initial}, end {final}).");
+
+            header.IsSubMenuOpen = false;
+            using var after = Capture(window);
+            if (popup.IsOpen || Difference(Pixel(before, sample, scale), Pixel(after, sample, scale)) > 4)
+                throw new InvalidOperationException($"The closed menu left a visible surface ({theme.Key}, {scale}×).");
+
+            AlderMotion.SetReduced(window, true);
+            header.IsSubMenuOpen = true;
+            using var reduced = Capture(window);
+            if (Difference(final, Pixel(reduced, sample, scale)) > 4)
+                throw new InvalidOperationException($"Reduced motion did not show the final menu immediately ({theme.Key}, {scale}×).");
         }
         finally { window.Close(); }
     }

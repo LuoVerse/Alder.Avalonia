@@ -1557,7 +1557,7 @@
                              IsVisible="{TemplateBinding IsSubmitting}" AutomationProperties.Name="{DynamicResource AlderText.AiLoad}">
                 <a:AlderLoader Name="PendingGlyph" Variant="Ring" Width="16" Height="16" Foreground="{DynamicResource AlderOnAccent}" />
               </a:AlderButton>
-              <a:AlderPopup Name="PART_TokenPopup" ShouldUseOverlayLayer="True" TakesFocusFromNativeControl="False"
+              <a:AlderEntrancePopup Name="PART_TokenPopup" FadeOnly="True" ShouldUseOverlayLayer="True" TakesFocusFromNativeControl="False"
                             WindowManagerAddShadowHint="False" Placement="AnchorAndGravity" PlacementAnchor="TopLeft"
                             PlacementGravity="TopRight" VerticalOffset="-4">
                 <Border Background="{DynamicResource AlderSurface}" CornerRadius="12" BoxShadow="{DynamicResource AlderToolbarShadow}" Padding="4">
@@ -1565,7 +1565,7 @@
                                   Width="216" Focusable="False" IsVisible="False" MaxHeight="264"
                                   ItemTemplate="{TemplateBinding TokenItemTemplate}" ItemContainerTheme="{StaticResource AlderPickerRowTheme}" />
                 </Border>
-              </a:AlderPopup>
+              </a:AlderEntrancePopup>
             </Grid>
           </Border>
         </Panel>

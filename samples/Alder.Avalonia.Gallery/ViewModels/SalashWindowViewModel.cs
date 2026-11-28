@@ -9,7 +9,6 @@ public sealed class SalashWindowViewModel : GalleryViewModel, IDialogContext
     public string Account { get => field; set => this.RaiseAndSetIfChanged(ref field, value); } = "";
     public string Password { get => field; set => this.RaiseAndSetIfChanged(ref field, value); } = "";
     public bool IsPasswordVisible { get => field; set => this.RaiseAndSetIfChanged(ref field, value); }
-    public bool IsSigningIn { get => field; private set => this.RaiseAndSetIfChanged(ref field, value); }
     public string? Error { get => field; private set => this.RaiseAndSetIfChanged(ref field, value); }
     public ICommand SignIn { get; }
     public ICommand TogglePassword { get; }
@@ -17,11 +16,11 @@ public sealed class SalashWindowViewModel : GalleryViewModel, IDialogContext
 
     public SalashWindowViewModel()
     {
-        SignIn = ReactiveCommand.CreateFromTask(SignInAsync);
+        SignIn = ReactiveCommand.Create(CompleteSignIn);
         TogglePassword = ReactiveCommand.Create(() => IsPasswordVisible = !IsPasswordVisible);
     }
 
-    private async Task SignInAsync()
+    private void CompleteSignIn()
     {
         if (string.IsNullOrWhiteSpace(Account) || string.IsNullOrEmpty(Password))
         {
@@ -30,14 +29,6 @@ public sealed class SalashWindowViewModel : GalleryViewModel, IDialogContext
         }
 
         Error = null;
-        IsSigningIn = true;
-        try
-        {
-            // Gallery simulates an asynchronous authentication service.
-            await Task.Delay(300);
-        }
-        finally { IsSigningIn = false; }
-
         RequestClose?.Invoke(this, DialogResult.OK);
     }
 }

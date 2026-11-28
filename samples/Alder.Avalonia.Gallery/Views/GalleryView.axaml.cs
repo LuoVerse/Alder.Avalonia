@@ -54,6 +54,10 @@ public partial class GalleryView : UserControl
         ["NumberStepper"] = new(() => CreatePage(CreateExamples(new NumberStepperExample(), new NumberStepperViewModel()))),
         ["InlineSelect"] = new(() => CreatePage(new InlineSelectExample())),
         ["NativeSelect"] = new(() => CreatePage(CreateExamples(new NativeSelectExample(), new FormSelectViewModel()))),
+        ["TextField"] = new(() => CreatePage(CreateExamples(new TextFieldExample(), new FormDemoViewModel()))),
+        ["Fieldset"] = new(() => CreatePage(CreateExamples(new FieldsetExample(), new FormDemoViewModel()))),
+        ["Form"] = new(() => CreatePage(CreateExamples(new FormExample(), new FormDemoViewModel()))),
+        ["FieldMessages"] = new(() => CreatePage(CreateExamples(new FieldMessagesExample(), new FormDemoViewModel()))),
         ["RichTextEditor"] = new(() => CreatePage(CreateExamples(new RichTextEditorExample(), new RichTextEditorViewModel()))),
         ["CheckboxButtonGroup"] = new(() => CreatePage(CreateExamples(new CheckboxButtonGroupExample(), new CheckboxButtonGroupViewModel()))),
         ["Input"] = new(() => CreateGroupedPage(
@@ -102,6 +106,9 @@ public partial class GalleryView : UserControl
         ["Breadcrumbs"] = new(() => CreatePage(CreateExamples(new BreadcrumbsExample(), new BreadcrumbsViewModel()))),
         ["Command"] = new(() => CreatePage(CreateExamples(new CommandExample(), new CommandViewModel()))),
         ["ContextMenu"] = new(() => CreatePage(CreateExamples(new ContextMenuExample(), new ContextMenuViewModel()))),
+        ["Menu"] = new(() => CreatePage(CreateExamples(new MenuExample(), new MenuViewModel()))),
+        ["TreeView"] = new(() => CreatePage(CreateExamples(new TreeViewExample(), new TreeViewExampleViewModel()))),
+        ["TimePicker"] = new(() => CreatePage(CreateExamples(new TimePickerExample(), new TimePickerViewModel()))),
         ["Disclosure"] = new(() => CreateGroupedPage(
             () => CreateExamples(new DisclosureExample(), new DisclosureViewModel(), "Disclosure"),
             () => CreateExamples(new DisclosureGroupExample(), new DisclosureGroupViewModel(), "DisclosureGroup"))),
@@ -155,6 +162,7 @@ public partial class GalleryView : UserControl
         ["ColorSwatchPicker"] = new(() => CreatePage(CreateExamples(new ColorSwatchPickerExample(), new ColorsViewModel()))),
         ["Badge"] = new(() => CreatePage(CreateExamples(new BadgeExample(), new StatusIndicatorViewModel()))),
         ["Chip"] = new(() => CreatePage(CreateExamples(new ChipExample(), new StatusIndicatorViewModel()))),
+        ["TagGroup"] = new(() => CreatePage(CreateExamples(new TagExample(), new TagViewModel()))),
         ["AreaChart"] = new(() => CreatePage(CreateExamples(new AreaChartExample(), new ChartViewModel()))),
         ["BarChart"] = new(() => CreatePage(CreateExamples(new BarChartExample(), new ChartViewModel()))),
         ["ChartTooltip"] = new(() => CreatePage(CreateExamples(new ChartTooltipExample(), new ChartsViewModel()))),
@@ -184,7 +192,7 @@ public partial class GalleryView : UserControl
     {
         if (item?.PageKey == "Home")
         {
-            homePage ??= new AlderScrollViewer
+            homePage ??= new GalleryPageScrollViewer
             {
                 Content = new GalleryHomeView(OpenHomeExample),
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled
@@ -298,7 +306,7 @@ public partial class GalleryView : UserControl
             VirtualizeExamples(group);
             stack.Children.Add(group);
         }
-        return new AlderScrollViewer { Content = stack, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
+        return new GalleryPageScrollViewer { Content = stack, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
     }
 
     private static ScrollViewer CreateGroupedPage(params Func<Control>[] groups)
@@ -310,7 +318,7 @@ public partial class GalleryView : UserControl
             VirtualizeExamples(control);
             return control;
         })));
-        return new AlderScrollViewer { Content = stack, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
+        return new GalleryPageScrollViewer { Content = stack, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
     }
 
     private static ScrollViewer CreateSectionPage(params (string Title, GalleryExampleSection Section, object Model)[] groups)
